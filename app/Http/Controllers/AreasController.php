@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Area;
 use App\Models\Sector;
-use Illuminate\Http\Request;
 use App\Services\AreaService;
 use App\Services\CommonService;
 use App\Services\PermissionService;
@@ -29,11 +28,11 @@ class AreasController extends Controller
     {
         $pageTitle = 'list Of Areas';
         $request = request()->all();
-    
+        $param = request()->param;
         $areas = $this->areaService->searchArea($request);
         $sectors = Sector::pluck('name');
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
-        return view('areas.index', compact('areas','pageTitle', 'permission','sectors'));
+        return view('areas.index', compact('areas','param','pageTitle', 'permission','sectors'));
     }
 
 
@@ -61,7 +60,7 @@ class AreasController extends Controller
         return redirect('area/list');
     }
 
-
+    
     public function edit($id)
     {
         $pageTitle = 'Update The Area';

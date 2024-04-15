@@ -19,7 +19,6 @@ class DispatchNoteController extends Controller
         $this->commonService = $commonService;
         $this->dispatchNoteService = $dispatchNoteService;
     }
-    const PER_PAGE = 10;
     /**
      * Display a listing of the resource.
      *
@@ -27,11 +26,12 @@ class DispatchNoteController extends Controller
      */
     public function index()
     {
-        $title = 'List of Dispatch Notes';
         $pageTitle = 'List of Dispatch Notes';
-        $dispatchNotes = DispatchNoteDetail::paginate(Self::PER_PAGE);
+        $request = request()->all();
+        $param = request()->param;
+        $dispatchNotes = $this->dispatchNoteService->searchDispatch($request);
 
-        return view('dispatch-note.index', compact('dispatchNotes', 'title', 'pageTitle'));
+        return view('dispatch-note.index', compact('dispatchNotes','pageTitle', 'param'));
     }
 
     /**
@@ -41,10 +41,11 @@ class DispatchNoteController extends Controller
      */
     public function create()
     {
-        $title = 'Create Dispatch Note';
+        $pageTitle = 'Create Dispatch Note';
         $dropDownData = $this->dispatchNoteService->DropDownData();
+        $dispatchNotes = DispatchNoteDetail::where('dispatch_note_master_id')->get();
 
-        return view('dispatch-note.create', compact('title', 'dropDownData'));
+        return view('dispatch-note.create', compact('pageTitle', 'dropDownData', 'dispatchNotes'));
     }
 
     /**
@@ -53,30 +54,23 @@ class DispatchNoteController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(DispatchNoteStoreRequest $request)
+    public function store(Request $request)
     {
-        try {
+        $data = request()->except('id', 'token');
         DB::beginTransaction();
-        //Insert data into Dispatch tables.
-        $dispatchMasterData = $this->dispatchNoteService->prepareDispatchMasterData($request);
-        $dispatchMasterInsert = $this->commonService->findUpdateOrCreate(DispatchNoteMaster::class, ['id' => ''], $dispatchMasterData);
-        $dispatchDetailData = $this->dispatchNoteService->prepareDispatchDetailData($request, $dispatchMasterInsert->id);
-        $this->dispatchNoteService->saveDispatch($dispatchDetailData);
+        // try {
+            //Insert data into Dispatch tables.
+            $dispatchMasterData = $this->dispatchNoteService->prepareDispatchMasterData($request);
+            $dispatchMasterInsert = $this->dispatchNoteService->findUpdateOrCreate(DispatchNoteMaster::class, ['id' => ''], $dispatchMasterData);
+            $dispatchDetailData = $this->dispatchNoteService->prepareDispatchDetailData($request, $dispatchMasterInsert->id);
+            $this->dispatchNoteService->saveDispatch($dispatchDetailData);
 
-        //Insert data into stock table.
-        // $this->stockService->prepareAndSaveData($request, $saleMasterInsert->id, purchaseService::SALE_TRANSACTION_TYPE);
-
-        //Insert data into accounts ledger table.
-        // $debitAccountData = $this->purchaseService->prepareAccountDebitData($request, $saleMasterInsert->id, purchaseService::SALE_TRANSACTION_TYPE, purchaseService::SALE_DESCRIPTION);
-        // $creditAccountData = $this->purchaseService->prepareAccountCreditData($request, $saleMasterInsert->id, purchaseService::SALE_TRANSACTION_TYPE, purchaseService::SALE_DESCRIPTION);
-        // AccountLedger::insert($debitAccountData);
-        // AccountLedger::insert($creditAccountData);
-        DB::commit();
-    } catch (\Exception $e) {
-        DB::rollback();
-        return redirect('dispatch-note/create')->with('error', $e->getMessage());
-    }
-    return redirect('dispatch-note/list')->with('message', config('constants.add'));
+            DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('dispatch-note/create')->with('error', $e->getMessage());
+        // }
+        return redirect('dispatch-note/list')->with('message', config('constants.add'));
     }
 
     /**
@@ -98,44 +92,38 @@ class DispatchNoteController extends Controller
      */
     public function edit($id)
     {
-        $dispatch = DispatchNoteMaster::find($id);
-        $purchaseDetails = DispatchNoteDetail::where('dispatch_master_id', $id)->get();
+
+        $pageTitle = 'Update Dispatch Note';
+        $note = DispatchNoteMaster::find($id);
+        // dd($note);
+        $dropDownData = $this->dispatchNoteService->DropDownData();
+        $dispatchNotes = DispatchNoteDetail::where('dispatch_note_master_id', $id)->get();
         if (empty($note)) {
             $message = config('constants.wrong');
         }
 
-        return view('dispatch-note.create', compact('dispatch', 'purchaseDetails'));
+        return view('dispatch-note.create', compact('pageTitle', 'dropDownData', 'note', 'dispatchNotes'));
     }
 
-    /**
+       /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(DispatchNoteStoreRequest $request, $id)
+    public function update(Request $request)
     {
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
             $request = request()->all();
-            DispatchNoteMaster::where('id', $request['noteId'])->delete();
-            DispatchNoteDetail::where('dispatch_master_id', $request['noteId'])->delete();
-            // Stock::where('invoice_id', $request['saleId'])->delete();
-            // AccountLedger::where('invoice_id', $request['saleId'])->delete();
 
-            //Save data into relevant tables.
             $dispatchMasterData = $this->dispatchNoteService->prepareDispatchMasterData($request);
-            $dispatchMasterInsert = $this->commonService->findUpdateOrCreate(DispatchNoteMaster::class, ['id' => request('noteId')], $dispatchMasterData);
+            $dispatchMasterInsert = $this->commonService->findUpdateOrCreate(DispatchNoteMaster::class, ['id' => request('id')], $dispatchMasterData);
             $dispatchDetailData = $this->dispatchNoteService->prepareDispatchDetailData($request, $dispatchMasterInsert->id);
             $this->dispatchNoteService->saveDispatch($dispatchDetailData);
 
-            //Save data into stock table.
-            // $this->stockService->prepareAndSaveData($request, $saleMasterInsert->id, purchaseService::SALE_TRANSACTION_TYPE);
-            // $debitAccountData = $this->purchaseService->prepareAccountDebitData($request, $saleMasterInsert->id, purchaseService::SALE_TRANSACTION_TYPE, purchaseService::SALE_DESCRIPTION);
-            // $creditAccountData = $this->purchaseService->prepareAccountCreditData($request, $saleMasterInsert->id, purchaseService::SALE_TRANSACTION_TYPE, purchaseService::SALE_DESCRIPTION);
-            // AccountLedger::insert($debitAccountData);
-            // AccountLedger::insert($creditAccountData);
+
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
@@ -153,21 +141,8 @@ class DispatchNoteController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            DB::beginTransaction();
-            $deleteMaster = DispatchNoteMaster::where('id', request()->id)->delete();
-            $deleteDetail = DispatchNoteDetail::where('dispatch_master_id', request()->id)->delete();
-            // $deleteStock = Stock::where('invoice_id', request()->id)->delete();
-            // $accountEntryDetail = AccountLedger::where('invoice_id', request()->id)->delete();
-            DB::commit();
-            // && $deleteStock && $accountEntryDetail
-            if ($deleteMaster && $deleteDetail ) {
-                return $this->commonService->deleteResource(DispatchNoteMaster::class, DispatchNoteDetail::class);
-            }
 
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('dispatch-note/list')->with('error', $e->getMessage());
-        }
+        return $this->commonService->deleteResource(DispatchNoteMaster::class);
+
     }
 }

@@ -6,19 +6,19 @@ use Illuminate\Http\Request;
 use App\Models\VoucherDetail;
 use App\Models\VoucherMaster;
 use App\Services\CommonService;
-use App\Services\VoucherService;
+use App\Services\CPVoucherService;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\VoucherRequest;
 
 class CPVoucherController extends Controller
 {
     protected $commonService;
-    protected $voucherService;
+    protected $cpVoucherService;
 
-    public function __construct(CommonService $commonService, VoucherService $voucherService)
+    public function __construct(CommonService $commonService, CPVoucherService $cpVoucherService)
     {
         $this->commonService = $commonService;
-        $this->voucherService = $voucherService;
+        $this->cpVoucherService = $cpVoucherService;
 
     }
     /**
@@ -30,7 +30,7 @@ class CPVoucherController extends Controller
     {
         $pageTitle = 'List Of CP Vouchers';
         $request = request()->all();
-        $vouchers = $this->voucherService->searchVoucher($request);
+        $vouchers = $this->cpVoucherService->searchVoucher($request);
 
         return view('vouchers.cpv.index', compact('vouchers', 'pageTitle'));
     }
@@ -43,8 +43,8 @@ class CPVoucherController extends Controller
     public function create()
     {
         $pageTitle = 'Create CPV';
-        $maxid = VoucherMaster::max('id') + 1;
-        $dropDownData = $this->voucherService->DropDownData();
+        $maxid = VoucherMaster::where('vr_type_id', 'CPV')->max('id') + 1;
+        $dropDownData = $this->cpVoucherService->DropDownData();
         return view('vouchers.cpv.create', compact( 'pageTitle','maxid', 'dropDownData'));
     }
 
@@ -56,24 +56,21 @@ class CPVoucherController extends Controller
      */
     public function store(VoucherRequest $request)
     {
-        $data['vr_type'] = config('constants.CPV');
+        $data['vr_type_id'] = config('constants.CPV');
+        $session = $this->commonService->getSession();
         $request = $request->except('_token', 'id');
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
             //Insert data into purchase tables.
-            $voucherMasterData = $this->voucherService->prepareVoucherMasterData($request);
+            $request['business_id'] = $session->business_id;
+            $request['f_year_id'] = $session->financial_year;
+            $voucherMasterData = $this->cpVoucherService->prepareVoucherMasterData($request);
             $voucherMasterInsert = $this->commonService->findUpdateOrCreate(VoucherMaster::class, ['id' => ''], $voucherMasterData);
-            $voucherDetailData = $this->voucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
-            $this->voucherService->saveVoucher($voucherDetailData);
+            $voucherDetailCreditData = $this->cpVoucherService->prepareVoucherDetailCreditData($request, $voucherMasterInsert->id);
+            $voucherDetailDebitData = $this->cpVoucherService->prepareVoucherDetailDebitData($request, $voucherMasterInsert->id);
+            $this->cpVoucherService->saveVoucher($voucherDetailCreditData);
+            $this->cpVoucherService->saveVoucher($voucherDetailDebitData);
 
-            //Insert data into stock table.
-            // $this->stockService->prepareAndSaveData($request, $saleMasterInsert->id, voucherService::SALE_TRANSACTION_TYPE);
-
-            //Insert data into accounts ledger table.
-            // $debitAccountData = $this->voucherService->prepareAccountDebitData($request, $saleMasterInsert->id, voucherService::SALE_TRANSACTION_TYPE, voucherService::SALE_DESCRIPTION);
-            // $creditAccountData = $this->voucherService->prepareAccountCreditData($request, $saleMasterInsert->id, voucherService::SALE_TRANSACTION_TYPE, voucherService::SALE_DESCRIPTION);
-            // AccountLedger::insert($debitAccountData);
-            // AccountLedger::insert($creditAccountData);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
@@ -112,38 +109,6 @@ class CPVoucherController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\VoucherMaster  $voucherMaster
-     * @return \Illuminate\Http\Response
-     */
-    public function update(VoucherRequest $request)
-    {
-        $data['vr_type'] = config('constants.CPV');
-        try {
-            DB::beginTransaction();
-            $request = request()->all();
-            VoucherMaster::where('id', $request['id'])->delete();
-            VoucherDetail::where('voucher_master_id', $request['id'])->delete();
-            // Stock::where('invoice_id', $request['saleId'])->delete();
-            // AccountLedger::where('invoice_id', $request['saleId'])->delete();
-
-            //Save data into relevant tables.
-            $voucherMasterData = $this->voucherService->prepareVoucherMasterData($request);
-            $voucherMasterInsert = $this->commonService->findUpdateOrCreate(VoucherMaster::class, ['id' => request('id')], $voucherMasterData);
-            $voucherDetailData = $this->voucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
-            $this->voucherService->saveVoucher($voucherDetailData);
-
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('cpv/create')->with('error', $e->getMessage());
-        }
-
-        return redirect('cpv/list')->with('message', config('constants.update'));    }
-
-    /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\VoucherMaster  $voucherMaster
@@ -151,8 +116,8 @@ class CPVoucherController extends Controller
      */
     public function destroy()
     {
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
             $deleteMaster = VoucherMaster::where('id', request()->id)->delete();
             $deleteDetail = VoucherDetail::where('voucher_master_id', request()->id)->delete();
 
@@ -171,8 +136,8 @@ class CPVoucherController extends Controller
 
     public function view($id)
     {
-        $voucherMaster = $this->voucherService->getVoucherMasterById($id);
-        $voucherDetail = $this->voucherService->getVoucherDetailById($id);
+        $voucherMaster = $this->cpVoucherService->getVoucherMasterById($id);
+        $voucherDetail = $this->cpVoucherService->getVoucherDetailById($id);
         if (empty($voucherMaster)) {
             $message = config('constants.wrong');
         }

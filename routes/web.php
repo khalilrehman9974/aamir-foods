@@ -107,9 +107,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('list', ['as' => 'store-issue-note.list', 'uses' => 'App\Http\Controllers\StoreIssueNoteController@index']);
         Route::get('create', ['as' => 'store-issue-note.create', 'uses' => 'App\Http\Controllers\StoreIssueNoteController@create']);
         Route::post('save', ['as' => 'store-issue-note.save', 'uses' => 'App\Http\Controllers\StoreIssueNoteController@store']);
-        // Route::get('edit/{id}', ['as' => 'chart-of-account.edit', 'uses' => 'CompaniesController@edit']);
-        // Route::post('update', ['as' => 'chart-of-account.update', 'uses' => 'CompaniesController@update']);
-        // Route::delete('delete/{id}', ['as' => 'chart-of-account.delete', 'uses' => 'CompaniesController@destroy']);
+        Route::get('edit/{id}', ['as' => 'store-issue-note.edit', 'uses' => 'App\Http\Controllers\StoreIssueNoteController@edit']);
+        Route::post('update', ['as' => 'store-issue-note.update', 'uses' => 'App\Http\Controllers\StoreIssueNoteController@update']);
+        Route::delete('delete/{id}', ['as' => 'store-issue-note.delete', 'uses' => 'App\Http\Controllers\StoreIssueNoteController@destroy']);
         // Route::post('show/{id}', ['as' => 'chart-of-account.show', 'uses' => 'CompaniesController@show']);
         // Route::get('search', ['as' => 'chart-of-account.search', 'uses' => 'CompaniesController@search']);
     });
@@ -119,11 +119,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('list', ['as' => 'dispatch-note.list', 'uses' => 'App\Http\Controllers\DispatchNoteController@index']);
         Route::get('create', ['as' => 'dispatch-note.create', 'uses' => 'App\Http\Controllers\DispatchNoteController@create']);
         Route::post('save', ['as' => 'dispatch-note.save', 'uses' => 'App\Http\Controllers\DispatchNoteController@store']);
-        // Route::get('edit/{id}', ['as' => 'chart-of-account.edit', 'uses' => 'CompaniesController@edit']);
-        // Route::post('update', ['as' => 'chart-of-account.update', 'uses' => 'CompaniesController@update']);
-        // Route::delete('delete/{id}', ['as' => 'chart-of-account.delete', 'uses' => 'CompaniesController@destroy']);
-        // Route::post('show/{id}', ['as' => 'chart-of-account.show', 'uses' => 'CompaniesController@show']);
-        // Route::get('search', ['as' => 'chart-of-account.search', 'uses' => 'CompaniesController@search']);
+        Route::get('edit/{id}', ['as' => 'dispatch-note.edit', 'uses' => 'App\Http\Controllers\DispatchNoteController@edit']);
+        Route::post('update', ['as' => 'dispatch-note.update', 'uses' => 'App\Http\Controllers\DispatchNoteController@update']);
+        Route::delete('delete/{id}', ['as' => 'dispatch-note.delete', 'uses' => 'App\Http\Controllers\DispatchNoteController@destroy']);
+        Route::post('show/{id}', ['as' => 'dispatch-note.show', 'uses' => 'App\Http\Controllers\DispatchNoteController@show']);
+        Route::get('search', ['as' => 'dispatch-note.search', 'uses' => 'App\Http\Controllers\DispatchNoteController@search']);
     });
 
     Route::group(['prefix' => 'product', 'middleware' => 'auth'], function () {
@@ -246,7 +246,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('save', ['as' => 'purchase.save', 'uses' => 'App\Http\Controllers\PurchaseController@store']);
         Route::get('edit/{id}', ['as' => 'purchase.edit', 'uses' => 'App\Http\Controllers\PurchaseController@edit']);
         Route::post('update', ['as' => 'purchase.update', 'uses' => 'App\Http\Controllers\PurchaseController@store']);
-        Route::get('/delete', ['as' => 'purchase.delete', 'uses' => 'App\Http\Controllers\PurchaseController@delete']);
+        Route::delete('delete/{id}', ['as' => 'purchase.delete', 'uses' => 'App\Http\Controllers\PurchaseController@delete']);
         Route::post('show/{id}', ['as' => 'purchase.show', 'uses' => 'App\Http\Controllers\PurchaseController@show']);
         Route::get('search', ['as' => 'purchase.search', 'uses' => 'App\Http\Controllers\PurchaseController@search']);
     });
@@ -334,8 +334,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('create', ['as' => 'grn.create', 'uses' => 'App\Http\Controllers\GRNotesController@create']);
         Route::post('save', ['as' => 'grn.save', 'uses' => 'App\Http\Controllers\GRNotesController@store']);
         Route::get('edit/{id}', ['as' => 'grn.edit', 'uses' => 'App\Http\Controllers\GRNotesController@edit']);
-        Route::post('update', ['as' => 'grn.update', 'uses' => 'App\Http\Controllers\GRNotesController@store']);
-        Route::get('/delete', ['as' => 'grn.delete', 'uses' => 'App\Http\Controllers\GRNotesController@delete']);
+        Route::post('update', ['as' => 'grn.update', 'uses' => 'App\Http\Controllers\GRNotesController@update']);
+        Route::delete('delete/{id}', ['as' => 'grn.delete', 'uses' => 'App\Http\Controllers\GRNotesController@delete']);
         Route::post('show/{id}', ['as' => 'grn.show', 'uses' => 'App\Http\Controllers\GRNotesController@show']);
         Route::get('search', ['as' => 'grn.search', 'uses' => 'App\Http\Controllers\GRNotesController@search']);
     });
@@ -360,6 +360,17 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('get-sub-head-account/{code}', ['as' => 'sub-head-account', 'uses' => 'App\Http\Controllers\ChartOfInvSubHeadController@getMaxSubSubHeadCode']);
     });
 
+    Route::group(['prefix' => 'co-inv-sub-sub-head'], function () {
+        Route::get('/list', ['as' => 'co-inventory-sub-sub-head.list', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@index']);
+        Route::get('create', ['as' => 'co-inventory-sub-sub-head.create', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@create']);
+        Route::get('edit/{id}', ['as' => 'co-inventory-sub-sub-head.edit', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@edit']);
+        Route::post('save', ['as' => 'co-inventory-sub-sub-head.save', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@store']);
+        Route::post('update', ['as' => 'co-inventory-sub-sub-head.update', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@store']);
+        Route::delete('delete/{id}', ['as' => 'co-inventory-sub-sub-head.delete', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@destroy']);
+        Route::get('get-sub-head-accounts/{id}', ['as' => 'sub-head-accounts-by-main-head', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@getSubHeadAccountsByMainHead']);
+        Route::get('get-sub-sub-head-account/{code}', ['as' => 'sub-sub-head-account', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@getMaxSubSubHeadCode']);
+    });
+
     //Chart of Inventory Detail account.
     Route::group(['prefix' => 'co-inv-detail-account'], function () {
         Route::get('/list', ['as' => 'co-inventory-detail-account.list', 'uses' => 'App\Http\Controllers\ChartOfInvDetailAccountController@index']);
@@ -370,6 +381,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::delete('delete/{id}', ['as' => 'co-inventory-detail-account.delete', 'uses' => 'App\Http\Controllers\ChartOfInvDetailAccountController@destroy']);
         Route::get('get-detail-account-code/{code}', ['as' => 'detail-account', 'uses' => 'App\Http\Controllers\ChartOfInvDetailAccountController@getMaxDetailAccountCode']);
         Route::get('get-sub-head-accounts/{id}', ['as' => 'sub-head-accounts-by-main-head', 'uses' => 'App\Http\Controllers\ChartOfInvDetailAccountController@getSubHeadAccountsByMainHead']);
+        Route::get('get-sub-sub-head-accounts/{id}', ['as' => 'sub-sub-head-accounts-by-sub-head', 'uses' => 'App\Http\Controllers\ChartOfInvDetailAccountController@getSubSubHeadAccountsBySubHead']);
     });
 
     Route::group(['prefix' => 'purchase-order', 'middleware' => 'auth'], function () {
@@ -408,13 +420,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::delete('delete/{id}', ['as' => 'PackingType.delete', 'uses' => 'App\Http\Controllers\PackingTypeController@delete']);
     });
 
-    Route::group(['prefix' => 'sale-order', 'middleware' => 'auth'], function () {
-        Route::get('list', ['as' => 'sale-order.list', 'uses' => 'App\Http\Controllers\PurchaseOrderController@index']);
-        Route::get('create', ['as' => 'sale-order.create', 'uses' => 'App\Http\Controllers\PurchaseOrderController@create']);
-        Route::post('save', ['as' => 'sale-order.store', 'uses' => 'App\Http\Controllers\PurchaseOrderController@store']);
-        Route::get('edit/{id}', ['as' => 'sale-order.edit', 'uses' => 'App\Http\Controllers\PurchaseOrderController@edit']);
-        Route::post('update', ['as' => 'sale-order.update', 'uses' => 'App\Http\Controllers\PurchaseOrderController@store']);
-        Route::delete('delete/{id}', ['as' => 'sale-order.delete', 'uses' => 'App\Http\Controllers\PurchaseOrderController@destroy']);
+    Route::group(['prefix' => 'purchase-order', 'middleware' => 'auth'], function () {
+        Route::get('list', ['as' => 'purchase-order.list', 'uses' => 'App\Http\Controllers\PurchaseOrderController@index']);
+        Route::get('create', ['as' => 'purchase-order.create', 'uses' => 'App\Http\Controllers\PurchaseOrderController@create']);
+        Route::post('save', ['as' => 'purchase-order.store', 'uses' => 'App\Http\Controllers\PurchaseOrderController@store']);
+        Route::get('edit/{id}', ['as' => 'purchase-order.edit', 'uses' => 'App\Http\Controllers\PurchaseOrderController@edit']);
+        Route::post('update', ['as' => 'purchase-order.update', 'uses' => 'App\Http\Controllers\PurchaseOrderController@store']);
+        Route::delete('delete/{id}', ['as' => 'purchase-order.delete', 'uses' => 'App\Http\Controllers\PurchaseOrderController@destroy']);
     });
 
     Route::group(['prefix' => 'sale-order', 'middleware' => 'auth'], function () {
@@ -424,6 +436,15 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('edit/{id}', ['as' => 'sale-order.edit', 'uses' => 'App\Http\Controllers\SaleOrderController@edit']);
         Route::post('update', ['as' => 'sale-order.update', 'uses' => 'App\Http\Controllers\SaleOrderController@store']);
         Route::delete('delete/{id}', ['as' => 'sale-order.delete', 'uses' => 'App\Http\Controllers\SaleOrderController@destroy']);
+    });
+
+    Route::group(['prefix' => 'storeReturn'], function () {
+        Route::get('list', ['as' => 'storeReturn.list', 'uses' => 'App\Http\Controllers\StoreReturnController@index']);
+        Route::get('create', ['as' => 'storeReturn.create', 'uses' => 'App\Http\Controllers\StoreReturnController@create']);
+        Route::post('save', ['as' => 'storeReturn.save', 'uses' => 'App\Http\Controllers\StoreReturnController@store']);
+        Route::get('edit/{id}', ['as' => 'storeReturn.edit', 'uses' => 'App\Http\Controllers\StoreReturnController@edit']);
+        Route::post('update', ['as' => 'storeReturn.update', 'uses' => 'App\Http\Controllers\StoreReturnController@update']);
+        Route::delete('delete/{id}', ['as' => 'storeReturn.delete', 'uses' => 'App\Http\Controllers\StoreReturnController@destroy']);
     });
 
     Route::get('/clear-cache', function () {

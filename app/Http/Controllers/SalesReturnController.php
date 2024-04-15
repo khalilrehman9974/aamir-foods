@@ -86,7 +86,6 @@ class SalesReturnController extends Controller
     public function edit($id)
     {
         $saleReturn = SaleReturnMaster::find($id);
-        // $products = Product::where('brand_id', $sale->brand_id)->pluck('name', 'id');
         $type = SalePurchaseType::where('name', 'Sale Return')->pluck('name', 'id');
         $saleReturnDetails = SaleReturnDetail::where('sale_master_id', $id)->get();
         if (empty($sale)) {
@@ -112,7 +111,7 @@ class SalesReturnController extends Controller
 
             //Save data into relevant tables.
             $saleReturnMasterData = $this->salereturnService->prepareSaleReturnMasterData($request);
-            $saleReturnMasterInsert = $this->commonService->findUpdateOrCreate(SaleReturnMaster::class, ['id' => request('productId')], $saleReturnMasterData);
+            $saleReturnMasterInsert = $this->commonService->findUpdateOrCreate(SaleReturnMaster::class, ['id' => request('id')], $saleReturnMasterData);
             $saleReturnDetailData = $this->salereturnService->prepareSaleReturnDetailData($request, $saleReturnMasterInsert->id);
             $this->salereturnService->saveSaleReturn($saleReturnDetailData);
 

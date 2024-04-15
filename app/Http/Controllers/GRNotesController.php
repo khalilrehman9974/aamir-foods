@@ -8,7 +8,7 @@ use App\Services\CommonService;
 use App\Services\GRNotesService;
 use App\Models\GoodsReceivedNote;
 use Illuminate\Support\Facades\DB;
-use App\Http\Requests\GRNotesRequest;
+// use App\Http\Requests\Request;
 
 class GRNotesController extends Controller
 {
@@ -30,8 +30,9 @@ class GRNotesController extends Controller
         $pageTitle = 'List Of GRN';
         $request = request()->all();
         $notes = $this->grNotesService->searchGRN($request);
+        $param = request()->param;
 
-        return view('goods-received-notes.index', compact('notes', 'request','pageTitle'));
+        return view('goods-received-notes.index', compact('notes','param', 'request','pageTitle'));
     }
 
     /*
@@ -41,19 +42,20 @@ class GRNotesController extends Controller
     {
         $pageTitle = 'Create GRN';
         $dropDownData = $this->grNotesService->DropDownData();
-        return view('goods-received-notes.create', compact('pageTitle','dropDownData'));
+        $note_details = GRNotesDetail::where('goods_received_note_master_id')->get();
+        return view('goods-received-notes.create', compact('pageTitle','dropDownData','note_details'));
     }
 
     /*
      * Save GRN into db.
      * @param: @request
      * */
-    public function store(GRNotesRequest $request)
+    public function store(Request $request)
     {
 
         $request = $request->except('_token', 'id');
-        try {
-            DB::beginTransaction();
+        DB::beginTransaction();
+        // try {
             //Insert data into GRN tables.
             $grnMasterData = $this->grNotesService->prepareGRNMasterData($request);
             $grnMasterInsert = $this->commonService->findUpdateOrCreate(GoodsReceivedNote::class, ['id' => ''], $grnMasterData);
@@ -61,11 +63,32 @@ class GRNotesController extends Controller
             $this->grNotesService->saveGRN($grnDetailData);
 
             DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('grn/create')->with('error', $e->getMessage());
+        // }
+        return redirect('grn/list')->with('message', config('constants.add'));
+    }
+
+    public function update(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $request = request()->all();
+
+            $dispatchMasterData = $this->grNotesService->prepareGRNMasterData($request);
+            $dispatchMasterInsert = $this->commonService->findUpdateOrCreate(GoodsReceivedNote::class, ['id' => request('id')], $dispatchMasterData);
+            $dispatchDetailData = $this->grNotesService->prepareGRNDetailData($request, $dispatchMasterInsert->id);
+            $this->grNotesService->saveGRN($dispatchDetailData);
+
+
+            DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
             return redirect('grn/create')->with('error', $e->getMessage());
         }
-        return redirect('grn/list')->with('message', config('constants.add'));
+
+        return redirect('grn/list')->with('message', config('constants.update'));
     }
 
     /*
@@ -73,14 +96,15 @@ class GRNotesController extends Controller
      * */
     public function edit($id)
     {
+        $pageTitle = 'Update GRN';
         $dropDownData = $this->grNotesService->DropDownData();
         $note = GoodsReceivedNote::find($id);
-        $note_details = GRNotesDetail::where('grn_master_id', $id)->get();
+        $note_details = GRNotesDetail::where('goods_received_note_master_id', $id)->get();
         if (empty($note)) {
             $message = config('constants.wrong');
         }
 
-        return view('goods-received-notes.create', compact('note','type', 'note_details','dropDownData'));
+        return view('goods-received-notes.create', compact('pageTitle','note', 'note_details','dropDownData'));
     }
 
 
@@ -90,10 +114,10 @@ class GRNotesController extends Controller
      * */
     public function delete()
     {
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
             $deleteMaster = GoodsReceivedNote::where('id', request()->id)->delete();
-            $deleteDetail = GRNotesDetail::where('grn_master_id', request()->id)->delete();
+            $deleteDetail = GRNotesDetail::where('goods_received_note_master_id', request()->id)->delete();
             DB::commit();
             if ($deleteMaster && $deleteDetail ) {
                 return $this->commonService->deleteResource(GoodsReceivedNote::class, GRNotesDetail::class);

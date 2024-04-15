@@ -6,21 +6,26 @@
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <x-slot:headerFiles>
-      <!--  BEGIN CUSTOM STYLE FILE  -->
-      <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
-      <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
-      @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
-      @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
+        <!--  BEGIN CUSTOM STYLE FILE  -->
+        <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
+        <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
+        @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
+        @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+            integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-      <!--  BEGIN CUSTOM STYLE FILE  -->
-      <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
-      <link rel="stylesheet" href="../src/plugins/src/filepond/filepond.min.css">
-      <link rel="stylesheet" href="../src/plugins/src/filepond/FilePondPluginImagePreview.min.css">
+        <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+        <!--  BEGIN CUSTOM STYLE FILE  -->
+        <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="../src/plugins/src/filepond/filepond.min.css">
+        <link rel="stylesheet" href="../src/plugins/src/filepond/FilePondPluginImagePreview.min.css">
 
-      <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
-      <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
-      <!--  END CUSTOM STYLE FILE  -->
+        <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
+        <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
+        <!--  END CUSTOM STYLE FILE  -->
     </x-slot>
     <!-- END GLOBAL MANDATORY STYLES -->
 
@@ -52,31 +57,34 @@
                 <div class="col-md-12 mb-4">
                     <div class="widget-content widget-content-area">
                         <form method="POST"
-                            action="{{ !empty($issue_noteid) ? route('store-issue-note.update') : route('store-issue-note.save') }}"
+                            action="{{ !empty($issueNote) ? route('store-issue-note.update') : route('store-issue-note.save') }}"
                             class="row g-3 needs-validation" novalidate>
                             @csrf
                             <input type="hidden" name="id" id="id"
-                                value="{{ isset($issue_note->id) ? $issue_note->id : '' }}" />
+                                value="{{ isset($issueNote->id) ? $issueNote->id : '' }}" />
                             <div class="form-group">
-                                <div class="col">
-                                    <label for="inputState" class="form-label">Product</label>
-                                    <select id="product_id" name="product_id" class="form-select">
-                                        <option selected="">Please select the
-                                            Distributer</option>
-                                        @foreach ($dropDownData['products'] as $key => $value)
-                                            <option value="{{ $key }}"
-                                                {{ (old('product_id') == $key ? 'selected' : '') || (!empty($issue_note->product_id) ? collect($issue_note->product_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                {{ $value }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
                                 <div class="row">
                                     <div class="col-md-6">
-
-                                        <label for="issued_to">Issued To</label>
-                                        <input type="text" value="{{ old('issued_to', @$issue_note->issued_to) }}"
-                                            name="issued_to" class="form-control" id="issued-to"
-                                            placeholder="Issued to..." required>
+                                        <label for="inputState" class="form-label">Product</label>
+                                        <select id="product_id" name="product_id"
+                                            class="form-select select2 mb-3 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                            <option selected="">Please select the
+                                                Product</option>
+                                            @foreach ($dropDownData['products'] as $key => $value)
+                                                <option value="{{ $key }}"
+                                                    {{ (old('product_id') == $key ? 'selected' : '') || (!empty($issueNote->product_id) ? collect($issueNote->product_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                    {{ $value }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <label for="issued_to">Issue To</label>
+                                        <input type="text" value="{{ old('issued_to', @$issueNote->issued_to) }}"
+                                            name="issued_to"
+                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                            id="issue-to" placeholder="issue to..." required>
                                         @error('issued_to')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -86,10 +94,11 @@
                                     </div>
 
                                     <div class="form-group col-md-6 ">
-                                        <label for="issued_by">Issued By</label>
+                                        <label for="issued_by">Issue By</label>
                                         <input type="text" name="issued_by"
-                                            value="{{ old('issued_by', @$issue_note->issued_by) }}"
-                                            class="form-control" id="issued-by" placeholder="Issued By" required>
+                                            value="{{ old('issued_by', @$issueNote->issued_by) }}"
+                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                            id="issue-by" placeholder="issue By" required>
                                         @error('issued_by')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -98,10 +107,10 @@
                                     </div>
 
                                 </div>
-                                <div class="form-group mb-4">
+                                <div class="form-group mt-3 mb-4">
                                     <label for="exampleFormControlTextarea1">Remarks</label>
-                                    <textarea class="form-control" value="{{ old('remarks', @$issue_note->remarks) }}" name="remarks" id="remarks"
-                                        rows="3"></textarea>
+                                    <textarea class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" name="remarks" id="remarks"
+                                        rows="3">{{ @$issueNote->remarks }}</textarea>
                                 </div>
                                 <div class="invoice-detail-items">
 
@@ -122,51 +131,55 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td class="delete-item-row">
-                                                        <ul class="table-controls">
-                                                            <li><a href="javascript:void(0);" class="delete-item"
-                                                                    data-toggle="tooltip" data-placement="top"
-                                                                    title="" data-original-title="Delete"><svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        width="24" height="24"
-                                                                        viewBox="0 0 24 24" fill="none"
-                                                                        stroke="currentColor" stroke-width="2"
-                                                                        stroke-linecap="round" stroke-linejoin="round"
-                                                                        class="feather feather-x-circle">
-                                                                        <circle cx="12" cy="12" r="10">
-                                                                        </circle>
-                                                                        <line x1="15" y1="9"
-                                                                            x2="9" y2="15">
-                                                                        </line>
-                                                                        <line x1="9" y1="9"
-                                                                            x2="15" y2="15">
-                                                                        </line>
-                                                                    </svg></a>
-                                                            </li>
-                                                        </ul>
-                                                    </td>
-                                                    <td class="date">
-                                                        <input id="date" name="date[]"
-                                                            class="form-control form-control-sm date flatpickr flatpickr-input"
-                                                            type="text"
-                                                            value="{{ old('date', !empty($issue_note->date) ? $issue_note->date : '') }}"
-                                                            placeholder="Select Date.." readonly="readonly">
-                                                    </td>
-                                                    <td class="">
-                                                        <textarea id="unit" type="text" name="description[]"
-                                                            value="{{ old('description', !empty($issue_note->description) ? $issue_note->description : '') }}"
-                                                            placeholder="Please Enter Description " class="form-control form-control-sm"></textarea>
-                                                    </td>
-                                                    <td class="">
-                                                        <input id="quantity" type="text" name="quantity[]"
-                                                            value="{{ old('quantity', !empty($issue_note->quantity) ? $issue_note->quantity : '') }}"
-                                                            placeholder="Please Enter Quantity "
-                                                            class="form-control form-control-sm">
-                                                    </td>
-
-
-                                                </tr>
+                                                @foreach ($issueNoteDetails as $issueNote)
+                                                    <tr>
+                                                        <td class="delete-item-row">
+                                                            <ul class="table-controls">
+                                                                <li><a href="javascript:void(0);" class="delete-item"
+                                                                        data-toggle="tooltip" data-placement="top"
+                                                                        title=""
+                                                                        data-original-title="Delete"><svg
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            width="24" height="24"
+                                                                            viewBox="0 0 24 24" fill="none"
+                                                                            stroke="currentColor" stroke-width="2"
+                                                                            stroke-linecap="round"
+                                                                            stroke-linejoin="round"
+                                                                            class="feather feather-x-circle">
+                                                                            <circle cx="12" cy="12"
+                                                                                r="10">
+                                                                            </circle>
+                                                                            <line x1="15" y1="9"
+                                                                                x2="9" y2="15">
+                                                                            </line>
+                                                                            <line x1="9" y1="9"
+                                                                                x2="15" y2="15">
+                                                                            </line>
+                                                                        </svg></a>
+                                                                </li>
+                                                            </ul>
+                                                        </td>
+                                                        <td class="date">
+                                                            <input id="date" name="date[]"
+                                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} date flatpickr flatpickr-input"
+                                                                type="text" data-date-format="Y-m-d"
+                                                                value="{{ empty( $issueNote->date) ? null :  \Illuminate\Support\Carbon::parse(  $issueNote->date)->format('Y-m-d')}}"
+                                                                {{-- value="{{ old('date', !empty($issueNote->date) ? $issueNote->date : '') }}" --}}
+                                                                placeholder="Select Date.." readonly="readonly">
+                                                        </td>
+                                                        <td class="description ">
+                                                            <textarea id="unit" type="text" name="description[]"
+                                                                placeholder="Please Enter Description "
+                                                                class="form-control mt-0 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">{{@$issueNote->description}}</textarea>
+                                                        </td>
+                                                        <td class="quantity">
+                                                            <input id="quantity" type="text" name="quantity[]"
+                                                                value="{{ old('quantity', !empty($issueNote->quantity) ? $issueNote->quantity : '') }}"
+                                                                placeholder="Please Enter Quantity "
+                                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
                                             </tbody>
                                         </table>
                                     </div>
@@ -181,7 +194,7 @@
                                         class="btn btn-success  rounded bs-popover me-1 mt-5 mb-4 "
                                         data-bs-container="body" data-bs-placement="right"
                                         data-bs-content="Tooltip on right">
-                                        @if (!isset($issue_noteid))
+                                        @if (!isset($issueNote))
                                             Save
                                         @else
                                             Update
@@ -191,9 +204,7 @@
                             </div>
                         </form>
                     </div>
-
                 </div>
-
             </div>
         </div>
     </div>
@@ -208,11 +219,13 @@
                 '<li><a href="javascript:void(0);" class="delete-item" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></a></li>' +
                 '</ul>' +
                 '</td>' +
-                '<td class="date"><input id="date" name="date[]" class="form-control date_'+currentIndex+' flatpickr flatpickr-input" type="text" value="{{ old('date', !empty($issue_note->date) ? $issue_note->date : '') }}" placeholder="Select Date.." readonly="readonly"> ' +
+                '<td class="date"><input id="date" name="date[]" class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} date_' +
+                currentIndex +
+                ' flatpickr flatpickr-input" type="text" value="{{ old('date', !empty($issueNote->date) ? $issueNote->date : '') }}" placeholder="Select Date.." readonly="readonly"> ' +
                 '<td class="description" >' +
-                '<textarea type="text" name="description[]" class="form-control  form-control-sm" placeholder="Please Enter Description "></textarea>' +
+                '<textarea type="text" name="description[]" class="form-control mt-0 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" placeholder="Please Enter Description "></textarea>' +
                 ' </td>' +
-                '<td class=""><input type="text" name="quantity[]" class="form-control  form-control-sm" placeholder="Please Enter Quantity "></td>' +
+                '<td class="quantity"><input type="text" name="quantity[]" class="form-control  {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" placeholder="Please Enter Quantity "></td>' +
                 '<div class="form-check form-check-primary form-check-inline me-0 mb-0">' +
                 '</div>' +
                 '</div>' +
@@ -221,8 +234,8 @@
 
             $(".item-table tbody").append($html);
 
-            $( ".date_"+currentIndex ).flatpickr({
-                dateFormat:"d-m-Y",
+            $(".date_" + currentIndex).flatpickr({
+                dateFormat: "d-m-Y",
                 minDate: "today",
                 time_24hr: true,
             });
@@ -250,11 +263,20 @@
 
 
     <x-slot:footerFiles>
+        <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
+
         <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
         <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>
 
         <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
         <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
+        <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script>
+        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
+            integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="{{ asset('js/common.js') }}"></script>
 
         <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])

@@ -6,19 +6,19 @@ use Illuminate\Http\Request;
 use App\Models\VoucherDetail;
 use App\Models\VoucherMaster;
 use App\Services\CommonService;
-use App\Services\VoucherService;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\VoucherRequest;
+use App\Services\CashReceiptVoucherService;
 
 class CRVoucherController extends Controller
 {
     protected $commonService;
-    protected $voucherService;
+    protected $cashReceiptVoucherService;
 
-    public function __construct(CommonService $commonService, VoucherService $voucherService)
+    public function __construct(CommonService $commonService, CashReceiptVoucherService $cashReceiptVoucherService)
     {
         $this->commonService = $commonService;
-        $this->voucherService = $voucherService;
+        $this->cashReceiptVoucherService = $cashReceiptVoucherService;
 
     }
     /**
@@ -30,7 +30,7 @@ class CRVoucherController extends Controller
     {
         $pageTitle = 'List Of CR Vouchers';
         $request = request()->all();
-        $vouchers = $this->voucherService->searchVoucher($request);
+        $vouchers = $this->cashReceiptVoucherService->searchVoucher($request);
 
         return view('vouchers.crv.index', compact('vouchers', 'pageTitle'));
     }
@@ -42,9 +42,9 @@ class CRVoucherController extends Controller
      */
     public function create()
     {
-        $pageTitle = 'Create Voucher';
-        $maxid = VoucherMaster::max('id') + 1;
-        $dropDownData = $this->voucherService->DropDownData();
+        $pageTitle = 'Create CRVoucher';
+        $maxid = VoucherMaster::where('vr_type_id', 'CRV')->max('id') + 1;
+        $dropDownData = $this->cashReceiptVoucherService->DropDownData();
         return view('vouchers.crv.create', compact( 'pageTitle','maxid','dropDownData'));
     }
 
@@ -57,22 +57,19 @@ class CRVoucherController extends Controller
     public function store(VoucherRequest $request)
     {
         $request = $request->except('_token', 'voucherId');
+        $session = $this->commonService->getSession();
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
             //Insert data into purchase tables.
-            $voucherMasterData = $this->voucherService->prepareVoucherMasterData($request);
+            $request['business_id'] = $session->business_id;
+            $request['f_year_id'] = $session->financial_year;
+            $voucherMasterData = $this->cashReceiptVoucherService->prepareVoucherMasterData($request);
             $voucherMasterInsert = $this->commonService->findUpdateOrCreate(VoucherMaster::class, ['id' => ''], $voucherMasterData);
-            $voucherDetailData = $this->voucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
-            $this->voucherService->saveVoucher($voucherDetailData);
+            $voucherDetailCreditData = $this->cashReceiptVoucherService->prepareVoucherDetailCreditData($request, $voucherMasterInsert->id);
+            $voucherDetailDebitData = $this->cashReceiptVoucherService->prepareVoucherDetailDebitData($request, $voucherMasterInsert->id);
+            $this->cashReceiptVoucherService->saveVoucher($voucherDetailCreditData);
+            $this->cashReceiptVoucherService->saveVoucher($voucherDetailDebitData);
 
-            //Insert data into stock table.
-            // $this->stockService->prepareAndSaveData($request, $saleMasterInsert->id, voucherService::SALE_TRANSACTION_TYPE);
-
-            //Insert data into accounts ledger table.
-            // $debitAccountData = $this->voucherService->prepareAccountDebitData($request, $saleMasterInsert->id, voucherService::SALE_TRANSACTION_TYPE, voucherService::SALE_DESCRIPTION);
-            // $creditAccountData = $this->voucherService->prepareAccountCreditData($request, $saleMasterInsert->id, voucherService::SALE_TRANSACTION_TYPE, voucherService::SALE_DESCRIPTION);
-            // AccountLedger::insert($debitAccountData);
-            // AccountLedger::insert($creditAccountData);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
@@ -109,42 +106,6 @@ class CRVoucherController extends Controller
         return view('vouchers.crv.create', compact('voucher', 'voucherDetails'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\VoucherMaster  $voucherMaster
-     * @return \Illuminate\Http\Response
-     */
-    public function update(VoucherRequest $request)
-    {
-        try {
-            DB::beginTransaction();
-            $request = request()->all();
-            VoucherMaster::where('id', $request['voucherId'])->delete();
-            VoucherDetail::where('voucher_master_id', $request['voucherId'])->delete();
-            // Stock::where('invoice_id', $request['saleId'])->delete();
-            // AccountLedger::where('invoice_id', $request['saleId'])->delete();
-
-            //Save data into relevant tables.
-            $voucherMasterData = $this->voucherService->prepareVoucherMasterData($request);
-            $voucherMasterInsert = $this->commonService->findUpdateOrCreate(VoucherMaster::class, ['id' => request('productId')], $voucherMasterData);
-            $voucherDetailData = $this->voucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
-            $this->voucherService->saveVoucher($voucherDetailData);
-
-            //Save data into stock table.
-            // $this->stockService->prepareAndSaveData($request, $saleMasterInsert->id, voucherService::SALE_TRANSACTION_TYPE);
-            // $debitAccountData = $this->voucherService->prepareAccountDebitData($request, $saleMasterInsert->id, voucherService::SALE_TRANSACTION_TYPE, voucherService::SALE_DESCRIPTION);
-            // $creditAccountData = $this->voucherService->prepareAccountCreditData($request, $saleMasterInsert->id, voucherService::SALE_TRANSACTION_TYPE, voucherService::SALE_DESCRIPTION);
-            // AccountLedger::insert($debitAccountData);
-            // AccountLedger::insert($creditAccountData);
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('crv/create')->with('error', $e->getMessage());
-        }
-
-        return redirect('crv/list')->with('message', config('constants.update'));    }
 
     /**
      * Remove the specified resource from storage.
@@ -175,8 +136,8 @@ class CRVoucherController extends Controller
 
     public function view($id)
     {
-        $voucherMaster = $this->voucherService->getVoucherMasterById($id);
-        $voucherDetail = $this->voucherService->getVoucherDetailById($id);
+        $voucherMaster = $this->cashReceiptVoucherService->getVoucherMasterById($id);
+        $voucherDetail = $this->cashReceiptVoucherService->getVoucherDetailById($id);
         if (empty($voucherMaster)) {
             $message = config('constants.wrong');
         }

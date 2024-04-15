@@ -2,16 +2,19 @@
 
 namespace App\Services;
 
-use App\Models\CoaInventoryDetailAccount;
-use App\Models\CoaInventorySubHead;
 use App\Models\CoaMainHead;
+use App\Models\CoaInventorySubHead;
+use App\Models\CoaInventorySubSubHead;
+use App\Models\CoaInventoryDetailAccount;
+use App\Models\MeasurementType;
+use App\Models\PackingType;
+use App\Models\PriceTag;
 
 /*
  * Class BankService
  * @package App\Services
  * */
 
-use App\Models\Donor;
 
 // use Illuminate\Support\Facades\Input;
 
@@ -39,6 +42,17 @@ class CoaInventoryDetailAccountService
         return $object;
     }
 
+    public function DropDownData()
+    {
+        $result = [
+            'PriceTags' => PriceTag::pluck('name','id'),
+            'MeasurementTypes' => MeasurementType::pluck('name','id'),
+            'PackingType' => PackingType::pluck('name','id'),
+        ];
+
+        return $result;
+    }
+
     public function getListOfMainHeads()
     {
         return CoaMainHead::orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
@@ -51,7 +65,7 @@ class CoaInventoryDetailAccountService
 
     public function getListOfDetailAccounts($param = null)
     {
-        $q = CoaInventoryDetailAccount::with('getMainHead', 'getSubHead');
+        $q = CoaInventoryDetailAccount::with('getMainHead', 'getSubHead','getSubSubHead');
         if (!empty($param)) {
             $q->where('name', 'LIKE', '%' . $param . '%');
         }
@@ -63,6 +77,11 @@ class CoaInventoryDetailAccountService
     public function getSubHeadsByMainHead($mainHead)
     {
         return CoaInventorySubHead::where('main_head', $mainHead)->pluck('name', 'code');
+    }
+
+    public function getSubSubHeadsBySubHead($subHead)
+    {
+        return CoaInventorySubSubHead::where('sub_head', $subHead)->pluck('name', 'code');
     }
 }
 

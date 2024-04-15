@@ -6,10 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\PurchaseDetail;
 use App\Models\PurchaseMaster;
 use App\Services\CommonService;
-use App\Models\SalePurchaseType;
 use App\Services\PurchaseService;
 use Illuminate\Support\Facades\DB;
-use App\Http\Requests\StorePurchaseRequest;
 
 class PurchaseController extends Controller
 {
@@ -30,7 +28,7 @@ class PurchaseController extends Controller
     {
         $pageTitle = 'List Of Purchases';
         $request = request()->all();
-        $purchases = $this->purchaseService->searchPurchase($request);
+        $purchases = $this->purchaseService->search($request);
 
         return view('purchases.index', compact('purchases', 'request','pageTitle'));
     }
@@ -41,40 +39,33 @@ class PurchaseController extends Controller
     public function create()
     {
         $pageTitle = 'Create Purchase';
-        $type = SalePurchaseType::where('name', 'Purchase')->pluck('name', 'id');
-        return view('purchases.create', compact( 'type','pageTitle'));
+        $dropDownData = $this->purchaseService->DropDownData();
+        $purchaseDetails = PurchaseDetail::where('purchase_master_id')->get();
+        return view('purchases.create', compact('pageTitle','purchaseDetails','dropDownData'));
     }
 
     /*
      * Save Purchase into db.
      * @param: @request
      * */
-    public function store(StorePurchaseRequest $request)
+    public function store(Request $request)
     {
-
         $request = $request->except('_token', 'id');
-        try {
-            DB::beginTransaction();
+        DB::beginTransaction();
+        // try {
+
             //Insert data into purchase tables.
             $purchaseMasterData = $this->purchaseService->preparePurchaseMasterData($request);
             $purchaseMasterInsert = $this->commonService->findUpdateOrCreate(PurchaseMaster::class, ['id' => ''], $purchaseMasterData);
             $purchaseDetailData = $this->purchaseService->preparePurchaseDetailData($request, $purchaseMasterInsert->id);
             $this->purchaseService->savePurchase($purchaseDetailData);
 
-            //Insert data into stock table.
-            // $this->stockService->prepareAndSaveData($request, $saleMasterInsert->id, purchaseService::SALE_TRANSACTION_TYPE);
-
-            //Insert data into accounts ledger table.
-            // $debitAccountData = $this->purchaseService->prepareAccountDebitData($request, $saleMasterInsert->id, purchaseService::SALE_TRANSACTION_TYPE, purchaseService::SALE_DESCRIPTION);
-            // $creditAccountData = $this->purchaseService->prepareAccountCreditData($request, $saleMasterInsert->id, purchaseService::SALE_TRANSACTION_TYPE, purchaseService::SALE_DESCRIPTION);
-            // AccountLedger::insert($debitAccountData);
-            // AccountLedger::insert($creditAccountData);
             DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('purchase/create')->with('error', $e->getMessage());
-        }
-        return redirect('purchase/purchase-list')->with('message', config('constants.add'));
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('purchase/create')->with('error', $e->getMessage());
+        // }
+        return redirect('purchase/list')->with('message', config('constants.add'));
     }
 
     /*
@@ -82,14 +73,15 @@ class PurchaseController extends Controller
      * */
     public function edit($id)
     {
+        $pageTitle = 'Update Purchase';
         $purchase = PurchaseMaster::find($id);
-        $type = SalePurchaseType::where('name', 'Purchase')->pluck('name', 'id');
+        $dropDownData = $this->purchaseService->DropDownData();
         $purchaseDetails = PurchaseDetail::where('purchase_master_id', $id)->get();
         if (empty($purchase)) {
             $message = config('constants.wrong');
         }
 
-        return view('purchases.create', compact('purchase','type', 'purchaseDetails'));
+        return view('purchases.create', compact('pageTitle','purchase','dropDownData', 'purchaseDetails'));
     }
 
     /*
@@ -102,8 +94,7 @@ class PurchaseController extends Controller
             DB::beginTransaction();
             $deleteMaster = PurchaseMaster::where('id', request()->id)->delete();
             $deleteDetail = PurchaseDetail::where('purchase_master_id', request()->id)->delete();
-            // $deleteStock = Stock::where('invoice_id', request()->id)->delete();
-            // $accountEntryDetail = AccountLedger::where('invoice_id', request()->id)->delete();
+
             DB::commit();
             // && $deleteStock && $accountEntryDetail
             if ($deleteMaster && $deleteDetail ) {

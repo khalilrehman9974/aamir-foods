@@ -5,21 +5,25 @@
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <x-slot:headerFiles>
+        <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
+        <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
+        @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
+        @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+            integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
         <!--  BEGIN CUSTOM STYLE FILE  -->
-      <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
-      <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
-      @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
-      @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
+        <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="../src/plugins/src/filepond/filepond.min.css">
+        <link rel="stylesheet" href="../src/plugins/src/filepond/FilePondPluginImagePreview.min.css">
 
-
-      <!--  BEGIN CUSTOM STYLE FILE  -->
-      <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
-      <link rel="stylesheet" href="../src/plugins/src/filepond/filepond.min.css">
-      <link rel="stylesheet" href="../src/plugins/src/filepond/FilePondPluginImagePreview.min.css">
-
-      <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
-      <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
-      <!--  END CUSTOM STYLE FILE  -->
+        <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
+        <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
+        <!--  END CUSTOM STYLE FILE  -->
     </x-slot>
 
     <x-slot:scrollspyConfig>
@@ -62,8 +66,11 @@
                                     <div class="col-md-6">
                                         <label for="date">
                                             Date</label>
-                                        <input type="text" class="form-control " id="date" name="date"
-                                            placeholder="Select The Date">
+                                        <input id="date" name="date"
+                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} date flatpickr flatpickr-input"
+                                            type="text"
+                                            value="{{ empty($purchaseOrder->date) ? null : \Illuminate\Support\Carbon::parse($purchaseOrder->date)->format('Y-m-d') }}"
+                                            placeholder="Select Date.." readonly="readonly">
 
                                     </div>
                                 </div>
@@ -73,7 +80,9 @@
                                         </label>
                                         <input id="name" type="name" name="name"
                                             value="{{ old('name', !empty($purchaseOrder->name) ? $purchaseOrder->name : '') }}"
-                                            placeholder="Please Enter The Name " class="form-control" required>
+                                            placeholder="Please Enter The Name "
+                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                            required>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="company_name" class="form-label">Company
@@ -81,15 +90,16 @@
                                         </label>
                                         <input id="company_name" type="company_name" name="company_name"
                                             value="{{ old('company_name', !empty($purchaseOrder->company_name) ? $purchaseOrder->company_name : '') }}"
-                                            placeholder="Please Enter The Company Name " class="form-control" required>
+                                            placeholder="Please Enter The Company Name "
+                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                            required>
                                     </div>
                                 </div>
                                 <div class="col-md-12 ">
 
-                                    <label for="address" class="form-label">Address</label>
-                                    <textarea id="address" type="textarea" name="address" rows="3"
-                                        value="{{ isset($purchaseOrder->address) ? $purchaseOrder->address : '' }}" placeholder="Please Enter Address"
-                                        class="form-control">{{ @$purchaseOrder->address }} </textarea>
+                                    <label for="address" class="form-label ">Address</label>
+                                    <textarea id="address" type="textarea" name="address" rows="3" placeholder="Please Enter Address"
+                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">{{ @$purchaseOrder->address }} </textarea>
                                     <div class="invalid-feedback">
                                         Please provide Address.
                                     </div>
@@ -157,7 +167,7 @@
 
                                                     <td class="product">
                                                         <select id="product_id" name="product_id[]"
-                                                            class="form-select form-select-sm ">
+                                                            class="form-control select2 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} custom-select">
                                                             <option selected="">Please
                                                                 select the
                                                                 Items</option>
@@ -171,43 +181,54 @@
                                                     </td>
                                                     <br>
                                                     <td class="quantity">
-                                                        <input type="text" class="form-control form-control-sm qty_0"
-                                                            name="total_quantity[]" placeholder="Qty"
-                                                            >
+                                                        <input type="text"
+                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_0"
+                                                            name="total_quantity[]" placeholder="Qty">
                                                     </td>
                                                     <td class="Schedule_date">
+
                                                         <input id="date" name="Schedule_date[]"
-                                                            class="form-control form-control-sm flatpickr flatpickr-input"
+                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} date flatpickr flatpickr-input"
+                                                            type="text"
+                                                            value="{{ empty($purchaseOrder->Schedule_date) ? null : \Illuminate\Support\Carbon::parse($purchaseOrder->Schedule_date)->format('Y-m-d') }}"
+                                                            placeholder="Select Date.." readonly="readonly">
+
+
+                                                        {{-- <input id="date" name="Schedule_date[]"
+                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} flatpickr flatpickr-input"
                                                             type="text"
                                                             value="{{ old('date', !empty($purchaseOrder->Schedule_date) ? $purchaseOrder->Schedule_date : '') }}"
-                                                            placeholder="Select Schedule Date.." readonly="readonly"
-                                                            >
+                                                            placeholder="Select Schedule Date.." readonly="readonly">
+                                                        <input id="date" name="date[]"
+                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} date flatpickr flatpickr-input"
+                                                            type="text"
+                                                            value="{{ old('date', !empty($purchaseOrder->date) ? $purchaseOrder->date : '') }}"
+                                                            placeholder="Select Date.." readonly="readonly"> --}}
                                                     </td>
                                                     <td class="Schedule_quantity">
-                                                        <input type="text" class="form-control form-control-sm qty_0"
+                                                        <input type="text"
+                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_0"
                                                             value="{{ old('Schedule_quantity', !empty($purchaseOrder->Schedule_quantity) ? $purchaseOrder->Schedule_quantity : '') }}"
-                                                            name="Schedule_quantity[]" placeholder="Qty"
-                                                            >
+                                                            name="Schedule_quantity[]" placeholder="Qty">
                                                     </td>
                                                     <td class="Delivery_date">
                                                         <input id="date" name="Delivery_date[]"
-                                                            class="form-control form-control-sm flatpickr flatpickr-input"
+                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} flatpickr flatpickr-input"
                                                             type="text"
                                                             value="{{ old('date', !empty($purchaseOrder->Delivery_date) ? $purchaseOrder->Delivery_date : '') }}"
-                                                            placeholder="Select Delivery Date.." readonly="readonly"
-                                                            >
+                                                            placeholder="Select Delivery Date.." readonly="readonly">
                                                     </td>
                                                     <td class="Delivery_quantity">
-                                                        <input type="text" class="form-control form-control-sm qty_0"
+                                                        <input type="text"
+                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_0"
                                                             value="{{ old('Delivery_quantity', !empty($purchaseOrder->Delivery_quantity) ? $purchaseOrder->Delivery_quantity : '') }}"
-                                                            name="Delivery_quantity[]" placeholder="Qty"
-                                                            >
+                                                            name="Delivery_quantity[]" placeholder="Qty">
                                                     </td>
                                                     <td class="price">
                                                         <input type="text" id="price" name="price[]"
-                                                            class="form-control form-control-sm amount_0 amount"
+                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} amount"
                                                             value="{{ old('price', !empty($purchaseOrder->price) ? $purchaseOrder->price : '') }}"
-                                                            placeholder="Price" >
+                                                            placeholder="Price">
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -219,8 +240,6 @@
                                         Item</a>
 
                                 </div>
-
-
                                 <div class="invoice-detail-note">
 
                                     <div class="row">
@@ -231,7 +250,8 @@
                                                 <label for="invoice-detail-notes"
                                                     class="col-sm-12 col-form-label col-form-label-sm mt-3">Remarks</label>
                                                 <div class="col-sm-12">
-                                                    <textarea class="form-control" id="remarks" placeholder='Enter The Remarks' style="height: 88px;"></textarea>
+                                                    <textarea class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" id="remarks"
+                                                        placeholder='Enter The Remarks' style="height: 88px;">{{ @$purchaseOrder->remarks }}</textarea>
                                                 </div>
                                             </div>
 
@@ -240,22 +260,25 @@
                                     </div>
 
                                 </div>
-                                <div class="col-xl-5 invoice-address-client invoice-detail-total mt-3"
+                                <div class="col-xl-7 invoice-address-client invoice-detail-total"
                                     style="float: right">
                                     <div class="invoice-address-client-fields">
+
                                         <div class="form-group row">
                                             <label for="client-phone"
-                                                class="col-sm-4 col-form-label col-form-label-sm ">Tot.
+                                                class="col-md-3 col-form-label col-form-label-sm ">Total
                                                 Amount</label>
-                                            <div class="col-sm-8">
-                                                <input type="text" id="net-amount" class="form-control "
-                                                    name="grand_total" id="client-phone" placeholder="Total Amount"
+                                            <div class="col-md-9">
+                                                <input type="text" id="gross-amount"
+                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} gross-amount"
+                                                    name="grand_total" id="gross-amount" placeholder="Total Amount"
                                                     readonly>
                                             </div>
                                         </div>
 
                                     </div>
                                 </div>
+
                             </div>
 
                             <div class="form-group">
@@ -263,8 +286,9 @@
                                     class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
                                 @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
                                     <button type="submit" style="float: right"
-                                        class="btn btn-success  rounded bs-popover me-1 mt-5 mb-4 " data-bs-container="body"
-                                        data-bs-placement="right" data-bs-content="Tooltip on right">
+                                        class="btn btn-success  rounded bs-popover me-1 mt-5 mb-4 "
+                                        data-bs-container="body" data-bs-placement="right"
+                                        data-bs-content="Tooltip on right">
                                         @if (!isset($purchaseOrder))
                                             Save
                                         @else
@@ -298,22 +322,22 @@
                 '</td>' +
                 '<td><input type="checkbox" name="row_id[]" class="row_id" value="' + currentIndex +
                 '" hidden></td>' +
-                '<td class="product"><select id="product_id" name="product_id[]" class="form-select form-select-sm"> <option selected = "" > Please select the Items </option> @foreach ($dropDownData['products'] as $key => $value)<option value = "{{ $key }}" {{ (old('product_id') == $key ? 'selected' : '') || (!empty($purchaseOrder->product_id) ? collect($purchaseOrder->product_id)->contains($key) : '') ? 'selected' : '' }}>{{ $value }} </option>@endforeach </select> ' +
+                '<td class="product"><select id="product_id" name="product_id[]" class="form-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"> <option selected = "" > Please select the Items </option> @foreach ($dropDownData['products'] as $key => $value)<option value = "{{ $key }}" {{ (old('product_id') == $key ? 'selected' : '') || (!empty($purchaseOrder->product_id) ? collect($purchaseOrder->product_id)->contains($key) : '') ? 'selected' : '' }}>{{ $value }} </option>@endforeach </select> ' +
                 '<td class="quantity">' +
-                '<input type="text" class ="form-control form-control-sm  qty_0" name = "total_quantity[]" ' +
+                '<input type="text" class ="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}  qty_0" name = "total_quantity[]" ' +
                 currentIndex +
                 '" placeholder="Qty"></td>' +
-                '<td class="Schedule_date"><input id="date" name = "Schedule_date[]" class = "form-control form-control-sm  flatpickr flatpickr-input" type = "text" value = "{{ old('date', !empty($purchaseOrder->Schedule_date) ? $purchaseOrder->Schedule_date : '') }}"' +
+                '<td class="Schedule_date"><input id="date" name = "Schedule_date[]" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}  flatpickr flatpickr-input" type = "text" value = "{{ old('date', !empty($purchaseOrder->Schedule_date) ? $purchaseOrder->Schedule_date : '') }}"' +
                 currentIndex +
                 '"  placeholder = "Select Schedule Date.." readonly = "readonly" ></td>' +
-                '<td class="Schedule_quantity"><input type="text" class = "form-control form-control-sm  qty_0" value="{{ old('Schedule_quantity', !empty($purchaseOrder->Schedule_quantity) ? $purchaseOrder->Schedule_quantity : '') }}" name = "Schedule_quantity[]" placeholder = "Qty" > </td>' +
-                '<td class="Delivery_date"> <input id="date" name = "Delivery_date[]" class = "form-control form-control-sm  flatpickr flatpickr-input" type = "text" value = "{{ old('date', !empty($purchaseOrder->Delivery_date) ? $purchaseOrder->Delivery_date : '') }}"' +
+                '<td class="Schedule_quantity"><input type="text" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}  qty_0" value="{{ old('Schedule_quantity', !empty($purchaseOrder->Schedule_quantity) ? $purchaseOrder->Schedule_quantity : '') }}" name = "Schedule_quantity[]" placeholder = "Qty" > </td>' +
+                '<td class="Delivery_date"> <input id="date" name = "Delivery_date[]" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}  flatpickr flatpickr-input" type = "text" value = "{{ old('date', !empty($purchaseOrder->Delivery_date) ? $purchaseOrder->Delivery_date : '') }}"' +
                 currentIndex +
                 '" placeholder = "Select Delivery Date.." readonly = "readonly" ></td>' +
-                '<td><input type = "text" class = "form-control form-control-sm  qty_0" value ="{{ old('Delivery_quantity', !empty($purchaseOrder->Delivery_quantity) ? $purchaseOrder->Delivery_quantity : '') }}"  placeholder = "Qty" name = "Delivery_quantity[]"' +
+                '<td><input type = "text" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}  qty_0" value ="{{ old('Delivery_quantity', !empty($purchaseOrder->Delivery_quantity) ? $purchaseOrder->Delivery_quantity : '') }}"  placeholder = "Qty" name = "Delivery_quantity[]"' +
                 currentIndex +
                 '"  placeholder = "Qty"></td>' +
-                '<td><input type="text" id = "price" name = "price[]" class = "form-control form-control-sm  amount_0 amount" value = "{{ old('price', !empty($purchaseOrder->price) ? $purchaseOrder->price : '') }}"' +
+                '<td><input type="text" id = "price" name= "price[]" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} amount" value = "{{ old('price', !empty($purchaseOrder->price) ? $purchaseOrder->price : '') }}"' +
                 currentIndex +
                 '" placeholder="Price"></td>' +
                 '</div>' +
@@ -333,18 +357,27 @@
         var f2 = flatpickr(document.getElementById('due'), {
             defaultDate: currentDate.setDate(currentDate.getDate() + 5),
         });
+
+
     </script>
     <x-slot:footerFiles>
+        <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
+
         <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
         <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>
 
         <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
         <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
+        <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script>
+        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
+            integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="{{ asset('js/common.js') }}"></script>
 
         <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])
-
-
 
     </x-slot>
 </x-base-layout>

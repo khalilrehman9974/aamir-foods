@@ -53,19 +53,20 @@
 
     <div class="row layout-top-spacing">
         <div class="row">
+            <div class="col-md-1 mt-1" role="group">
+            </div>
+
             <div class="col-lg-8 col-md-8 col-sm-9 filtered-list-search mx-auto">
                 <form class="form-inline my-2 my-lg-0 justify-content-center" method="get"
                     action="{{ route('purchase-return.list') }}">
                     <div class="w-100">
-                        <input type="text" value="{{ @$request['param'] }}" name="param" id="param"
+                        <input type="text" value="{{ $param }}" name="param" id="param"
                             class="w-100 form-control product-search br-30" id="input-search"
-                            placeholder="Search Sales...">
-                        <button class="btn btn-primary _effect--ripple waves-effect waves-light"
-                            type="submit">
+                            placeholder="Search...">
+                        <button class="btn btn-primary _effect--ripple waves-effect waves-light" type="submit">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round"
-                                class="feather feather-search">
+                                stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
                                 <circle cx="11" cy="11" r="8"></circle>
                                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                             </svg>
@@ -74,7 +75,41 @@
                     </div>
                 </form>
             </div>
+            <div class="col-md-3 mt-1 " role="group">
+                <a href="{{ route('purchase-return.list') }}" class="btn btn-primary _effect--ripple waves-effect waves-light" id="Refresh Cw"
+                    type="submit" >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" class="feather feather-refresh-cw">
+                    <polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14">
+                        </polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15">
+                            </path>
+                        </svg>
+
+                    </a>
+            </div>
         </div>
+        {{-- <div class="row">
+            <div class="col-lg-8 col-md-8 col-sm-9 filtered-list-search mx-auto">
+                <form class="form-inline my-2 my-lg-0 justify-content-center" method="get"
+                    action="{{ route('purchase-return.list') }}">
+                    <div class="w-100">
+                        <input type="text" value="{{ @$request['param'] }}" name="param" id="param"
+                            class="w-100 form-control product-search br-30" id="input-search"
+                            placeholder="Search Sales...">
+                        <button class="btn btn-primary _effect--ripple waves-effect waves-light" type="submit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="feather feather-search">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </button>
+
+                    </div>
+                </form>
+            </div>
+        </div> --}}
         <div id="tableCustomBasic" class="col-lg-12 col-12">
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">
@@ -90,7 +125,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col"> <b>Id </b> </th>
-                                    <th scope="col" > <b>GRN No</b> </th>
+                                    <th scope="col"> <b>GRN No</b> </th>
                                     <th scope="col" style="width: 30%"> <b>Party </b> </th>
                                     <th scope="col" style="width: 20%"> <b>Date</b> </th>
                                     <th scope="col" style="width: 10%"> <b>Bill Number </b> </th>
@@ -196,27 +231,28 @@
                                                     </a>
                                                 @endif
                                                 @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
-                                                    <a href="{{ route('purchase.delete') }}"
-                                                        class="action-btn btn-delete bs-tooltip" data-toggle="tooltip"
-                                                        data-placement="top" title="Delete">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                            height="24" viewBox="0 0 24 24" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            stroke-linecap="round" stroke-linejoin="round"
-                                                            class="feather feather-trash-2">
-                                                            <polyline points="3 6 5 6 21 6"></polyline>
-                                                            <path
-                                                                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                                                            </path>
-                                                            <line x1="10" y1="11" x2="10"
-                                                                y2="17">
-                                                            </line>
-                                                            <line x1="14" y1="11" x2="14"
-                                                                y2="17">
-                                                            </line>
-                                                        </svg>
-                                                    </a>
                                                 @endif
+
+                                                <a href="javascript:void(0)"
+                                                    class="action-btn btn-delete bs-tooltip delete"
+                                                    data-id="{{ $purchaseReturn->id }}" data-toggle="tooltip"
+                                                    data-placement="top" title="Delete">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                        height="24" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round" class="feather feather-trash-2">
+                                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                                        <path
+                                                            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                                        </path>
+                                                        <line x1="10" y1="11" x2="10"
+                                                            y2="17">
+                                                        </line>
+                                                        <line x1="14" y1="11" x2="14"
+                                                            y2="17">
+                                                        </line>
+                                                    </svg>
+                                                </a>
 
                                             </div>
                                         </td>
@@ -225,57 +261,11 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-                <div class="inv-list-bottom-section d-sm-flex justify-content-sm-between text-center">
-                    <div class="inv-list-pages-count  mb-sm-0 mb-3">
-                        <div class="dataTables_info" id="invoice-list_info" role="status"
-                            aria-live="polite">Showing page 1 of 2
-                        </div>
-                    </div>
-                    <div class="inv-list-pagination">
-                        <div class="dataTables_paginate paging_simple_numbers"
-                            id="invoice-list_paginate">
-                            <ul class="pagination">
-                                <li class="paginate_button page-item previous disabled"
-                                    id="invoice-list_previous">
-                                    <a href="#" aria-controls="invoice-list" data-dt-idx="0"
-                                        tabindex="0" class="page-link">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                            height="24" viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
-                                            class="feather feather-arrow-left">
-                                            <line x1="19" y1="12" x2="5"
-                                                y2="12"></line>
-                                            <polyline points="12 19 5 12 12 5">
-                                            </polyline>
-                                        </svg></a>
-                                </li>
-                                <li class="paginate_button page-item active">
-                                    <a href="#" aria-controls="invoice-list" data-dt-idx="1"
-                                        tabindex="0" class="page-link">1</a>
-                                </li>
-                                <li class="paginate_button page-item ">
-                                    <a href="#" aria-controls="invoice-list" data-dt-idx="2"
-                                        tabindex="0" class="page-link">2</a>
-                                </li>
-                                <li class="paginate_button page-item next" id="invoice-list_next"><a
-                                        href="#" aria-controls="invoice-list" data-dt-idx="3"
-                                        tabindex="0" class="page-link">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                            height="24" viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
-                                            class="feather feather-arrow-right">
-                                            <line x1="5" y1="12" x2="19"
-                                                y2="12"></line>
-                                            <polyline points="12 5 19 12 12 19"></polyline>
-                                        </svg>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-end">
+                            {!! $purchaseReturns->appends(request()->query())->links() !!}
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
@@ -287,7 +277,7 @@
         <script>
             var config = {
                 routes: {
-                    deleteMainHead: "{{ url('control-head/delete') }}",
+                    deleteMainHead: "{{ url('purchase-return/delete') }}",
                 },
             }
         </script>

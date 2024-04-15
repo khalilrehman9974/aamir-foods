@@ -32,9 +32,10 @@ class AssignSectorController extends Controller
         $sale_mans = SaleMan::pluck('name','id');
         $request = request()->all();
         $assignSectors = $this->assignSectorService->search($request);
+        $param = request()->param;
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '14');
 
-        return view('assign_sector.index', compact( 'permission','assignSectors','pageTitle',  'sale_mans'));
+        return view('assign_sector.index', compact('param', 'permission','assignSectors','pageTitle',  'sale_mans'));
     }
 
 

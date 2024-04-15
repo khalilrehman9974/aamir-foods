@@ -8,6 +8,8 @@
     <x-slot:headerFiles>
         @vite(['resources/scss/light/assets/elements/search.scss', 'resources/scss/dark/assets/elements/search.scss'])
         <link rel="stylesheet" href="{{ asset('plugins/sweetalerts2/sweetalerts2.css') }}">
+        <meta name="csrf-token" content="{{ csrf_token() }}" />
+        <script src="{{ asset('js/jquery.min.js') }}"></script>
     </x-slot>
     <!-- END GLOBAL MANDATORY STYLES -->
 
@@ -36,10 +38,9 @@
                     </div>
                 </div>
                 <div class="col-lg-0 col-6 ">
-                    <a href="{{ route('grn.create') }}" class="btn btn-primary mt-2 mb-2 me-8"
-                        style="float : right; " style="">Create
+                    <a href="{{ route('grn.create') }}" class="btn btn-primary mt-2 mb-2 me-8" style="float : right; "
+                        style="">Create
                     </a>
-
                 </div>
             </div>
 
@@ -48,21 +49,43 @@
     </div>
     <div class="row layout-top-spacing col-md-12">
         <div id="tableCustomBasic" class="col-lg-12 col-12 layout-spacing">
-            <div class="col-lg-8 col-md-8 col-sm-9 filtered-list-search mx-auto">
-                <form class="form-inline my-2 my-lg-0 justify-content-center">
-                    <div class="w-100">
-                        <input type="text" class="w-100 form-control product-search br-30" id="input-search"
-                            placeholder="Search Goods Received Notes...">
-                        <button class="btn btn-primary" type="submit">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="feather feather-search">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                            </svg>
-                        </button>
-                    </div>
-                </form>
+            <div class="row">
+                <div class="col-md-1 mt-1" role="group">
+                </div>
+                <div class="col-lg-8 col-md-8 col-sm-9 filtered-list-search mx-auto">
+                    <form class="form-inline my-2 my-lg-0 justify-content-center" method="get"
+                        action="{{ route('grn.list') }}">
+                        <div class="w-100">
+                            <input type="text" value="{{$param}}" name="param" id="param"
+                                class="w-100 form-control product-search br-30" id="input-search"
+                                placeholder="Search...">
+                            <button class="btn btn-primary _effect--ripple waves-effect waves-light" type="submit">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                            </button>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-3 mt-1 " role="group">
+                    <a href="{{ route('grn.list') }}"
+                        class="btn btn-primary _effect--ripple waves-effect waves-light" id="Refresh Cw" type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" class="feather feather-refresh-cw">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <polyline points="1 20 1 14 7 14">
+                            </polyline>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15">
+                            </path>
+                        </svg>
+
+                    </a>
+                </div>
             </div>
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">
@@ -89,77 +112,77 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if($notes)
-                                @foreach ($notes as $note)
-                                    <tr id="row_{{ $note->id }}">
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $note->id }}</h6>
+                                @if ($notes)
+                                    @foreach ($notes as $note)
+                                        <tr id="row_{{ $note->id }}">
+                                            <td>
+                                                <div class="media">
+                                                    <div class="media-body align-self-center">
+                                                        <h6 class="mb-0">{{ $note->id }}</h6>
 
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $note->purchase_order_no }}</h6>
+                                            </td>
+                                            <td>
+                                                <div class="media">
+                                                    <div class="media-body align-self-center">
+                                                        <h6 class="mb-0">{{ $note->purchase_order_no }}</h6>
 
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $note->date }}</h6>
+                                            </td>
+                                            <td>
+                                                <div class="media">
+                                                    <div class="media-body align-self-center">
+                                                        <h6 class="mb-0">{{ $note->date }}</h6>
 
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $note->supplier_name }}</h6>
+                                            </td>
+                                            <td>
+                                                <div class="media">
+                                                    <div class="media-body align-self-center">
+                                                        <h6 class="mb-0">{{ $note->supplier_name }}</h6>
 
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $note->transporter_id }}</h6>
+                                            </td>
+                                            <td>
+                                                <div class="media">
+                                                    <div class="media-body align-self-center">
+                                                        <h6 class="mb-0">{{ $note->transporter->name }}</h6>
 
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $note->fare }}</h6>
+                                            </td>
+                                            <td>
+                                                <div class="media">
+                                                    <div class="media-body align-self-center">
+                                                        <h6 class="mb-0">{{ $note->fare }}</h6>
 
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="action-btns">
-                                                @if ((!empty($permission->edit_access) && $permission->edit_access == 1) || Auth::user()->is_admin == 1)
-                                                    <a href="{{ route('note.edit', ['id' => $note->id]) }}"
-                                                        class="action-btn btn-edit bs-tooltip me-2"
-                                                        data-toggle="tooltip" data-placement="top" title="Edit">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                            height="24" viewBox="0 0 24 24" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            stroke-linecap="round" stroke-linejoin="round"
-                                                            class="feather feather-edit-2">
-                                                            <path
-                                                                d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z">
-                                                            </path>
-                                                        </svg>
-                                                    </a>
-                                                @endif
-                                                @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
-                                                    <a href="{{ route('note.delete') }}"
-                                                        class="action-btn btn-delete bs-tooltip" data-toggle="tooltip"
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="action-btns">
+                                                    @if ((!empty($permission->edit_access) && $permission->edit_access == 1) || Auth::user()->is_admin == 1)
+                                                        <a href="{{ route('grn.edit', ['id' => $note->id]) }}"
+                                                            class="action-btn btn-edit bs-tooltip me-2"
+                                                            data-toggle="tooltip" data-placement="top" title="Edit">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                                height="24" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round"
+                                                                class="feather feather-edit-2">
+                                                                <path
+                                                                    d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z">
+                                                                </path>
+                                                            </svg>
+                                                        </a>
+                                                    @endif
+                                                    <a href="javascript:void(0);"
+                                                        class="action-btn btn-delete bs-tooltip delete"
+                                                        data-id="{{ $note->id }}" data-toggle="tooltip"
                                                         data-placement="top" title="Delete">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                             height="24" viewBox="0 0 24 24" fill="none"
@@ -178,26 +201,40 @@
                                                             </line>
                                                         </svg>
                                                     </a>
-                                                @endif
+                                                    {{-- @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
 
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
+                                                @endif --}}
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                 @else
-                                <h4>No data found</h4>
+                                    <h4>No data found</h4>
                                 @endif
                             </tbody>
                         </table>
                     </div>
+                    <nav aria-label=" ListPagination">
+                        <ul class="pagination justify-content-end">
+                            {!! $notes->appends(request()->query())->links() !!}
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
     </div>
     <x-slot:footerFiles>
         <script src="{{ asset('plugins/sweetalerts2/sweetalerts2.min.js') }}"></script>
-
+        <script src="{{ asset('js/common.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])
 
+        <script>
+            var config = {
+                routes: {
+                    deleteMainHead: "{{ url('grn/delete') }}",
+                },
+            }
+        </script>
     </x-slot>
 </x-base-layout>

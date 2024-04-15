@@ -3,23 +3,24 @@
 
 namespace App\Services;
 
-use App\Models\Account;
 use App\Models\Area;
-use App\Models\Attachments;
 use App\Models\Bank;
-use App\Models\CoaDetailAccount;
-use App\Models\CoaInventoryDetailAccount;
-use App\Models\CoaInventoryMainHead;
-use App\Models\CoaInventorySubHead;
-use App\Models\Distributer;
+use App\Models\Account;
 use App\Models\Product;
 use App\Models\SaleMan;
 use App\Models\Sessions;
+use App\Models\Attachments;
+use App\Models\Distributer;
 use App\Models\Transporter;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\Paginator;
+use App\Models\CoaDetailAccount;
 use Illuminate\Support\Collection;
+use App\Models\CoaInventorySubHead;
+use App\Models\CoaInventoryMainHead;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
+use App\Models\CoaInventorySubSubHead;
+use App\Models\CoaInventoryDetailAccount;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class CommonService
 {
@@ -39,6 +40,7 @@ class CommonService
      */
     public function findUpdateOrCreate($model, array $where, array $data)
     {
+        // dd($model);
         $object = $model::firstOrNew($where);
         foreach ($data as $property => $value) {
             $object->{$property} = $value;
@@ -142,6 +144,11 @@ class CommonService
         return CoaInventorySubHead::where('main_head', $mainHead)->pluck('name', 'id');
     }
 
+    public function getInventorySubSubHeads($subHead = null)
+    {
+        return CoaInventorySubSubHead::where('sub_head', $subHead)->pluck('name', 'id');
+    }
+
     public function getInventoryMainHeads()
     {
         return CoaInventoryMainHead::pluck('name', 'id');
@@ -160,7 +167,6 @@ class CommonService
     public function DropDownData()
     {
         $result = [
-            'products' => Product::pluck('name','id'),
             'saleMans' => SaleMan::pluck('name','id'),
             'areas' => Area::pluck('name','id'),
             'parties' => CoaDetailAccount::pluck('account_name','id'),

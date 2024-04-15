@@ -3,18 +3,17 @@
 namespace App\Services;
 
 
-use App\Models\Product;
-
-
 /*
      * Class StoreIssueNoteService
      * @package App\Services
      * */
 
 
+use Carbon\Carbon;
 use App\Models\StoreIssueNote;
 use App\Models\StoreIssueNoteDetail;
 use Illuminate\Support\Facades\Auth;
+use App\Models\CoaInventoryDetailAccount;
 
 class StoreIssueNoteService
 {
@@ -48,7 +47,7 @@ class StoreIssueNoteService
     public function DropDownData()
     {
         $result = [
-            'products' => Product::pluck('name', 'id'),
+            'products' => CoaInventoryDetailAccount::pluck('name', 'id'),
         ];
 
         return $result;
@@ -72,28 +71,19 @@ class StoreIssueNoteService
             ->first();
     }
 
-    /*
-     * Search IssueNote record.
-     * @queries: $queries
-     * @return: object
-     * */
-    public function searchIssueNote($request)
+    public function search($request)
     {
-        $query = StoreIssueNote::groupBy(
-            'issue_note.id as id',
-            'issue_note.issued_to',
-            'issue_note.issued_by',
-            'issue_note.remarks',
-            'products.name as productName',
-        );
+        // leftjoin('products', 'product.id', '=', 'issue_note.product_id')->
+        $q = StoreIssueNote::query();
         if (!empty($request['param'])) {
-            $query = $query->where('issue_note.id', "=", $request['param']);
+            $q = StoreIssueNote::with('product')
+            ->where('issued_to', 'like', '%' . $request['param'] . '%')
+            ->orWhere('issued_by', 'like', '%' . $request['param'] . '%');
         }
-        $purchases = $query->orderBy('id', 'DESC')->get();
+        $storeIssueNotes = $q->orderBy('issued_to', 'ASC')->paginate(config('constants.PER_PAGE'));
 
-        return $this->commonService->paginate($purchases, Self::PER_PAGE);
+        return $storeIssueNotes;
     }
-
 
     /*
      * Prepare IssueNote master data.
@@ -107,42 +97,23 @@ class StoreIssueNoteService
             'issued_by' => $request['issued_by'],
             'product_id' => $request['product_id'],
             'remarks' => $request['remarks'],
-            $data['created_by'] = Auth::user()->id,
-            $data['updated_by'] = Auth::user()->id
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id
         ];
     }
 
-    /*
-     * Prepare dispatch detail data.
-     * @param: $request
-     * @return Array
-     * */
-    public function prepareIssueNoteDetailData($request, $store_issue_notesParentId)
-    {
-        return [
-            'date' => $request['date'],
-            'description' => $request['description'],
-            'quantity' => $request['quantity'],
-            'store_issue_notes_id' => $store_issue_notesParentId,
-        ];
-    }
 
-    /*
-     * Save dispatch data.
-     * @param: $data
-     * */
-    public function saveIssueNote($data)
+    public function saveIssueNote($request, $store_issue_notesParentId)
     {
-        foreach ($data['date'] as $key => $value) {
-            if (!empty($data['date'][$key])) {
-                $rec['date'] = $data['date'][$key];
+        $data = $request;
+        foreach ($data["date"] as $key => $value) {
+                $rec['date'] = Carbon::parse($data['date'][$key])->format("Y-m-d") ;
                 $rec['description'] = $data['description'][$key];
                 $rec['quantity'] = $data['quantity'][$key];
-                $rec['created_by'] = Auth::user()->id;
-                $rec['updated_by'] = Auth::user()->id;
-                $rec['store_issue_notes_id'] = $data['store_issue_notes_id'];
+                $rec['created_by'] = Auth::Id();
+                $rec['updated_by'] = Auth::Id();
+                $rec['store_issue_notes_id'] = $store_issue_notesParentId;
                 StoreIssueNoteDetail::create($rec);
-            }
         }
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use Carbon\Carbon;
-use App\Models\Product;
 use App\Models\SaleDetail;
 use App\Models\SaleMaster;
 use Illuminate\Support\Facades\Auth;

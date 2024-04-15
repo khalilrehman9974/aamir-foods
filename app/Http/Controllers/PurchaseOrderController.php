@@ -5,10 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\CommonService;
 use Illuminate\Support\Facades\DB;
+use App\Models\PurchaseOrderDetail;
 use App\Models\PurchaseOrderMaster;
 use App\Services\PurchaseOrderService;
-use App\Http\Requests\PurchaseOrderRequest;
-use App\Models\PurchaseOrderDetail;
 
 class PurchaseOrderController extends Controller
 {
@@ -32,8 +31,9 @@ class PurchaseOrderController extends Controller
         $pageTitle = 'List Of Purchase Orders';
         $request = request()->all();
         $orders = $this->purchaseOrderService->searchPOrder($request);
+        $param = request()->param;
 
-        return view('purchase-order.index', compact('orders', 'request','pageTitle'));
+        return view('purchase-order.index', compact('orders','param', 'request','pageTitle'));
     }
 
     /*
@@ -50,7 +50,7 @@ class PurchaseOrderController extends Controller
      * Save POrder into db.
      * @param: @request
      * */
-    public function store(PurchaseOrderRequest $request)
+    public function store(Request $request)
     {
 
         $request = $request->except('_token', 'id');

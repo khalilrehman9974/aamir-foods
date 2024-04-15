@@ -9,15 +9,12 @@ use Symfony\Component\Console\Input\Input;
      * Class BankService
      * @package App\Services
      * */
-
-    use App\Models\Donor;
 use App\Models\Sector;
 
     // use Illuminate\Support\Facades\Input;
 
     class AreaService
 {
-    const PER_PAGE = 10;
 
     protected $commonService;
 
@@ -74,7 +71,7 @@ use App\Models\Sector;
     {
         $q = Area::query();
         if (!empty($request['param'])) {
-            $q = Area::with('Sector')->where('name', 'like', '%' . $request['param'] . '%');
+            $q = Area::with('sector')->where('name', 'like', '%' . $request['param'] . '%');
         }
         $areas = $q->orderBy('name', 'ASC')->paginate(config('constants.PER_PAGE'));
 

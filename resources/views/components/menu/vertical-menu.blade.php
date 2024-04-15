@@ -155,6 +155,9 @@
                             <a href="{{ route('store-issue-note.list') }}"> Store Issue Note </a>
                         </li>
                         <li class="{{ Request::routeIs('invoice-preview') ? 'active' : '' }}">
+                            <a href="{{ route('storeReturn.list') }}">Store return </a>
+                        </li>
+                        <li class="{{ Request::routeIs('invoice-preview') ? 'active' : '' }}">
                             <a href="{{ route('grn.list') }}">GRN </a>
                         </li>
                         <li class="{{ Request::routeIs('invoice-preview') ? 'active' : '' }}">
@@ -195,6 +198,9 @@
                         </li>
                         <li class="{{ Request::routeIs('chart-of-account-control-head') ? 'active' : '' }}">
                             <a href="{{route('co-inventory-sub-head.list')}}"> Sub Head </a>
+                        </li>
+                        <li class="{{ Request::routeIs('chart-of-account-control-head') ? 'active' : '' }}">
+                            <a href="{{route('co-inventory-sub-sub-head.list')}}">Sub Sub Head </a>
                         </li>
                         <li class="{{ Request::routeIs('chart-of-account-detail-account') ? 'active' : '' }}">
                             <a href="{{ route('co-inventory-detail-account.list') }}"> Detail Account </a>
@@ -300,7 +306,7 @@
                         id="sale" data-bs-parent="#accordionExample">
 
                         <li class="{{ Request::routeIs('sale-preview') ? 'active' : '' }}">
-                            <a href="{{ route('sale.sales') }}">Sale</a>
+                            <a href="{{ route('sale.sales') }}">Sale Invoice</a>
 
                         </li>
                         <li class="{{ Request::routeIs('sale-preview') ? 'active' : '' }}">

@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\SaleOrder;
+use Illuminate\Http\Request;
 use App\Models\SaleOrderDetail;
 use App\Services\CommonService;
 use App\Services\SaleOrderService;
 use Illuminate\Support\Facades\DB;
-use App\Http\Requests\SaleOrderRequest;
 
 class SaleOrderController extends Controller
 {
@@ -32,7 +32,7 @@ class SaleOrderController extends Controller
         $request = request()->all();
         $saleOrders = $this->saleOrderService->searchSale($request);
 
-        return view('sale-orders.index', compact('saleOrders', 'request','pageTitle'));
+        return view('sale-orders.index', compact('saleOrders','pageTitle'));
     }
 
     /*
@@ -42,19 +42,20 @@ class SaleOrderController extends Controller
     {
         $pageTitle = 'Sales Orders';
         $dropDownData = $this->saleOrderService->DropDownData();
-        return view('sale-orders.create', compact('pageTitle', 'dropDownData'));
+        $saleOrders = SaleOrderDetail::where('sale_order_master_id')->get();
+        return view('sale-orders.create', compact('pageTitle', 'dropDownData','saleOrders'));
     }
 
     /*
      * Save sale into db.
      * @param: @request
      * */
-    public function store(SaleOrderRequest $request)
+    public function store(Request $request)
     {
 
-        $request = $request->except('_token', 'saleId');
-        try {
-            DB::beginTransaction();
+        $request = $request->except('_token', 'id');
+        DB::beginTransaction();
+        // try {
             //Insert data into sale tables.
             $saleOrderMasterData = $this->saleOrderService->prepareSaleOrderMasterData($request);
             $saleOrderMasterInsert = $this->commonService->findUpdateOrCreate(SaleOrder::class, ['id' => ''], $saleOrderMasterData);
@@ -62,10 +63,10 @@ class SaleOrderController extends Controller
             $this->saleOrderService->saveSaleOrder($saleOrderDetailData);
 
             DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('sale-order/create')->with('error', $e->getMessage());
-        }
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('sale-order/create')->with('error', $e->getMessage());
+        // }
         return redirect('sale-order/list')->with('message', config('constants.add'));
     }
 
@@ -87,17 +88,18 @@ class SaleOrderController extends Controller
      * update existing resource.
      * @param: $data
      * */
-    public function update(SaleOrderRequest $request)
+    public function update(Request $request)
     {
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
+
             $request = request()->all();
             SaleOrder::where('id', $request['id'])->delete();
             SaleOrderDetail::where('sale_order_master_id', $request['id'])->delete();
 
             //Save data into relevant tables.
             $saleOrderMasterData = $this->saleOrderService->prepareSaleOrderMasterData($request);
-            $saleOrderMasterInsert = $this->commonService->findUpdateOrCreate(SaleOrder::class, ['id' => request('productId')], $saleOrderMasterData);
+            $saleOrderMasterInsert = $this->commonService->findUpdateOrCreate(SaleOrder::class, ['id' => request('id')], $saleOrderMasterData);
             $saleOrderDetailData = $this->saleOrderService->prepareSaleOrderDetailData($request, $saleOrderMasterInsert->id);
             $this->saleOrderService->saveSaleOrder($saleOrderDetailData);
 
@@ -116,8 +118,8 @@ class SaleOrderController extends Controller
      * */
     public function delete()
     {
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
             $deleteMaster = SaleOrder::where('id', request()->id)->delete();
             $deleteDetail = SaleOrderDetail::where('sale_order_master_id', request()->id)->delete();
 

@@ -2,9 +2,13 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
+use App\Models\Transporter;
+use App\Models\CoaDetailAccount;
 use App\Models\PurchaseReturnDetail;
 use App\Models\PurchaseReturnMaster;
 use Illuminate\Support\Facades\Auth;
+use App\Models\CoaInventoryDetailAccount;
 
 class PurchaseReturnService
 {
@@ -15,6 +19,20 @@ class PurchaseReturnService
     public function __construct(CommonService $commonService)
     {
         $this->commonService = $commonService;
+    }
+
+
+    public function DropDownData()
+    {
+        $result = [
+            'products' => CoaInventoryDetailAccount::pluck('name','id'),
+            // 'saleMans' => SaleMan::pluck('name','id'),
+            // 'areas' => Area::pluck('name','id'),
+            'parties' => CoaDetailAccount::pluck('account_name','id'),
+            'transporters' => Transporter::pluck('name','id'),
+        ];
+
+        return $result;
     }
 
     /*
@@ -28,7 +46,7 @@ class PurchaseReturnService
                 'purchase_return_masters.id as id',
                 'purchase_return_masters.date',
                 'purchase_return_masters.grn_no',
-                'purchase_return_masters.type_id',
+                'purchase_return_masters.type',
                 'purchase_return_masters.bill_no',
                 'purchase_return_masters.transporter_id',
                 'purchase_return_masters.total_amount',
@@ -51,7 +69,7 @@ class PurchaseReturnService
     {
         return PurchaseReturnDetail::leftjoin('purchases', 'purchase_details.product_id', '=', 'purchases.id')
             ->select('purchases.name as purchaseName', 'purchase_details.unit', 'purchase_details.quantity', 'purchase_details.amount', 'purchase_details.rate', 'purchase_details.total_unit')
-            ->where('purchase_details.purchase_master_id', $id)
+            ->where('purchase_details.purchase_return_master_id', $id)
             ->get();
     }
 
@@ -62,29 +80,16 @@ class PurchaseReturnService
      * */
     public function searchPurchaseReturn($request)
     {
-        $query = PurchaseReturnMaster::groupBy(
-            'purchase_return_masters.id',
-            'purchase_return_masters.date',
-            'purchase_return_masters.grn_no',
-            'purchase_return_masters.type_id',
-            'purchase_return_masters.party_id',
-            'purchase_return_masters.bill_no',
-            'purchase_return_masters.remarks',
-            'purchase_return_masters.created_at',
-            'purchase_return_masters.updated_at',
-            'purchase_return_masters.transporter_id',
-            'purchase_return_masters.total_amount',
-            'purchase_return_masters.fare',
-            'purchase_return_masters.carriage_inward',
-        );
+        $q = PurchaseReturnMaster::query();
         if (!empty($request['param'])) {
-            $query = $query->where('purchase_return_masters.id', "=", $request['param']);
-            //            $query = $query->orwhere('parties.name', "% like %", $request['param']);
+            $q = PurchaseReturnMaster::with('type', 'party')
+                ->where('grn_no', 'like', '%' . $request['param'] . '%')
+                ->orwhere('date', 'like', '%' . $request['param'] . '%')
+                ->orwhere('bill_no', 'like', '%' . $request['param'] . '%');
         }
-        //        $query->select('purchase_return_masters.id','purchase_return_masters.date','purchase_return_masters.amount','purchase_return_masters.quantity');
-        $purchases = $query->orderBy('id', 'DESC')->get();
+        $pRorders = $q->orderBy('grn_no', 'ASC')->paginate(config('constants.PER_PAGE'));
 
-        return $this->commonService->paginate($purchases, Self::PER_PAGE);
+        return $pRorders;
     }
 
     // /*
@@ -104,21 +109,22 @@ class PurchaseReturnService
      * */
     public function preparePurchaseReturnMasterData($request)
     {
+        $session = $this->commonService->getSession();
         return [
             'grn_no' => $request['grn_no'],
-            'date' => $request['date'],
-            'type_id' => $request['type_id'],
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'type' => config('constants.transaction.Purchase-Return'),
             'party_id' => $request['party_id'],
             'bill_no' => $request['bill_no'],
             'transporter_id' => $request['transporter_id'],
-            'business_id' => $request['business_id'],
-            'f_year_id' => $request['f_year_id'],
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
             'remarks' => $request['remarks'],
-            'total_amount' => array_sum($request['total_amount']),
+            'total_amount' => $request['total_amount'],
             'fare' => $request['fare'],
             'carriage_inward' => $request['carriage_inward'],
-            $data['created_by'] = Auth::user()->id,
-            $data['updated_by'] = Auth::user()->id
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id
         ];
     }
 
@@ -136,7 +142,7 @@ class PurchaseReturnService
             'total_unit' => $request['total_unit'],
             'rate' => $request['rate'],
             'amount' => $request['amount'],
-            'purchase_master_id' => $purchaseParentId,
+            'purchase_return_master_id' => $purchaseParentId,
         ];
     }
 
@@ -154,7 +160,7 @@ class PurchaseReturnService
                 $rec['rate'] = $data['rate'][$key];
                 $rec['amount'] = $data['amount'][$key];
                 $rec['total_unit'] = $data['total_unit'][$key];
-                $rec['purchase_master_id'] = $data['purchase_master_id'];
+                $rec['purchase_return_master_id'] = $data['purchase_return_master_id'];
                 PurchaseReturnDetail::create($rec);
             }
         }

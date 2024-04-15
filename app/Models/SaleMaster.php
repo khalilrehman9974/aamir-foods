@@ -11,7 +11,7 @@ class SaleMaster extends Model
     protected $table = 'sale_masters';
 
     protected $fillable = ['dispatch_note','date', 'type_id','party_id','bilty_no','deliverd_to','saleman_id','transporter_id','business_id','f_year_id',
-    'remarks','total_amount','freight','scheme','commission'];
+    'remarks','total_amount','freight','scheme','commission','updated_by','created_by'];
 
     public function type_id(){
         return $this->hasOne(SalePurchaseType::class);

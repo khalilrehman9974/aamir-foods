@@ -30,10 +30,10 @@ class AssignAreaController extends Controller
         $pageTitle = 'List Of Asign Areas';
         $request = request()->all();
         $assignAreas = $this->assignAreaService->searchAssignArea($request);
-        // $assignAreas = AssignArea::paginate(AssignArea::PER_PAGE);
+        $param = request()->param;
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '14');
 
-        return view('assign_area.index', compact('assignAreas', 'pageTitle', 'permission','assignAreas'));
+        return view('assign_area.index', compact('assignAreas','param', 'pageTitle', 'permission','assignAreas'));
     }
 
 

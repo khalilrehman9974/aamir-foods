@@ -33,9 +33,10 @@ class BusinessController extends Controller
         $pageTitle = 'List Of Business';
         $request = request()->all();
         $busineses = $this->businessService->searchbusiness($request);
+        $param = request()->param;
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '24');
 
-        return view('business.index', compact('busineses', 'pageTitle', 'permission'));
+        return view('business.index', compact('busineses','param', 'pageTitle', 'permission'));
     }
 
     /**

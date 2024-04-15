@@ -54,8 +54,8 @@ class VoucherMasterController extends Controller
     public function store(Request $request)
     {
         $request = $request->except('_token', 'purchaseId');
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
             //Insert data into purchase tables.
             $saleMasterData = $this->voucherService->prepareVoucherMasterData($request);
             $saleMasterInsert = $this->commonService->findUpdateOrCreate(VoucherMaster::class, ['id' => ''], $saleMasterData);
@@ -118,14 +118,14 @@ class VoucherMasterController extends Controller
         try {
             DB::beginTransaction();
             $request = request()->all();
-            VoucherMaster::where('id', $request['saleId'])->delete();
-            VoucherDetail::where('purchase_master_id', $request['purchaseId'])->delete();
+            VoucherMaster::where('id', $request['id'])->delete();
+            VoucherDetail::where('voucher_master_id', $request['id'])->delete();
             // Stock::where('invoice_id', $request['saleId'])->delete();
             // AccountLedger::where('invoice_id', $request['saleId'])->delete();
 
             //Save data into relevant tables.
             $purchaseMasterData = $this->voucherService->prepareVoucherMasterData($request);
-            $purchaseMasterInsert = $this->commonService->findUpdateOrCreate(VoucherMaster::class, ['id' => request('productId')], $purchaseMasterData);
+            $purchaseMasterInsert = $this->commonService->findUpdateOrCreate(VoucherMaster::class, ['id' => request('id')], $purchaseMasterData);
             $purchaseDetailData = $this->voucherService->prepareVoucherDetailData($request, $purchaseMasterInsert->id);
             $this->voucherService->saveVoucher($purchaseDetailData);
 

@@ -7,20 +7,23 @@
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <x-slot:headerFiles>
         <!--  BEGIN CUSTOM STYLE FILE  -->
-      <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
-      <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
-      @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
-      @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
+        <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
+        <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
+        @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
+        @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
 
 
-      <!--  BEGIN CUSTOM STYLE FILE  -->
-      <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
-      <link rel="stylesheet" href="../src/plugins/src/filepond/filepond.min.css">
-      <link rel="stylesheet" href="../src/plugins/src/filepond/FilePondPluginImagePreview.min.css">
+        <!--  BEGIN CUSTOM STYLE FILE  -->
+        <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+            integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-      <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
-      <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
-      <!--  END CUSTOM STYLE FILE  -->
+        <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+        <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
+        <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
+        <!--  END CUSTOM STYLE FILE  -->
     </x-slot>
     <!-- END GLOBAL MANDATORY STYLES -->
 
@@ -58,14 +61,15 @@
                             <input type="hidden" name="id" id="id"
                                 value="{{ isset($note->id) ? $note->id : '' }}" />
                             <div class="form-group">
-                                <div class="row">
+                                <div class="row mt-3">
                                     <div class="col-md-6">
 
                                         <label for="purchase_order_no">PO Number</label>
                                         <input type="text"
                                             value="{{ old('purchase_order_no', @$note->purchase_order_no) }}"
-                                            name="purchase_order_no" class="form-control" id="purchase_order_no"
-                                            placeholder="PO Number..." required>
+                                            name="purchase_order_no"
+                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                            id="purchase_order_no" placeholder="PO Number..." required>
                                         @error('purchase_order_no')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -76,20 +80,18 @@
                                     <div class="col-md-6 ">
                                         <label for="date">
                                             Date</label>
-                                        <input type="text" class="form-control " id="date"
-                                            placeholder="Select The Date">
+                                        <input type="text"
+                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} "
+                                            id="date" name="date" placeholder="Select The Date">
                                     </div>
                                 </div>
-                                <div class="row">
-
-
+                                <div class="row mt-3">
                                     <div class="col-md-6">
-
                                         <label for="supplier_name">Supplier Name</label>
-                                        <input type="text"
-                                            value="{{ old('supplier_name', @$note->supplier_name) }}"
-                                            name="supplier_name" class="form-control" id="supplier_name"
-                                            placeholder="Name..." required>
+                                        <input type="text" value="{{ old('supplier_name', @$note->supplier_name) }}"
+                                            name="supplier_name"
+                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                            id="supplier_name" placeholder="Name..." required>
                                         @error('supplier_name')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -103,8 +105,9 @@
                                         <label for="supplier_bill_no">Supplier Bill No</label>
                                         <input type="text"
                                             value="{{ old('supplier_bill_no', @$note->supplier_bill_no) }}"
-                                            name="supplier_bill_no" class="form-control" id="supplier_bill_no"
-                                            placeholder="Bill No..." required>
+                                            name="supplier_bill_no"
+                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                            id="supplier_bill_no" placeholder="Bill No..." required>
                                         @error('supplier_bill_no')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -115,11 +118,12 @@
                                 </div>
 
 
-                                <div class="row mb-5">
+                                <div class="row mt-3 mb-5">
                                     <div class="col-md-6">
 
                                         <label for="inputState" class="form-label">Transporter</label>
-                                        <select id="transporter_id" name="transporter_id" class="form-select">
+                                        <select id="transporter_id" name="transporter_id"
+                                            class="form-select select2 mb-3 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
                                             <option selected="">Please select the
                                                 transporter</option>
                                             @foreach ($dropDownData['transporters'] as $key => $value)
@@ -132,9 +136,9 @@
 
                                     <div class="form-group col-md-6 ">
                                         <label for="fare">Fare</label>
-                                        <input type="text" name="fare"
-                                            value="{{ old('fare', @$note->fare) }}" class="form-control"
-                                            id="fare" placeholder="fare" >
+                                        <input type="text" name="fare" value="{{ old('fare', @$note->fare) }}"
+                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                            id="fare" placeholder="fare">
                                         @error('fare')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -163,56 +167,62 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td class="delete-item-row">
-                                                        <ul class="table-controls">
-                                                            <li><a href="javascript:void(0);" class="delete-item"
-                                                                    data-toggle="tooltip" data-placement="top"
-                                                                    title="" data-original-title="Delete"><svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        width="24" height="24"
-                                                                        viewBox="0 0 24 24" fill="none"
-                                                                        stroke="currentColor" stroke-width="2"
-                                                                        stroke-linecap="round" stroke-linejoin="round"
-                                                                        class="feather feather-x-circle">
-                                                                        <circle cx="12" cy="12" r="10">
-                                                                        </circle>
-                                                                        <line x1="15" y1="9"
-                                                                            x2="9" y2="15">
-                                                                        </line>
-                                                                        <line x1="9" y1="9"
-                                                                            x2="15" y2="15">
-                                                                        </line>
-                                                                    </svg></a>
-                                                            </li>
-                                                        </ul>
-                                                    </td>
-                                                    <td class="product_id">
-                                                        <select id="product_id" name="product_id[]" class="form-select form-select-sm">
-                                                            <option selected="">Please select the
-                                                                Item</option>
-                                                            @foreach ($dropDownData['products'] as $key => $value)
-                                                                <option value="{{ $key }}"
-                                                                    {{ (old('product_id') == $key ? 'selected' : '') || (!empty($note->product_id) ? collect($note->product_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                    {{ $value }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </td>
-                                                    <td class="quantity">
-                                                        <input id="quantity" type="text" name="quantity[]"
-                                                            value="{{ old('quantity', !empty($note->quantity) ? $note->quantity : '') }}"
-                                                            placeholder="Quantity "
-                                                            class="form-control form-control-sm">
-                                                    </td>
-                                                    <td class="remarks">
-                                                        <textarea id="unit" type="text" name="remarks[]"
-                                                            value="{{ old('remarks', !empty($note->remarks) ? $note->remarks : '') }}"
-                                                            placeholder="Please Enter Remarks " class="form-control form-control-sm"></textarea>
-                                                    </td>
+                                                @foreach ($note_details as $note)
+                                                    <tr>
+                                                        <td class="delete-item-row">
+                                                            <ul class="table-controls">
+                                                                <li><a href="javascript:void(0);" class="delete-item"
+                                                                        data-toggle="tooltip" data-placement="top"
+                                                                        title=""
+                                                                        data-original-title="Delete"><svg
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            width="24" height="24"
+                                                                            viewBox="0 0 24 24" fill="none"
+                                                                            stroke="currentColor" stroke-width="2"
+                                                                            stroke-linecap="round"
+                                                                            stroke-linejoin="round"
+                                                                            class="feather feather-x-circle">
+                                                                            <circle cx="12" cy="12"
+                                                                                r="10">
+                                                                            </circle>
+                                                                            <line x1="15" y1="9"
+                                                                                x2="9" y2="15">
+                                                                            </line>
+                                                                            <line x1="9" y1="9"
+                                                                                x2="15" y2="15">
+                                                                            </line>
+                                                                        </svg></a>
+                                                                </li>
+                                                            </ul>
+                                                        </td>
+                                                        <td class="product_id">
+                                                            <select id="product_id" name="product_id[]"
+                                                                class="form-select select2 mb-3 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                <option selected="">Please select the
+                                                                    Item</option>
+                                                                @foreach ($dropDownData['products'] as $key => $value)
+                                                                    <option value="{{ $key }}"
+                                                                        {{ (old('product_id') == $key ? 'selected' : '') || (!empty($note->product_id) ? collect($note->product_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                        {{ $value }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </td>
+                                                        <td class="quantity">
+                                                            <input id="quantity" type="text" name="quantity[]"
+                                                                value="{{ old('quantity', !empty($note->quantity) ? $note->quantity : '') }}"
+                                                                placeholder="Quantity "
+                                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                        </td>
+                                                        <td class="remarks">
+                                                            <textarea id="unit" type="text" name="remarks[]"
+                                                                value="{{ old('remarks', !empty($note->remarks) ? $note->remarks : '') }}" placeholder="Please Enter Remarks "
+                                                                class="form-control mt-0 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">{{ @$note->remarks }}</textarea>
+                                                        </td>
 
 
 
-                                                </tr>
+                                                    </tr>
+                                                @endforeach
                                             </tbody>
                                         </table>
                                     </div>
@@ -220,25 +230,26 @@
                                     <a class="btn btn-dark additem">Add
                                         Item</a>
                                 </div>
-                                <div class="form-group mt-5 mb-4">
+                                <div class="form-group mb-4">
                                     <label for="exampleFormControlTextarea1">Remarks</label>
-                                    <textarea class="form-control" value="{{ old('remarks', @$note->remarks) }}" name="remarks" id="remarks"
-                                        rows="3"></textarea>
+                                    <textarea class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" name="remarks"
+                                        id="remarks" rows="3">{{ @$note->remarks }}</textarea>
                                 </div>
                                 <a href="{{ route('grn.list') }}" style="float: right;"
                                     class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
-                                @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
                                     <button type="submit" style="float: right"
                                         class="btn btn-success  rounded bs-popover me-1 mt-5 mb-4 "
                                         data-bs-container="body" data-bs-placement="right"
                                         data-bs-content="Tooltip on right">
-                                        @if (!isset($issue_noteid))
+                                        @if (!isset($note))
                                             Save
                                         @else
                                             Update
                                         @endif
                                     </button>
-                                @endif
+                                {{-- @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
+
+                                @endif --}}
                             </div>
                         </form>
                     </div>
@@ -260,10 +271,10 @@
                 '<li><a href="javascript:void(0);" class="delete-item" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></a></li>' +
                 '</ul>' +
                 '</td>' +
-                '<td class="product_id"><select id="product_id" name="product_id[]" class="form-select form-select-sm"><option selected="">Please select the Item</option> @foreach ($dropDownData['products'] as $key => $value) <option value="{{ $key }}"{{ (old('product_id') == $key ? 'selected' : '') || (!empty($note->product_id) ? collect($note->product_id)->contains($key) : '') ? 'selected' : '' }}>{{ $value }}</option>@endforeach</select> </td>' +
-                '<td class="quantity"><input type="text" name="quantity[]" class="form-control  form-control-sm" placeholder="Quantity "></td>' +
+                '<td class="product_id"><select id="product_id" name="product_id[]" class="form-select select2 mb-3 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"><option selected="">Please select the Item</option> @foreach ($dropDownData['products'] as $key => $value) <option value="{{ $key }}"{{ (old('product_id') == $key ? 'selected' : '') || (!empty($note->product_id) ? collect($note->product_id)->contains($key) : '') ? 'selected' : '' }}>{{ $value }}</option>@endforeach</select> </td>' +
+                '<td class="quantity"><input type="text" name="quantity[]" class="form-control  {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" placeholder="Quantity "></td>' +
                 '<td class="remarks" >' +
-                '<textarea type="text" name="remarks[]" class="form-control  form-control-sm" placeholder="Please Enter remarks "></textarea>' +
+                '<textarea type="text" name="remarks[]" class="form-control mt-0 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" placeholder="Please Enter remarks "></textarea>' +
                 ' </td>' +
 
                 '<div class="form-check form-check-primary form-check-inline me-0 mb-0">' +
@@ -298,11 +309,17 @@
 
 
     <x-slot:footerFiles>
-        <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
-        <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>
+        <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
 
         <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
         <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
+        <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script>
+        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
+            integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="{{ asset('js/common.js') }}"></script>
 
         <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])

@@ -2,130 +2,156 @@
 
 namespace App\Services;
 
-
-
-use App\Issuance;
-use App\Models\tblacc_code;
-use App\Models\tbljv;
-use App\Models\tbljv_details;
-use App\Models\tbljvDetailsTemp;
+use App\Models\VoucherDetail;
+use App\Models\VoucherMaster;
+use App\Models\CoaDetailAccount;
 use Illuminate\Support\Facades\Auth;
 
-class JVService
+class JournalVoucherService
 {
-    const PER_PAGE = 10;
-    const JV_SAVED = 'JV saved successfully';
-    const JVTEMP_SAVED = 'JV SAVED AS DRAFT SUCCESSFULLY';
-    const JV_UPDATED = 'JV updated successfully';
-    const JV_DELETED = 'JV is deleted successfully';
-    const SOME_THING_WENT_WRONG = 'Oops!Something went wrong';
     protected $commonService;
 
     public function __construct(CommonService $commonService)
     {
         $this->commonService = $commonService;
     }
+
     /*
-    * Store company data.
-    * @param $model
-    * @param $where
-    * @param $data
-    *
-    * @return object $object.
-    * */
-    public function findUpdateOrCreate($model, array $where, array $data)
+     * Get contract by id.
+     * @param $id
+     * */
+    public function getVoucherMasterById($id)
     {
-        $object = $model::firstOrNew($where);
-
-        foreach ($data as $property => $value) {
-            $object->{$property} = $value;
-        }
-        $object->save();
-
-        return $object;
-    }
-    public function getacc_namebyid($request)
-    {
-        return tblacc_code::where('id', $request['account_name'])->get();
-    }
-
-    public function gettbljvByid($id)
-    {
-        return tbljv::leftjoin('tblcust_sup', 'tblcust_sup.cust_sup_id', '=','tbljv.cust_sup_id' )
-            ->select('tbljv.id as id', 'tbljv.date', 'tblcust_sup.id as tblcust_supid')
-            ->where('tbljv.id', $id)
+        return VoucherMaster::select(
+            'voucher_masters.id',
+            'voucher_masters.date',
+            'voucher_masters.vr_type',
+            'voucher_masters.total_amount',
+            'voucher_masters.created_at',
+            'voucher_masters.updated_at',
+        )
+            ->where('voucher_masters.id', $id)
             ->first();
     }
 
-
-    public function searchjv($request)
+    public function DropDownData()
     {
+        $result = [
+            'accounts' => CoaDetailAccount::pluck('account_name', 'id'),
+        ];
 
-        $query = tbljv::select('tbljv.id', 'date',  'tbljv.cust_sup_id', 'tblcust_sup.cust_sup_name'
-            , 'tbljv.created_at','tbljv.status','tbljv.updated_at')
-            ->leftjoin('tblcust_sup ', 'tblcust_sup.cust_sup_id', '=' ,'tbljv.cust_sup_id');
+        return $result;
+    }
+
+    /*
+    * Get contract by id.
+    * @param $id
+    * */
+    public function getVoucherDetailById($id)
+    {
+        return VoucherDetail::select(
+            'voucher_details.code',
+            'voucher_details.description',
+            'voucher_details.debit',
+            'voucher_details.credit'
+        )
+            ->where('voucher_details.voucher_master_id', $id)
+            ->get();
+    }
+
+    /*
+     * Search Voucher record.
+     * @queries: $queries
+     * @return: object
+     * */
+    public function searchVoucher($request)
+    {
+        $query = VoucherMaster::groupBy(
+            'voucher_masters.id',
+            'voucher_masters.date',
+            'voucher_masters.total_amount',
+            'voucher_masters.created_at',
+            'voucher_masters.updated_at',
+        );
         if (!empty($request['param'])) {
-            $query = $query->where('cust_sup_name', "=", $request['param']);
-
+            $query = $query->where('voucher_masters.id', "=", $request['param']);
         }
+        $vouchers = $query->orderBy('id', 'DESC')->get();
 
-        $jv = $query->orderBy('id', 'DESC')->get();
-
-        return $this->commonService->paginate($jv, Self::PER_PAGE);
+        return $this->commonService->paginate($vouchers, config('constants.PER_PAGE'));
     }
 
 
-    public function preparetbljvData($request)
+
+    /*
+     * Prepare Voucher master data.
+     * @param: $request
+     * @return Array
+     * */
+    public function prepareVoucherMasterData($request)
     {
         return [
             'date' => $request['date'],
-            'cust_sup_id' => $request['cust_sup_id'],
-            'status' => config('constants.active')
+            'vr_type' => config('constants.vouchers.JV'),
+            'total_amount' => $request['total_amount'],
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id
         ];
     }
 
-    public function preparetbljv_detailData($request, $tbljvid)
+    /*
+     * Prepare Purchase detail data.
+     * @param: $request
+     * @return Array
+     * */
+    public function prepareVoucherDetailDebitData($request, $voucherParentId)
     {
         return [
-            'account_code' => $request['account_code'],
-            'remarks' => $request['remarks'],
-            'debit_amount' =>  array_sum($request['debit_amount']),
-            'credit_amount' =>  array_sum($request['credit_amount']),
-            'status' => config('constants.active'),
-            'jv_id' => $tbljvid,
+            'code' => $request['code'],
+            'description' => $request['description'],
+            'debit' => $request['debit_amount'],
+            'credit' => $request['credit_amount'],
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id,
+            'voucher_master_id' => $voucherParentId,
         ];
-
     }
-    public function savejv($data)
+
+    /*
+     * Prepare Purchase detail data.
+     * @param: $request
+     * @return Array
+     * */
+    public function prepareVoucherDetailCreditData($request, $voucherParentId)
     {
-        tbljv_details::where('jv_id', $data['jv_id'])->delete();
-        foreach ($data['account_code'] as $key => $value) {
-            if (!empty($data['account_code'][$key])) {
-                $request['account_code'] = $data['account_code'][$key];
-                $request['remarks'] = $data['remarks'][$key];
-                $request['debit_amount'] = $data['debit_amount'];
-                $request['credit_amount'] = $data['credit_amount'];
-                $request['status'] = config('constants.active');
-                $request['jv_id'] = $data['jv_id'];
-                tbljv_details::create($request);
+        return [
+            'code' => config('constants.account_codes.CASH_IN_HAND'),
+            'description' => $request['description'],
+            'debit' => $request['debit_amount'],
+            'credit' => $request['credit_amount'],
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id,
+            'voucher_master_id' => $voucherParentId,
+        ];
+    }
+
+    /*
+     * Save Voucher data.
+     * @param: $data
+     * */
+    public function saveVoucher($data)
+    {
+        foreach ($data['code'] as $key => $value) {
+            if (!empty($data['code'][$key])) {
+                $rec['code'] = $data['code'][$key];
+                $rec['description'] = $data['description'][$key];
+                $rec['debit'] = config('constants.ZERO');
+                $rec['credit'] = $data['amount'][$key];
+                $rec['created_by'] = Auth::user()->id;
+                $rec['updated_by'] = Auth::user()->id;
+                $rec['voucher_master_id'] = $data['voucher_master_id'];
+                VoucherDetail::create($rec);
             }
         }
     }
-
-    public function savejv_temp($data)
-    {
-        foreach ($data['account_code'] as $key => $value) {
-            if (!empty($data['account_code'][$key])) {
-                $request['account_code'] = $data['account_code'][$key];
-                $request['remarks'] = $data['remarks'][$key];
-                $request['debit_amount'] = $data['debit_amount'];
-                $request['credit_amount'] = $data['credit_amount'];
-                $request['status'] = config('constants.active');
-                $request['jv_id'] = $data['jv_id'];
-                tbljvDetailsTemp::create($request);
-            }
-        }
-    }
-
-
 }

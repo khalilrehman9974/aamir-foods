@@ -22,13 +22,13 @@ class ChartOfInvDetailAccountController extends Controller
     protected $commonService;
     protected $uploadService;
 
-    public function __construct(CoaInventorySubHeadService       $coInvSubHeadService,
-                                CoaInventoryDetailAccountService $coInventoryDetailAccountService,
-                                PermissionService                $permissionService,
-                                CommonService                    $commonService,
-                                UploadFileService                $uploadService
-    )
-    {
+    public function __construct(
+        CoaInventorySubHeadService       $coInvSubHeadService,
+        CoaInventoryDetailAccountService $coInventoryDetailAccountService,
+        PermissionService                $permissionService,
+        CommonService                    $commonService,
+        UploadFileService                $uploadService
+    ) {
         $this->coInvSubHeadService = $coInvSubHeadService;
         $this->coInventoryDetailAccountService = $coInventoryDetailAccountService;
         $this->permissionService = $permissionService;
@@ -58,12 +58,13 @@ class ChartOfInvDetailAccountController extends Controller
     public function create()
     {
         $pageTitle = 'Create Inventory Detail Accounts';
+        $dropDownData = $this->coInventoryDetailAccountService->DropDownData();
         $accountCode = $this->coInventoryDetailAccountService->getMaxAccountCode();
         $mainHeads = $this->commonService->getInventoryMainHeads();
         $subHeads = $this->commonService->getInventorySubHeads();
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '24');
 
-        return view('chart-of-inventory.detail-account.create', compact('permission', 'mainHeads', 'subHeads', 'pageTitle', 'accountCode'));
+        return view('chart-of-inventory.detail-account.create', compact('permission', 'dropDownData', 'mainHeads', 'subHeads', 'pageTitle', 'accountCode'));
     }
 
     /**
@@ -93,15 +94,17 @@ class ChartOfInvDetailAccountController extends Controller
     public function edit($id)
     {
         $pageTitle = 'Update Inventory Sub Head';
+        $dropDownData = $this->coInventoryDetailAccountService->DropDownData();
         $detailAccount = CoaInventoryDetailAccount::find($id);
         $mainHeads = $this->coInvSubHeadService->getMainHeads();
         $subHeads = $this->commonService->getInventorySubHeads($detailAccount->main_head);
+        $subSubHeads = $this->commonService->getInventorySubSubHeads($detailAccount->sub_head);
         if (!$detailAccount) {
             return abort(404);
         }
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
 
-        return view('chart-of-inventory.detail-account.create', compact('detailAccount', 'subHeads', 'mainHeads', 'permission', 'pageTitle'));
+        return view('chart-of-inventory.detail-account.create', compact('detailAccount','subSubHeads', 'dropDownData', 'subHeads', 'mainHeads', 'permission', 'pageTitle'));
     }
 
     /**
@@ -133,4 +136,12 @@ class ChartOfInvDetailAccountController extends Controller
         return response()->json(['status' => 'fail', 'data' => []]);
     }
 
+    public function getSubSubHeadAccountsBySubHead($subHead)
+    {
+        $detailAccounts = $this->coInventoryDetailAccountService->getSubSubHeadsBySubHead($subHead);
+        if ($detailAccounts) {
+            return response()->json(['status' => 'success', 'data' => $detailAccounts]);
+        }
+        return response()->json(['status' => 'fail', 'data' => []]);
+    }
 }

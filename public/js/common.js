@@ -157,44 +157,26 @@ $("#dispatch_note").on("keypress", function (event) {
     }
 });
 
-$('#main-head').on('change', function () {
-    var mainCode = $('#main-head :selected').val();
-    $("#control-head").val('');
-    $("#account_code").val('');
-    let url = config.routes.getControlHeads + '/' + mainCode;
-    $.ajax({
-        url: url,
-        type: 'GET',
-        dataType: 'json',
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function (response) {
-            $("#control-head").html('');
-            // $("#control-head").append('Please select the control head');
-            $("#selectVersion").append("<option selected disabled> Please select the control head </option>");
-            // var div_data="<option value=''>'Please select the control head'</option>";
-            $.each(response.data, function (i, obj) {
+$(document).on('click', 'body *', function() {
+    $('.amount').on("focusout", function() {
+        doAmountTotal();
+    });
 
-                $("#control-head").empty();
-                $("#control-head").append($("<option />").val("").text("Please select the control head"));
-                $.each(response.data, function (key, value) {
-                    $("#control-head").append($("<option />").val(key).text(value));
-                });
-            });
-        },
-        complete: function () {
-            $('#loading').css('display', 'none');
-        },
-        error: function (errorThrown) {
-            $('#account_code').val('');
-            var errors = errorThrown.responseJSON.errors;
-            Swal.fire({
-                icon: 'error',
-                title: 'Something went wrong',
-            })
-        }
-    })
-})
+    $('.delete-item').on("click", function() {
+        doAmountTotal();
+    });
+
+    function doAmountTotal() {
+        $('#total-amount').text("");
+        console.log('in do amount total');
+        var totalAmount = 0;
+        $(".amount").each(function() {
+            if (!isNaN(this.value) && this.value.length != 0) {
+                totalAmount += parseFloat(this.value);
+            }
+        });
+        $('#gross-amount').val(totalAmount.toFixed(2));
+    }
+});
 
 

@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use App\Models\Area;
 use App\Models\SaleMan;
-use App\Models\Distributer;
 use App\Models\Transporter;
 use App\Models\CoaDetailAccount;
 use App\Models\DispatchNoteDetail;
@@ -33,7 +33,7 @@ class DispatchNoteService
     {
         $object = $model::firstOrNew($where);
 
-        foreach ($data as $property => $value) {
+        foreach ($data as $property => $value){
             $object->{$property} = $value;
         }
         $object->save();
@@ -49,7 +49,6 @@ class DispatchNoteService
             'areas' => Area::pluck('name','id'),
             'parties' => CoaDetailAccount::pluck('account_name','id'),
             'transporters' => Transporter::pluck('name','id'),
-            'distributers'=> Distributer::pluck('name','id')
         ];
 
         return $result;
@@ -63,60 +62,35 @@ class DispatchNoteService
     {
         return DispatchNoteMaster::leftjoin('saleMans', 'sale_man.id', '=', 'dispatch_note_masters.sale_man_id')
             ->select(
-                'dispatch_masters.id as id',
-                'dispatch_masters.date',
-                'dispatch_masters.po_no',
-                'dispatch_masters.civil_distributer_id',
-                'dispatch_masters.party_id',
-                'dispatch_masters.transporter_id',
-                'dispatch_masters.bilty_no',
-                'dispatch_masters.fare',
-                'dispatch_masters.contact_no',
-                'dispatch_masters.total_balance',
+                'dispatch_note_masters.id as id',
+                'dispatch_note_masters.date',
+                'dispatch_note_masters.po_no',
+                'dispatch_note_masters.party_id',
+                'dispatch_note_masters.transporter_id',
+                'dispatch_note_masters.bilty_no',
+                'dispatch_note_masters.fare',
+                'dispatch_note_masters.contact_no',
                 'saleMans.name as saleManName',
             )
-            ->where('dispatch_masters.id', $id)
+            ->where('dispatch_note_masters.id', $id)
             ->first();
     }
 
-    /*
-    * Get contract by id.
-    * @param $id
-    * */
-    // public function getDispatchDetailById($id)
-    // {
-    //     return DispatchNoteDetail::leftjoin('purchases', 'purchase_details.product_id', '=', 'purchases.id')
-    //         ->select('purchases.name as purchaseName', 'purchase_details.unit', 'purchase_details.quantity', 'purchase_details.amount', 'purchase_details.rate', 'purchase_details.total_unit')
-    //         ->where('purchase_details.purchase_master_id', $id)
-    //         ->get();
-    // }
 
-    /*
-     * Search dispatch record.
-     * @queries: $queries
-     * @return: object
-     * */
+
     public function searchDispatch($request)
     {
-        $query = DispatchNoteMaster::groupBy(
-            'dispatch_masters.id as id',
-            'dispatch_masters.date',
-            'dispatch_masters.po_no',
-            'dispatch_masters.civil_distributer_id',
-            'dispatch_masters.party_id',
-            'dispatch_masters.transporter_id',
-            'dispatch_masters.bilty_no',
-            'dispatch_masters.fare',
-            'dispatch_masters.contact_no',
-            'dispatch_masters.total_balance',
-            'saleMans.name as saleManName',
-        );
+        $q = DispatchNoteMaster::query();
         if (!empty($request['param'])) {
-            $query = $query->where('dispatch_masters.id', "=", $request['param']);
+            $q = DispatchNoteMaster::with('party','transporter','saleMan')
+            ->where('po_no', 'like', '%' . $request['param'] . '%')
+            ->orWhere('fare', 'like', '%' . $request['param'] . '%')
+            ->orWhere('bilty_no', 'like', '%' . $request['param'] . '%')
+            ->orWhere('date', 'like', '%' . $request['param'] . '%');
         }
-        $purchases = $query->orderBy('id', 'DESC')->get();
+        $dispatchNotes = $q->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
 
-        return $this->commonService->paginate($purchases, Self::PER_PAGE);
+        return $dispatchNotes;
     }
 
 
@@ -129,16 +103,15 @@ class DispatchNoteService
     {
         return [
             'po_no' => $request['po_no'],
-            'date' => $request['date'],
-            'civil_distributer_id' => $request['civil_distributer_id'],
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'sale_man_id' => $request['sale_man_id'],
             'party_id' => $request['party_id'],
             'transporter_id' => $request['transporter_id'],
             'bilty_no' => $request['bilty_no'],
             'contact_no' => $request['contact_no'],
-            'total_balance' => array_sum($request['total_balance']),
             'fare' => $request['fare'],
-            $data['created_by'] = Auth::user()->id,
-            $data['updated_by'] = Auth::user()->id
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id
         ];
     }
 
@@ -154,7 +127,7 @@ class DispatchNoteService
             'quantity' => $request['quantity'],
             'unit' => $request['unit'],
             'remarks' => $request['remarks'],
-            'dispatch_master_id' => $dispatchParentId,
+            'dispatch_note_master_id' => $dispatchParentId,
         ];
     }
 
@@ -164,13 +137,16 @@ class DispatchNoteService
      * */
     public function saveDispatch($data)
     {
+        DispatchNoteDetail::where('dispatch_note_master_id', $data['dispatch_note_master_id'])->delete();
         foreach ($data['product_id'] as $key => $value) {
             if (!empty($data['product_id'][$key])) {
                 $rec['product_id'] = $data['product_id'][$key];
                 $rec['unit'] = $data['unit'][$key];
                 $rec['quantity'] = $data['quantity'][$key];
                 $rec['remarks'] = $data['remarks'][$key];
-                $rec['dispatch_master_id'] = $data['dispatch_master_id'];
+                $rec['created_by'] = Auth::user()->id;
+                $rec['updated_by'] = Auth::user()->id;
+                $rec['dispatch_note_master_id'] = $data['dispatch_note_master_id'];
                 DispatchNoteDetail::create($rec);
             }
         }

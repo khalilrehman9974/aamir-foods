@@ -6,7 +6,6 @@ use App\Models\Bank;
 use App\Http\Requests\BankStoreRequest;
 use App\Services\BankService;
 use App\Services\PermissionService;
-use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

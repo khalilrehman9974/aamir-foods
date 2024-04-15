@@ -40,7 +40,7 @@
                 <div class="widget-header">
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4>Create Price Tag</h4>
+                            <h4>Create Packing Type</h4>
                         </div>
                     </div>
                 </div>
@@ -66,10 +66,10 @@
 
 
                                                             <div class="col-lg-0 col-12 ">
-                                                                <label for="name" class="form-label">Price Tag</label>
+                                                                <label for="name" class="form-label">Packing Type</label>
                                                                 <input id="name" type="text" name="name"
                                                                     value="{{ old('name', !empty($packingType->name) ? $packingType->name : '') }}"
-                                                                    placeholder="Please Enter Price Tag"
+                                                                    placeholder="Please Enter Packing Type"
                                                                     class="form-control" required>
                                                                     <div class="invalid-feedback">
 

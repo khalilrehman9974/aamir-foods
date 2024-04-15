@@ -4,18 +4,12 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\StoreSaleRequest;
-use App\Models\DispatchNoteDetail;
 use App\Models\DispatchNoteMaster;
-use App\Models\Product;
 use App\Models\SaleDetail;
-use App\Models\SaleMan;
 use App\Models\SaleMaster;
 use App\Models\SalePurchaseType;
-use App\Services\AccountLedgerService;
 use App\Services\CommonService;
 use App\Services\SaleService;
-use App\Services\StockService;
-use App\Models\Stock;
 use Illuminate\Support\Facades\DB;
 
 class SalesController extends Controller
@@ -102,7 +96,6 @@ class SalesController extends Controller
     public function edit($id)
     {
         $sale = SaleMaster::find($id);
-        // $products = Product::where('brand_id', $sale->brand_id)->pluck('name', 'id');
         $type = SalePurchaseType::where('name', 'Sale')->pluck('name', 'id');
         $saleDetails = SaleDetail::where('sale_master_id', $id)->get();
         if (empty($sale)) {
@@ -121,14 +114,14 @@ class SalesController extends Controller
         try {
             DB::beginTransaction();
             $request = request()->all();
-            SaleMaster::where('id', $request['saleId'])->delete();
+            SaleMaster::where('id', $request['id'])->delete();
             SaleDetail::where('sale_master_id', $request['saleId'])->delete();
             // Stock::where('invoice_id', $request['saleId'])->delete();
             // AccountLedger::where('invoice_id', $request['saleId'])->delete();
 
             //Save data into relevant tables.
             $saleMasterData = $this->saleService->prepareSaleMasterData($request);
-            $saleMasterInsert = $this->commonService->findUpdateOrCreate(SaleMaster::class, ['id' => request('productId')], $saleMasterData);
+            $saleMasterInsert = $this->commonService->findUpdateOrCreate(SaleMaster::class, ['id' => request('id')], $saleMasterData);
             $saleDetailData = $this->saleService->prepareSaleDetailData($request, $saleMasterInsert->id);
             $this->saleService->saveSale($saleDetailData);
 

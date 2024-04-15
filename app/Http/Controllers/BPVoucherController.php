@@ -2,23 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\VoucherDetail;
 use App\Models\VoucherMaster;
 use App\Services\CommonService;
-use App\Services\VoucherService;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\VoucherRequest;
+use App\Services\BankPaymentVoucherService;
 
 class BPVoucherController extends Controller
 {
     protected $commonService;
-    protected $voucherService;
+    protected $bankPaymentVoucherService;
 
-    public function __construct(CommonService $commonService, VoucherService $voucherService)
+    public function __construct(CommonService $commonService, BankPaymentVoucherService $bankPaymentVoucherService)
     {
         $this->commonService = $commonService;
-        $this->voucherService = $voucherService;
+        $this->bankPaymentVoucherService = $bankPaymentVoucherService;
 
     }
     /**
@@ -30,9 +29,10 @@ class BPVoucherController extends Controller
     {
         $pageTitle = 'List Of BPVouchers';
         $request = request()->all();
-        $vouchers = $this->voucherService->searchVoucher($request);
+        $vouchers = $this->bankPaymentVoucherService->searchVoucher($request);
+        $param = request()->param;
 
-        return view('vouchers.bpv.index', compact('vouchers', 'pageTitle'));
+        return view('vouchers.bpv.index', compact('vouchers','param', 'pageTitle'));
     }
 
     /**
@@ -43,8 +43,8 @@ class BPVoucherController extends Controller
     public function create()
     {
         $pageTitle = 'Create BPV';
-        $maxid = VoucherMaster::max('id') + 1;
-        $dropDownData = $this->voucherService->DropDownData();
+        $maxid = VoucherMaster::where('vr_type_id', 'BPV')->max('id') + 1;
+        $dropDownData = $this->bankPaymentVoucherService->DropDownData();
         return view('vouchers.bpv.create', compact( 'pageTitle','dropDownData','maxid'));
     }
 
@@ -56,24 +56,20 @@ class BPVoucherController extends Controller
      */
     public function store(VoucherRequest $request)
     {
-        $data['vr_type'] = config('constants.BPV');
+        $session = $this->commonService->getSession();
         $request = $request->except('_token', 'id');
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
-            //Insert data into purchase tables.
-            $voucherMasterData = $this->voucherService->prepareVoucherMasterData($request);
+            //Insert data into Vouchers tables.
+            $request['business_id'] = $session->business_id;
+            $request['f_year_id'] = $session->financial_year;
+            $voucherMasterData = $this->bankPaymentVoucherService->prepareVoucherMasterData($request);
             $voucherMasterInsert = $this->commonService->findUpdateOrCreate(VoucherMaster::class, ['id' => ''], $voucherMasterData);
-            $voucherDetailData = $this->voucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
-            $this->voucherService->saveVoucher($voucherDetailData);
+            $voucherDetailCreditData = $this->bankPaymentVoucherService->prepareVoucherDetailCreditData($request, $voucherMasterInsert->id);
+            $voucherDetailDebitData = $this->bankPaymentVoucherService->prepareVoucherDetailDebitData($request, $voucherMasterInsert->id);
+            $this->bankPaymentVoucherService->saveVoucher($voucherDetailCreditData);
+            $this->bankPaymentVoucherService->saveVoucher($voucherDetailDebitData);
 
-            //Insert data into stock table.
-            // $this->stockService->prepareAndSaveData($request, $saleMasterInsert->id, voucherService::SALE_TRANSACTION_TYPE);
-
-            //Insert data into accounts ledger table.
-            // $debitAccountData = $this->voucherService->prepareAccountDebitData($request, $saleMasterInsert->id, voucherService::SALE_TRANSACTION_TYPE, voucherService::SALE_DESCRIPTION);
-            // $creditAccountData = $this->voucherService->prepareAccountCreditData($request, $saleMasterInsert->id, voucherService::SALE_TRANSACTION_TYPE, voucherService::SALE_DESCRIPTION);
-            // AccountLedger::insert($debitAccountData);
-            // AccountLedger::insert($creditAccountData);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
@@ -119,12 +115,10 @@ class BPVoucherController extends Controller
      */
     public function destroy(VoucherMaster $voucherMaster)
     {
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
             $deleteMaster = VoucherMaster::where('id', request()->id)->delete();
             $deleteDetail = VoucherDetail::where('voucher_master_id', request()->id)->delete();
-            // $deleteStock = Stock::where('invoice_id', request()->id)->delete();
-            // $accountEntryDetail = AccountLedger::where('invoice_id', request()->id)->delete();
             DB::commit();
             // && $deleteStock && $accountEntryDetail
             if ($deleteMaster && $deleteDetail ) {
@@ -140,8 +134,8 @@ class BPVoucherController extends Controller
 
     public function view($id)
     {
-        $voucherMaster = $this->voucherService->getVoucherMasterById($id);
-        $voucherDetail = $this->voucherService->getVoucherDetailById($id);
+        $voucherMaster = $this->bankPaymentVoucherService->getVoucherMasterById($id);
+        $voucherDetail = $this->bankPaymentVoucherService->getVoucherDetailById($id);
         if (empty($voucherMaster)) {
             $message = config('constants.wrong');
         }
