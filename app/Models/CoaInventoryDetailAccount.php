@@ -16,16 +16,16 @@ class CoaInventoryDetailAccount extends Model
 
     public function getMainHead()
     {
-        return $this->hasOne(CoaInventoryMainHead::class, 'code', 'main_head');
+        return $this->hasOne(CoaInventoryMainHead::class, 'id', 'main_head');
     }
 
     public function getSubHead()
     {
-        return $this->hasOne(CoaInventorySubHead::class, 'code', 'sub_head');
+        return $this->hasOne(CoaInventorySubHead::class, 'id', 'sub_head');
     }
 
     public function getSubSubHead()
     {
-        return $this->hasOne(CoaInventorySubSubHead::class, 'code', 'sub_sub_head');
+        return $this->hasOne(CoaInventorySubSubHead::class, 'id', 'sub_sub_head');
     }
 }

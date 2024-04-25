@@ -76,12 +76,12 @@ class CoaInventoryDetailAccountService
 
     public function getSubHeadsByMainHead($mainHead)
     {
-        return CoaInventorySubHead::where('main_head', $mainHead)->pluck('name', 'code');
+        return CoaInventorySubHead::where('main_head', $mainHead)->pluck('name', 'id');
     }
 
     public function getSubSubHeadsBySubHead($subHead)
     {
-        return CoaInventorySubSubHead::where('sub_head', $subHead)->pluck('name', 'code');
+        return CoaInventorySubSubHead::where('sub_head_id', $subHead)->pluck('name', 'id');
     }
 }
 

@@ -44,7 +44,7 @@ class ChartOfInvSubSubHeadController extends Controller
     public function create()
     {
         $pageTitle = 'Create Inventory Sub Sub Head';
-        $accountCode = $this->coInvSubSubHeadService->getMaxAccountCode();
+        $accountCode = $this->coInvSubSubHeadService->getMaxSubSubHeadCode();
         $mainHeads = $this->coInvSubSubHeadService->getMainHeads();
         $subHeads = $this->coInvSubSubHeadService->getSubHeads();
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '24');
@@ -76,13 +76,13 @@ class ChartOfInvSubSubHeadController extends Controller
         $pageTitle = 'Update Inventory Sub Sub Head';
         $subSubHead = CoaInventorySubSubHead::find($id);
         $mainHeads = $this->coInvSubSubHeadService->getMainHeads();
-        $subSubHeads = $this->coInvSubSubHeadService->getSubHeads();
+        $subHeads = $this->coInvSubSubHeadService->getSubHeads();
         if (!$subSubHead) {
             return abort(404);
         }
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
 
-        return view('chart-of-inventory.sub-sub-head.create', compact('subSubHead', 'mainHeads','subSubHeads','permission', 'pageTitle'));
+        return view('chart-of-inventory.sub-sub-head.create', compact('subHeads','subSubHead', 'mainHeads','permission', 'pageTitle'));
     }
 
     /**
@@ -98,19 +98,22 @@ class ChartOfInvSubSubHeadController extends Controller
 
     public function getSubHeadAccountsByMainHead($mainHead)
     {
-        $detailAccounts = $this->coInvSubSubHeadService->getSubHeadsByMainHead($mainHead);
-        if ($detailAccounts) {
-            return response()->json(['status' => 'success', 'data' => $detailAccounts]);
+        $subSubHeads = $this->coInvSubSubHeadService->getSubHeadsByMainHead($mainHead);
+        if ($subSubHeads) {
+            return response()->json(['status' => 'success', 'data' => $subSubHeads]);
         }
         return response()->json(['status' => 'fail', 'data' => []]);
     }
 
-    public function getMaxSubSubHeadCode($mainHead)
+    public function getMaxSubSubHeadCode($subHead)
     {
-        $subHeadAccount = $this->coInvSubSubHeadService->getMaxAccountCode($mainHead);
+        $subHeadAccount = $this->coInvSubSubHeadService->getMaxSubSubHeadCode($subHead);
         if ($subHeadAccount ) {
             return response()->json(['status' => 'success', 'account_code' => $subHeadAccount]);
         }
         return response()->json(['status' => 'fail', 'data' => []]);
     }
+
+
+
 }

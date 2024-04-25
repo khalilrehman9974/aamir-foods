@@ -283,6 +283,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/delete', ['as' => 'bpv.delete', 'uses' => 'App\Http\Controllers\BPVoucherController@delete']);
         Route::post('show/{id}', ['as' => 'bpv.show', 'uses' => 'App\Http\Controllers\BPVoucherController@show']);
         Route::get('search', ['as' => 'bpv.search', 'uses' => 'App\Http\Controllers\BPVoucherController@search']);
+        Route::get('get-party-code/{code}', ['as' => 'party-code', 'uses' => 'App\Http\Controllers\BPVoucherController@getPartyCode']);
+        Route::get('get-party/{code}', ['as' => 'party-code', 'uses' => 'App\Http\Controllers\BPVoucherController@getParty']);
     });
 
     Route::group(['prefix' => 'brv', 'middleware' => 'auth'], function () {
@@ -368,7 +370,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('update', ['as' => 'co-inventory-sub-sub-head.update', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@store']);
         Route::delete('delete/{id}', ['as' => 'co-inventory-sub-sub-head.delete', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@destroy']);
         Route::get('get-sub-head-accounts/{id}', ['as' => 'sub-head-accounts-by-main-head', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@getSubHeadAccountsByMainHead']);
-        Route::get('get-sub-sub-head-account/{code}', ['as' => 'sub-sub-head-account', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@getMaxSubSubHeadCode']);
+        Route::get('get-sub-sub-head-account-code/{code}', ['as' => 'sub-sub-head-account', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@getMaxSubSubHeadCode']);
     });
 
     //Chart of Inventory Detail account.

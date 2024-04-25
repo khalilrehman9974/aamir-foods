@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('goods_received_note_details', function (Blueprint $table) {
             $table->Increments('id');
-            $table->integer('grn_master_id')->unsigned()->index();
+            $table->integer('goods_received_note_master_id')->unsigned()->index();
             $table->integer('product_id');
             $table->double('quantity');
             $table->string('remarks');
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')->nullable();
 
-            $table->foreign('grn_master_id')
+            $table->foreign('goods_received_note_master_id')
             ->references('id')->on('goods_received_note_masters')
             ->onDelete('cascade');
         });

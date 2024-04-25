@@ -25,6 +25,8 @@ return new class extends Migration
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')->nullable();
+            $table->bigInteger('created_by');
+            $table->c('updated_by');
 
             $table->foreign('sale_order_master_id')
             ->references('id')->on('sale_order_masters')

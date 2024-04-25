@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('store_issue_notes_detail', function (Blueprint $table) {
+        Schema::create('store_return_details', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('store_issue_notes_id')->unsigned()->index();
-            $table->dateTime('date');
+            $table->integer('store_return_master_id')->unsigned()->index();
+            $table->date('date', 150);
             $table->string('description');
             $table->integer('quantity');
             $table->TIMESTAMP('created_at');
@@ -25,8 +25,8 @@ return new class extends Migration
             $table->string('created_by');
             $table->string('updated_by');
 
-            $table->foreign('store_issue_notes_id')
-                ->references('id')->on('store_issue_notes')
+            $table->foreign('store_return_master_id')
+                ->references('id')->on('store_return_masters')
                 ->onDelete('cascade');
         });
     }
@@ -38,6 +38,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('store_issue_notes_detail');
+        Schema::dropIfExists('store_return_details');
     }
 };

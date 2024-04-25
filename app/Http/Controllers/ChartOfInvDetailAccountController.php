@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CoInvDetailAccountRequest;
-use App\Models\CoaInventoryDetailAccount;
-use App\Models\CoaInventorySubHead;
-use App\Services\CoaInventoryDetailAccountService;
-use App\Services\CoaInventorySubHeadService;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use App\Services\CommonService;
+use App\Models\CoaInventorySubHead;
 use App\Services\PermissionService;
 use App\Services\UploadFileService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
+use App\Models\CoaInventoryDetailAccount;
+use App\Services\CoaInventorySubHeadService;
+use App\Http\Requests\CoInvDetailAccountRequest;
+use App\Services\CoaInventoryDetailAccountService;
 
 class ChartOfInvDetailAccountController extends Controller
 {

@@ -13,22 +13,20 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('dispatch_note_details', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('dispatch_note_master_id')->unsigned()->index();
+        Schema::create('store_return_masters', function (Blueprint $table) {
+            $table->increments('id')->unsigned();
             $table->integer('product_id');
-            $table->double('quantity');
-            $table->double('unit');
+            $table->string('return_to', 200);
+            $table->string('return_by', 200);
+            $table->integer('business_id');
+            $table->integer('f_year_id');
             $table->text('remarks')->nullable();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')->nullable();
-            $table->string('created_by');
-            $table->string('updated_by');
+            $table->bigInteger('created_by');
+            $table->bigInteger('updated_by');
 
-            $table->foreign('dispatch_note_master_id')
-                ->references('id')->on('dispatch_note_masters')
-                ->onSoftDelete('cascade');
         });
     }
 
@@ -39,6 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('dispatch_note_details');
+        Schema::dropIfExists('store_return_masters');
     }
 };

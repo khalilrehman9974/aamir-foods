@@ -6,7 +6,7 @@ FilePond.registerPlugin(
 );
 
 FilePond.create(document.querySelector('.file-upload-multiple'));
-
+ 
 $('#main-head').on('change', function () {
     var mainCode = $('#main-head :selected').val();
     $("#sub-head").empty();

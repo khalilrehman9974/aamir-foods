@@ -1,6 +1,6 @@
 <x-base-layout :scrollspy="false">
 
-<x-slot:pageTitle>
+    <x-slot:pageTitle>
         {{ $pageTitle }}
     </x-slot>
 
@@ -26,7 +26,8 @@
                         <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Chart of Inventory</li>
                         <li class="breadcrumb-item"><a href="{{ route('co-inventory-main-head.list') }}">List</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('co-inventory-main-head.create') }}">Create</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('co-inventory-main-head.create') }}">Create</a>
+                        </li>
                     </ol>
                 </nav>
             </div>
@@ -54,28 +55,27 @@
                                         <div class="widget-content widget-content-area">
                                             <div class="row">
                                                 <div class="col-lg-12 col-12 ">
-                                                    <form
-                                                            action="{{ !empty($mainHead) ? route('co-inventory-main-head.update') : route('co-inventory-main-head.save') }}"
-                                                        method="POST" class="row g-3 needs-validation" novalidate>
+                                                    <form action="{{ !empty($mainHead) ? route('co-inventory-main-head.update') : route('co-inventory-main-head.save') }}" method="POST" class="row g-3 needs-validation" novalidate>
                                                         @csrf
                                                         <input type="hidden" name="id" id="id"
                                                             value="{{ isset($mainHead->id) ? $mainHead->id : '' }}" />
                                                         <div class="form-group">
-
                                                             <div class="col-lg-0 col-3 ">
                                                                 <label for="code" class="form-label">Code</label>
-                                                                <input id="code" type="text" name="code" readonly
-                                                                       value="{{ @$mainHead ? '' : $accountCode  }} {{ old('code', !empty($mainHead->code) ? $mainHead->code : '') }}"
-                                                                       class="form-control" required>
+                                                                <input id="code" type="text" name="code"
+                                                                    readonly
+                                                                    value="{{ @$mainHead ? '' : $accountCode }} {{ old('code', !empty($mainHead->code) ? $mainHead->code : '') }}"
+                                                                    class="form-control" required>
                                                             </div>
                                                             <br>
                                                             <div class="col-lg-0 col-12 ">
-                                                                <label for="name" class="form-label">Main Head</label>
+                                                                <label for="name" class="form-label">Main
+                                                                    Head</label>
                                                                 <input id="name" type="text" name="name"
                                                                     value="{{ old('name', !empty($mainHead->name) ? $mainHead->name : '') }}"
                                                                     placeholder="Please Enter Main Head "
                                                                     class="form-control" required>
-                                                                @if($errors->has('name'))
+                                                                @if ($errors->has('name'))
                                                                     <div class="invalid-feedback">
                                                                         {{ $errors->first('name') }}
                                                                     </div>
@@ -84,10 +84,9 @@
 
                                                             @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
                                                                 <button type="submit"
-                                                                        class="btn btn-success  rounded bs-popover me-1 mt-5 mb-4 "
-                                                                        data-bs-container="body"
-                                                                        data-bs-placement="right"
-                                                                        data-bs-content="Tooltip on right">
+                                                                    class="btn btn-success  rounded bs-popover me-1 mt-5 mb-4 "
+                                                                    data-bs-container="body" data-bs-placement="right"
+                                                                    data-bs-content="Tooltip on right">
                                                                     @if (!isset($mainHead))
                                                                         Save
                                                                     @else
@@ -96,7 +95,7 @@
                                                                 </button>
                                                             @endif
                                                             <a href="{{ route('co-inventory-main-head.list') }}"
-                                                               class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
+                                                                class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
                                                         </div>
                                                     </form>
                                                 </div>
@@ -111,6 +110,6 @@
             </div>
         </div>
     </div>
-        <x-slot:footerFiles>
-            </x-slot>
+    <x-slot:footerFiles>
+    </x-slot>
 </x-base-layout>

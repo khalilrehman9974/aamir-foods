@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('purchase_masters', function (Blueprint $table) {
             $table->Increments('id');
             $table->string('grn_no');
-            $table->integer('type_id')->unsigned()->index();
+            $table->string('type');
             $table->date('date');
             $table->integer('party_id');
             $table->string('bill_no');
@@ -32,10 +32,6 @@ return new class extends Migration
             $table->timestamp('deleted_at')->nullable();
             $table->string('created_by');
             $table->string('updated_by');
-
-            $table->foreign('type_id')
-            ->references('id')->on('sale_purchase_type')
-            ->onDelete('cascade');
 
             $table->foreign('f_year_id')
             ->references('id')->on('financial_years')

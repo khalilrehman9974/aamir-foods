@@ -135,7 +135,7 @@
                                                             <label for="inputState" class="form-label">Sub Sub
                                                                 Head</label>
                                                             @if (!empty($detailAccount))
-                                                                <select id="sub-sub-head" name="sub-sub_head"
+                                                                <select id="sub-sub-head" name="sub_sub_head"
                                                                     class="form-select" required>
 
                                                                     @foreach ($subSubHeads as $key => $value)

@@ -45,22 +45,43 @@
                 </div>
                 <div class="row layout-top-spacing">
                     <div id="tableCustomBasic" class="col-lg-12 col-12 layout-spacing">
-                        <div class="col-lg-8 col-md-8 col-sm-9 filtered-list-search mx-auto">
-                            <form method="get" action="{{ route('co-inventory-detail-account.list') }}" class="form-inline my-2 my-lg-0 justify-content-center">
-                                <div class="w-100">
-                                    <input type="text" name="search" class="w-100 form-control product-search br-30" id="input-search"
-                                           placeholder="Search Account...">
-                                    <button class="btn btn-primary" type="submit">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                             stroke-linejoin="round" class="feather feather-search">
-                                            <circle cx="11" cy="11" r="8"></circle>
-                                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </form>
+                        <div class="row">
+                            <div class="col-md-1">
+
+                            </div>
+                            <div class="col-lg-8 col-md-8 col-sm-9 filtered-list-search mx-auto">
+                                <form method="get" action="{{ route('co-inventory-detail-account.list') }}" class="form-inline my-2 my-lg-0 justify-content-center">
+                                    <div class="w-100">
+                                        <input type="text" name="search" class="w-100 form-control product-search br-30" id="input-search"
+                                               placeholder="Search....">
+                                        <button class="btn btn-primary" type="submit">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                 stroke-linejoin="round" class="feather feather-search">
+                                                <circle cx="11" cy="11" r="8"></circle>
+                                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-md-3 mt-1 " role="group">
+                                <a href="{{ route('co-inventory-detail-account.list') }}"
+                                    class="btn btn-primary _effect--ripple waves-effect waves-light" id="Refresh Cw" type="submit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="feather feather-refresh-cw">
+                                        <polyline points="23 4 23 10 17 10"></polyline>
+                                        <polyline points="1 20 1 14 7 14">
+                                        </polyline>
+                                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15">
+                                        </path>
+                                    </svg>
+
+                                </a>
+                            </div>
                         </div>
+
                         <div class="statbox widget box box-shadow">
                             <div class="widget-header">
                                 <div class="row">

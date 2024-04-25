@@ -14,20 +14,16 @@ return new class extends Migration
     public function up()
     {
         Schema::create('store_issue_notes', function (Blueprint $table) {
-            $table->increments('id')->unsigned();
-            $table->integer('product_id')->unsigned()->index();
+            $table->increments('id');
+            $table->integer('product_id');
             $table->string('issued_to', 200);
             $table->string('issued_by', 200);
             $table->text('remarks')->nullable();
-            $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('updated_at')->useCurrent();
-            $table->timestamp('deleted_at')->useCurrent()->nullable();
+            $table->timestamp('created_at');
+            $table->timestamp('updated_at');
+            $table->timestamp('deleted_at')->nullable();
             $table->string('created_by');
             $table->string('updated_by');
-
-            $table->foreign('product_id')
-                ->references('id')->on('product')
-                ->onDelete('cascade');
         });
     }
 

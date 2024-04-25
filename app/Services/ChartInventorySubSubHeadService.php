@@ -25,24 +25,24 @@ class ChartInventorySubSubHeadService
         return $object;
     }
 
-    public function getMaxAccountCode()
+    public function getMaxSubSubHeadCode()
     {
         return CoaInventorySubSubHead::max('code') ? CoaInventorySubSubHead::max('code') + 1 : 1;
     }
 
     public function getMainHeads()
     {
-        return CoaInventoryMainHead::pluck('name', 'code');
+        return CoaInventoryMainHead::pluck('name', 'id');
     }
 
     public function getSubHeads()
     {
-        return CoaInventorySubHead::pluck('name', 'code');
+        return CoaInventorySubHead::pluck('name', 'id');
     }
 
     public function getSubHeadsByMainHead($mainHead)
     {
-        return CoaInventorySubHead::where('main_head', $mainHead)->pluck('name', 'code');
+        return CoaInventorySubHead::where('main_head', $mainHead)->pluck('name', 'id');
     }
 
     public function getListOfSubSubHeads($param = null)

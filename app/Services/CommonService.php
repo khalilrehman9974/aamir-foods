@@ -146,7 +146,7 @@ class CommonService
 
     public function getInventorySubSubHeads($subHead = null)
     {
-        return CoaInventorySubSubHead::where('sub_head', $subHead)->pluck('name', 'id');
+        return CoaInventorySubSubHead::where('sub_head_id', $subHead)->pluck('name', 'id');
     }
 
     public function getInventoryMainHeads()

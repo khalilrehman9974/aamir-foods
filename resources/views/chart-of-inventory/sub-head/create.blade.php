@@ -93,7 +93,7 @@
                                                                     class="btn btn-success  rounded bs-popover me-1 mt-5 mb-4 "
                                                                     data-bs-container="body" data-bs-placement="right"
                                                                     data-bs-content="Tooltip on right">
-                                                                @if (!isset($detailAccount))
+                                                                @if (!isset($subHead))
                                                                     Save
                                                                 @else
                                                                     Update

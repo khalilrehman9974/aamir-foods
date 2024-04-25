@@ -65,18 +65,18 @@
                                                         <div class="col-lg-0 col-12 form-group mb-4">
                                                             <label for="inputState" class="form-label">Main
                                                                 Head</label>
-                                                            <select id="main-head" name="main_head" class="form-select"
+                                                            <select id="main-head" name="main_head_id" class="form-select"
                                                                 required>
                                                                 <option selected>Please select main head
                                                                 </option>
                                                                 @foreach ($mainHeads as $index => $value)
                                                                     <option value="{{ $index }}"
-                                                                        {{ (old('main_head') == $index ? 'selected' : '') || (!empty($subSubHead->main_head) ? collect($subSubHead->main_head)->contains($index) : '') ? 'selected' : '' }}>
+                                                                        {{ (old('main_head_id') == $index ? 'selected' : '') || (!empty($subSubHead->main_head_id) ? collect($subSubHead->main_head_id)->contains($index) : '') ? 'selected' : '' }}>
                                                                         {{ $value }}</option>
                                                                 @endforeach
                                                             </select>
 
-                                                            @if ($errors->has('main_head'))
+                                                            @if ($errors->has('main_head_id'))
                                                                 <div class="invalid-feedback">
                                                                     {{ $errors->first('main_head') }}
                                                                 </div>
@@ -108,32 +108,32 @@
                                                         <div class="col-lg-0 col-12 form-group mb-4">
                                                             <label for="inputState" class="form-label">Sub Head</label>
                                                             @if (!empty($subSubHead))
-                                                                <select id="sub-head" name="sub_head"
+                                                                <select id="sub-head" name="sub_head_id"
                                                                     class="form-select" required>
 
                                                                     @foreach ($subHeads as $key => $value)
                                                                         <option value="{{ $key }}"
-                                                                            {{ !empty($subSubHead) && $subSubHead->sub_head == $key ? 'selected' : '' }}
+                                                                            {{ !empty($subSubHead) && $subSubHead->sub_head_id == $key ? 'selected' : '' }}
                                                                             {{ $key == old('sub') ? 'selected' : '' }}>
                                                                             {{ $value }}</option>
                                                                     @endforeach
                                                                 </select>
                                                             @else
 
-                                                                <select id="sub-head" name="sub_head"
+                                                                <select id="sub-head" name="sub_head_id"
                                                                     class="form-select">
                                                                     <option selected>
                                                                     </option>
                                                                     @foreach ($subHeads as $key => $value)
                                                                         <option value="{{ $key }}"
-                                                                            {{ $key == old('sub_head') ? 'selected' : '' }}>
+                                                                            {{ $key == old('sub_head_id') ? 'selected' : '' }}>
                                                                             {{ $value }}</option>
                                                                     @endforeach
                                                                 </select>
                                                             @endif
-                                                            @if ($errors->has('sub_head'))
+                                                            @if ($errors->has('sub_head_id'))
                                                                 <div class="invalid-feedback">
-                                                                    {{ $errors->first('sub_head') }}
+                                                                    {{ $errors->first('sub_head_id') }}
                                                                 </div>
                                                             @endif
                                                         </div>
@@ -148,6 +148,13 @@
                                                             </div>
                                                         </div>
                                                         <br>
+                                                        {{-- <div class="col-lg-0 col-12 ">
+                                                            <label for="code" class="form-label">Code</label>
+                                                            <input id="code" type="text" name="code" readonly
+                                                                   value="{{ @$subSubHead ? '' : $accountCode  }} {{ old('code', !empty($subSubHead->code) ? $subSubHead->code : '') }}"
+                                                                   class="form-control" required>
+                                                        </div> --}}
+
                                                         <div class="col-lg-0 col-12 ">
                                                             <label for="name" class="form-label">Sub Sub Account
                                                                 Name </label>
@@ -191,73 +198,15 @@
         <script src="{{ asset('js/inventory-sub-sub-head.js') }}"></script>
         <script src="{{ asset('plugins/sweetalerts2/sweetalerts2.min.js') }}"></script>
         <script src="{{ asset('plugins/sweetalerts2/custom-sweetalert.js') }}"></script>
-        <script>
-            $('#main-head').on('change', function() {
-                var mainCode = $('#main-head :selected').val();
-                $("#sub-head").empty();
-                $("#code").val('');
-                let url = config.routes.getSubHeads + '/' + mainCode;
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-                        $("#sub-head").empty();
-                        $("#sub-head").append($("<option />").val("").text("Please select the sub head"));
-                        $.each(response.data, function(key, value) {
-                            $("#sub-head").append($("<option />").val(key).text(value));
-                        });
-                    },
-                    complete: function() {
-                        $('#loading').css('display', 'none');
-                    },
-                    error: function(errorThrown) {
-                        $('#code').val('');
-                        $("#sub-head").empty();
-                        var errors = errorThrown.responseJSON.errors;
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Something went wrong',
-                        })
-                    }
-                })
-            })
 
-            $('#sub-head').on('change', function() {
-                var subCode = $('#sub-head :selected').val();
-                $("#code").val('');
-                let url = config.routes.getDetailAccountCode + '/' + subCode;
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-                        $("#code").val(response.code);
-                    },
-                    complete: function() {
-                        $('#loading').css('display', 'none');
-                    },
-                    error: function(errorThrown) {
-                        $('#code').val('');
-                        var errors = errorThrown.responseJSON.errors;
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Something went wrong',
-                        })
-                    }
-                })
-            })
-        </script>
         <script>
             var config = {
                 routes: {
-                    getSubHeads: "{{ url('co-inventory-sub-sub-head/get-sub-head-accounts') }}",
+                    getSubHeads: "{{ url('co-inv-sub-sub-head/get-sub-head-accounts') }}",
                     // getSubSubHeads: "{{ url('co-inv-detail-account/get-sub-sub-head-accounts') }}",
-                    getsubSubHeadCode: "{{ url('co-inventory-sub-sub-head/get-detail-account-code') }}",
+                    getsubSubHeadCode: "{{ url('co-inv-sub-sub-head/get-sub-sub-head-account-code') }}",
+
+                    // getDetailAccountCode: "{{ url('co-inv-detail-account/get-detail-account-code') }}",
                 },
             }
         </script>

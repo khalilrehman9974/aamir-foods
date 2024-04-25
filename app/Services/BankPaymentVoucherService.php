@@ -154,4 +154,11 @@ class BankPaymentVoucherService
             }
         }
     }
+
+    // public function getPartyCode()
+    // {
+    //     // $voucher = VoucherMaster::find($id);; ? CoaDetailAccount::max('account_code') + 1 : 1
+    //     return CoaDetailAccount::find($code);
+    // }
+
 }

@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('sale_order_masters', function (Blueprint $table) {
             $table->Increments('id');
-            $table->integer('type_id')->unsigned()->index();
             $table->date('date');
             $table->integer('party_id');
             $table->string('bilty_no');
@@ -32,12 +31,9 @@ return new class extends Migration
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')->nullable();
-            $table->string('created_by');
-            $table->string('updated_by');
+            $table->bigInteger('created_by');
+            $table->bigInteger('updated_by');
 
-            $table->foreign('type_id')
-            ->references('id')->on('sale_purchase_type')
-            ->onDelete('cascade');
 
             $table->foreign('saleman_id')
             ->references('id')->on('sale_mans')

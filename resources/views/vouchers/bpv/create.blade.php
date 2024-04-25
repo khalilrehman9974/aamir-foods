@@ -178,15 +178,16 @@
                                                                                 </td>
 
 
-                                                                                <td class="rate">
-                                                                                    <input type="text"
-                                                                                        class="form-control form-control-sm"
+                                                                                <td class="code">
+                                                                                    <input type="text" id="code"
+                                                                                        class="form-control form-control-sm code"
                                                                                         name="code[]"
+                                                                                        {{-- value="{{ @$bpv ? '' : $detailAccount  }} {{ old('code', !empty($bpv->code) ? $bpv->code : '') }}" --}}
                                                                                         placeholder="Code">
                                                                                 </td>
 
                                                                                 <td class="description">
-                                                                                    <select id="account_title"
+                                                                                    <select id="party"
                                                                                         class="form-control select2 custom-select mr-0 mb-0 form-control-sm">
                                                                                         <option selected="">
                                                                                             Please select the
@@ -380,6 +381,17 @@
             integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script src="{{ asset('js/common.js') }}"></script>
+        <script src="{{ asset('js/BankPaymentVoucher.js') }}"></script>
+
+
+        <script>
+             var config = {
+                routes: {
+                    getPartyCode: "{{ url('bpv/get-party-code') }}",
+                    getParty: "{{ url('bpv/get-party') }}",
+                },
+            }
+        </script>
 
     </x-slot>
 

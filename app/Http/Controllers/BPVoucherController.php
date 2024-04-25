@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\VoucherDetail;
 use App\Models\VoucherMaster;
 use App\Services\CommonService;
+use App\Models\CoaDetailAccount;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\VoucherRequest;
 use App\Services\BankPaymentVoucherService;
@@ -141,6 +142,26 @@ class BPVoucherController extends Controller
         }
 
         return view('vouchers.bpv.view', compact('voucherMaster', 'voucherDetail'));
+    }
+
+    public function getPartyCode($code)
+    {
+        // $detailAccount = CoaDetailAccount::find($code)->select('account_name')->where('account_name',$code)->pluck('account_code');
+        $detailAccount = CoaDetailAccount::find($code)->pluck('account_code');
+        // $detailAccount = $this->bankPaymentVoucherService->getPartyCode($party);
+        if ($detailAccount) {
+            return response()->json(['status' => 'success', 'code' => $detailAccount]);
+        }
+        return response()->json(['status' => 'fail', 'data' => []]);
+    }
+
+    public function getParty($code)
+    {
+        $detailAccount = CoaDetailAccount::select('account_name')->where('account_code',$code)->get();
+        if ($detailAccount) {
+            return response()->json(['status' => 'success', 'account_name' => $detailAccount]);
+        }
+        return response()->json(['status' => 'fail', 'data' => []]);
     }
 
 }
