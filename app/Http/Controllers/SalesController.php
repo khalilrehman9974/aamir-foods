@@ -3,27 +3,38 @@
 namespace App\Http\Controllers;
 
 
-use App\Http\Requests\StoreSaleRequest;
-use App\Models\DispatchNoteMaster;
 use App\Models\SaleDetail;
 use App\Models\SaleMaster;
-use App\Models\SalePurchaseType;
-use App\Services\CommonService;
+use App\Models\StockLedger;
+use App\Models\AccountLedger;
 use App\Services\SaleService;
+use App\Services\CommonService;
+use App\Models\SalePurchaseType;
+use App\Models\DispatchNoteMaster;
 use Illuminate\Support\Facades\DB;
+use App\Services\StockLedgerService;
+use App\Services\AccountLedgerService;
+use App\Http\Requests\StoreSaleRequest;
 
 class SalesController extends Controller
 {
 
     protected $commonService;
     protected $saleService;
+    protected $stockLedgerService;
+    protected $accountLedgerService;
 
 
 
-    public function __construct(CommonService $commonService, SaleService $saleService)
+    public function __construct(CommonService $commonService,
+    SaleService $saleService,
+    StockLedgerService $stockLedgerService,
+    AccountLedgerService $accountLedgerService)
     {
         $this->commonService = $commonService;
         $this->saleService = $saleService;
+        $this->stockLedgerService = $stockLedgerService;
+        $this->accountLedgerService = $accountLedgerService;
 
     }
 
@@ -61,13 +72,11 @@ class SalesController extends Controller
     {
         $request = $request->except('_token', 'saleId');
         $session = $this->commonService->getSession();
-//        try {
-//            DB::beginTransaction();
-//            dd($session->business_id);
+        DB::beginTransaction();
+       try {
             $request['business_id'] = $session->business_id;
             $request['f_year_id'] = $session->financial_year;
             $request['type_id'] = $session->financial_year;
-            dd($request);
             //Insert data into sale tables.
             $saleMasterData = $this->saleService->prepareSaleMasterData($request);
             $saleMasterInsert = $this->commonService->findUpdateOrCreate(SaleMaster::class, ['id' => ''], $saleMasterData);
@@ -75,18 +84,18 @@ class SalesController extends Controller
             $this->saleService->saveSale($saleDetailData);
 
             //Insert data into stock table.
-            // $this->stockService->prepareAndSaveData($request, $saleMasterInsert->id, SaleService::SALE_TRANSACTION_TYPE);
+            $this->stockLedgerService->prepareAndSaveData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'));
 
             //Insert data into accounts ledger table.
-            // $debitAccountData = $this->saleService->prepareAccountDebitData($request, $saleMasterInsert->id, SaleService::SALE_TRANSACTION_TYPE, SaleService::SALE_DESCRIPTION);
-            // $creditAccountData = $this->saleService->prepareAccountCreditData($request, $saleMasterInsert->id, SaleService::SALE_TRANSACTION_TYPE, SaleService::SALE_DESCRIPTION);
-            // AccountLedger::insert($debitAccountData);
-            // AccountLedger::insert($creditAccountData);
-           /* DB::commit();
+            $debitAccountData = $this->saleService->prepareAccountDebitData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'), config('contants.SALE_DESCRIPTION'));
+            $creditAccountData = $this->saleService->prepareAccountCreditData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'), config('contants.SALE_DESCRIPTION'));
+            AccountLedger::insert($debitAccountData);
+            AccountLedger::insert($creditAccountData);
+            DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
             return redirect('sale/create')->with('error', $e->getMessage());
-        }*/
+        }
         return redirect('sale/sales-list')->with('message', config('constants.add'));
     }
 
@@ -126,11 +135,11 @@ class SalesController extends Controller
             $this->saleService->saveSale($saleDetailData);
 
             //Save data into stock table.
-            // $this->stockService->prepareAndSaveData($request, $saleMasterInsert->id, SaleService::SALE_TRANSACTION_TYPE);
-            // $debitAccountData = $this->saleService->prepareAccountDebitData($request, $saleMasterInsert->id, SaleService::SALE_TRANSACTION_TYPE, SaleService::SALE_DESCRIPTION);
-            // $creditAccountData = $this->saleService->prepareAccountCreditData($request, $saleMasterInsert->id, SaleService::SALE_TRANSACTION_TYPE, SaleService::SALE_DESCRIPTION);
-            // AccountLedger::insert($debitAccountData);
-            // AccountLedger::insert($creditAccountData);
+            $this->stockLedgerService->prepareAndSaveData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'));
+            $debitAccountData = $this->saleService->prepareAccountDebitData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'), config('contants.SALE_DESCRIPTION'));
+            $creditAccountData = $this->saleService->prepareAccountCreditData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'), config('contants.SALE_DESCRIPTION'));
+            AccountLedger::insert($debitAccountData);
+            AccountLedger::insert($creditAccountData);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
@@ -150,12 +159,14 @@ class SalesController extends Controller
             DB::beginTransaction();
             $deleteMaster = SaleMaster::where('id', request()->id)->delete();
             $deleteDetail = SaleDetail::where('sale_master_id', request()->id)->delete();
-            // $deleteStock = Stock::where('invoice_id', request()->id)->delete();
-            // $accountEntryDetail = AccountLedger::where('invoice_id', request()->id)->delete();
+            $deleteStock = StockLedger::where('invoice_id', request()->id)->delete();
+            $accountEntryDetail = AccountLedger::where('invoice_id', request()->id)->delete();
             DB::commit();
             // && $deleteStock && $accountEntryDetail
-            if ($deleteMaster && $deleteDetail ) {
-                return $this->commonService->deleteResource(SaleMaster::class, SaleDetail::class);
+            if ($deleteMaster && $deleteDetail && $deleteStock && $accountEntryDetail) {
+                return response()->json(['status' => 'success', 'message' => config('constants.delete')]);
+            } else {
+                return response()->json(['status' => 'fail', 'message' => config('constants.wrong')]);
             }
 
         } catch (\Exception $e) {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\AccountLedger;
 use App\Models\VoucherDetail;
 use App\Models\VoucherMaster;
 use App\Services\CommonService;
@@ -67,8 +68,14 @@ class BRVoucherController extends Controller
             $voucherMasterInsert = $this->commonService->findUpdateOrCreate(VoucherMaster::class, ['id' => ''], $voucherMasterData);
             $voucherDetailCreditData = $this->bankReceiptVoucherService->prepareVoucherDetailCreditData($request, $voucherMasterInsert->id);
             $voucherDetailDebitData = $this->bankReceiptVoucherService->prepareVoucherDetailDebitData($request, $voucherMasterInsert->id);
-            $this->bankReceiptVoucherService->saveVoucher($voucherDetailCreditData);
-            $this->bankReceiptVoucherService->saveVoucher($voucherDetailDebitData);
+            $this->bankReceiptVoucherService->saveVoucherCreditData($voucherDetailCreditData);
+            $this->bankReceiptVoucherService->saveVoucherDebitData($voucherDetailDebitData);
+
+
+            $debitAccountData = $this->bankReceiptVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData, config('contants.BRV'), config('contants.Brv_bank_transaction'));
+            $creditAccountData = $this->bankReceiptVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData, config('contants.BRV'), config('contants.Brv_party_transaction'));
+            AccountLedger::insert($debitAccountData);
+            AccountLedger::insert($creditAccountData);
 
             DB::commit();
         } catch (\Exception $e) {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AccountLedger;
 use App\Models\VoucherDetail;
 use App\Models\VoucherMaster;
 use App\Services\CommonService;
@@ -64,10 +65,12 @@ class JournalVoucherController extends Controller
             $request['f_year_id'] = $session->financial_year;
             $voucherMasterData = $this->journalVoucherService->prepareVoucherMasterData($request);
             $voucherMasterInsert = $this->commonService->findUpdateOrCreate(VoucherMaster::class, ['id' => ''], $voucherMasterData);
-            $voucherDetailCreditData = $this->journalVoucherService->prepareVoucherDetailCreditData($request, $voucherMasterInsert->id);
-            $voucherDetailDebitData = $this->journalVoucherService->prepareVoucherDetailDebitData($request, $voucherMasterInsert->id);
-            $this->journalVoucherService->saveVoucher($voucherDetailCreditData);
-            $this->journalVoucherService->saveVoucher($voucherDetailDebitData);
+            $voucherDetailData = $this->journalVoucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
+            $this->journalVoucherService->saveVoucher($voucherDetailData);
+
+
+            $AccountData = $this->journalVoucherService->prepareAccountData($request, $voucherDetailData, config('contants.JV'),config('contants.Jv_transaction') );
+            AccountLedger::insert($AccountData);
 
             DB::commit();
         } catch (\Exception $e) {

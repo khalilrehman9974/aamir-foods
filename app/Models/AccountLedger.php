@@ -11,16 +11,16 @@ class AccountLedger extends Model
 
     protected $guarded = ['id'];
 
-    protected $fillable = ['date','invoice_id','account_id','description','transaction_type','debit','credit','voucher_number'];
+    protected $fillable = ['invoice_id','account_id','description','debit','credit'];
 
     protected $hidden = ['created_at','updated_at'];
 
     public function customer(){
-        return $this->belongsTo(Account::class, 'account_id', 'account_code');
+        return $this->belongsTo(CoaDetailAccount::class, 'account_id', 'account_code');
     }
 
     public function party(){
-        return $this->belongsTo(Account::class, 'account_id', 'account_code');
+        return $this->belongsTo(CoaDetailAccount::class, 'account_id', 'account_code');
     }
 
     public function bank(){

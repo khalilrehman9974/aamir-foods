@@ -171,29 +171,26 @@ class SaleService
         }
     }
 
-    // public function prepareAccountCreditData($request, $saleParentId, $dataType, $description)
-    // {
-    //     return [
-    //         'date' => Carbon::parse($request['date'])->format('Y-m-d'),
-    //         'invoice_id' => $saleParentId,
-    //         'account_id' => 'S-00000001',
-    //         'description' => $description . ' '. $saleParentId,
-    //         'transaction_type' => $dataType,
-    //         'debit' => 0,
-    //         'credit' => $request['totalAmount'],
-    //     ];
-    // }
+    public function prepareAccountCreditData($request, $saleParentId, $dataType, $description)
+    {
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'account_id' => 'S-00000001',
+            'description' => $description . ' '. $saleParentId. $dataType,
+            'debit' => 0,
+            'credit' => $request['totalAmount'],
+        ];
+    }
 
-    // public function prepareAccountDebitData($request, $saleParentId, $dataType, $description)
-    // {
-    //     return [
-    //         'date' => Carbon::parse($request['date'])->format('Y-m-d'),
-    //         'invoice_id' => $saleParentId,
-    //         'account_id' => $request['customer_id'],
-    //         'description' => $description . ' '. $saleParentId,
-    //         'transaction_type' => $dataType,
-    //         'debit' => $request['totalAmount'],
-    //         'credit' => 0,
-    //     ];
-    // }
+    public function prepareAccountDebitData($request, $saleParentId, $dataType, $description)
+    {
+        return [
+            'invoice_id' => $saleParentId,
+            'account_id' => $request['customer_id'],
+            'description' => $description . ' '. $saleParentId, $dataType,
+            'debit' => $request['totalAmount'],
+            'credit' => 0,
+        ];
+    }
 }

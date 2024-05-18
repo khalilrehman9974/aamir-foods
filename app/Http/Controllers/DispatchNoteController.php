@@ -123,7 +123,6 @@ class DispatchNoteController extends Controller
             $dispatchDetailData = $this->dispatchNoteService->prepareDispatchDetailData($request, $dispatchMasterInsert->id);
             $this->dispatchNoteService->saveDispatch($dispatchDetailData);
 
-
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();

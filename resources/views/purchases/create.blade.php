@@ -260,13 +260,15 @@
                                                                                     <td class="text-right qty">
                                                                                         <input type="text"
                                                                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                                            value="{{ old('quantity', !empty($purchase->quantity) ? $purchase->quantity : '') }}" placeholder="Qty"
+                                                                                            value="{{ old('quantity', !empty($purchase->quantity) ? $purchase->quantity : '') }}"
+                                                                                            placeholder="Qty"
                                                                                             name="quantity[]">
                                                                                     </td>
                                                                                     <td class="unit">
                                                                                         <input type="text"
                                                                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                                            placeholder="unit" value="{{ old('unit', !empty($purchase->unit) ? $purchase->unit : '') }}"
+                                                                                            placeholder="unit"
+                                                                                            value="{{ old('unit', !empty($purchase->unit) ? $purchase->unit : '') }}"
                                                                                             name="unit[]">
                                                                                     </td>
                                                                                     <td class="text-right amount">
@@ -279,7 +281,8 @@
                                                                                     <td class="rate">
                                                                                         <input type="text"
                                                                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                                            placeholder="Rate" value="{{ old('rate', !empty($purchase->rate) ? $purchase->rate : '') }}"
+                                                                                            placeholder="Rate"
+                                                                                            value="{{ old('rate', !empty($purchase->rate) ? $purchase->rate : '') }}"
                                                                                             name="rate[]">
                                                                                     </td>
                                                                                     <td class="text-right amount">
@@ -310,8 +313,8 @@
                                                                             <label for="invoice-detail-notes"
                                                                                 class="col-sm-12 col-form-label col-form-label-sm">Remarks</label>
                                                                             <div class="col-sm-12">
-                                                                                <textarea
-                                                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" name="remarks" id="remarks" placeholder='Enter The Remarks' style="height: 88px;">{{@$purchases->remarks}}</textarea>
+                                                                                <textarea class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" name="remarks"
+                                                                                    id="remarks" placeholder='Enter The Remarks' style="height: 88px;">{{ @$purchases->remarks }}</textarea>
                                                                             </div>
                                                                         </div>
 

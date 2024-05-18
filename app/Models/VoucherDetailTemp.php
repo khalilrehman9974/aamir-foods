@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class VoucherDetail extends Model
+class VoucherDetailTemp extends Model
 {
     protected $guarded =['id'];
     protected $fillable = ['voucher_master_id', 'account_id', 'description',
@@ -14,7 +15,4 @@ class VoucherDetail extends Model
     {
         return $this->hasMany(VoucherMaster::class, 'id', 'voucher_master_id');
     }
-
 }
-
-

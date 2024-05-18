@@ -2,22 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\StockLedger;
 use Illuminate\Http\Request;
+use App\Models\AccountLedger;
 use App\Models\PurchaseDetail;
 use App\Models\PurchaseMaster;
+use App\Services\AccountLedgerService;
 use App\Services\CommonService;
 use App\Services\PurchaseService;
 use Illuminate\Support\Facades\DB;
+use App\Services\StockLedgerService;
 
 class PurchaseController extends Controller
 {
     protected $commonService;
     protected $purchaseService;
+    protected $stockLedgerService;
+    protected $accountLedgerService;
 
-    public function __construct(CommonService $commonService, PurchaseService $purchaseService)
+    public function __construct(CommonService $commonService,
+    PurchaseService $purchaseService,
+    StockLedgerService $stockLedgerService,
+    AccountLedgerService $accountLedgerService)
     {
         $this->commonService = $commonService;
         $this->purchaseService = $purchaseService;
+        $this->stockLedgerService = $stockLedgerService;
+        $this->accountLedgerService = $accountLedgerService;
 
     }
 
@@ -60,6 +71,12 @@ class PurchaseController extends Controller
             $purchaseDetailData = $this->purchaseService->preparePurchaseDetailData($request, $purchaseMasterInsert->id);
             $this->purchaseService->savePurchase($purchaseDetailData);
 
+            $stockLeadgerData = $this->stockLedgerService->prepareAndSaveData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE,);
+            //Insert data into accounts ledger table.
+            $creditAccountData = $this->accountLedgerService->prepareCreditData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE, PurchaseService::PURCHASE_DESCRIPTION);
+            $debitAccountData = $this->accountLedgerService->prepareDebitData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE, PurchaseService::PURCHASE_DESCRIPTION);
+            AccountLedger::insert($creditAccountData);
+            AccountLedger::insert($debitAccountData);
             DB::commit();
         // } catch (\Exception $e) {
         //     DB::rollback();
@@ -82,6 +99,36 @@ class PurchaseController extends Controller
         }
 
         return view('purchases.create', compact('pageTitle','purchase','dropDownData', 'purchaseDetails'));
+    }
+
+    public function update(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $request = request()->all();
+            PurchaseMaster::where('id', $request['id'])->delete();
+            PurchaseDetail::where('purchase_master_id', $request['id'])->delete();
+            StockLedger::where('invoice_id', $request['id'])->delete();
+            AccountLedger::where('invoice_id', $request['id'])->delete();
+
+            //Save data into relevant tables.
+            $purchaseMasterData = $this->purchaseService->preparePurchaseMasterData($request);
+            $purchaseMasterInsert = $this->commonService->findUpdateOrCreate(PurchaseMaster::class, ['id' => request('productId')], $purchaseMasterData);
+            $purchaseDetailData = $this->purchaseService->preparePurchaseDetailData($request, $purchaseMasterInsert->id);
+            $this->purchaseService->savePurchase($purchaseDetailData);
+            //Save data into stock table.
+            $this->stockLedgerService->prepareAndSaveData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE);
+            $creditAccountData = $this->accountLedgerService->prepareCreditData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE, PurchaseService::PURCHASE_DESCRIPTION);
+            $debitAccountData = $this->accountLedgerService->prepareDebitData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE, PurchaseService::PURCHASE_DESCRIPTION);
+            AccountLedger::insert($creditAccountData);
+            AccountLedger::insert($debitAccountData);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect('purchase/purchase-list')->with('error', $e->getMessage());
+        }
+
+        return redirect('purchase/purchase-list')->with('message', config('constants.update'));
     }
 
     /*

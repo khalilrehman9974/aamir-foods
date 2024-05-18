@@ -13,7 +13,9 @@ use App\Models\CoaInventoryDetailAccount;
 class PurchaseService
 {
     const PER_PAGE = 10;
-
+    const PURCHASE_TRANSACTION_TYPE = 'purchase';
+    const PURCHASE_DESCRIPTION = 'Purchased products';
+    
     protected $commonService;
 
     public function __construct(CommonService $commonService)

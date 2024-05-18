@@ -50,7 +50,7 @@ class CPVoucherService
     public function getVoucherDetailById($id)
     {
         return VoucherDetail::select(
-            'voucher_details.code',
+            'voucher_details.account_id',
             'voucher_details.description',
             'voucher_details.debit',
             'voucher_details.credit'
@@ -107,10 +107,10 @@ class CPVoucherService
     public function prepareVoucherDetailDebitData($request, $voucherParentId)
     {
         return [
-            'code' => $request['code'],
+            'account_id' => $request['account_id'],
             'description' => $request['description'],
             'debit' => $request['amount'],
-            'credit' => 0,
+            'credit' => config('constants.ZERO'),
             'created_by' => Auth::user()->id,
             'updated_by' => Auth::user()->id,
             'voucher_master_id' => $voucherParentId,
@@ -125,9 +125,9 @@ class CPVoucherService
     public function prepareVoucherDetailCreditData($request, $voucherParentId)
     {
         return [
-            'code' => config('constants.account_codes.CASH_IN_HAND'),
+            'account_id' => config('constants.account_codes.CASH_IN_HAND'),
             'description' => $request['description'],
-            'debit' => 0,
+            'debit' => config('constants.ZERO'),
             'credit' => $request['amount'],
             'created_by' => Auth::user()->id,
             'updated_by' => Auth::user()->id,
@@ -135,18 +135,55 @@ class CPVoucherService
         ];
     }
 
+
+    public function prepareAccountDebitData($request, $voucherParentId, $dataType, $description)
+    {
+        return [
+            'account_id' => $request['account_id'],
+            'description' => $description . ' '. $voucherParentId, $dataType,
+            'debit' => $request['amount'],
+            'credit' => config('constants.ZERO'),
+        ];
+    }
+
+    public function prepareAccountCreditData($request, $voucherParentId, $dataType, $description)
+    {
+        return [
+            'account_id' => config('constants.account_codes.CASH_IN_HAND'),
+            'description' => $description . ' '. $voucherParentId. $dataType,
+            'debit' => config('constants.ZERO'),
+            'credit' => $request['amount'],
+        ];
+    }
+
     /*
      * Save Voucher data.
      * @param: $data
      * */
-    public function saveVoucher($data)
+    public function saveVoucherCreditData($data)
     {
-        foreach ($data['code'] as $key => $value) {
-            if (!empty($data['code'][$key])) {
-                $rec['code'] = $data['code'][$key];
+        foreach ($data['account_id'] as $key => $value) {
+            if (!empty($data['account_id'][$key])) {
+                $rec['account_id'] = $data['account_id'][$key];
                 $rec['description'] = $data['description'][$key];
                 $rec['debit'] = config('constants.ZERO');
-                $rec['credit'] = $data['amount'][$key];
+                $rec['credit'] = $data['credit'][$key];
+                $rec['created_by'] = Auth::user()->id;
+                $rec['updated_by'] = Auth::user()->id;
+                $rec['voucher_master_id'] = $data['voucher_master_id'];
+                VoucherDetail::create($rec);
+            }
+        }
+    }
+
+    public function saveVoucherDebitData($data)
+    {
+        foreach ($data['account_id'] as $key => $value) {
+            if (!empty($data['account_id'][$key])) {
+                $rec['account_id'] = $data['account_id'][$key];
+                $rec['description'] = $data['description'][$key];
+                $rec['debit'] = $data['debit'][$key];
+                $rec['credit'] = config('constants.ZERO');
                 $rec['created_by'] = Auth::user()->id;
                 $rec['updated_by'] = Auth::user()->id;
                 $rec['voucher_master_id'] = $data['voucher_master_id'];

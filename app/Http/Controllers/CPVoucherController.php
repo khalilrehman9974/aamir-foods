@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\AccountLedger;
 use App\Models\VoucherDetail;
 use App\Models\VoucherMaster;
 use App\Services\CommonService;
@@ -68,8 +69,14 @@ class CPVoucherController extends Controller
             $voucherMasterInsert = $this->commonService->findUpdateOrCreate(VoucherMaster::class, ['id' => ''], $voucherMasterData);
             $voucherDetailCreditData = $this->cpVoucherService->prepareVoucherDetailCreditData($request, $voucherMasterInsert->id);
             $voucherDetailDebitData = $this->cpVoucherService->prepareVoucherDetailDebitData($request, $voucherMasterInsert->id);
-            $this->cpVoucherService->saveVoucher($voucherDetailCreditData);
-            $this->cpVoucherService->saveVoucher($voucherDetailDebitData);
+            $this->cpVoucherService->saveVoucherCreditData($voucherDetailCreditData);
+            $this->cpVoucherService->saveVoucherDebitData($voucherDetailDebitData);
+
+            //Insert data into accounts ledger table.
+            $debitAccountData = $this->cpVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData, config('contants.CPV'), config('contants.Cpv_party_transaction'));
+            $creditAccountData = $this->cpVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData, config('contants.CPV'), config('contants.Cpv_cash_in_hand'));
+            AccountLedger::insert($debitAccountData);
+            AccountLedger::insert($creditAccountData);
 
             DB::commit();
         } catch (\Exception $e) {

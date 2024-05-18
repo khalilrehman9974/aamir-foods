@@ -273,6 +273,11 @@
                                                                             Update
                                                                         @endif
                                                                     </button>
+                                                                    <input type="submit" style="float: right"
+                                                                        value="{{ 'SaveAsDraft' }}"
+                                                                        class="btn btn-primary save-as me-1 mt-5 mb-4 mr-5">
+                                                                    <input type="hidden" name="save_type"
+                                                                        id="save_type" />
                                                                     {{-- @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
 
                                                                         @endif --}}

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\VoucherDetail;
 use App\Models\VoucherMaster;
+use Illuminate\Support\Carbon;
 use App\Models\CoaDetailAccount;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,6 +16,20 @@ class BankPaymentVoucherService
     {
         $this->commonService = $commonService;
     }
+
+
+    public function findUpdateOrCreate($model, array $where, array $data)
+    {
+        $object = $model::firstOrNew($where);
+
+        foreach ($data as $property => $value){
+            $object->{$property} = $value;
+        }
+        $object->save();
+
+        return $object;
+    }
+
 
     /*
      * Get contract by id.
@@ -99,6 +114,7 @@ class BankPaymentVoucherService
         ];
     }
 
+
     /*
      * Prepare Purchase detail data.
      * @param: $request
@@ -107,7 +123,7 @@ class BankPaymentVoucherService
     public function prepareVoucherDetailDebitData($request, $voucherParentId)
     {
         return [
-            'code' => $request['code'],
+            'account_id' => $request['account_id'],
             'description' => $request['description'],
             'debit' => $request['amount'],
             'credit' => 0,
@@ -125,7 +141,8 @@ class BankPaymentVoucherService
     public function prepareVoucherDetailCreditData($request, $voucherParentId)
     {
         return [
-            'code' => config('constants.account_codes.CASH_IN_HAND'),
+            // 'code' => $request['code'],
+            'account_id' => $request['bank_id'],
             'description' => $request['description'],
             'debit' => 0,
             'credit' => $request['amount'],
@@ -139,14 +156,31 @@ class BankPaymentVoucherService
      * Save Voucher data.
      * @param: $data
      * */
-    public function saveVoucher($data)
+    public function saveVoucherDebitData($data)
     {
-        foreach ($data['code'] as $key => $value) {
-            if (!empty($data['code'][$key])) {
-                $rec['code'] = $data['code'][$key];
+        foreach ($data['account_id'] as $key => $value) {
+            if (!empty($data['account_id'][$key])) {
+                $rec['account_id'] = $data['account_id'][$key];
+                $rec['description'] = $data['description'][$key];
+                $rec['debit'] = $data['debit'][$key];
+                $rec['credit'] = config('constants.ZERO');
+                $rec['created_by'] = Auth::user()->id;
+                $rec['updated_by'] = Auth::user()->id;
+                $rec['voucher_master_id'] = $data['voucher_master_id'];
+                VoucherDetail::create($rec);
+            }
+        }
+    }
+
+
+    public function saveVoucherCreditData($data)
+    {
+        foreach ($data['account_id'] as $key => $value) {
+            if (!empty($data['account_id'][$key])) {
+                $rec['account_id'] = $data['account_id'][$key];
                 $rec['description'] = $data['description'][$key];
                 $rec['debit'] = config('constants.ZERO');
-                $rec['credit'] = $data['amount'][$key];
+                $rec['credit'] = $data['credit'][$key];
                 $rec['created_by'] = Auth::user()->id;
                 $rec['updated_by'] = Auth::user()->id;
                 $rec['voucher_master_id'] = $data['voucher_master_id'];
@@ -160,5 +194,28 @@ class BankPaymentVoucherService
     //     // $voucher = VoucherMaster::find($id);; ? CoaDetailAccount::max('account_code') + 1 : 1
     //     return CoaDetailAccount::find($code);
     // }
+
+    public function prepareAccountCreditData($request, $voucherParentId, $dataType, $description)
+    {
+        return [
+            'account_id' => $voucherParentId,
+            'description' => $description . ' '. $voucherParentId. $dataType,
+            'debit' => config('constants.ZERO'),
+            'credit' => $request['credit'],
+        ];
+    }
+
+    public function prepareAccountDebitData($request, $voucherParentId, $dataType, $description)
+    {
+        return [
+            'account_id' => $voucherParentId,
+            'description' => $description . ' '. $voucherParentId, $dataType,
+            'debit' => $request['amount'],
+            'credit' => config('constants.ZERO'),
+        ];
+    }
+
+
+
 
 }

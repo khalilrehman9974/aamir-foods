@@ -17,11 +17,10 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->Increments('id');
             $table->integer('voucher_master_id')->unsigned()->index();
-            $table->string('code');
-            $table->integer('account_title_id');
+            $table->integer('account_id');
             $table->string('description');
-            $table->double('debit')->nullable();
-            $table->double('credit')->nullable();
+            $table->double('debit');
+            $table->double('credit');
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')->nullable();

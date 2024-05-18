@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\AccountLedger;
 use App\Models\VoucherDetail;
 use App\Models\VoucherMaster;
 use App\Services\CommonService;
@@ -67,8 +68,14 @@ class CRVoucherController extends Controller
             $voucherMasterInsert = $this->commonService->findUpdateOrCreate(VoucherMaster::class, ['id' => ''], $voucherMasterData);
             $voucherDetailCreditData = $this->cashReceiptVoucherService->prepareVoucherDetailCreditData($request, $voucherMasterInsert->id);
             $voucherDetailDebitData = $this->cashReceiptVoucherService->prepareVoucherDetailDebitData($request, $voucherMasterInsert->id);
-            $this->cashReceiptVoucherService->saveVoucher($voucherDetailCreditData);
-            $this->cashReceiptVoucherService->saveVoucher($voucherDetailDebitData);
+            $this->cashReceiptVoucherService->saveVoucherDebitData($voucherDetailCreditData);
+            $this->cashReceiptVoucherService->saveVoucherCreditData($voucherDetailDebitData);
+
+
+            $debitAccountData = $this->cashReceiptVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData, config('contants.CRV'),config('contants.Crv_cash_in_hand') );
+            $creditAccountData = $this->cashReceiptVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData, config('contants.CRV'), config('contants.Crv_party_transaction'));
+            AccountLedger::insert($debitAccountData);
+            AccountLedger::insert($creditAccountData);
 
             DB::commit();
         } catch (\Exception $e) {

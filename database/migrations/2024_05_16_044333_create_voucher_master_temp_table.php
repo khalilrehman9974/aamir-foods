@@ -13,8 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('voucher_masters_log', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
+        Schema::create('voucher_master_temp', function (Blueprint $table) {
             $table->Increments('id');
             $table->date('date');
             $table->string('vr_type');
@@ -26,6 +25,10 @@ return new class extends Migration
             $table->timestamp('deleted_at')->nullable();
             $table->string('created_by');
             $table->string('updated_by');
+
+            $table->foreign('f_year_id')
+            ->references('id')->on('financial_years')
+            ->onDelete('cascade');
         });
     }
 
@@ -36,6 +39,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('voucher_masters_log');
+        Schema::dropIfExists('voucher_master_temp');
     }
 };

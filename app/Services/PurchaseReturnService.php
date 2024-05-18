@@ -13,6 +13,8 @@ use App\Models\CoaInventoryDetailAccount;
 class PurchaseReturnService
 {
     const PER_PAGE = 10;
+    const PURCHASE_RETURN_TRANSACTION_TYPE = 'purchase_return';
+    const PURCHASE_RETURN_DESCRIPTION = 'Purchased Return Products';
 
     protected $commonService;
 
@@ -166,29 +168,28 @@ class PurchaseReturnService
         }
     }
 
-    // public function prepareAccountCreditData($request, $saleParentId, $dataType, $description)
-    // {
-    //     return [
-    //         'date' => Carbon::parse($request['date'])->format('Y-m-d'),
-    //         'invoice_id' => $saleParentId,
-    //         'account_id' => 'S-00000001',
-    //         'description' => $description . ' '. $saleParentId,
-    //         'transaction_type' => $dataType,
-    //         'debit' => 0,
-    //         'credit' => $request['totalAmount'],
-    //     ];
-    // }
+    public function prepareAccountCreditData($request, $purchaseParentId, $dataType, $description)
+    {
+        return [
+                'invoice_id' => $purchaseParentId,
+            'account_id' => 'PR-00000001',
+            'description' => $description . ' '. $purchaseParentId, $dataType,
+            'debit' => 0,
+            'credit' => $request['totalAmount'],
 
-    // public function prepareAccountDebitData($request, $saleParentId, $dataType, $description)
-    // {
-    //     return [
-    //         'date' => Carbon::parse($request['date'])->format('Y-m-d'),
-    //         'invoice_id' => $saleParentId,
-    //         'account_id' => $request['customer_id'],
-    //         'description' => $description . ' '. $saleParentId,
-    //         'transaction_type' => $dataType,
-    //         'debit' => $request['totalAmount'],
-    //         'credit' => 0,
-    //     ];
-    // }
+        ];
+    }
+
+    public function prepareAccountDebitData($request, $purchaseParentId, $dataType, $description)
+    {
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $purchaseParentId,
+            'account_id' => $request['party_id'],
+            'description' => $description . ' '. $purchaseParentId, $dataType,
+            'debit' => $request['totalAmount'],
+            'credit' => 0,
+
+        ];
+    }
 }
