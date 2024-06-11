@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Models\AccountLedger;
 use App\Models\VoucherDetail;
 use App\Models\VoucherMaster;
 use Illuminate\Support\Carbon;
 use App\Models\CoaDetailAccount;
+use App\Models\VoucherDetailTemp;
 use Illuminate\Support\Facades\Auth;
 
 class BankPaymentVoucherService
@@ -79,7 +81,7 @@ class BankPaymentVoucherService
      * @queries: $queries
      * @return: object
      * */
-    public function searchVoucher($request)
+    public function searchVoucher2($request)
     {
         $query = VoucherMaster::groupBy(
             'voucher_masters.id',
@@ -96,7 +98,16 @@ class BankPaymentVoucherService
         return $this->commonService->paginate($vouchers, config('constants.PER_PAGE'));
     }
 
+    public function searchVoucher($request)
+    {
+        $q = VoucherMaster::query();
+        if (!empty($request['param'])) {
+            $q = VoucherMaster::with('vouchers')->where('account_id', 'like', '%' . $request['param'] . '%');
+        }
+        $vouchers = $q->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
 
+        return $vouchers;
+    }
 
     /*
      * Prepare Voucher master data.
@@ -105,10 +116,13 @@ class BankPaymentVoucherService
      * */
     public function prepareVoucherMasterData($request)
     {
+        $session = $this->commonService->getSession();
         return [
-            'date' => $request['date'],
-            'vr_type' => config('constants.vouchers.BPV'),
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'vr_type' => config('constants.BPV'),
             'total_amount' => $request['total_amount'],
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
             'created_by' => Auth::user()->id,
             'updated_by' => Auth::user()->id
         ];
@@ -133,6 +147,20 @@ class BankPaymentVoucherService
         ];
     }
 
+    public function prepareVoucherDetailTempData($request, $voucherParentId)
+    {
+        // dd($request);
+        return [
+            'account_id' => $request['account_id'],
+            'bank_id' => $request['bank_id'],
+            'description' => $request['description'],
+            'amount' => $request['amount'],
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id,
+            'voucher_master_id' => $voucherParentId,
+        ];
+    }
+
     /*
      * Prepare Purchase detail data.
      * @param: $request
@@ -141,7 +169,6 @@ class BankPaymentVoucherService
     public function prepareVoucherDetailCreditData($request, $voucherParentId)
     {
         return [
-            // 'code' => $request['code'],
             'account_id' => $request['bank_id'],
             'description' => $request['description'],
             'debit' => 0,
@@ -173,6 +200,22 @@ class BankPaymentVoucherService
     }
 
 
+    public function saveVoucherTempData($data)
+    {
+        foreach ($data['account_id'] as $key => $value) {
+            if (!empty($data['account_id'][$key])) {
+                $rec['account_id'] = $data['account_id'][$key];
+                $rec['description'] = $data['description'][$key];
+                $rec['bank_id'] = $data['bank_id'][$key];
+                $rec['amount'] = $data['amount'][$key];
+                $rec['created_by'] = Auth::user()->id;
+                $rec['updated_by'] = Auth::user()->id;
+                $rec['voucher_master_id'] = $data['voucher_master_id'];
+                VoucherDetailTemp::create($rec);
+            }
+        }
+    }
+
     public function saveVoucherCreditData($data)
     {
         foreach ($data['account_id'] as $key => $value) {
@@ -189,33 +232,60 @@ class BankPaymentVoucherService
         }
     }
 
+
     // public function getPartyCode()
     // {
     //     // $voucher = VoucherMaster::find($id);; ? CoaDetailAccount::max('account_code') + 1 : 1
     //     return CoaDetailAccount::find($code);
     // }
 
-    public function prepareAccountCreditData($request, $voucherParentId, $dataType, $description)
+    public function prepareAccountCreditData($request, $voucherParentId)
     {
         return [
-            'account_id' => $voucherParentId,
-            'description' => $description . ' '. $voucherParentId. $dataType,
+            'account_id' => $request['account_id'],
+            'description' => $request['description'],
             'debit' => config('constants.ZERO'),
-            'credit' => $request['credit'],
+            'credit' => $request['amount'],
         ];
     }
 
-    public function prepareAccountDebitData($request, $voucherParentId, $dataType, $description)
+    public function saveCreditData($data)
+    {
+        // dd($data);
+        foreach ($data['account_id'] as $key => $value) {
+            // dd($key,$value);
+            if (!empty($data['account_id'][$key])) {
+                $rec['account_id'] = $data['account_id'][$key];
+                $rec['description'] = $data['description'][$key];
+                $rec['debit'] = config('constants.ZERO');
+                $rec['credit'] = $data['credit'][$key];
+                AccountLedger::create($rec);
+            }
+        }
+    }
+
+    public function prepareAccountDebitData($request, $voucherParentId)
     {
         return [
-            'account_id' => $voucherParentId,
-            'description' => $description . ' '. $voucherParentId, $dataType,
+            'account_id' => $request['account_id'],
+            'description' => $request['description'] ,
             'debit' => $request['amount'],
             'credit' => config('constants.ZERO'),
         ];
     }
 
-
+    public function saveDebitData($data)
+    {
+        foreach ($data['account_id'] as $key => $value) {
+            if (!empty($data['account_id'][$key])) {
+                $rec['account_id'] = $data['account_id'][$key];
+                $rec['description'] = $data['description'][$key];
+                $rec['debit'] = $data['debit'][$key];
+                $rec['credit'] = config('constants.ZERO');
+                AccountLedger::create($rec);
+            }
+        }
+    }
 
 
 }

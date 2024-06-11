@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class VoucherMasterTemp extends Model
 {
+    protected $table = 'voucher_master_temp';
     protected $fillable = ['date', 'f_year_id', 'total_amount', 'vr_type_id', 'business_id', 'created_by', 'updated_by'];
 
     public function f_year_id()

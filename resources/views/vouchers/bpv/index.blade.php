@@ -30,14 +30,15 @@
                         <nav class="breadcrumb-style-one" aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                                <li class="breadcrumb-item"><a href="{{ route('bpv.list') }}">List of Bank Payment Vouchers</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('bpv.list') }}">List of Bank Payment
+                                        Vouchers</a></li>
                             </ol>
                         </nav>
                     </div>
                 </div>
                 <div class="col-lg-0 col-6 ">
-                    <a href="{{ route('bpv.create') }}" class="btn btn-primary mt-2 mb-2 me-8"
-                        style="float : right; " style="">Create
+                    <a href="{{ route('bpv.create') }}" class="btn btn-primary mt-2 mb-2 me-8" style="float : right; "
+                        style="">Create
                     </a>
 
                 </div>
@@ -87,92 +88,98 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if($vouchers)
-                                @foreach ($vouchers as $bpv)
-                                    <tr id="row_{{ $bpv->id }}">
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $bpv->id }}</h6>
+                                @if ($vouchers)
+                                    @foreach ($vouchers as $bpv)
+                                        <tr id="row_{{ $bpv->id }}">
+                                            <td>
+                                                <div class="media">
+                                                    <div class="media-body align-self-center">
+                                                        <h6 class="mb-0">{{ $bpv->id }}</h6>
+
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="media">
+                                                    <div class="media-body align-self-center">
+                                                        <h6 class="mb-0">{{ $bpv->date }}</h6>
+
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="media">
+                                                    <div class="media-body align-self-center">
+                                                        <h6 class="mb-0">{{ $bpv->vouchers}}</h6>
+
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="media">
+                                                    <div class="media-body align-self-center">
+                                                        <h6 class="mb-0">{{ $bpv->total_amount }}</h6>
+
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <td class="text-center">
+                                                <div class="action-btns">
+                                                    @if ((!empty($permission->edit_access) && $permission->edit_access == 1) || Auth::user()->is_admin == 1)
+                                                        <a href="{{ route('bpv.edit', ['id' => $bpv->id]) }}"
+                                                            class="action-btn btn-edit bs-tooltip me-2"
+                                                            data-toggle="tooltip" data-placement="top" title="Edit">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                                height="24" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round"
+                                                                class="feather feather-edit-2">
+                                                                <path
+                                                                    d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z">
+                                                                </path>
+                                                            </svg>
+                                                        </a>
+                                                    @endif
+                                                    @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
+                                                        <a href="{{ route('bpv.delete') }}"
+                                                            class="action-btn btn-delete bs-tooltip"
+                                                            data-toggle="tooltip" data-placement="top"
+                                                            title="Delete">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                                height="24" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round"
+                                                                class="feather feather-trash-2">
+                                                                <polyline points="3 6 5 6 21 6"></polyline>
+                                                                <path
+                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                                                </path>
+                                                                <line x1="10" y1="11" x2="10"
+                                                                    y2="17">
+                                                                </line>
+                                                                <line x1="14" y1="11" x2="14"
+                                                                    y2="17">
+                                                                </line>
+                                                            </svg>
+                                                        </a>
+                                                    @endif
 
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $bpv->date }}</h6>
-
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $bpv->account_title_id }}</h6>
-
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $bpv->total_amount }}</h6>
-
-                                                </div>
-                                            </div>
-                                        </td>
-
-                                        <td class="text-center">
-                                            <div class="action-btns">
-                                                @if ((!empty($permission->edit_access) && $permission->edit_access == 1) || Auth::user()->is_admin == 1)
-                                                    <a href="{{ route('bpv.edit', ['id' => $bpv->id]) }}"
-                                                        class="action-btn btn-edit bs-tooltip me-2"
-                                                        data-toggle="tooltip" data-placement="top" title="Edit">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                            height="24" viewBox="0 0 24 24" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            stroke-linecap="round" stroke-linejoin="round"
-                                                            class="feather feather-edit-2">
-                                                            <path
-                                                                d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z">
-                                                            </path>
-                                                        </svg>
-                                                    </a>
-                                                @endif
-                                                @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
-                                                    <a href="{{ route('bpv.delete') }}"
-                                                        class="action-btn btn-delete bs-tooltip" data-toggle="tooltip"
-                                                        data-placement="top" title="Delete">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                            height="24" viewBox="0 0 24 24" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            stroke-linecap="round" stroke-linejoin="round"
-                                                            class="feather feather-trash-2">
-                                                            <polyline points="3 6 5 6 21 6"></polyline>
-                                                            <path
-                                                                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                                                            </path>
-                                                            <line x1="10" y1="11" x2="10"
-                                                                y2="17">
-                                                            </line>
-                                                            <line x1="14" y1="11" x2="14"
-                                                                y2="17">
-                                                            </line>
-                                                        </svg>
-                                                    </a>
-                                                @endif
-
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                 @else
-                                <h4>No data found</h4>
+                                    <h4>No data found</h4>
                                 @endif
                             </tbody>
                         </table>
                     </div>
+                    <nav aria-label=" ListPagination">
+                        <ul class="pagination justify-content-end">
+                            {!! $vouchers->appends(request()->query())->links() !!}
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
@@ -184,4 +191,3 @@
 
     </x-slot>
 </x-base-layout>
-

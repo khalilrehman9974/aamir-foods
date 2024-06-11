@@ -283,8 +283,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/delete', ['as' => 'bpv.delete', 'uses' => 'App\Http\Controllers\BPVoucherController@delete']);
         Route::post('show/{id}', ['as' => 'bpv.show', 'uses' => 'App\Http\Controllers\BPVoucherController@show']);
         Route::get('search', ['as' => 'bpv.search', 'uses' => 'App\Http\Controllers\BPVoucherController@search']);
-        Route::get('get-party-code/{code}', ['as' => 'party-code', 'uses' => 'App\Http\Controllers\BPVoucherController@getPartyCode']);
         Route::get('get-party/{code}', ['as' => 'party-code', 'uses' => 'App\Http\Controllers\BPVoucherController@getParty']);
+        Route::get('get-detail-data/{id}', ['as' => 'get-detail-data', 'uses' => 'App\Http\Controllers\BPVoucherController@getDetailData']);
+        Route::get('get-party-code/{name}', ['as' => 'party-code', 'uses' => 'App\Http\Controllers\BPVoucherController@getPartyCode']);
     });
 
     Route::group(['prefix' => 'brv', 'middleware' => 'auth'], function () {

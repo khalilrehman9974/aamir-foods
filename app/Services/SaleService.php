@@ -76,7 +76,7 @@ class SaleService
             'sale_masters.bilty_no',
             'sale_masters.remarks',
             'sale_masters.created_at',
-            'sale_masters.deliverd_to',
+            // 'sale_masters.deliverd_to',
             'sale_masters.updated_at',
             'sale_masters.saleman_id',
             'sale_masters.transporter_id',

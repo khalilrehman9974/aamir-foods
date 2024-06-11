@@ -44,7 +44,7 @@ class BRVoucherController extends Controller
     public function create()
     {
         $pageTitle = 'Create BRV';
-        $maxid = VoucherMaster::where('vr_type_id', 'BRV')->max('id') + 1;
+        $maxid = VoucherMaster::where('vr_type', 'BRV')->max('id') + 1;
         $dropDownData = $this->bankReceiptVoucherService->DropDownData();
         return view('vouchers.brv.create', compact( 'pageTitle','maxid' ,'dropDownData'));
     }

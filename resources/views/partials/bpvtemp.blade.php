@@ -18,7 +18,10 @@
                         <label for="date">
                             Date</label>
                         <input type="text" class="form-control form-control-sm" name="date" id="date"
-                            placeholder="Select The Date">
+                        data-date-format="d-m-Y"
+                        {{-- value="{{ empty($bpvTemp->date) ? null : \Illuminate\Support\Carbon::parse($bpvTemp->date)->format('d-m-Y') }}" --}}
+                        value="{{ old('date', !empty($bpvTemp->date) ? $bpvTemp->date : '') }}"
+                        placeholder="Select The Date">
                     </div>
                 </div>
 
@@ -57,23 +60,9 @@
         </td>
 
         <td class="description">
-            <select id="party" class="form-control select2 custom-select mr-0 mb-0 form-control-sm">
-                <option selected="">
-                    Please select the
-                    Party</option>
-                @foreach ($dropDownData['accounts'] as $key => $value)
-                    <option value="{{ $key }}"
-                        {{ (old('account_title_id') == $key ? 'selected' : '') || (!empty($bpvDetail->account_title_id) ? collect($bpvDetail->account_title_id)->contains($key) : '') ? 'selected' : '' }}>
-                        {{ $value }}
-                    </option>
-                @endforeach
-            </select>
-            <textarea id="description" type="text" name="description[]"
-                value="{{ old('description', !empty($bpvDetail->description) ? $bpvDetail->description : '') }}"
-                placeholder="Please Enter Description" class="form-control form-control-sm mt-3"></textarea>
-        </td>
-        <td class="title">
-            <select id="account_title" class="form-control select2 custom-select mr-0 mb-0 form-control-sm">
+            <select id="party" name="account_id[]"
+             class="form-control select2 custom-select mr-0 mb-0 form-control-sm">
+
                 <option selected="">
                     Please select the
                     Party</option>
@@ -84,8 +73,25 @@
                     </option>
                 @endforeach
             </select>
+            <textarea id="description" type="text" name="description[]"
+                value="{{ old('description', !empty($bpvDetail->description) ? $bpvDetail->description : '') }}"
+                placeholder="Please Enter Description" class="form-control form-control-sm mt-3">{{@$bpvDetail->description}}</textarea>
+        </td>
+        <td class="title">
+            <select id="account_title" name="bank_id[]"
+                class="form-control select2 custom-select mr-0 mb-0 form-control-sm">
+                <option selected="">
+                    Please select the
+                    Party</option>
+                @foreach ($dropDownData['accounts'] as $key => $value)
+                    <option value="{{ $key }}"
+                        {{ (old('bank_id') == $key ? 'selected' : '') || (!empty($bpvDetail->bank_id) ? collect($bpvDetail->bank_id)->contains($key) : '') ? 'selected' : '' }}>
+                        {{ $value }}
+                    </option>
+                @endforeach
+            </select>
             <input type="text" id="amount" class="form-control form-control-sm mt-4 amount"
-                value="{{ old('debit', !empty($bpvDetail->debit) ? $bpvDetail->debit : '') }}" name="debit[]"
+                value="{{ old('amount', !empty($bpvDetail->amount) ? $bpvDetail->amount : '') }}" name="amount[]"
                 placeholder="Amount">
 
         </td>

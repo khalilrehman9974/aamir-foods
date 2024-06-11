@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\AccountLedger;
 use App\Models\VoucherDetail;
 use App\Models\VoucherMaster;
 use App\Services\CommonService;
 use App\Models\CoaDetailAccount;
-use Illuminate\Support\Facades\DB;
-use App\Http\Requests\VoucherRequest;
 use App\Models\VoucherDetailTemp;
 use App\Models\VoucherMasterTemp;
+use Illuminate\Support\Facades\DB;
+use App\Http\Requests\VoucherRequest;
 use App\Services\AccountLedgerService;
 use App\Services\BankPaymentVoucherService;
+
 
 class BPVoucherController extends Controller
 {
@@ -56,7 +58,7 @@ class BPVoucherController extends Controller
         $pageTitle = 'Create BPV';
         $maxid = VoucherMaster::where('vr_type', 'BPV')->max('id') + 1;
         $dropDownData = $this->bankPaymentVoucherService->DropDownData();
-        return view('vouchers.bpv.create', compact('pageTitle', 'dropDownData', 'maxid'));
+        return view('vouchers.bpv.create', compact('pageTitle','bpvTemp','bpvDetailsTemp', 'dropDownData', 'maxid'));
     }
 
     /**
@@ -65,8 +67,9 @@ class BPVoucherController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(VoucherRequest $request)
+    public function store(Request $request)
     {
+        // dd($request);
         $session = $this->commonService->getSession();
         $request = $request->except('_token', 'id');
         // DB::beginTransaction();
@@ -74,10 +77,8 @@ class BPVoucherController extends Controller
         if ($request["save_type"] == config('constants.in_active')) {
             $bpvTemp = $this->bankPaymentVoucherService->prepareVoucherMasterData($request);
             $tblbpvInsert = $this->bankPaymentVoucherService->findUpdateOrCreate(VoucherMasterTemp::class, ['id' => ''], $bpvTemp);
-            $bpvTempDetailDebitData = $this->bankPaymentVoucherService->prepareVoucherDetailDebitData($request, $tblbpvInsert->id);
-            $bpvTempDetailCreditData = $this->bankPaymentVoucherService->prepareVoucherDetailCreditData($request, $tblbpvInsert->id);
-            $this->bankPaymentVoucherService->saveVoucherDebitData($bpvTempDetailDebitData);
-            $this->bankPaymentVoucherService->saveVoucherCreditData($bpvTempDetailCreditData);
+            $bpvTempDetailDebitData = $this->bankPaymentVoucherService->prepareVoucherDetailTempData($request, $tblbpvInsert->id);
+            $this->bankPaymentVoucherService->saveVoucherTempData($bpvTempDetailDebitData);
 
         }
         else {
@@ -94,16 +95,19 @@ class BPVoucherController extends Controller
             $this->bankPaymentVoucherService->saveVoucherDebitData($voucherDetailDebitData);
 
             //Insert data into accounts ledger table.
-            $debitAccountData = $this->bankPaymentVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData, config('contants.BPV'), config('contants.Bpv_party_transaction'));
-            $creditAccountData = $this->bankPaymentVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData, config('contants.BPV'), config('contants.Bpv_bank_transaction'));
-            AccountLedger::insert($debitAccountData);
-            AccountLedger::insert($creditAccountData);
+            $debitAccountData = $this->bankPaymentVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData);
+            $creditAccountData = $this->bankPaymentVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData);
+            $this->bankPaymentVoucherService->saveCreditData($creditAccountData);
+            $this->bankPaymentVoucherService->saveDebitData($debitAccountData);
+
+            // AccountLedger::insert($debitAccountData);
+            // AccountLedger::insert($creditAccountData);
 
             VoucherMasterTemp::where('id', request()->id)->delete();
             VoucherDetailTemp::where('voucher_master_id', request()->id)->delete();
         }
 
-        DB::commit();
+        // DB::commit();
         // }
         // catch (\Exception $e) {
         //     DB::rollback();
@@ -129,16 +133,20 @@ class BPVoucherController extends Controller
      * @param  \App\Models\VoucherMaster  $voucherMaster
      * @return \Illuminate\Http\Response
      */
-    public function edit(VoucherMaster $voucherMaster, $id)
+    public function edit($id)
     {
+        $pageTitle = 'Edit BPV';
         $currentid = $id;
-        $voucher = VoucherMaster::find($id);
-        $voucherDetails = VoucherDetail::where('voucher_master_id', $id)->get();
+        $bpv = VoucherMaster::find($id);
+        $voucherDetails = VoucherDetail::where('voucher_master_id', $id )->where('debit', '>', 0)->get();
+        // dd($voucherDetails);
+        $bankId = VoucherDetail::where('voucher_master_id', $id )->where('credit', '>', 0)->first('account_id');
+        $dropDownData = $this->bankPaymentVoucherService->DropDownData();
         if (empty($voucher)) {
             $message = config('constants.wrong');
         }
 
-        return view('vouchers.bpv.create', compact('voucher', 'voucherDetails', 'currentid'));
+        return view('vouchers.bpv.create', compact('bpv','bankId','dropDownData' ,'pageTitle','voucherDetails', 'currentid'));
     }
 
     /**
@@ -175,23 +183,33 @@ class BPVoucherController extends Controller
         return view('vouchers.bpv.view', compact('voucherMaster', 'voucherDetail'));
     }
 
-    public function getPartyCode($code)
+    public function getPartyCode($name)
     {
-        $detailAccount = CoaDetailAccount::where('account_name', $code['account_code'])->get();
+        $detailAccount = CoaDetailAccount::where('account_name', trim($name))->first('account_code');
         // $detailAccount = CoaDetailAccount::where('account_name', $code)->pluck('account_code');
         if ($detailAccount) {
-            return response()->json(['status' => 'success', 'account_code' => $detailAccount]);
+            return response()->json(['status' => 'success', 'account_code' => $detailAccount->account_code]);
         }
         return response()->json(['status' => 'fail', 'data' => []]);
     }
 
     public function getParty($code)
     {
-        return CoaDetailAccount::where('account_code', $code['account_name'])->get();
-        // $detailAccount = CoaDetailAccount::where('account_code',$code)->pluck('account_name');
-        // if ($detailAccount) {
-        //     return response()->json(['status' => 'success', 'account_name' => $detailAccount]);
-        // }
-        // return response()->json(['status' => 'fail', 'data' => []]);
+        $detailAccount = CoaDetailAccount::where('account_code', trim($code))->first('account_name');
+        if ($detailAccount) {
+            return response()->json(['status' => 'success', 'account_name' => $detailAccount->account_name]);
+        }
+        return response()->json(['status' => 'fail', 'data' => []]);
+    }
+
+    public function getDetailData($id)
+    {
+        dd($id);
+        $detailAccount = CoaDetailAccount::where('voucher_master_id', trim($id))->get();
+        // dd($detailAccount);
+        if ($detailAccount) {
+            return response()->json(['status' => 'success', 'data' => []]);
+        }
+        return response()->json(['status' => 'fail', 'data' => []]);
     }
 }

@@ -59,9 +59,10 @@ class SalesController extends Controller
         $type = SalePurchaseType::where('name', 'Sale')->pluck('name', 'id');
         $dropDownData = $this->commonService->DropDownData();
         $invoiceNo = SaleMaster::max('id') + 1;
+        $saleDetails = SaleDetail::where('sale_master_id')->get();
 //        dd($dropDownData);
 
-        return view('sales.create', compact( 'type','pageTitle', 'dropDownData', 'invoiceNo'));
+        return view('sales.create', compact( 'type','pageTitle','saleDetails', 'dropDownData', 'invoiceNo'));
     }
 
     /*
