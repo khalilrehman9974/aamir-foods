@@ -64,16 +64,15 @@ class BankPaymentVoucherService
     * Get contract by id.
     * @param $id
     * */
-    public function getVoucherDetailById($id)
+    public function getAccountById($id)
     {
-        return VoucherDetail::select(
-            'voucher_details.code',
-            'voucher_details.description',
-            'voucher_details.debit',
-            'voucher_details.credit'
-        )
-            ->where('voucher_details.voucher_master_id', $id)
-            ->get();
+        return VoucherDetail::leftjoin('CoaDetailAccount', 'CoaDetailAccount.account_code', '=', 'voucher_detail.account_id')
+            ->select(
+                'voucher_detail.id as id',
+                'CoaDetailAccount.account_name as account_name',
+            )
+            ->where('voucher_detail.id', $id)
+            ->first();
     }
 
     /*
@@ -81,23 +80,6 @@ class BankPaymentVoucherService
      * @queries: $queries
      * @return: object
      * */
-    public function searchVoucher2($request)
-    {
-        $query = VoucherMaster::groupBy(
-            'voucher_masters.id',
-            'voucher_masters.date',
-            'voucher_masters.total_amount',
-            'voucher_masters.created_at',
-            'voucher_masters.updated_at',
-        );
-        if (!empty($request['param'])) {
-            $query = $query->where('voucher_masters.id', "=", $request['param']);
-        }
-        $vouchers = $query->orderBy('id', 'DESC')->get();
-
-        return $this->commonService->paginate($vouchers, config('constants.PER_PAGE'));
-    }
-
     public function searchVoucher($request)
     {
         $q = VoucherMaster::query();

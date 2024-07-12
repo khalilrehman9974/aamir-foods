@@ -82,8 +82,7 @@
                                                                 @endif
                                                             </div>
 
-                                                            @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
-                                                                <button type="submit"
+                                                            <button type="submit"
                                                                     class="btn btn-success  rounded bs-popover me-1 mt-5 mb-4 "
                                                                     data-bs-container="body" data-bs-placement="right"
                                                                     data-bs-content="Tooltip on right">
@@ -93,7 +92,10 @@
                                                                         Update
                                                                     @endif
                                                                 </button>
-                                                            @endif
+
+                                                            {{-- @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
+
+                                                            @endif --}}
                                                             <a href="{{ route('co-inventory-main-head.list') }}"
                                                                 class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
                                                         </div>

@@ -145,3 +145,4 @@ class ChartOfInvDetailAccountController extends Controller
         return response()->json(['status' => 'fail', 'data' => []]);
     }
 }
+

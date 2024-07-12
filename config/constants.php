@@ -39,7 +39,7 @@ return
             '5th_level' => '501',
         ],
         'file_upload' => [
-            'inventory' => 'resources/images/inventory/'
+            'inventory' => 'public/resources/images/inventory/'
         ],
 
         'css-classes' => [

@@ -75,8 +75,8 @@ class UploadFileService
      */
     public function uploadSingleFile($file, $fileName, $path)
     {
-        if(File::exists(base_path('resources/images/inventory/' . $fileName))){
-            File::delete(base_path('resources/images/inventory/' . $fileName));
+        if(File::exists(base_path('public/resources/images/inventory/' . $fileName))){
+            File::delete(base_path('public/resources/images/inventory/' . $fileName));
         }
         $file->move(base_path($path), $fileName);
     }

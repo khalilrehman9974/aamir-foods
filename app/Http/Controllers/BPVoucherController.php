@@ -137,16 +137,17 @@ class BPVoucherController extends Controller
     {
         $pageTitle = 'Edit BPV';
         $currentid = $id;
-        $bpv = VoucherMaster::find($id);
+        $bpv = VoucherMaster::with('voucherDetails')->where('id',$id)->first();
         $voucherDetails = VoucherDetail::where('voucher_master_id', $id )->where('debit', '>', 0)->get();
-        // dd($voucherDetails);
-        $bankId = VoucherDetail::where('voucher_master_id', $id )->where('credit', '>', 0)->first('account_id');
+        $vouchers = $bpv->voucherDetails;
+        dd($bpv);
+        $bankId = VoucherDetail::where('credit', '>', 0)->first('account_id');
         $dropDownData = $this->bankPaymentVoucherService->DropDownData();
         if (empty($voucher)) {
             $message = config('constants.wrong');
         }
 
-        return view('vouchers.bpv.create', compact('bpv','bankId','dropDownData' ,'pageTitle','voucherDetails', 'currentid'));
+        return view('vouchers.bpv.create', compact('bpv','vouchers','bankId','dropDownData' ,'pageTitle','voucherDetails', 'currentid'));
     }
 
     /**
@@ -175,7 +176,7 @@ class BPVoucherController extends Controller
     public function view($id)
     {
         $voucherMaster = $this->bankPaymentVoucherService->getVoucherMasterById($id);
-        $voucherDetail = $this->bankPaymentVoucherService->getVoucherDetailById($id);
+        // $voucherDetail = $this->bankPaymentVoucherService->getVoucherDetailById($id);
         if (empty($voucherMaster)) {
             $message = config('constants.wrong');
         }

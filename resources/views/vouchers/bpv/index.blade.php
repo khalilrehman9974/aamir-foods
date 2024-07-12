@@ -90,6 +90,7 @@
                             <tbody>
                                 @if ($vouchers)
                                     @foreach ($vouchers as $bpv)
+                                    {{dd($bpv)}}
                                         <tr id="row_{{ $bpv->id }}">
                                             <td>
                                                 <div class="media">
@@ -110,7 +111,7 @@
                                             <td>
                                                 <div class="media">
                                                     <div class="media-body align-self-center">
-                                                        <h6 class="mb-0">{{ $bpv->vouchers}}</h6>
+                                                        <h6 class="mb-0">{{ $bpv->vouchers }}</h6>
 
                                                     </div>
                                                 </div>
