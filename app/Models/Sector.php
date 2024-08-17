@@ -4,11 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Sector extends Model
 {
     use SoftDeletes;
     protected  $guarded = ['id'];
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'zone_id'];
+
+    public function zone()
+    {
+        return $this->BelongsTo(Zone::class);
+    }
 }

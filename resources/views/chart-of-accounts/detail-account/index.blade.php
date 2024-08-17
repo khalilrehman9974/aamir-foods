@@ -82,6 +82,7 @@
                                             <th scope="col" style="width: 10%"> <b>Sub-Sub Head </b> </th>
                                             <th scope="col" style="width: 15%"> <b>Account Code </b> </th>
                                             <th scope="col" style="width: 35%"> <b>Account Name </b> </th>
+                                            <th scope="col" style="width: 35%"> <b>Sale Man </b> </th>
                                             <th class="text-center" scope="col"></th>
                                         </tr>
                                         </thead>
@@ -133,6 +134,14 @@
                                                     <div class="media">
                                                         <div class="media-body align-self-center">
                                                             <h6 class="mb-0">{{ $account->account_name }}</h6>
+
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="media">
+                                                        <div class="media-body align-self-center">
+                                                            <h6 class="mb-0">{{ $account->SaleMan}}</h6>
 
                                                         </div>
                                                     </div>

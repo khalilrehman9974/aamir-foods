@@ -6,19 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Area extends Model
+class Zone extends Model
 {
     use SoftDeletes;
 
-    use HasFactory;
-    const PER_PAGE = 10;
-
     protected  $guarded = ['id'];
-    protected $fillable = ['name','sector_id'];
+    protected $fillable = ['name','country_id'];
 
-    public function sector()
+    public function country()
     {
-        return $this->BelongsTo(Sector::class);
+        return $this->BelongsTo(Country::class);
     }
-
 }

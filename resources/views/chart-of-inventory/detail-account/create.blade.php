@@ -10,8 +10,8 @@
         @vite(['resources/scss/light/assets/components/timeline.scss'])
         @vite(['resources/scss/light/assets/components/accordions.scss'])
         @vite(['resources/scss/dark/assets/components/accordions.scss'])
-        {{--            @vite(['resources/scss/light/assets/elements/alert.scss']) --}}
-        {{--            @vite(['resources/scss/dark/assets/elements/alert.scss']) --}}
+        {{--@vite(['resources/scss/light/assets/elements/alert.scss']) --}}
+        {{--@vite(['resources/scss/dark/assets/elements/alert.scss']) --}}
         <link rel="stylesheet" href="{{ asset('plugins/filepond/filepond.min.css') }}">
         <link rel="stylesheet" href="{{ asset('plugins/filepond/FilePondPluginImagePreview.min.css') }}">
         @vite(['resources/scss/light/plugins/filepond/custom-filepond.scss'])
@@ -214,16 +214,16 @@
                                                         <div class="col-lg-0 col-12 ">
                                                             <div class="row">
                                                                 <div class="col-md-6">
-                                                                    <label for="PriceTags" class="form-label">Price
-                                                                        Tag</label>
-                                                                    <select id="PriceTags" type="text"
-                                                                        name="price_tag_id"
+                                                                    <label for="packing_type_id" class="form-label">Packing
+                                                                        Type</label>
+                                                                    <select id="packing_type_id" type="text"
+                                                                        name="packing_type_id"
                                                                         class="form-control select2 form-control mb-3 custom-select"
                                                                         required>
-                                                                        <option value="">Select Price Tag</option>
-                                                                        @foreach ($dropDownData['PriceTags'] as $key => $value)
+                                                                        <option value="">Select Packing Type</option>
+                                                                        @foreach ($dropDownData['PackingType'] as $key => $value)
                                                                             <option value="{{ $key }}"
-                                                                                {{ (old('price_tag_id') == $key ? 'selected' : '') || (!empty($detailAccount->price_tag_id) ? collect($detailAccount->price_tag_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                {{ (old('packing_type_id') == $key ? 'selected' : '') || (!empty($detailAccount->packing_type_id) ? collect($detailAccount->packing_type_id)->contains($key) : '') ? 'selected' : '' }}>
                                                                                 {{ $value }}</option>
                                                                         @endforeach
                                                                     </select>
@@ -254,24 +254,7 @@
                                                         </div>
                                                         <div class="col-lg-0 col-12 ">
                                                             <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <label for="packing_type_id" class="form-label">Packing
-                                                                        Type</label>
-                                                                    <select id="packing_type_id" type="text"
-                                                                        name="packing_type_id"
-                                                                        class="form-control select2 form-control mb-3 custom-select"
-                                                                        required>
-                                                                        <option value="">Select Packing Type</option>
-                                                                        @foreach ($dropDownData['PackingType'] as $key => $value)
-                                                                            <option value="{{ $key }}"
-                                                                                {{ (old('packing_type_id') == $key ? 'selected' : '') || (!empty($detailAccount->packing_type_id) ? collect($detailAccount->packing_type_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                {{ $value }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                    {{-- <div class="invalid-feedback">
-                                                                            Please Select the Sector.
-                                                                        </div> --}}
-                                                                </div>
+
                                                                 <div class="col-md-6">
                                                                     <label for="min_limit" class="form-label">
                                                                         Minimum Limit</label>
@@ -285,11 +268,6 @@
                                                                         </div>
                                                                     @endif
                                                                 </div>
-                                                            </div>
-
-                                                        </div>
-                                                        <div class="col-lg-0 col-12 ">
-                                                            <div class="row">
                                                                 <div class="col-md-6">
                                                                     <label for="max_limit" class="form-label">
                                                                         Maximum Limit</label>
@@ -306,6 +284,7 @@
                                                             </div>
 
                                                         </div>
+                
 
 
 

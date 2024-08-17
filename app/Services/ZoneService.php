@@ -2,18 +2,18 @@
 
 namespace App\Services;
 
-
+use App\Models\Country;
 use App\Models\Zone;
-use App\Models\Sector;
-use App\Services\CommonService;
 
     /*
      * Class BankService
      * @package App\Services
      * */
+
+
     // use Illuminate\Support\Facades\Input;
 
-    class SectorService
+    class ZoneService
 {
 
     protected $commonService;
@@ -43,21 +43,22 @@ use App\Services\CommonService;
     }
 
 
-    public function searchSector($request)
+    public function searchZone($request)
     {
-        $q = Sector::query();
+        $q = Zone::query();
         if (!empty($request['param'])) {
-            $q = Sector::where('name', 'like', '%' . $request['param'] . '%');
+            $q = Zone::with('country')->where('name', 'like', '%' . $request['param'] . '%');
         }
-        $sectors = $q->orderBy('name', 'ASC')->paginate(config('constants.PER_PAGE'));
+        $zones = $q->orderBy('name', 'ASC')->paginate(config('constants.PER_PAGE'));
 
-        return $sectors;
+        return $zones;
     }
+
 
     public function DropDownData()
     {
         $result = [
-            'zones' => Zone::pluck('name','id'),
+            'countries' => Country::pluck('name','id'),
         ];
 
         return $result;

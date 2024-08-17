@@ -20,6 +20,9 @@ Route::get('/barebone', function () {
     return view('pages/user/profile', ['title' => 'This is Title']);
 });
 
+Route::post('api/fetch-zones', [App\Http\Controllers\SaleManController::class, 'fetchZone']);
+Route::post('api/fetch-sectors', [App\Http\Controllers\SaleManController::class, 'fetchSector']);
+Route::post('api/fetch-areas', [App\Http\Controllers\SaleManController::class, 'fetchArea']);
 
 Auth::routes();
 
@@ -100,6 +103,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('search', ['as' => 'detail-account.search', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@search']);
         Route::get('get-detail-account-code/{code}', ['as' => 'detail-account-code', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@getMaxDetailAccountCode']);
         Route::get('get-sub-sub-account/{id}', ['as' => 'sub-sub-head-by-sub-head', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@getSubSubHeadAccountsBySubHead']);
+        Route::get('get-saleMan-detail/{name}', ['as' => 'saleMan-detail', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@getSaleManDetail']);
+        Route::get('get-saleMan-area-detail/{name}', ['as' => 'saleMan-area-detail', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@getSaleManAreaDetail']);
+        Route::get('get-product-price/{name}', ['as' => 'product-price', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@getProductPrice']);
     });
 
     //Store issue note
@@ -147,6 +153,30 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('search', ['as' => 'sector.search', 'uses' => 'App\Http\Controllers\SectorController@search']);
     });
 
+    // Country
+    Route::group(['prefix' => 'country', 'middleware' => 'auth'], function () {
+        Route::get('list', ['as' => 'country.list', 'uses' => 'App\Http\Controllers\CountriesController@index']);
+        Route::get('create', ['as' => 'country.create', 'uses' => 'App\Http\Controllers\CountriesController@create']);
+        Route::post('save', ['as' => 'country.save', 'uses' => 'App\Http\Controllers\CountriesController@store']);
+        Route::get('edit/{id}', ['as' => 'country.edit', 'uses' => 'App\Http\Controllers\CountriesController@edit']);
+        Route::post('update', ['as' => 'country.update', 'uses' => 'App\Http\Controllers\CountriesController@store']);
+        Route::delete('delete/{id}', ['as' => 'country.delete', 'uses' => 'App\Http\Controllers\CountriesController@delete']);
+        Route::post('show/{id}', ['as' => 'country.show', 'uses' => 'App\Http\Controllers\CountriesController@show']);
+        Route::get('search', ['as' => 'country.search', 'uses' => 'App\Http\Controllers\CountriesController@search']);
+    });
+
+    // Zone
+    Route::group(['prefix' => 'zone', 'middleware' => 'auth'], function () {
+        Route::get('list', ['as' => 'zone.list', 'uses' => 'App\Http\Controllers\ZoneController@index']);
+        Route::get('create', ['as' => 'zone.create', 'uses' => 'App\Http\Controllers\ZoneController@create']);
+        Route::post('save', ['as' => 'zone.save', 'uses' => 'App\Http\Controllers\ZoneController@store']);
+        Route::get('edit/{id}', ['as' => 'zone.edit', 'uses' => 'App\Http\Controllers\ZoneController@edit']);
+        Route::post('update', ['as' => 'zone.update', 'uses' => 'App\Http\Controllers\ZoneController@store']);
+        Route::delete('delete/{id}', ['as' => 'zone.delete', 'uses' => 'App\Http\Controllers\ZoneController@destroy']);
+        Route::post('show/{id}', ['as' => 'zone.show', 'uses' => 'App\Http\Controllers\ZoneController@show']);
+        Route::get('search', ['as' => 'zone.search', 'uses' => 'App\Http\Controllers\ZoneController@search']);
+    });
+
     Route::group(['prefix' => 'area', 'middleware' => 'auth'], function () {
         Route::get('list', ['as' => 'area.list', 'uses' => 'App\Http\Controllers\AreasController@index']);
         Route::get('create', ['as' => 'area.create', 'uses' => 'App\Http\Controllers\AreasController@create']);
@@ -175,6 +205,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('edit/{id}', ['as' => 'saleMan.edit', 'uses' => 'App\Http\Controllers\SaleManController@edit']);
         Route::post('update', ['as' => 'saleMan.update', 'uses' => 'App\Http\Controllers\SaleManController@store']);
         Route::delete('delete/{id}', ['as' => 'saleMan.delete', 'uses' => 'App\Http\Controllers\SaleManController@destroy']);
+
     });
 
     Route::group(['prefix' => 'assignSector', 'middleware' => 'auth'], function () {
@@ -439,6 +470,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('edit/{id}', ['as' => 'sale-order.edit', 'uses' => 'App\Http\Controllers\SaleOrderController@edit']);
         Route::post('update', ['as' => 'sale-order.update', 'uses' => 'App\Http\Controllers\SaleOrderController@store']);
         Route::delete('delete/{id}', ['as' => 'sale-order.delete', 'uses' => 'App\Http\Controllers\SaleOrderController@destroy']);
+        Route::get('get-party-sale-man/{name}', ['as' => 'party-sale-man', 'uses' => 'App\Http\Controllers\SaleOrderController@getSaleManDetail']);
+        Route::get('get-party-sale-man-sector/{name}', ['as' => 'party-sale-man-sector', 'uses' => 'App\Http\Controllers\SaleOrderController@getSaleManSectorDetail']);
+        Route::get('get-party-sale-man-area/{name}', ['as' => 'party-sale-man-area', 'uses' => 'App\Http\Controllers\SaleOrderController@getSaleManAreaDetail']);
+        Route::get('get-product-packing-type/{name}', ['as' => 'product-packing-type', 'uses' => 'App\Http\Controllers\SaleOrderController@getProductPackingType']);
+        Route::get('get-product-measurement-type/{name}', ['as' => 'product-measurement-type', 'uses' => 'App\Http\Controllers\SaleOrderController@getProductMeasurementType']);
     });
 
     Route::group(['prefix' => 'storeReturn'], function () {

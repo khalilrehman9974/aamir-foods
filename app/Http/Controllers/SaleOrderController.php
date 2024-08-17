@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CoaDetailAccount;
+use App\Models\CoaInventoryDetailAccount;
+use App\Models\SaleMan;
 use App\Models\SaleOrder;
 use Illuminate\Http\Request;
 use App\Models\SaleOrderDetail;
@@ -20,7 +23,6 @@ class SaleOrderController extends Controller
     {
         $this->commonService = $commonService;
         $this->saleOrderService = $saleOrderService;
-
     }
 
     /*
@@ -32,7 +34,7 @@ class SaleOrderController extends Controller
         $request = request()->all();
         $saleOrders = $this->saleOrderService->searchSale($request);
 
-        return view('sale-orders.index', compact('saleOrders','pageTitle'));
+        return view('sale-orders.index', compact('saleOrders', 'pageTitle'));
     }
 
     /*
@@ -43,7 +45,7 @@ class SaleOrderController extends Controller
         $pageTitle = 'Sales Orders';
         $dropDownData = $this->saleOrderService->DropDownData();
         $saleOrders = SaleOrderDetail::where('sale_order_master_id')->get();
-        return view('sale-orders.create', compact('pageTitle', 'dropDownData','saleOrders'));
+        return view('sale-orders.create', compact('pageTitle', 'dropDownData', 'saleOrders'));
     }
 
     /*
@@ -56,13 +58,13 @@ class SaleOrderController extends Controller
         $request = $request->except('_token', 'id');
         DB::beginTransaction();
         // try {
-            //Insert data into sale tables.
-            $saleOrderMasterData = $this->saleOrderService->prepareSaleOrderMasterData($request);
-            $saleOrderMasterInsert = $this->commonService->findUpdateOrCreate(SaleOrder::class, ['id' => ''], $saleOrderMasterData);
-            $saleOrderDetailData = $this->saleOrderService->prepareSaleOrderDetailData($request, $saleOrderMasterInsert->id);
-            $this->saleOrderService->saveSaleOrder($saleOrderDetailData);
+        //Insert data into sale tables.
+        $saleOrderMasterData = $this->saleOrderService->prepareSaleOrderMasterData($request);
+        $saleOrderMasterInsert = $this->commonService->findUpdateOrCreate(SaleOrder::class, ['id' => ''], $saleOrderMasterData);
+        $saleOrderDetailData = $this->saleOrderService->prepareSaleOrderDetailData($request, $saleOrderMasterInsert->id);
+        $this->saleOrderService->saveSaleOrder($saleOrderDetailData);
 
-            DB::commit();
+        DB::commit();
         // } catch (\Exception $e) {
         //     DB::rollback();
         //     return redirect('sale-order/create')->with('error', $e->getMessage());
@@ -125,10 +127,9 @@ class SaleOrderController extends Controller
 
             DB::commit();
             // && $deleteStock && $accountEntryDetail
-            if ($deleteMaster && $deleteDetail ) {
+            if ($deleteMaster && $deleteDetail) {
                 return $this->commonService->deleteResource(SaleOrder::class, SaleOrderDetail::class);
             }
-
         } catch (\Exception $e) {
             DB::rollback();
             return redirect('sale-order/list')->with('error', $e->getMessage());
@@ -148,6 +149,82 @@ class SaleOrderController extends Controller
         }
 
         return view('sale-orders.view', compact('saleOrderMaster'));
+    }
+
+    public function getSaleManDetail($name)
+    {
+
+        $fetchSaleMan = CoaDetailAccount::where('account_name', trim($name))->first('saleMan_id');
+        // dd($fetchSector);
+        if ($fetchSaleMan) {
+            return response()->json(['status' => 'success', 'saleMan_id' => $fetchSaleMan->saleMan_id]);
+        }
+        return response()->json(['status' => 'fail', 'data' => []]);
+
+        // $fetchSaleMan = CoaDetailAccount::where('account_name', trim($name))->first('saleMan_id');
+
+        // if ($fetchSaleMan) {
+        //     $fetchSaleMan = CoaDetailAccount::with('getSaleMan')->get();
+        //     foreach ($fetchSaleMan as $saleMan) {
+        //         $saleManName = $saleMan->getSaleMan ? $saleMan->getSaleMan->name : 'Sale Man not found';
+
+        //         return response()->json(['status' => 'success', 'saleMan_id' => $saleManName]);
+        //     }
+        //     return response()->json(['status' => 'success', 'saleMan_id' => $fetchSaleMan->saleMan_id]);
+        // }
+        return response()->json(['status' => 'fail', 'data' => []]);
+        // $detailAccount = CoaDetailAccount::where('account_name', trim($name))->first('saleMan_id');
+        // // dd($detailAccount);
+        // if ($detailAccount) {
+        //     $detailAccount = CoaDetailAccount::with('getSaleMan')->get();
+
+        //     foreach ($detailAccount as $saleMan) {
+        //         $saleManName = $saleMan->getSaleMan ? $saleMan->getSaleMan->name : 'Sale Man not found';
+
+        //         return response()->json(['status' => 'success', 'saleMan_id' => $saleManName]);
+        //     }
+        // }
+        // return response()->json(['status' => 'fail', 'data' => []]);
+    }
+
+    public function getSaleManSectorDetail($name)
+    {
+        $fetchSector = CoaDetailAccount::where('account_name', trim($name))->first('sector');
+        // dd($fetchSector);
+        if ($fetchSector) {
+            return response()->json(['status' => 'success', 'sector' => $fetchSector->sector]);
+        }
+        return response()->json(['status' => 'fail', 'data' => []]);
+    }
+
+    public function getSaleManAreaDetail($name)
+    {
+        $fetchArea = CoaDetailAccount::where('account_name', trim($name))->first('area');
+
+        if ($fetchArea) {
+            return response()->json(['status' => 'success', 'area' => $fetchArea->area]);
+        }
+        return response()->json(['status' => 'fail', 'data' => []]);
+    }
+
+    public function getProductPackingType($name)
+    {
+        $fetchPackingType = CoaInventoryDetailAccount::where('name', trim($name))->first('packing_type_id');
+
+        if ($fetchPackingType) {
+            return response()->json(['status' => 'success', 'packing_type_id' => $fetchPackingType->packing_type_id]);
+        }
+        return response()->json(['status' => 'fail', 'data' => []]);
+    }
+
+    public function getProductMeasurementType($name)
+    {
+        $fetchMeasurementType = CoaInventoryDetailAccount::where('name', trim($name))->first('measurement_type_id');
+
+        if ($fetchMeasurementType) {
+            return response()->json(['status' => 'success', 'measurement_type_id' => $fetchMeasurementType->measurement_type_id]);
+        }
+        return response()->json(['status' => 'fail', 'data' => []]);
     }
 
 }

@@ -31,12 +31,13 @@
                         <nav class="breadcrumb-style-one" aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Belts</li>
-                                <li class="breadcrumb-item"><a href="{{ route('sector.list') }}">List</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Countries</li>
+                                <li class="breadcrumb-item"><a href="{{ route('country.list') }}">List</a></li>
                             </ol>
                         </nav>
                     </div>
                 </div>
+
                 <div class="col-md-5 " style="float : right; ">
                     <a href="{{ route('country.create') }}" class="btn btn-primary mt-2 mb-2 ml-5 " style="">Add
                         Country
@@ -61,11 +62,11 @@
 
             <div class="col-lg-8 col-md-8 col-sm-9 filtered-list-search mx-auto">
                 <form class="form-inline my-2 my-lg-0 justify-content-center" method="get"
-                    action="{{ route('sector.list') }}">
+                    action="{{ route('country.list') }}">
                     <div class="w-100">
                         <input type="text" value="{{ @$request['param'] }}" name="param" id="param"
                             class="w-100 form-control product-search br-30" id="input-search"
-                            placeholder="Search Belt...">
+                            placeholder="Search Country...">
                         <button class="btn btn-primary _effect--ripple waves-effect waves-light" type="submit">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -84,7 +85,7 @@
                 <div class="widget-header">
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4>List Of Belts</h4>
+                            <h4>List Of Countries</h4>
                         </div>
                     </div>
                 </div>
@@ -95,18 +96,17 @@
                             <thead>
                                 <tr>
                                     <th scope="col"> <b>ID </b> </th>
-                                    <th scope="col" style="width: 40%"> <b>Zone </b> </th>
-                                    <th scope="col" style="width: 40%"> <b>Belt Name </b> </th>
+                                    <th scope="col" style="width: 80%"> <b>Name </b> </th>
                                     <th class="text-center" scope="col"></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($sectors as $sector)
-                                    <tr id="row_{{ $sector->id }}">
+                                @foreach ($countries as $country)
+                                    <tr id="row_{{ $country->id }}">
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $sector->id }}</h6>
+                                                    <h6 class="mb-0">{{ $country->id }}</h6>
 
                                                 </div>
                                             </div>
@@ -114,15 +114,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $sector->zone->name }}</h6>
-
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $sector->name }}</h6>
+                                                    <h6 class="mb-0">{{ $country->name }}</h6>
 
                                                 </div>
                                             </div>
@@ -131,7 +123,7 @@
                                         <td class="text-center">
                                             <div class="action-btns">
                                                 @if ((!empty($permission->edit_access) && $permission->edit_access == 1) || Auth::user()->is_admin == 1)
-                                                    <a href="{{ route('sector.edit', ['id' => $sector->id]) }}"
+                                                    <a href="{{ route('country.edit', ['id' => $country->id]) }}"
                                                         class="action-btn btn-edit bs-tooltip me-2"
                                                         data-toggle="tooltip" data-placement="top" title="Edit">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
@@ -148,7 +140,7 @@
                                                 @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
                                                     <a href="javascript:void(0);"
                                                         class="action-btn btn-delete bs-tooltip delete"
-                                                        data-toggle="tooltip" data-id="{{ $sector->id }}"
+                                                        data-toggle="tooltip" data-id="{{ $country->id }}"
                                                         data-placement="top" title="Delete">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                             height="24" viewBox="0 0 24 24" fill="none"
@@ -178,7 +170,7 @@
                     </div>
                     <nav aria-label="Page navigation">
                         <ul class="pagination justify-content-end">
-                            {!! $sectors->appends(request()->query())->links() !!}
+                            {!! $countries->appends(request()->query())->links() !!}
                         </ul>
                     </nav>
                 </div>
@@ -194,7 +186,7 @@
         <script>
             var config = {
                 routes: {
-                    deleteMainHead: "{{ url('sector/delete') }}",
+                    deleteMainHead: "{{ url('country/delete') }}",
                 },
             }
         </script>

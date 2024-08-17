@@ -2,10 +2,9 @@
 
 namespace App\Services;
 
-
-use App\Models\Zone;
-use App\Models\Sector;
+use App\Models\Country;
 use App\Services\CommonService;
+use Symfony\Component\Console\Input\Input;
 
     /*
      * Class BankService
@@ -13,7 +12,7 @@ use App\Services\CommonService;
      * */
     // use Illuminate\Support\Facades\Input;
 
-    class SectorService
+    class CountryService
 {
 
     protected $commonService;
@@ -43,24 +42,15 @@ use App\Services\CommonService;
     }
 
 
-    public function searchSector($request)
+    public function searchCountry($request)
     {
-        $q = Sector::query();
+        $q = Country::query();
         if (!empty($request['param'])) {
-            $q = Sector::where('name', 'like', '%' . $request['param'] . '%');
+            $q = Country::where('name', 'like', '%' . $request['param'] . '%');
         }
-        $sectors = $q->orderBy('name', 'ASC')->paginate(config('constants.PER_PAGE'));
+        $countries = $q->orderBy('name', 'ASC')->paginate(config('constants.PER_PAGE'));
 
-        return $sectors;
-    }
-
-    public function DropDownData()
-    {
-        $result = [
-            'zones' => Zone::pluck('name','id'),
-        ];
-
-        return $result;
+        return $countries;
     }
 
 

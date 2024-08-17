@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('sectors_log', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name', 250);
+            $table->integer('zone_id')->unsigned()->index();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')->nullable();

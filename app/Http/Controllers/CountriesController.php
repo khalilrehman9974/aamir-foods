@@ -2,23 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sector;
+use App\Models\Country;
 use Illuminate\Http\Request;
 use App\Services\CommonService;
-use App\Services\SectorService;
+use App\Services\CountryService;
 use App\Services\PermissionService;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\StoreSectorRequest;
+use App\Http\Requests\StoreCountryRequest;
 
-class SectorController extends Controller
+class CountriesController extends Controller
 {
-    private $SectorService;
+    private $CountryService;
     private $permissionService;
     private $commonService;
 
-    public function __construct(SectorService $SectorService, CommonService $commonService, PermissionService $permissionService)
+    public function __construct(CountryService $CountryService, CommonService $commonService, PermissionService $permissionService)
     {
-        $this->SectorService = $SectorService;
+        $this->CountryService = $CountryService;
         $this->permissionService = $permissionService;
         $this->commonService = $commonService;
     }
@@ -29,13 +29,12 @@ class SectorController extends Controller
      */
     public function index()
     {
-        $pageTitle = 'list Of Belts';
+        $pageTitle = 'list Of Countries';
         $request = request()->all();
-        $sectors = $this->SectorService->searchSector($request);
-        $dropDownData = $this->SectorService->DropDownData();
+        $countries = $this->CountryService->searchCountry($request);
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '24');
 
-        return view('sectors.index', compact('sectors', 'pageTitle', 'permission','dropDownData'));
+        return view('countries.index', compact('countries', 'pageTitle', 'permission'));
     }
 
     /**
@@ -45,10 +44,9 @@ class SectorController extends Controller
      */
     public function create()
     {
-        $pageTitle = 'Create Belt';
-        $dropDownData = $this->SectorService->DropDownData();
+        $pageTitle = 'Create Country';
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '24');
-        return view('sectors.create', compact('permission','dropDownData','pageTitle'));
+        return view('countries.create', compact('permission','pageTitle'));
     }
 
     /**
@@ -57,13 +55,13 @@ class SectorController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreSectorRequest $request)
+    public function store(StoreCountryRequest $request)
     {
         $data = $request->except('_token','id');
         $data['created_by'] = Auth::user()->id;
         $data['updated_by'] = Auth::user()->id;
 
-        $this->SectorService->findUpdateOrCreate(Sector::class, ['id'=>!empty(request('id')) ? request('id') : null], $data);
+        $this->CountryService->findUpdateOrCreate(Country::class, ['id'=>!empty(request('id')) ? request('id') : null], $data);
         $message = config(
             'constants.add'
         );
@@ -71,44 +69,33 @@ class SectorController extends Controller
             $message = config('constants.update');
         }
         session()->flash('message', $message);
-        return redirect('sector/list');
+        return redirect('country/list');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Sector  $sector
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Sector $sector)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Sector  $sector
+     * @param  \App\Models\country  $country
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
-        $pageTitle = 'Update The Belt ';
-        $sector = Sector::find($id);
-        $dropDownData = $this->SectorService->DropDownData();
+        $pageTitle = 'Update The Country ';
+        $country = Country::find($id);
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
 
-        return view('sectors.create', compact('sector', 'pageTitle','dropDownData','permission'));
+        return view('countries.create', compact('country', 'pageTitle', 'permission'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Sector  $sector
+     * @param  \App\Models\country  $country
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Sector $sector)
+    public function update(Request $request)
     {
         //
     }
@@ -116,11 +103,11 @@ class SectorController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Sector  $sector
+     * @param  \App\Models\country  $country
      * @return \Illuminate\Http\Response
      */
     public function delete()
     {
-        return $this->commonService->deleteResource(Sector::class);
+        return $this->commonService->deleteResource(Country::class);
     }
 }

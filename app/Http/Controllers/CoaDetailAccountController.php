@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\CommonService;
 use App\Models\CoaDetailAccount;
+use App\Models\CoaInventorySubSubHead;
+use App\Models\SaleMan;
 use App\Services\PermissionService;
 use Illuminate\Support\Facades\Auth;
 use App\Services\ChartOfAccountService;
@@ -48,13 +50,14 @@ class CoaDetailAccountController extends Controller
     {
         $pageTitle = 'Create Detail Account';
         $title = 'Detail Account';
+        $dropDownData = $this->coaDetailAccountService->DropDownData();
         $mainHeads = $this->chartOfAccountService->getMainHeads();
         $controlHeads = $this->chartOfAccountService->getControlHeads();
         $subHeads = $this->chartOfAccountService->getSubHeads();
         $subSubHeads = $this->chartOfAccountService->getSubSubHeads();
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '24');
 
-        return view('chart-of-accounts.detail-account.create', compact('permission', 'controlHeads', 'pageTitle', 'title', 'mainHeads', 'subHeads', 'subSubHeads'));
+        return view('chart-of-accounts.detail-account.create', compact('permission', 'controlHeads', 'dropDownData', 'pageTitle', 'title', 'mainHeads', 'subHeads', 'subSubHeads'));
     }
 
     /**
@@ -65,6 +68,7 @@ class CoaDetailAccountController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request);
         try {
             $this->coaDetailAccountService->storeAccountData($request);
             $message = !empty(request('id')) ? config('constants.update') : config('constants.add');
@@ -86,6 +90,7 @@ class CoaDetailAccountController extends Controller
     public function edit($id)
     {
         $pageTitle = 'Update Detail Account';
+        $dropDownData = $this->coaDetailAccountService->DropDownData();
         $detailAccount = CoaDetailAccount::find($id);
         if (!$detailAccount) {
             return abort(404);
@@ -96,7 +101,7 @@ class CoaDetailAccountController extends Controller
         $subSubHeads = $this->chartOfAccountService->getSubSubHeadsBySubHead($detailAccount->sub_head);
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
 
-        return view('chart-of-accounts.detail-account.create', compact('detailAccount', 'subSubHeads', 'subHeads', 'controlHeads', 'mainHeads', 'permission', 'pageTitle'));
+        return view('chart-of-accounts.detail-account.create', compact('detailAccount', 'subSubHeads','dropDownData', 'subHeads', 'controlHeads', 'mainHeads', 'permission', 'pageTitle'));
     }
 
     /**
@@ -135,4 +140,44 @@ class CoaDetailAccountController extends Controller
             return response()->json(['status' => 'success', 'data' => $subSubAccounts ? $subSubAccounts : []]);
         }
     }
+
+    public function getSaleManDetail($name)
+    {
+
+        $detailAccount = SaleMan::where('name', trim($name))->first('sector_id');
+        if ($detailAccount) {
+            $detailAccount = SaleMan::with('sectors')->get();
+            foreach ($detailAccount as $seller) {
+                $sectorName = $seller->sectors ? $seller->sectors->name : 'Sector not found';
+
+                return response()->json(['status' => 'success', 'sector_id' => $sectorName]);
+            }
+        }
+        return response()->json(['status' => 'fail', 'data' => []]);
+    }
+
+    public function getSaleManAreaDetail($name)
+    {
+        $fetchArea = SaleMan::where('name', trim($name))->first('area_id');
+        if ($fetchArea) {
+            $fetchArea = SaleMan::with('area')->get();
+            foreach ($fetchArea as $area) {
+
+                $areaName = $area->area ? $area->area->name : 'Area not found';
+                return response()->json(['status' => 'success', 'area_id' => $areaName]);
+            }
+        }
+        return response()->json(['status' => 'fail', 'data' => []]);
+    }
+
+    public function getProductPrice($name)
+    {
+        $fetchPrice = CoaInventorySubSubHead::where('name', trim($name))->first('price');
+
+        if ($fetchPrice) {
+            return response()->json(['status' => 'success', 'price' => $fetchPrice->price]);
+        }
+        return response()->json(['status' => 'fail', 'data' => []]);
+    }
+
 }

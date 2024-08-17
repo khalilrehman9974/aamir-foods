@@ -9,9 +9,12 @@ namespace App\Services;
      * @package App\Services
      * */
 
+use App\Models\Area;
+use App\Models\Country;
 use App\Models\Donor;
 use App\Models\SaleMan;
-
+use App\Models\Sector;
+use App\Models\Zone;
 
 // use Illuminate\Support\Facades\Input;
 
@@ -62,14 +65,32 @@ class SaleManService
     {
         $q = SaleMan::query();
         if (!empty($request['param'])) {
-            $q = SaleMan::where('name', 'like', '%' . $request['param'] . '%');
+            $q = SaleMan::with('country','zone','sectors','area')->where('name', 'like', '%' . $request['param'] . '%');
         }
         $saleMans = $q->orderBy('name', 'ASC')->paginate(config('constants.PER_PAGE'));
 
         return $saleMans;
     }
 
+    public function getCountries()
+    {
+        return Country::pluck('name', 'id');
+    }
 
+    public function getZones()
+    {
+        return Zone::pluck('name', 'id');
+    }
+
+    public function getSectors()
+    {
+        return Sector::pluck('name', 'id');
+    }
+
+    public function getAreas()
+    {
+        return Area::pluck('name', 'id');
+    }
 
 
     // public function search($params)

@@ -13,7 +13,11 @@ class CoaDetailAccount extends Model
 
     protected $table = 'detail_accounts';
 
-    protected $fillable = ['main_head','control_head', 'sub_head', 'sub_sub_head','account_code','account_name'];
+    protected $fillable = [
+        'main_head', 'control_head', 'sub_head', 'sub_sub_head', 'account_code', 'account_name',
+        'saleMan_id', 'sector', 'area', 'product_id', 'price', 'discount', 'scheme',
+        'commision', 'mode', 'status'
+    ];
 
     public function getMainHead()
     {
@@ -34,4 +38,15 @@ class CoaDetailAccount extends Model
     {
         return $this->hasOne(CoaSubSubHead::class, 'account_code', 'sub_sub_head');
     }
+
+    public function getProducts()
+    {
+        return $this->hasOne(CoaInventorySubSubHead::class, 'id', 'name');
+    }
+
+    public function SaleMan()
+    {
+        return $this->belongsTo(SaleMan::class,'id', 'name');
+    }
+
 }

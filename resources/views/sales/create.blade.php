@@ -636,7 +636,7 @@
                 '<li><a href="javascript:void(0);" class="delete-item" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></a></li>' +
                 '</ul>' +
                 '</td>' +
-                '<td class="description"> <select id="product_id" type="text" name="product_id[]" value="{{ old('product_id', !empty($sale->product_id) ? $sale->product_id : '') }}" placeholder="Please Select the Product" class="form-control select2 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mb-3 custom-select"> <option value=""> Select</option> @foreach ($dropDownData['products'] as $key => $value)<option value="{{ $key }}" {{ (old('product_id') == $key ? 'selected' : '') || (!empty($sale->product_id) ? collect($sale->product_id)->contains($key) : '') ? 'selected' : '' }}> {{ $value }} </option>@endforeach </select>' +
+                '<td class="description"> <select id="product_id" type="text" name="product_id[]" value="{{ old('product_id', !empty($sale->product_id) ? $sale->product_id : '') }}" placeholder="Please Select the Product" class="form-control product select2 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mb-3 custom-select"> <option value=""> Select</option> @foreach ($dropDownData['products'] as $key => $value)<option value="{{ $key }}" {{ (old('product_id') == $key ? 'selected' : '') || (!empty($sale->product_id) ? collect($sale->product_id)->contains($key) : '') ? 'selected' : '' }}> {{ $value }} </option>@endforeach </select>' +
                 '<td class="rate">' +
                 '<input type="text" class="form-control  {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" placeholder="Qty" name="quantity[]">' +
                 ' </td>' +
@@ -673,5 +673,19 @@
                 })
             }
         }
+
+        $(document).ready(function() {
+            // console.log("DOM is ready");
+            $('.select2').select2();
+                console.log("DOM is loaded");
+
+                $(document.body).on("change",".product",function(){
+            alert(this.value);
+            });
+        });
+
+
+
+
     </script>
 </x-base-layout>

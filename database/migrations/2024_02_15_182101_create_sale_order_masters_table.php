@@ -17,10 +17,7 @@ return new class extends Migration
             $table->Increments('id');
             $table->date('date');
             $table->integer('party_id');
-            $table->string('bilty_no');
             $table->string('deliverd_to');
-            $table->integer('saleman_id')->unsigned()->index();
-            $table->integer('transporter_id');
             $table->integer('business_id');
             $table->integer('f_year_id')->unsigned()->index();
             $table->text('remarks')->nullable();

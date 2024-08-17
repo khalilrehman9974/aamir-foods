@@ -57,7 +57,7 @@
                                             <div class="col-lg-6 col-12 ">
                                                 <form
                                                     action="{{ !empty($subSubHead) ? route('co-inventory-sub-sub-head.update') : route('co-inventory-sub-sub-head.save') }}"
-                                                    method="POST" class="row g-3 needs-validation" novalidate>
+                                                    method="POST" class="row g-3 needs-validation" autocomplete="off" novalidate>
                                                     @csrf
                                                     <input type="hidden" name="id" id="id"
                                                         value="{{ isset($subSubHead->id) ? $subSubHead->id : '' }}" />
@@ -161,6 +161,15 @@
                                                             <input id="name" type="text" name="name"
                                                                 value="{{ old('name', !empty($subSubHead->name) ? $subSubHead->name : '') }}"
                                                                 placeholder="Please Enter Sub Sub Account "
+                                                                class="form-control" required>
+                                                        </div>
+
+                                                        <div class="col-lg-0 col-12 mt-3 ">
+                                                            <label for="price" class="form-label">Price
+                                                                 </label>
+                                                            <input id="price" type="text" name="price"
+                                                                value="{{ old('price', !empty($subSubHead->price) ? $subSubHead->price : '') }}"
+                                                                placeholder="Please Enter Price "
                                                                 class="form-control" required>
                                                         </div>
 

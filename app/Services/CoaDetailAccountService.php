@@ -8,8 +8,10 @@ namespace App\Services;
 
 use App\Models\CoaDetAccountDetail;
 use App\Models\CoaDetailAccount;
+use App\Models\CoaInventorySubSubHead;
 use App\Models\CoaSubHead;
 use App\Models\CoaSubSubHead;
+use App\Models\SaleMan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -18,7 +20,7 @@ class CoaDetailAccountService {
 
     public function getListOfDetailAccounts($param = null)
     {
-        $q = CoaDetailAccount::with('getMainHead','getControlHead', 'getSubHead', 'getSubSubHead');
+        $q = CoaDetailAccount::with('getMainHead','getControlHead', 'getSubHead', 'getSubSubHead','SaleMan');
         if (!empty($param)) {
             $q->where('account_name', 'LIKE', '%' . $param . '%');
         }
@@ -61,6 +63,16 @@ class CoaDetailAccountService {
 //        }
     }
 
+    public function DropDownData()
+    {
+        $result = [
+            'saleMans' => SaleMan::pluck('name','id'),
+            'products' => CoaInventorySubSubHead::pluck('name','id'),
+        ];
+
+        return $result;
+    }
+
 
     public function prepareMainAccountData($request)
     {
@@ -71,6 +83,16 @@ class CoaDetailAccountService {
             'sub_sub_head' => $request->sub_sub_head,
             'account_code' => $request->account_code,
             'account_name' => $request->account_name,
+            'saleMan_id' => $request->saleMan_id,
+            'sector' => $request->sector,
+            'area' => $request->area,
+            'product_id' => $request->product_id,
+            'price' => $request->price,
+            'discount' => $request->discount,
+            'scheme' => $request->scheme,
+            'commision' => $request->commision,
+            'mode' => $request->mode,
+            'status' => $request->status,
             'created_by' => Auth::user()->id,
             'updated_by' => Auth::user()->id
         ];

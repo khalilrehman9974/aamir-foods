@@ -45,7 +45,6 @@ class CoaInventoryDetailAccountService
     public function DropDownData()
     {
         $result = [
-            'PriceTags' => PriceTag::pluck('name','id'),
             'MeasurementTypes' => MeasurementType::pluck('name','id'),
             'PackingType' => PackingType::pluck('name','id'),
         ];

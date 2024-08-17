@@ -65,10 +65,10 @@
                                                             value="{{ isset($area->id) ? $area->id : '' }}" />
                                                         <div class="form-group">
                                                             <div class="col-lg-0 col-12 ">
-                                                                <label for="sector_id" class="form-label">Sector</label>
+                                                                <label for="sector_id" class="form-label">Belt</label>
                                                                 <select id="sector_id" type="text" name="sector_id"
                                                                     value="{{ old('sector_id', !empty($area->sector_id) ? $area->sector_id : '') }}"
-                                                                    placeholder="Please Select Sector "
+                                                                    placeholder="Please Select Belt "
                                                                     class="form-control select2 form-control mb-3 custom-select"
                                                                     required>
                                                                     <option value="">Select</option>

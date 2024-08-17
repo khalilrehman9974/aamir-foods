@@ -88,13 +88,13 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th scope="col" style="width: 20%"> <b>Id </b> </th>
-                                    <th scope="col" style="width: 80%"> <b>Name </b> </th>
-                                    <th scope="col" style="width: 80%"> <b>Email </b> </th>
-                                    <th scope="col" style="width: 80%"> <b>Mobile No </b> </th>
-                                    <th scope="col" style="width: 80%"> <b>WhatsApp No </b> </th>
-                                    <th scope="col" style="width: 80%"> <b>Reference</b> </th>
-                                    <th scope="col" style="width: 80%"> <b>Remarks </b> </th>
+                                    <th scope="col" style="width: 5%"> <b>Id </b> </th>
+                                    <th scope="col" style="width: 20%"> <b>Name </b> </th>
+                                    <th scope="col" > <b>Mobile No </b> </th>
+                                    <th scope="col" > <b>Zone</b> </th>
+                                    <th scope="col" > <b>Belt</b> </th>
+                                    <th scope="col" > <b>Area</b> </th>
+                                    <th scope="col" > <b>Designation </b> </th>
                                     <th class="text-center" scope="col"></th>
                                 </tr>
                             </thead>
@@ -119,14 +119,6 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $saleMan->email }}</h6>
-
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
                                                     <h6 class="mb-0">{{ $saleMan->mobile_no }}</h6>
 
                                                 </div>
@@ -135,7 +127,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $saleMan->whatsapp_no }}</h6>
+                                                    <h6 class="mb-0">{{ $saleMan->zone->name }}</h6>
 
                                                 </div>
                                             </div>
@@ -143,7 +135,14 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $saleMan->reference }}</h6>
+                                                    <h6 class="mb-0">{{ $saleMan->sectors->name }}</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="media">
+                                                <div class="media-body align-self-center">
+                                                    <h6 class="mb-0">{{ $saleMan->area->name }}</h6>
 
                                                 </div>
                                             </div>
@@ -151,7 +150,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $saleMan->remarks }}</h6>
+                                                    <h6 class="mb-0">{{ $saleMan->designation }}</h6>
 
                                                 </div>
                                             </div>

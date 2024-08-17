@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
+use App\Models\Zone;
+use App\Models\Sector;
+use App\Models\Country;
 use App\Models\SaleMan;
 use Illuminate\Http\Request;
 use App\Services\CommonService;
@@ -36,10 +40,13 @@ class SaleManController extends Controller
 
     public function create()
     {
-
+        $countries = $this->saleManService->getCountries();
+        $zones = $this->saleManService->getZones();
+        $sectors = $this->saleManService->getSectors();
+        $areas = $this->saleManService->getAreas();
         $pageTitle = 'Add SaleMan';
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
-        return view('sale_mans.create', compact('permission','pageTitle'));
+        return view('sale_mans.create', compact('permission', 'countries','zones', 'sectors','areas','pageTitle'));
     }
 
 
@@ -63,17 +70,51 @@ class SaleManController extends Controller
 
     public function edit($id)
     {
-        $pageTitle = 'Update SaleMan';
-
         $saleMan = SaleMan::find($id);
+        if (!$saleMan) {
+            return abort(404);
+        }
+        $pageTitle = 'Update SaleMan';
+        // $countries = Country::get(["name", "id"]);
+        $countries = $this->saleManService->getCountries();
+        $zones = $this->saleManService->getZones();
+        $sectors = $this->saleManService->getSectors();
+        $areas = $this->saleManService->getAreas();
+
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
 
-        return view('sale_mans.create', compact('saleMan','pageTitle', 'permission'));
+        return view('sale_mans.create', compact('saleMan','pageTitle','countries','zones','sectors', 'areas','permission'));
     }
 
 
     public function destroy()
     {
         return $this->commonService->deleteResource(SaleMan::class);
+    }
+
+    public function fetchZone(Request $request)
+    {
+        $data['zones'] = Zone::where("country_id", $request->country_id)
+            ->get(["name", "id"]);
+
+        return response()->json($data);
+    }
+
+    public function fetchSector(Request $request)
+    {
+        $data['sectors'] = Sector::where("zone_id", $request->zone_id)
+            ->get(["name", "id"]);
+        $data['areas'] = Area::where("sector_id", $request->sector_id)
+            ->get(["name", "id"]);
+
+        return response()->json($data);
+    }
+
+    public function fetchArea(Request $request)
+    {
+        $data['areas'] = Area::where("sector_id", $request->sector_id)
+            ->get(["name", "id"]);
+
+        return response()->json($data);
     }
 }

@@ -25,13 +25,16 @@ class StoreSectorRequest extends FormRequest
     {
         return [
 
+            'zone_id' =>  'required',
             'name' => 'required|max:250|string'
+
         ];
     }
 
     public function messages()
     {
         return [
+            'zone_id.required' => 'Please Select the zone!',
             'name.required' => 'Please enter the name!'
         ];
     }

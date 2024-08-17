@@ -96,3 +96,87 @@ $('#sub-sub-head').on('change', function () {
         }
     })
 })
+
+
+$('#saleMan').on('change', function () {
+    var name = $('#saleMan :selected').text();
+    // console.log(name);
+    let url = config.routes.getSaleManDetail + '/' + name;
+    $.ajax({
+        url: url,
+        type: 'GET',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function (response) {
+            $("#sector").val(response.sector_id);
+        },
+        complete: function () {
+            $('#loading').css('display', 'none');
+        },
+        error: function (errorThrown) {
+            $('').val('');
+            var errors = errorThrown.responseJSON.errors;
+            Swal.fire({
+                icon: 'error',
+                title: 'Something went wrong',
+            })
+        }
+    })
+})
+
+
+$('#saleMan').on('change', function () {
+    var name = $('#saleMan :selected').text();
+    // console.log(name);
+    let url = config.routes.getSaleManAreaDetail + '/' + name;
+    $.ajax({
+        url: url,
+        type: 'GET',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function (response) {
+            $("#area").val(response.area_id);
+        },
+        complete: function () {
+            $('#loading').css('display', 'none');
+        },
+        error: function (errorThrown) {
+            $('').val('');
+            var errors = errorThrown.responseJSON.errors;
+            Swal.fire({
+                icon: 'error',
+                title: 'Something went wrong',
+            })
+        }
+    })
+})
+
+
+$('#product').on('change', function () {
+    var name = $('#product :selected').text();
+    // console.log(name);
+    let url = config.routes.getProductPrice + '/' + name;
+    $.ajax({
+        url: url,
+        type: 'GET',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function (response) {
+            $("#price").val(response.price);
+        },
+        complete: function () {
+            $('#loading').css('display', 'none');
+        },
+        error: function (errorThrown) {
+            $('').val('');
+            var errors = errorThrown.responseJSON.errors;
+            Swal.fire({
+                icon: 'error',
+                title: 'Something went wrong',
+            })
+        }
+    })
+})

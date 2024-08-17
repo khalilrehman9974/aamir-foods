@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CoaInventorySubSubHeadRequest extends FormRequest
+class StoreCountryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,11 +24,15 @@ class CoaInventorySubSubHeadRequest extends FormRequest
     public function rules()
     {
         return [
-            'main_head' => 'required',
-            'sub_head' => 'required',
-            'sub_sub_head' => 'required',
-            'name' => 'required|string|max:250',
-            'price' => 'required|string|max:250',
+
+            'name' => 'required|max:250|string'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'name.required' => 'Please enter the Country name!'
         ];
     }
 }

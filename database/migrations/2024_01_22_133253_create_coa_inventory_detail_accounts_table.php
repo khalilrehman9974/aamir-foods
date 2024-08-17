@@ -21,7 +21,6 @@ return new class extends Migration
             $table->integer('code');
             $table->string('name');
             $table->string('image')->nullable();
-            $table->integer('price_tag_id');
             $table->integer('measurement_type_id');
             $table->integer('packing_type_id');
             $table->string('max_limit');

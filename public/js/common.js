@@ -140,6 +140,8 @@ $(document).on('click', 'body *', function () {
         $('#net-amount').val(totalLessAmount ? totalAmount.toFixed(2) - totalLessAmount : totalAmount.toFixed(2));
     })
 
+    
+
 });
 
 $(document).ready(function () {

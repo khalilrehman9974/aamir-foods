@@ -23,7 +23,9 @@ class CoaDetailAccountRequest extends FormRequest
             'control_head' => 'required|max:250|string',
             'sub_head' => 'required|max:250|string',
             'sub_sub_head' => 'required|max:250|string',
-            'account_name' => 'required|max:250|string'
+            'account_name' => 'required|max:250|string',
+            'saleMan_id' => 'required|max:250|string',
+            'product_id' => 'required|max:250|string',
         ];
     }
 
@@ -34,7 +36,9 @@ class CoaDetailAccountRequest extends FormRequest
             'control-head.required' => 'Please select control head',
             'sub-head.required' => 'Please select sub head',
             'sub-sub-head.required' => 'Please select sub-sub head',
-            'account_name.required' => 'Please enter the account name'
+            'account_name.required' => 'Please enter the account name',
+            'saleMan_id.required' => 'Please select Sale Man',
+            'producct_id.required' => 'Please select the Product',
         ];
     }
 }

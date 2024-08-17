@@ -27,7 +27,7 @@
         @endif
         <div class="col-xl-12 col-md-12 col-sm-12 col-12">
             <div class="row">
-                <div class="col-lg-0 col-6 ">
+                <div class="col-lg-0 col-7 ">
                     <div class="page-meta">
                         <nav class="breadcrumb-style-one" aria-label="breadcrumb">
                             <ol class="breadcrumb">
@@ -38,9 +38,16 @@
                         </nav>
                     </div>
                 </div>
-                <div class="col-lg-0 col-6 ">
-                    <a href="{{ route('area.create') }}" class="btn btn-primary mt-2 mb-2 me-8" style="float : right; "
-                        style="">Create
+                <div class="col-md-5 " style="float : right; ">
+                    <a href="{{ route('country.create') }}" class="btn btn-primary mt-2 mb-2 ml-5 " style="">Add
+                        Country
+                    </a>
+                    <a href="{{ route('zone.create') }}" class="btn btn-primary mt-2 mb-2 " style="">Add Zone
+                    </a>
+                    <a href="{{ route('sector.create') }}" class="btn btn-primary mt-2 mb-2" style="">Add Belt
+                    </a>
+
+                    <a href="{{ route('area.create') }}" class="btn btn-primary mt-2 mb-2" style="">Add Area
                     </a>
                 </div>
             </div>
@@ -90,7 +97,8 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th scope="col" style="width: 40%"> <b>Sector </b> </th>
+                                    <th scope="col" > <b>ID </b> </th>
+                                    <th scope="col" style="width: 40%"> <b>Belt </b> </th>
                                     <th scope="col" style="width: 40%"> <b>Area </b> </th>
                                     <th class="text-center" scope="col"></th>
                                 </tr>
@@ -98,6 +106,13 @@
                             <tbody>
                                 @foreach ($areas as $area)
                                     <tr id="row_{{ $area->id }}">
+                                        <td>
+                                            <div class="media">
+                                                <div class="media-body align-self-center">
+                                                    <h6 class="mb-0">{{ $area->id }}</h6>
+                                                </div>
+                                            </div>
+                                        </td>
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">

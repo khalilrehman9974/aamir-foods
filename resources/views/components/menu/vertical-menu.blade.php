@@ -230,10 +230,17 @@
                     </a>
                     <ul class="collapse submenu list-unstyled {{ Request::is('*/app/management/*') ? 'show' : '' }}"
                         id="management" data-bs-parent="#accordionExample">
+                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                            <a href="{{ route('country.list') }}">Add Country</a>
+                        </li>
 
+                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                            <a href="{{ route('zone.list') }}">Add Zone</a>
+                        </li>
                         <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('sector.list') }}"> Sector</a>
                         </li>
+
                         <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('area.list') }}"> Area</a>
 

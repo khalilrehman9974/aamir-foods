@@ -1,11 +1,12 @@
 <x-base-layout :scrollspy="false">
+
     <x-slot:pageTitle>
         {{ $pageTitle }}
     </x-slot>
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <x-slot:headerFiles>
-        <meta name ="csrf-token" content="{{ csrf_token() }}" />
+        <meta name="csrf-token" content="{{ csrf_token() }}" />
         <script src="{{ asset('js/jquery.min.js') }}"></script>
         @vite(['resources/scss/light/assets/elements/search.scss', 'resources/scss/dark/assets/elements/search.scss'])
         <link rel="stylesheet" href="{{ asset('plugins/sweetalerts2/sweetalerts2.css') }}">
@@ -31,8 +32,8 @@
                         <nav class="breadcrumb-style-one" aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Belts</li>
-                                <li class="breadcrumb-item"><a href="{{ route('sector.list') }}">List</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Zones</li>
+                                <li class="breadcrumb-item"><a href="{{ route('zone.list') }}">List</a></li>
                             </ol>
                         </nav>
                     </div>
@@ -56,16 +57,19 @@
     </div>
 
 
+
+
+
     <div class="row layout-top-spacing">
         <div class="row">
 
             <div class="col-lg-8 col-md-8 col-sm-9 filtered-list-search mx-auto">
                 <form class="form-inline my-2 my-lg-0 justify-content-center" method="get"
-                    action="{{ route('sector.list') }}">
+                    action="{{ route('zone.list') }}">
                     <div class="w-100">
                         <input type="text" value="{{ @$request['param'] }}" name="param" id="param"
                             class="w-100 form-control product-search br-30" id="input-search"
-                            placeholder="Search Belt...">
+                            placeholder="Search Zone...">
                         <button class="btn btn-primary _effect--ripple waves-effect waves-light" type="submit">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -84,46 +88,42 @@
                 <div class="widget-header">
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4>List Of Belts</h4>
+                            <h4>List Of Zones</h4>
                         </div>
                     </div>
                 </div>
-
                 <div class="widget-content widget-content-area">
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
                                     <th scope="col"> <b>ID </b> </th>
+                                    <th scope="col" style="width: 40%"> <b>Country </b> </th>
                                     <th scope="col" style="width: 40%"> <b>Zone </b> </th>
-                                    <th scope="col" style="width: 40%"> <b>Belt Name </b> </th>
                                     <th class="text-center" scope="col"></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($sectors as $sector)
-                                    <tr id="row_{{ $sector->id }}">
+                                @foreach ($zones as $zone)
+                                    <tr id="row_{{ $zone->id }}">
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $sector->id }}</h6>
-
+                                                    <h6 class="mb-0">{{ $zone->id }}</h6>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $sector->zone->name }}</h6>
-
+                                                    <h6 class="mb-0">{{ $zone->country->name }}</h6>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $sector->name }}</h6>
-
+                                                    <h6 class="mb-0">{{ $zone->name }}</h6>
                                                 </div>
                                             </div>
                                         </td>
@@ -131,7 +131,7 @@
                                         <td class="text-center">
                                             <div class="action-btns">
                                                 @if ((!empty($permission->edit_access) && $permission->edit_access == 1) || Auth::user()->is_admin == 1)
-                                                    <a href="{{ route('sector.edit', ['id' => $sector->id]) }}"
+                                                    <a href="{{ route('zone.edit', ['id' => $zone->id]) }}"
                                                         class="action-btn btn-edit bs-tooltip me-2"
                                                         data-toggle="tooltip" data-placement="top" title="Edit">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
@@ -145,10 +145,11 @@
                                                         </svg>
                                                     </a>
                                                 @endif
+
                                                 @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
                                                     <a href="javascript:void(0);"
                                                         class="action-btn btn-delete bs-tooltip delete"
-                                                        data-toggle="tooltip" data-id="{{ $sector->id }}"
+                                                        data-id="{{ $zone->id }}" data-toggle="tooltip"
                                                         data-placement="top" title="Delete">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                             height="24" viewBox="0 0 24 24" fill="none"
@@ -168,17 +169,17 @@
                                                         </svg>
                                                     </a>
                                                 @endif
-                                            </div>
 
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
-                    <nav aria-label="Page navigation">
+                    <nav aria-label=" ListPagination">
                         <ul class="pagination justify-content-end">
-                            {!! $sectors->appends(request()->query())->links() !!}
+                            {!! $zones->appends(request()->query())->links() !!}
                         </ul>
                     </nav>
                 </div>
@@ -186,7 +187,6 @@
             </div>
         </div>
     </div>
-
     <x-slot:footerFiles>
         <script src="{{ asset('js/common.js') }}"></script>
         <script src="{{ asset('plugins/sweetalerts2/sweetalerts2.min.js') }}"></script>
@@ -194,10 +194,11 @@
         <script>
             var config = {
                 routes: {
-                    deleteMainHead: "{{ url('sector/delete') }}",
+                    deleteMainHead: "{{url('zone/delete')}}",
                 },
             }
         </script>
     </x-slot>
+
 
 </x-base-layout>

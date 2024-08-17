@@ -26,9 +26,9 @@
                 <nav class="breadcrumb-style-one" aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Belts</li>
-                        <li class="breadcrumb-item"><a href="{{ route('sector.list') }}">List</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('sector.create') }}">Create</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Countries</li>
+                        <li class="breadcrumb-item"><a href="{{ route('country.list') }}">List</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('country.create') }}">Create</a></li>
                     </ol>
                 </nav>
             </div>
@@ -40,7 +40,7 @@
                 <div class="widget-header">
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4>Add Belt</h4>
+                            <h4>Add Country</h4>
                         </div>
                     </div>
                 </div>
@@ -57,49 +57,33 @@
                                             <div class="row">
                                                 <div class="col-lg-12 col-12 ">
                                                     <form
-                                                        action="{{ !empty($sector) ? route('sector.update') : route('sector.save') }}"
+                                                        action="{{ !empty($country) ? route('country.update') : route('country.save') }}"
                                                         method="POST" class="row g-3 needs-validation" novalidate>
                                                         @csrf
                                                         <input type="hidden" name="id" id="id"
-                                                            value="{{ isset($sector->id) ? $sector->id : '' }}" />
+                                                            value="{{ isset($country->id) ? $country->id : '' }}" />
                                                         <div class="form-group">
-                                                            <div class="col-lg-0 col-12 ">
-                                                                <label for="zone_id" class="form-label">Zone</label>
-                                                                <select id="zone_id" type="text" name="zone_id"
-                                                                    placeholder="Please Select Zone "
-                                                                    class="form-control select2 form-control mb-3 custom-select"
-                                                                    required>
-                                                                    <option value="">Select</option>
-                                                                    @foreach ($dropDownData['zones'] as $key => $value)
-                                                                        <option value="{{ $key }}"
-                                                                            {{ (old('zone_id') == $key ? 'selected' : '') || (!empty($sector->zone_id) ? collect($sector->zone_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                            {{ $value }}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                                {{-- <div class="invalid-feedback">
-                                                                    Please Select the Sector.
-                                                                </div> --}}
-                                                            </div>
+
 
                                                             <div class="col-lg-0 col-12 ">
-                                                                <label for="name" class="form-label">Belt</label>
+                                                                <label for="name" class="form-label">Country</label>
                                                                 <input id="name" type="text" name="name"
-                                                                    value="{{ old('name', !empty($sector->name) ? $sector->name : '') }}"
-                                                                    placeholder="Please Enter Sector Name "
+                                                                    value="{{ old('name', !empty($country->name) ? $country->name : '') }}"
+                                                                    placeholder="Please Enter Country Name "
                                                                     class="form-control" required>
                                                                     <div class="invalid-feedback">
-                                                                        Please Enter the Belt Name.
+                                                                        Please Enter the Country Name.
                                                                     </div>
                                                             </div>
 
-                                                            <a href="{{ route('sector.list') }}" style="float: right;"
+                                                            <a href="{{ route('country.list') }}" style="float: right;"
                                                                 class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
                                                             @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
                                                                 <button type="submit" style="float: right"
                                                                     class="btn btn-success  rounded bs-popover me-1 mt-5 mb-4 "
                                                                     data-bs-container="body" data-bs-placement="right"
                                                                     data-bs-content="Tooltip on right">
-                                                                    @if (!isset($sector))
+                                                                    @if (!isset($country))
                                                                         Save
                                                                     @else
                                                                         Update

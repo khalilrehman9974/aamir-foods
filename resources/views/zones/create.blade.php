@@ -1,4 +1,4 @@
-<x-base-layout :scrollspy="true">
+<x-base-layout :scrollspy="false">
 
     <x-slot:pageTitle>
         {{ $pageTitle }}
@@ -26,21 +26,22 @@
                 <nav class="breadcrumb-style-one" aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Belts</li>
-                        <li class="breadcrumb-item"><a href="{{ route('sector.list') }}">List</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('sector.create') }}">Create</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Zones</li>
+                        <li class="breadcrumb-item"><a href="{{ route('zone.list') }}">List</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('zone.create') }}">Create</a></li>
                     </ol>
                 </nav>
             </div>
         </div>
     </div>
+
     <div class="row layout-top-spacing">
         <div id="tableCustomBasic" class="col-xl-12 col-12 layout-spacing">
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4>Add Belt</h4>
+                            <h4>Add Zone</h4>
                         </div>
                     </div>
                 </div>
@@ -57,22 +58,24 @@
                                             <div class="row">
                                                 <div class="col-lg-12 col-12 ">
                                                     <form
-                                                        action="{{ !empty($sector) ? route('sector.update') : route('sector.save') }}"
+                                                        action="{{ !empty($zone) ? route('zone.update') : route('zone.save') }}"
                                                         method="POST" class="row g-3 needs-validation" novalidate>
                                                         @csrf
                                                         <input type="hidden" name="id" id="id"
-                                                            value="{{ isset($sector->id) ? $sector->id : '' }}" />
+                                                            value="{{ isset($zone->id) ? $zone->id : '' }}" />
                                                         <div class="form-group">
                                                             <div class="col-lg-0 col-12 ">
-                                                                <label for="zone_id" class="form-label">Zone</label>
-                                                                <select id="zone_id" type="text" name="zone_id"
-                                                                    placeholder="Please Select Zone "
+                                                                <label for="country_id"
+                                                                    class="form-label">Country</label>
+                                                                <select id="country_id" type="text" name="country_id"
+                                                                    {{-- value="{{ old('country_id', !empty($zone->country_id) ? $zone->country_id : '') }}" --}}
+                                                                    placeholder="Please Select Country "
                                                                     class="form-control select2 form-control mb-3 custom-select"
                                                                     required>
                                                                     <option value="">Select</option>
-                                                                    @foreach ($dropDownData['zones'] as $key => $value)
+                                                                    @foreach ($dropDownData['countries'] as $key => $value)
                                                                         <option value="{{ $key }}"
-                                                                            {{ (old('zone_id') == $key ? 'selected' : '') || (!empty($sector->zone_id) ? collect($sector->zone_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                            {{ (old('country_id') == $key ? 'selected' : '') || (!empty($zone->country_id) ? collect($zone->country_id)->contains($key) : '') ? 'selected' : '' }}>
                                                                             {{ $value }}</option>
                                                                     @endforeach
                                                                 </select>
@@ -80,32 +83,32 @@
                                                                     Please Select the Sector.
                                                                 </div> --}}
                                                             </div>
-
                                                             <div class="col-lg-0 col-12 ">
-                                                                <label for="name" class="form-label">Belt</label>
+                                                                <label for="name" class="form-label">Zone</label>
                                                                 <input id="name" type="text" name="name"
-                                                                    value="{{ old('name', !empty($sector->name) ? $sector->name : '') }}"
-                                                                    placeholder="Please Enter Sector Name "
+                                                                    value="{{ old('name', !empty($zone->name) ? $zone->name : '') }}"
+                                                                    placeholder="Please Enter Zone Name "
                                                                     class="form-control" required>
-                                                                    <div class="invalid-feedback">
-                                                                        Please Enter the Belt Name.
-                                                                    </div>
+                                                                {{-- <div class="invalid-feedback">
+                                                                        Please Enter the zone Name.
+                                                                    </div> --}}
                                                             </div>
 
-                                                            <a href="{{ route('sector.list') }}" style="float: right;"
+                                                            <a href="{{ route('zone.list') }}" style="float: right;"
                                                                 class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
-                                                            @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
-                                                                <button type="submit" style="float: right"
-                                                                    class="btn btn-success  rounded bs-popover me-1 mt-5 mb-4 "
-                                                                    data-bs-container="body" data-bs-placement="right"
-                                                                    data-bs-content="Tooltip on right">
-                                                                    @if (!isset($sector))
-                                                                        Save
-                                                                    @else
-                                                                        Update
-                                                                    @endif
-                                                                </button>
-                                                            @endif
+                                                            {{-- @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
+
+                                                            @endif --}}
+                                                            <button type="submit" style="float: right"
+                                                                class="btn btn-success  rounded bs-popover me-1 mt-5 mb-4 "
+                                                                data-bs-container="body" data-bs-placement="right"
+                                                                data-bs-content="Tooltip on right">
+                                                                @if (!isset($zone))
+                                                                    Save
+                                                                @else
+                                                                    Update
+                                                                @endif
+                                                            </button>
                                                         </div>
                                                     </form>
                                                 </div>
@@ -123,19 +126,20 @@
     </div>
     <script>
         window.addEventListener('load', function() {
-            // Fetch all the forms we want to apply custom Bootstrap validation styles to
-            var forms = document.getElementsByClassName('needs-validation');
-            // Loop over them and prevent submission
-            var validation = Array.prototype.filter.call(forms, function(form) {
-                form.addEventListener('submit', function(event) {
-                    if (form.checkValidity() === false) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-                    form.classList.add('was-validated');
-                }, false);
-            });
-        }, false);
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            },
+            false);
     </script>
     <x-slot:footerFiles>
         <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
