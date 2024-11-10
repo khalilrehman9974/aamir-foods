@@ -493,7 +493,7 @@
 
         <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
         <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
-        <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script>
+        {{-- <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script> --}}
         <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
@@ -638,7 +638,7 @@
                 '</td>' +
                 '<td class="description"> <select id="product_id" type="text" name="product_id[]" value="{{ old('product_id', !empty($sale->product_id) ? $sale->product_id : '') }}" placeholder="Please Select the Product" class="form-control product select2 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mb-3 custom-select"> <option value=""> Select</option> @foreach ($dropDownData['products'] as $key => $value)<option value="{{ $key }}" {{ (old('product_id') == $key ? 'selected' : '') || (!empty($sale->product_id) ? collect($sale->product_id)->contains($key) : '') ? 'selected' : '' }}> {{ $value }} </option>@endforeach </select>' +
                 '<td class="rate">' +
-                '<input type="text" class="form-control  {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" placeholder="Qty" name="quantity[]">' +
+                '<input type="text" class="rate form-control  {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" placeholder="Qty" name="quantity[]">' +
                 ' </td>' +
                 '<td class="text-right qty"><input type="text" class="form-control  {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" placeholder="unit" name="unit[]"></td>' +
                 '<td class="text-right amount"><span class="editable-amount"><span class="currency"></span> <span class="amount">0.00</span></td>' +

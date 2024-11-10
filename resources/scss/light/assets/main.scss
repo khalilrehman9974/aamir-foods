@@ -441,7 +441,7 @@ span {
   }
 
   /* Card Style 2 */
-  
+
   &.style-2 {
     padding: 15px 18px;
     border-radius: 15px;
@@ -453,7 +453,7 @@ span {
   }
 
   /* Card Style 3 */
-  
+
   &.style-3 {
     padding: 10px 10px;
     border-radius: 15px;
@@ -506,9 +506,9 @@ span {
     }
   }
 
-  
+
 /* Card Style 5 */
-  
+
   &.style-5 {
     flex-direction: row;
 
@@ -529,7 +529,7 @@ span {
     right: 8px;
     top: 8px;
   }
-  
+
   /* Card Style 7 */
 
   &.style-7 {
@@ -619,8 +619,8 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
       cursor: no-drop;
       color: #d3d3d3;
     }
-    
-    
+
+
     &:focus {
       background-color: #f1f2f3;
     }
@@ -629,7 +629,7 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
       color: #888ea8;
       font-size: 15px;
     }
-    
+
   }
 }
 
@@ -721,7 +721,7 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
   height: 17px;
   margin-top: 0.21em;
   transition: background-color .15s ease-in-out,background-position .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-  
+
   &:focus {
     border-color: #e0e6ed;
     box-shadow: none;
@@ -2636,7 +2636,7 @@ fieldset:disabled .btn {
   }
 
   // &:active {
-    
+
   // }
 }
 
@@ -3482,12 +3482,12 @@ fieldset:disabled .btn {
           left: -14px;
           top: 0;
         }
-        
+
       }
 
     }
   }
-  
+
 }
 
 .avatar {
@@ -3699,7 +3699,7 @@ fieldset:disabled .btn {
 
 /* .search-form-control { border-radius: .25rem; } */
 
-/*  
+/*
     ====================
         Table
     ====================
@@ -3720,7 +3720,7 @@ fieldset:disabled .btn {
     background-color: #bfc9d4;
     border-color: #bfc9d4;
   }
-  
+
   thead {
     color: #515365;
     letter-spacing: 1px;
@@ -3755,7 +3755,7 @@ fieldset:disabled .btn {
       width: 5%;
     }
   }
-  
+
   tbody {
     border: none;
 
@@ -3766,7 +3766,7 @@ fieldset:disabled .btn {
 
       td {
         border: none;
-        padding: 10px 21px 10px 21px;
+        padding: 5px 5px 5px 5px;
         vertical-align: middle;
         letter-spacing: normal;
         white-space: nowrap;
@@ -3864,7 +3864,7 @@ fieldset:disabled .btn {
   }
 }
 
-/* 
+/*
     Hover and Striped
 */
 
@@ -3890,13 +3890,13 @@ fieldset:disabled .btn {
   }
 }
 
-/* 
+/*
 
     Striped
 
 */
 
-/* 
+/*
     Striped and Bordered
 */
 
@@ -3911,85 +3911,85 @@ fieldset:disabled .btn {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
           }
-    
+
           &:last-child {
             border-top-right-radius: 0;
             border-bottom-right-radius: 0;
           }
         }
-    
+
         &:first-child td {
           &:first-child {
             border-top-left-radius: 0;
           }
-    
+
           &:last-child {
             border-top-right-radius: 0;
           }
         }
-    
+
         &:last-child td {
           &:first-child {
             border-bottom-left-radius: 10px;
           }
-    
+
           &:last-child {
             border-bottom-right-radius: 10px;
           }
         }
       }
-    
+
       thead tr th {
         border: 1px solid #ebedf2;
         background: transparent;
         border-bottom-right-radius: 0;
         border-bottom-left-radius: 0;
       }
-    
+
       > tbody > tr {
         td {
           border: 1px solid #ebedf2;
         }
-    
+
         &:last-child td {
           &:first-child {
             border-bottom-left-radius: 10px;
           }
-    
+
           &:last-child {
             border-bottom-right-radius: 10px;
           }
         }
       }
-    
+
       &.table-hover > tbody > tr:hover {
         td {
           &:first-child {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
           }
-    
+
           &:last-child {
             border-top-right-radius: 0;
             border-bottom-right-radius: 0;
           }
         }
-    
+
         &:first-child td {
           &:first-child {
             border-top-left-radius: 0;
           }
-    
+
           &:last-child {
             border-top-right-radius: 0;
           }
         }
-    
+
         &:last-child td {
           &:first-child {
             border-bottom-left-radius: 10px;
           }
-    
+
           &:last-child {
             border-bottom-right-radius: 10px;
           }
@@ -4001,13 +4001,13 @@ fieldset:disabled .btn {
 
 }
 
-/* 
+/*
 
     Bordered
 
 */
 
-/* 
+/*
     Bordered and Hover
 */
 
@@ -4106,14 +4106,14 @@ fieldset:disabled .btn {
   color: #fff;
 }
 
-/*  
+/*
     ==========================
-        Background Colors  
+        Background Colors
     ==========================
 */
 
-/*  
-    Default  
+/*
+    Default
 */
 
 .bg-primary {
@@ -4158,8 +4158,8 @@ fieldset:disabled .btn {
   color: #fff;
 }
 
-/*  
-    Light Background  
+/*
+    Light Background
 */
 
 .bg-light-primary {
@@ -4204,7 +4204,7 @@ fieldset:disabled .btn {
   color: #fff;
 }
 
-/*  
+/*
     Progress Bar
 */
 
@@ -4309,7 +4309,7 @@ fieldset:disabled .btn {
   }
 }
 
-/* 
+/*
     =====================
         BreadCrumbs
     =====================

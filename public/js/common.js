@@ -96,10 +96,11 @@ $('#main-head').on('change', function () {
 //Runtime calculation
 $(document).on('click', 'body *', function () {
     $('.rate').on("focusout", function () {
+
         var row_id = $(this).closest("tr").find(".row_id").val();
         let quantity = $(this).closest("tr").find(".qty_" + row_id).val();
         let price = $(this).closest("tr").find(".rate_" + row_id).val();
-        console.log(row_id + ", " + quantity + ", " + price);
+        // console.log(row_id + ", " + quantity + ", " + price);
         if (parseInt(quantity) > 0) {
             $(this).closest("tr").find(".amount_" + row_id).val(quantity * price);
         } else {
@@ -140,7 +141,7 @@ $(document).on('click', 'body *', function () {
         $('#net-amount').val(totalLessAmount ? totalAmount.toFixed(2) - totalLessAmount : totalAmount.toFixed(2));
     })
 
-    
+
 
 });
 

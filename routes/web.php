@@ -127,6 +127,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('save', ['as' => 'dispatch-note.save', 'uses' => 'App\Http\Controllers\DispatchNoteController@store']);
         Route::get('edit/{id}', ['as' => 'dispatch-note.edit', 'uses' => 'App\Http\Controllers\DispatchNoteController@edit']);
         Route::post('update', ['as' => 'dispatch-note.update', 'uses' => 'App\Http\Controllers\DispatchNoteController@update']);
+        Route::get('get-sale-order-data/{name}', ['as' => 'sale-order-data', 'uses' => 'App\Http\Controllers\DispatchNoteController@getSaleOrderData']);
         Route::delete('delete/{id}', ['as' => 'dispatch-note.delete', 'uses' => 'App\Http\Controllers\DispatchNoteController@destroy']);
         Route::post('show/{id}', ['as' => 'dispatch-note.show', 'uses' => 'App\Http\Controllers\DispatchNoteController@show']);
         Route::get('search', ['as' => 'dispatch-note.search', 'uses' => 'App\Http\Controllers\DispatchNoteController@search']);

@@ -88,11 +88,10 @@
                             <thead>
                                 <tr>
                                     <th scope="col"> <b>Id </b> </th>
-                                    <th scope="col" style="width: 30%"> <b>Party </b> </th>
-                                    <th scope="col" style="width: 30%"> <b>Sale Man </b> </th>
-                                    <th scope="col" style="width: 20%"> <b>Bilty Number </b> </th>
-                                    <th scope="col" style="width: 20%"> <b>Total Amount</b> </th>
-                                    {{-- <th scope="col" style="width: 80%"> <b>Remarks </b> </th> --}}
+                                    <th scope="col" style="width: 20%"> <b>Date</b> </th>
+                                    <th scope="col" style="width: 30%"> <b>Party</b> </th>
+                                    <th scope="col" style="width: 30%"> <b>Total Amount</b> </th>
+                                    <th scope="col" style="width: 20%"> <b>Remarks</b> </th>
                                     <th class="text-center" scope="col"></th>
                                 </tr>
                             </thead>
@@ -109,7 +108,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $saleOrder->party_id }}</h6>
+                                                    <h6 class="mb-0">{{ $saleOrder->date }}</h6>
 
                                                 </div>
                                             </div>
@@ -117,23 +116,25 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $saleOrder->saleman_id }}</h6>
+                                                    <h6 class="mb-0">{{ $saleOrder->party->account_name }}</h6>
 
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $saleOrder->bilty_no }}</h6>
 
-                                                </div>
-                                            </div>
-                                        </td>
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
                                                     <h6 class="mb-0">{{ $saleOrder->total_amount }}</h6>
+
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <div class="media">
+                                                <div class="media-body align-self-center">
+                                                    <h6 class="mb-0">{{ $saleOrder->remarks}}</h6>
 
                                                 </div>
                                             </div>

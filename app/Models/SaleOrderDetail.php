@@ -12,9 +12,14 @@ class SaleOrderDetail extends Model
     protected $guarded = ['id'];
     protected $table = 'sale_order_details';
 
-    protected $fillable = ['sale_order_master_id','product_id', 'quantity','unit','total_unit','rate','amount','created_by','updated_by'];
+    protected $fillable = ['sale_order_master_id','product_id', 'quantity','dzn','total_dzn','rate','amount','created_by','updated_by'];
 
     public function sale_order_master(){
         return $this->hasMany(SaleOrder::class,'id', 'sale_order_master_id');
+    }
+
+    public function master()
+    {
+        return $this->belongsTo(SaleOrder::class);
     }
 }

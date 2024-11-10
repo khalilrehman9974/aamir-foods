@@ -28,4 +28,14 @@ class CoaInventoryDetailAccount extends Model
     {
         return $this->hasOne(CoaInventorySubSubHead::class, 'id', 'sub_sub_head');
     }
+
+    public function measurementType()
+    {
+        return $this->hasOne(MeasurementType::class, 'id', 'measurement_type_id');
+    }
+
+    public function packingType()
+    {
+        return $this->hasOne(PackingType::class, 'id', 'packing_type_id');
+    }
 }

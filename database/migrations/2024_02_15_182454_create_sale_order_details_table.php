@@ -18,19 +18,21 @@ return new class extends Migration
             $table->integer('sale_order_master_id')->unsigned()->index();
             $table->integer('product_id');
             $table->double('quantity');
-            $table->double('unit');
-            $table->double('total_unit');
+            $table->double('dzn');
+            $table->double('total_dzn');
             $table->double('rate');
             $table->double('amount');
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')->nullable();
             $table->bigInteger('created_by');
-            $table->c('updated_by');
+            $table->bigInteger('updated_by');
 
             $table->foreign('sale_order_master_id')
             ->references('id')->on('sale_order_masters')
             ->onDelete('cascade');
+
+           
         });
     }
 

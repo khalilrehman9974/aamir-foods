@@ -17,24 +17,16 @@ return new class extends Migration
             $table->Increments('id');
             $table->date('date');
             $table->integer('party_id');
-            $table->string('deliverd_to');
             $table->integer('business_id');
             $table->integer('f_year_id')->unsigned()->index();
             $table->text('remarks')->nullable();
             $table->double('total_amount')->nullable();
-            $table->double('freight')->nullable();
-            $table->double('scheme')->nullable();
-            $table->double('commission')->nullable();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')->nullable();
             $table->bigInteger('created_by');
             $table->bigInteger('updated_by');
 
-
-            $table->foreign('saleman_id')
-            ->references('id')->on('sale_mans')
-            ->onDelete('cascade');
 
             $table->foreign('f_year_id')
             ->references('id')->on('financial_years')

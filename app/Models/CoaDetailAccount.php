@@ -46,7 +46,7 @@ class CoaDetailAccount extends Model
 
     public function SaleMan()
     {
-        return $this->belongsTo(SaleMan::class,'id', 'name');
+        return $this->hasOne(SaleMan::class,'id', 'saleMan_id');
     }
 
 }

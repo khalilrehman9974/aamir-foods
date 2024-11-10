@@ -17,4 +17,6 @@ class DispatchNoteDetail extends Model
         return $this->hasMany(DispatchNoteMaster::class, 'id', 'dispatch_note_master_id');
     }
 
+    
+
 }

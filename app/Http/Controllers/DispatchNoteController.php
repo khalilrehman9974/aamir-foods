@@ -9,6 +9,7 @@ use App\Models\DispatchNoteMaster;
 use Illuminate\Support\Facades\DB;
 use App\Services\DispatchNoteService;
 use App\Http\Requests\DispatchNoteStoreRequest;
+use App\Models\SaleOrder;
 
 class DispatchNoteController extends Controller
 {
@@ -42,10 +43,11 @@ class DispatchNoteController extends Controller
     public function create()
     {
         $pageTitle = 'Create Dispatch Note';
+        $maxid = DispatchNoteMaster::max('id') + 1;
         $dropDownData = $this->dispatchNoteService->DropDownData();
         $dispatchNotes = DispatchNoteDetail::where('dispatch_note_master_id')->get();
 
-        return view('dispatch-note.create', compact('pageTitle', 'dropDownData', 'dispatchNotes'));
+        return view('dispatch-note.create', compact('pageTitle', 'maxid', 'dropDownData', 'dispatchNotes'));
     }
 
     /**
@@ -94,6 +96,7 @@ class DispatchNoteController extends Controller
     {
 
         $pageTitle = 'Update Dispatch Note';
+        $currentid = $id;
         $note = DispatchNoteMaster::find($id);
         // dd($note);
         $dropDownData = $this->dispatchNoteService->DropDownData();
@@ -102,7 +105,7 @@ class DispatchNoteController extends Controller
             $message = config('constants.wrong');
         }
 
-        return view('dispatch-note.create', compact('pageTitle', 'dropDownData', 'note', 'dispatchNotes'));
+        return view('dispatch-note.create', compact('pageTitle', 'dropDownData', 'currentid', 'note', 'dispatchNotes'));
     }
 
        /**
@@ -143,5 +146,20 @@ class DispatchNoteController extends Controller
 
         return $this->commonService->deleteResource(DispatchNoteMaster::class);
 
+    }
+
+    public function getSaleOrderData($name)
+    {
+        // Fetch master data based on sale order Number
+        $orderMasterData = SaleOrder::with('details')->where('id', 'like', "%{$name}%")->first();
+
+        if ($orderMasterData) {
+            return response()->json($orderMasterData);
+        }
+
+        // return redirect('dispatch-note/create')->with('error', 'No data found' );
+
+        // return response()->json(['status' => 'fail', 'message' => 'No data found'], 404);
+        return response()->json(['message' => 'No data found'], 404);
     }
 }

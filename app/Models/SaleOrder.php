@@ -12,19 +12,16 @@ class SaleOrder extends Model
     protected $guarded = ['id'];
     protected $table = 'sale_order_masters';
 
-    protected $fillable = ['date','party_id','bilty_no','deliverd_to','saleman_id','transporter_id','business_id','f_year_id',
-    'remarks','total_amount','freight','scheme','commission','created_by','updated_by'];
+    protected $fillable = ['date','party_id','business_id','f_year_id',
+    'remarks','total_amount','created_by','updated_by'];
 
 
     public function party(){
         return $this->hasOne(CoaDetailAccount::class, 'account_code', 'party_id');
     }
 
-    public function saleman(){
-        return $this->hasOne(SaleMan::class, 'id', 'saleman_id');
-    }
-
-    public function transporter(){
-        return $this->hasOne(Transporter::class, 'id', 'transporter_id');
+    public function details()
+    {
+        return $this->hasMany(SaleOrderDetail::class, 'sale_order_master_id', 'id');
     }
 }

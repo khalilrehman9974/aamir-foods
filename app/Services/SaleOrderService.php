@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Carbon;
 use App\Models\SaleMan;
 use App\Models\SaleOrder;
 use App\Models\Transporter;
@@ -17,6 +18,18 @@ class SaleOrderService
     public function __construct(CommonService $commonService)
     {
         $this->commonService = $commonService;
+    }
+
+    public function findUpdateOrCreate($model, array $where, array $data)
+    {
+        $object = $model::firstOrNew($where);
+
+        foreach ($data as $property => $value){
+            $object->{$property} = $value;
+        }
+        $object->save();
+
+        return $object;
     }
 
     /*
@@ -58,12 +71,12 @@ class SaleOrderService
     {
         $q = SaleOrder::query();
         if (!empty($request['param'])) {
-            $q = SaleOrder::with('type','party','saleman','transporter')
-            ->where('bilty_no', 'like', '%' . $request['param'] . '%')
-            ->orWhere('party', 'like', '%' . $request['param'] . '%');
+            $q = SaleOrder::with('party')
+
+            ->Where('party', 'like', '%' . $request['param'] . '%');
 
         }
-        $saleOrders = $q->orderBy('bilty_no', 'ASC')->paginate(config('constants.PER_PAGE'));
+        $saleOrders = $q->orderBy('party_id', 'ASC')->paginate(config('constants.PER_PAGE'));
 
         return $saleOrders;
     }
@@ -78,20 +91,14 @@ class SaleOrderService
     {
         $session = $this->commonService->getSession();
         return [
-            'date' => $request['date'],
+            // 'date' => $request['date'],
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'party_id' => $request['party_id'],
-            'bilty_no' => $request['bilty_no'],
-            'deliverd_to' => $request['deliverd_to'],
-            'saleman_id' => $request['saleman_id'],
-            'transporter_id' => $request['transporter_id'],
             'business_id' => $session->business_id,
             'f_year_id' => $session->financial_year,
             'remarks' => $request['remarks'],
             'total_amount' => $request['total_amount'],
-            'freight' => $request['freight'],
-            'scheme' => $request['scheme'],
-            'commission' => $request['commission'],
-            'created_by '=> Auth::user()->id,
+            'created_by'=> Auth::user()->id,
             'updated_by' => Auth::user()->id
         ];
     }
@@ -119,8 +126,8 @@ class SaleOrderService
         return [
             'product_id' => $request['product_id'],
             'quantity' => $request['quantity'],
-            'unit' => $request['unit'],
-            'total_unit' => $request['total_unit'],
+            'dzn' => $request['dzn'],
+            'total_dzn' => $request['total_dzn'],
             'rate' => $request['rate'],
             'amount' => $request['amount'],
             'created_by'=> Auth::user()->id,
@@ -138,11 +145,13 @@ class SaleOrderService
         foreach ($data['product_id'] as $key => $value) {
             if (!empty($data['product_id'][$key])) {
                 $rec['product_id'] = $data['product_id'][$key];
-                $rec['unit'] = $data['unit'][$key];
                 $rec['quantity'] = $data['quantity'][$key];
+                $rec['dzn'] = $data['dzn'][$key];
+                $rec['total_dzn'] = $data['total_dzn'][$key];
                 $rec['rate'] = $data['rate'][$key];
                 $rec['amount'] = $data['amount'][$key];
-                $rec['total_unit'] = $data['total_unit'][$key];
+                $rec['created_by'] = Auth::user()->id;
+                $rec['updated_by'] = Auth::user()->id;
                 $rec['sale_order_master_id'] = $data['sale_order_master_id'];
                 SaleOrderDetail::create($rec);
             }
