@@ -13,38 +13,26 @@ class MenusSeeder extends Seeder
     public function run()
     {
         $menus = [
-            [
-                'name' => 'BRV',
-            ],
-            [
-                'name' => 'BPV',
-            ],
-            [
-                'name' => 'CPV',
-            ],
-            [
-                'name' => 'CRV',
-            ],
-            [
-                'name' => 'JV',
-            ],
+            // [
+            //     'name' => 'BRV',
+            // ],
+            // [
+            //     'name' => 'BPV',
+            // ],
+            // [
+            //     'name' => 'CPV',
+            // ],
+            // [
+            //     'name' => 'CRV',
+            // ],
+            // [
+            //     'name' => 'JV',
+            // ],
             [
                 'name' => 'Products',
             ],
             [
                 'name' => 'User Registration',
-            ],
-            [
-                'name' => 'Brands',
-            ],
-            [
-                'name' => 'Accounts',
-            ],
-            [
-                'name' => 'Customers',
-            ],
-            [
-                'name' => 'Bank Registration',
             ],
             [
                 'name' => 'Financial Year',
@@ -79,9 +67,7 @@ class MenusSeeder extends Seeder
             [
                 'name' => 'Sale Returns'
             ],
-            [
-                'name' => 'customerPrice'
-            ]
+
         ];
 
         foreach($menus as $area){

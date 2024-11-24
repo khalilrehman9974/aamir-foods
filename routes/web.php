@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ChartOfAccountController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -446,6 +446,18 @@ Route::group(['middleware' => ['auth']], function () {
         Route::delete('delete/{id}', ['as' => 'MeasurementType.delete', 'uses' => 'App\Http\Controllers\MeasurementTypeController@delete']);
     });
 
+    Route::group(['prefix' => 'permission'], function () {
+        Route::get('list', ['as' => 'permission.list', 'uses' => 'App\Http\Controllers\PermissionController@index']);
+        Route::get('create', ['as' => 'permission.create', 'uses' => 'App\Http\Controllers\PermissionController@create']);
+        Route::post('save', ['as' => 'permission.save', 'uses' => 'App\Http\Controllers\PermissionController@store']);
+        Route::get('edit/{id}', ['as' => 'permission.edit', 'uses' => 'App\Http\Controllers\PermissionController@edit']);
+        Route::post('update', ['as' => 'permission.update', 'uses' => 'App\Http\Controllers\PermissionController@update']);
+        Route::delete('delete/{id}', ['as' => 'permission.delete', 'uses' => 'App\Http\Controllers\PermissionController@destroy']);
+        Route::post('show/{id}', ['as' => 'permission.show', 'uses' => 'App\Http\Controllers\PermissionController@show']);
+        Route::get('search', ['as' => 'permission.search', 'uses' => 'App\Http\Controllers\PermissionController@search']);
+        Route::get('user', ['as' => 'user.permission', 'uses' => 'App\Http\Controllers\PermissionController@getUserPermissions']);
+    });
+
     Route::group(['prefix' => 'PackingType', 'middleware' => 'auth'], function () {
         Route::get('list', ['as' => 'PackingType.list', 'uses' => 'App\Http\Controllers\PackingTypeController@index']);
         Route::get('create', ['as' => 'PackingType.create', 'uses' => 'App\Http\Controllers\PackingTypeController@create']);
@@ -470,7 +482,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('save', ['as' => 'sale-order.save', 'uses' => 'App\Http\Controllers\SaleOrderController@store']);
         Route::get('edit/{id}', ['as' => 'sale-order.edit', 'uses' => 'App\Http\Controllers\SaleOrderController@edit']);
         Route::post('update', ['as' => 'sale-order.update', 'uses' => 'App\Http\Controllers\SaleOrderController@store']);
-        Route::delete('delete/{id}', ['as' => 'sale-order.delete', 'uses' => 'App\Http\Controllers\SaleOrderController@destroy']);
+        Route::delete('delete/{id}', ['as' => 'sale-order.delete', 'uses' => 'App\Http\Controllers\SaleOrderController@delete']);
         Route::get('get-party-sale-man/{name}', ['as' => 'party-sale-man', 'uses' => 'App\Http\Controllers\SaleOrderController@getSaleManDetail']);
         Route::get('get-party-sale-man-sector/{name}', ['as' => 'party-sale-man-sector', 'uses' => 'App\Http\Controllers\SaleOrderController@getSaleManSectorDetail']);
         Route::get('get-party-sale-man-area/{name}', ['as' => 'party-sale-man-area', 'uses' => 'App\Http\Controllers\SaleOrderController@getSaleManAreaDetail']);

@@ -141,7 +141,7 @@
                                                 <td>
                                                     <div class="media">
                                                         <div class="media-body align-self-center">
-                                                            <h6 class="mb-0">{{ $account->SaleMan}}</h6>
+                                                            <h6 class="mb-0">{{ $account->SaleMan->name}}</h6>
 
                                                         </div>
                                                     </div>

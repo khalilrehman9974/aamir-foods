@@ -1,11 +1,15 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
+
+    protected $tableName = 'users';
+
+
     /**
      * Run the migrations.
      *
@@ -13,17 +17,20 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
+        Schema::create($this->tableName, function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+            $table->Increments('id');
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('designation');
             $table->timestamp('email_verified_at')->nullable();
-            $table->integer('business_id');
-            $table->integer('f_year_id');
+            $table->integer('is_admin');
             $table->string('password');
             $table->rememberToken();
-            $table->timestamps();
+            $table->timestamp('created_at');
+            $table->timestamp('updated_at');
+            $table->timestamp('deleted_at')->nullable();
+            $table->string('created_by');
+            $table->string('updated_by');
         });
     }
 
@@ -34,6 +41,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists($this->tableName);
     }
 };

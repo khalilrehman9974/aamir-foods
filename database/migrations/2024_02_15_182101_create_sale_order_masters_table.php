@@ -19,6 +19,13 @@ return new class extends Migration
             $table->integer('party_id');
             $table->integer('business_id');
             $table->integer('f_year_id')->unsigned()->index();
+            $table->string('saleman', 250);
+            $table->string('belt', 250);
+            $table->string('area', 250);
+            $table->string('delivered_to', 250);
+            $table->string('status', 250);
+            $table->double('total_boray')->nullable();
+            $table->double('total_carton')->nullable();
             $table->text('remarks')->nullable();
             $table->double('total_amount')->nullable();
             $table->timestamp('created_at');

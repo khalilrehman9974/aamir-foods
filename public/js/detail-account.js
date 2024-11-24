@@ -109,7 +109,7 @@ $('#saleMan').on('change', function () {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         success: function (response) {
-            $("#sector").val(response.sector_id);
+            $("#sector").val(response.name.name);
         },
         complete: function () {
             $('#loading').css('display', 'none');
@@ -137,7 +137,7 @@ $('#saleMan').on('change', function () {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         success: function (response) {
-            $("#area").val(response.area_id);
+            $("#area").val(response.name.name);
         },
         complete: function () {
             $('#loading').css('display', 'none');

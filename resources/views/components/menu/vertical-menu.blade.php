@@ -8,6 +8,24 @@
 
 --}}
 
+@php
+    $permissionObj = new \App\Services\PermissionService();
+    $brvPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '1');
+    $bpvPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '2');
+    $cpvPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '3');
+    $crvPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '4');
+    $jvPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '5');
+    $chartofAccountPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '6');
+    $userRegistrationPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '7');
+    $companyRegistrationPermission = $permissionObj->getUserPermission(
+        \Illuminate\Support\Facades\Auth::user()->id,
+        '8',
+    );
+    $projectPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '9');
+    $donorPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '10');
+    $bankPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '11');
+    $fYearPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '12');
+@endphp
 
 <div class="sidebar-wrapper sidebar-theme">
     <div class="sidebar-wrapper sidebar-theme">
@@ -17,8 +35,8 @@
             <div class="navbar-nav theme-brand flex-row  text-center">
                 <div class="nav-logo">
                     <div class="nav-item theme-logo">
-                        <a href="{{getRouterValue();}}/home">
-                            <img alt="image-404" src="{{asset('images/logo.png')}}" class="light-element theme-logo">
+                        <a href="{{ getRouterValue() }}/home">
+                            <img alt="image-404" src="{{ asset('images/logo.png') }}" class="light-element theme-logo">
                         </a>
                     </div>
                     <div class="nav-item theme-text">
@@ -81,50 +99,53 @@
                         </li>
                     </ul>
                 </li>
-
-                <li class="menu {{ Request::is('*/app/chart-of-account/*') ? 'active' : '' }}">
-                    <a href="#chart-of-account" data-bs-toggle="collapse"
-                        aria-expanded="{{ Request::is('*/app/chart-of-account/*') ? 'true' : 'false' }}"
-                        class="dropdown-toggle">
-                        <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="feather feather-users">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            </svg>
-                            <span>Chart of Accounts</span>
-                        </div>
-                        <div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="feather feather-chevron-right">
-                                <polyline points="9 18 15 12 9 6"></polyline>
-                            </svg>
-                        </div>
-                    </a>
-                    <ul class="collapse submenu list-unstyled {{ Request::is('*/app/chart-of-account/*') ? 'show' : '' }}"
-                        id="chart-of-account" data-bs-parent="#accordionExample">
-                        <li class="{{ Request::routeIs('chart-of-account-main-head') ? 'active' : '' }}">
-                            <a href="{{ route('main-head.list') }}"> Main Head </a>
-                        </li>
-                        <li class="{{ Request::routeIs('chart-of-account-control-head') ? 'active' : '' }}">
-                            <a href="{{ route('control-head.list') }}"> Control Head </a>
-                        </li>
-                        <li class="{{ Request::routeIs('chart-of-account-sub-head') ? 'active' : '' }}">
-                            <a href="{{ route('sub-head.list') }}"> Sub Head </a>
-                        </li>
-                        <li class="{{ Request::routeIs('chart-of-account-sub-head') ? 'active' : '' }}">
-                            <a href="{{ route('sub-sub-head.list') }}"> Sub-Sub Head </a>
-                        </li>
-                        <li class="{{ Request::routeIs('chart-of-account-detail-account') ? 'active' : '' }}">
-                            <a href="{{ route('detail-account.list') }}"> Detail Account </a>
-                        </li>
-                    </ul>
-                </li>
-
+                @if (
+                    (!empty($chartofAccountPermission->menu_access) && $chartofAccountPermission->menu_access == 1) ||
+                        \Illuminate\Support\Facades\Auth::user()->is_admin == 1)
+                    <li class="menu {{ Request::is('*/app/chart-of-account/*') ? 'active' : '' }}">
+                        <a href="#chart-of-account" data-bs-toggle="collapse"
+                            aria-expanded="{{ Request::is('*/app/chart-of-account/*') ? 'true' : 'false' }}"
+                            class="dropdown-toggle">
+                            <div class="">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" class="feather feather-users">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                <span>Chart of Accounts</span>
+                            </div>
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="feather feather-chevron-right">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
+                            </div>
+                        </a>
+                        <ul class="collapse submenu list-unstyled {{ Request::is('*/app/chart-of-account/*') ? 'show' : '' }}"
+                            id="chart-of-account" data-bs-parent="#accordionExample">
+                            <li class="{{ Request::routeIs('chart-of-account-main-head') ? 'active' : '' }}">
+                                <a href="{{ route('main-head.list') }}"> Main Head </a>
+                            </li>
+                            <li class="{{ Request::routeIs('chart-of-account-control-head') ? 'active' : '' }}">
+                                <a href="{{ route('control-head.list') }}"> Control Head </a>
+                            </li>
+                            <li class="{{ Request::routeIs('chart-of-account-sub-head') ? 'active' : '' }}">
+                                <a href="{{ route('sub-head.list') }}"> Sub Head </a>
+                            </li>
+                            <li class="{{ Request::routeIs('chart-of-account-sub-head') ? 'active' : '' }}">
+                                <a href="{{ route('sub-sub-head.list') }}"> Sub-Sub Head </a>
+                            </li>
+                            <li class="{{ Request::routeIs('chart-of-account-detail-account') ? 'active' : '' }}">
+                                <a href="{{ route('detail-account.list') }}"> Detail Account </a>
+                            </li>
+                        </ul>
+                    </li>
+                @endif
                 <li class="menu {{ Request::is('*/app/invoice/*') ? 'active' : '' }}">
                     <a href="#invoice" data-bs-toggle="collapse"
                         aria-expanded="{{ Request::is('*/app/invoice/*') ? 'true' : 'false' }}"
@@ -166,16 +187,17 @@
                         <li class="{{ Request::routeIs('invoice-preview') ? 'active' : '' }}">
                             <a href="{{ route('sale-order.list') }}">Sale Order </a>
                         </li>
+
                     </ul>
                 </li>
-                <li class="menu {{ Request::is('*/app/chart-of-inventory/*') ? "active" : "" }}">
+                <li class="menu {{ Request::is('*/app/chart-of-inventory/*') ? 'active' : '' }}">
                     <a href="#chart-of-inventory" data-bs-toggle="collapse"
-                       aria-expanded="{{ Request::is('*/app/chart-of-inventory/*') ? "true" : "false" }}"
-                       class="dropdown-toggle">
+                        aria-expanded="{{ Request::is('*/app/chart-of-inventory/*') ? 'true' : 'false' }}"
+                        class="dropdown-toggle">
                         <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                 stroke-linejoin="round" class="feather feather-users">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" class="feather feather-users">
                                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="9" cy="7" r="4"></circle>
                                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -184,23 +206,23 @@
                             <span>Chart of Inventory</span>
                         </div>
                         <div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                 stroke-linejoin="round" class="feather feather-chevron-right">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
                                 <polyline points="9 18 15 12 9 6"></polyline>
                             </svg>
                         </div>
                     </a>
-                    <ul class="collapse submenu list-unstyled {{ Request::is('*/app/chart-of-inventory/*') ? "show" : "" }}"
+                    <ul class="collapse submenu list-unstyled {{ Request::is('*/app/chart-of-inventory/*') ? 'show' : '' }}"
                         id="chart-of-inventory" data-bs-parent="#accordionExample">
                         <li class="{{ Request::routeIs('chart-of-account-main-head') ? 'active' : '' }}">
-                            <a href="{{route('co-inventory-main-head.list')}}"> Main Head </a>
+                            <a href="{{ route('co-inventory-main-head.list') }}"> Main Head </a>
                         </li>
                         <li class="{{ Request::routeIs('chart-of-account-control-head') ? 'active' : '' }}">
-                            <a href="{{route('co-inventory-sub-head.list')}}"> Sub Head </a>
+                            <a href="{{ route('co-inventory-sub-head.list') }}"> Sub Head </a>
                         </li>
                         <li class="{{ Request::routeIs('chart-of-account-control-head') ? 'active' : '' }}">
-                            <a href="{{route('co-inventory-sub-sub-head.list')}}">Sub Sub Head </a>
+                            <a href="{{ route('co-inventory-sub-sub-head.list') }}">Sub Sub Head </a>
                         </li>
                         <li class="{{ Request::routeIs('chart-of-account-detail-account') ? 'active' : '' }}">
                             <a href="{{ route('co-inventory-detail-account.list') }}"> Detail Account </a>
@@ -285,6 +307,12 @@
                         <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('PackingType.list') }}">Packing Type</a>
                         </li>
+                        @if (
+                            (!empty($brvPermission->menu_access) && $brvPermission->menu_access == 1) ||
+                                \Illuminate\Support\Facades\Auth::user()->is_admin == 1)
+                            <li><a href="{{ route('permission.list') }}"> <span>User Rights Management</span></a>
+                            </li>
+                        @endif
                     </ul>
                 </li>
 

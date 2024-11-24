@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
 use Illuminate\Http\Request;
 use App\Services\CommonService;
 use App\Models\CoaDetailAccount;
 use App\Models\CoaInventorySubSubHead;
 use App\Models\SaleMan;
+use App\Models\Sector;
 use App\Services\PermissionService;
 use Illuminate\Support\Facades\Auth;
 use App\Services\ChartOfAccountService;
@@ -143,31 +145,19 @@ class CoaDetailAccountController extends Controller
 
     public function getSaleManDetail($name)
     {
-
         $detailAccount = SaleMan::where('name', trim($name))->first('sector_id');
-        if ($detailAccount) {
-            $detailAccount = SaleMan::with('sectors')->get();
-            foreach ($detailAccount as $seller) {
-                $sectorName = $seller->sectors ? $seller->sectors->name : 'Sector not found';
+        $saleManSector =  Sector::where('id', $detailAccount->sector_id)->first('name');
 
-                return response()->json(['status' => 'success', 'sector_id' => $sectorName]);
-            }
-        }
-        return response()->json(['status' => 'fail', 'data' => []]);
+        return response()->json(['status' => 'success', 'name' => $saleManSector]);
     }
 
     public function getSaleManAreaDetail($name)
     {
-        $fetchArea = SaleMan::where('name', trim($name))->first('area_id');
-        if ($fetchArea) {
-            $fetchArea = SaleMan::with('area')->get();
-            foreach ($fetchArea as $area) {
+        $detailAccount = SaleMan::where('name', trim($name))->first('area_id');
+        $saleManArea =  Area::where('id', $detailAccount->area_id)->first('name');
 
-                $areaName = $area->area ? $area->area->name : 'Area not found';
-                return response()->json(['status' => 'success', 'area_id' => $areaName]);
-            }
-        }
-        return response()->json(['status' => 'fail', 'data' => []]);
+        return response()->json(['status' => 'success', 'name' => $saleManArea]);
+
     }
 
     public function getProductPrice($name)

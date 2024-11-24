@@ -120,8 +120,9 @@ class RegisterController extends Controller
         Session::flash('message', 'User created successfully');
         return redirect('users/list', compact('pageTitle'));
     }
+
     public function update(){
-        $pageTitle = 'Register User';
+
         $data = request()->all();
         $fileName = null;
         if(isset($data['avatar']) && !empty($data['avatar'])){
@@ -137,7 +138,7 @@ class RegisterController extends Controller
             ));
 
         Session::flash('message', config('constants.update'));
-        return redirect('users/list', compact('pageTitle'));
+        return redirect('users/list')->with('message', config('constants.store'));
     }
 
     public function showRegistrationForm()

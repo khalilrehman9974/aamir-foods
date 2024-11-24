@@ -76,7 +76,7 @@ class SaleOrderService
             ->Where('party', 'like', '%' . $request['param'] . '%');
 
         }
-        $saleOrders = $q->orderBy('party_id', 'ASC')->paginate(config('constants.PER_PAGE'));
+        $saleOrders = $q->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
 
         return $saleOrders;
     }
@@ -97,6 +97,13 @@ class SaleOrderService
             'business_id' => $session->business_id,
             'f_year_id' => $session->financial_year,
             'remarks' => $request['remarks'],
+            'saleman' => $request['saleman'],
+            'belt' => $request['belt'],
+            'area' => $request['area'],
+            'delivered_to' => $request['delivered_to'],
+            'status' => $request['status'],
+            'total_boray' => $request['total_boray'],
+            'total_carton' => $request['total_carton'],
             'total_amount' => $request['total_amount'],
             'created_by'=> Auth::user()->id,
             'updated_by' => Auth::user()->id
@@ -125,6 +132,8 @@ class SaleOrderService
     {
         return [
             'product_id' => $request['product_id'],
+            'packing_type' => $request['packing_type'],
+            'measurement_type' => $request['measurement_type'],
             'quantity' => $request['quantity'],
             'dzn' => $request['dzn'],
             'total_dzn' => $request['total_dzn'],
@@ -145,6 +154,8 @@ class SaleOrderService
         foreach ($data['product_id'] as $key => $value) {
             if (!empty($data['product_id'][$key])) {
                 $rec['product_id'] = $data['product_id'][$key];
+                $rec['packing_type'] = $data['packing_type'][$key];
+                $rec['measurement_type'] = $data['measurement_type'][$key];
                 $rec['quantity'] = $data['quantity'][$key];
                 $rec['dzn'] = $data['dzn'][$key];
                 $rec['total_dzn'] = $data['total_dzn'][$key];

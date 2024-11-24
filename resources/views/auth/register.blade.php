@@ -7,6 +7,7 @@
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <x-slot:headerFiles>
         <!--  BEGIN CUSTOM STYLE FILE  -->
+        {{-- <x-navbar.style-vertical-menu classes="{{($isBoxed ? 'container-xxl' : '')}}"/> --}}
         <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
         @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
         @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])

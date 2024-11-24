@@ -12,7 +12,7 @@ class SaleOrder extends Model
     protected $guarded = ['id'];
     protected $table = 'sale_order_masters';
 
-    protected $fillable = ['date','party_id','business_id','f_year_id',
+    protected $fillable = ['date','party_id','business_id','f_year_id','saleman','belt','area','delivered_to','status','total_boray','total_carton',
     'remarks','total_amount','created_by','updated_by'];
 
 

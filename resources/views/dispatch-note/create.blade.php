@@ -126,7 +126,7 @@
                                                                         <label for="inputState"
                                                                             class="form-label">Party</label>
                                                                         <select id="party_id" name="party_id"
-                                                                            class="form-select select2 mb-3 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                            class="party_id form-select select2 mb-3 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
                                                                             <option selected="">Please select the
                                                                                 Party</option>
                                                                             @foreach ($dropDownData['parties'] as $key => $value)
@@ -139,7 +139,8 @@
 
                                                                     </div>
                                                                     <div class="col-md-6">
-                                                                        <label for="inputState" class="form-label">Sales
+                                                                        <label for="inputState"
+                                                                            class="form-label">Sales
                                                                             Man</label>
 
                                                                         <input type="text"
@@ -235,8 +236,6 @@
                                                                                             Quantity</th>
                                                                                         <th class="">
                                                                                             Dzns</th>
-                                                                                        <th class="">
-                                                                                            Tot. Dzns</th>
                                                                                         <th class="">Remarks</th>
 
 
@@ -246,7 +245,7 @@
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody>
-                                                                                    @foreach ($dispatchNotes as $note)
+                                                                                    {{-- @foreach ($dispatchNotes as $note)
                                                                                         <tr>
                                                                                             <td
                                                                                                 class="delete-item-row">
@@ -355,7 +354,105 @@
                                                                                             </td>
 
                                                                                         </tr>
-                                                                                    @endforeach
+                                                                                    @endforeach --}}
+                                                                                    @if (empty($dispatchNotes))
+                                                                                        <tr>
+                                                                                            <td
+                                                                                                class="delete-item-row">
+                                                                                                <ul
+                                                                                                    class="table-controls">
+                                                                                                    <li><a href="javascript:void(0);"
+                                                                                                            class="delete-item"
+                                                                                                            data-toggle="tooltip"
+                                                                                                            data-placement="top"
+                                                                                                            title=""
+                                                                                                            data-original-title="Delete"><svg
+                                                                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                                                                width="24"
+                                                                                                                height="24"
+                                                                                                                viewBox="0 0 24 24"
+                                                                                                                fill="none"
+                                                                                                                stroke="currentColor"
+                                                                                                                stroke-width="2"
+                                                                                                                stroke-linecap="round"
+                                                                                                                stroke-linejoin="round"
+                                                                                                                class="feather feather-x-circle">
+                                                                                                                <circle
+                                                                                                                    cx="12"
+                                                                                                                    cy="12"
+                                                                                                                    r="10">
+                                                                                                                </circle>
+                                                                                                                <line
+                                                                                                                    x1="15"
+                                                                                                                    y1="9"
+                                                                                                                    x2="9"
+                                                                                                                    y2="15">
+                                                                                                                </line>
+                                                                                                                <line
+                                                                                                                    x1="9"
+                                                                                                                    y1="9"
+                                                                                                                    x2="15"
+                                                                                                                    y2="15">
+                                                                                                                </line>
+                                                                                                            </svg></a>
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                            </td>
+                                                                                            <td class="product">
+                                                                                                <select id="product_id"
+                                                                                                    name="product_id[]"
+                                                                                                    class="mb-3 form-control select2 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                                                    <option
+                                                                                                        selected="">
+                                                                                                        Please select
+                                                                                                        the
+                                                                                                        product</option>
+                                                                                                    @foreach ($dropDownData['products'] as $key => $value)
+                                                                                                        <option
+                                                                                                            value="{{ $key }}"
+                                                                                                            {{ (old('product_id') == $key ? 'selected' : '') || (!empty($note->product_id) ? collect($note->product_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                                            {{ $value }}
+                                                                                                        </option>
+                                                                                                    @endforeach
+                                                                                                </select>
+
+                                                                                                <input type="text"
+                                                                                                    style="color: black;"
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_2"
+                                                                                                    id="packing"
+                                                                                                    placeholder="P.T"
+                                                                                                    readonly>
+
+                                                                                                <input type="text"
+                                                                                                    style="color: black;"
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_2"
+                                                                                                    placeholder="M.T"
+                                                                                                    id="measurement"
+                                                                                                    readonly>
+                                                                                            </td>
+
+                                                                                            <td class="text-right unit">
+                                                                                                <input id="quantity"
+                                                                                                    type="number"
+                                                                                                    name="quantity[]"
+                                                                                                    value="{{ old('quantity', !empty($note->quantity) ? $note->quantity : '') }}"
+                                                                                                    placeholder="Quantity.... "
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty">
+                                                                                            </td>
+                                                                                            <td class="unit">
+                                                                                                <input id="unit"
+                                                                                                    type="number"
+                                                                                                    name="unit[]"
+                                                                                                    value="{{ old('unit', !empty($note->unit) ? $note->unit : '') }}"
+                                                                                                    placeholder="Dzns... "
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} unit">
+                                                                                            </td>                                              <td class="unit">
+                                                                                                <textarea id="unit" type="text" name="remarks[]" placeholder="Please Enter Remarks "
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mt-0">{{ @$note->remarks }}</textarea>
+                                                                                            </td>
+
+                                                                                        </tr>
+                                                                                    @endif
                                                                                 </tbody>
                                                                             </table>
                                                                         </div>
@@ -365,7 +462,7 @@
                                                                             Item</a>
                                                                     </div>
                                                                 </div>
-                                                                {{-- <div class="col-xl-6 invoice-address-client invoice-detail-total mt-3"
+                                                               <div class="col-xl-6 invoice-address-client invoice-detail-total mt-3"
                                                                     style="float:right">
                                                                     <div class="invoice-address-client-fields">
                                                                         <div class="form-group row">
@@ -386,7 +483,7 @@
                                                                         <div class="form-group row">
                                                                             <label for="unit-amount"
                                                                                 class="col-sm-4 col-form-label col-form-label-sm ">Tot.
-                                                                                Units
+                                                                                Dzns
                                                                             </label>
                                                                             <div class="col-sm-8">
                                                                                 <input type="text" id="unit-amount"
@@ -398,7 +495,7 @@
                                                                         </div>
 
                                                                     </div>
-                                                                </div> --}}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <div class="invoice-detail-terms">
@@ -476,7 +573,7 @@
                     success: function(orderMasterData) {
                         // $('#results').empty(); // Clear previous results
                         $('#date').val(orderMasterData.date);
-                        $('#party_id').val(orderMasterData.party_id);
+                        $('#party_id').val(orderMasterData.party_id).selected;
                         // $('#date').val(orderMasterData.date);
                         // Display master data
                         // $('#results').append('<div> ' + orderMasterData.date + '</div>');
@@ -484,6 +581,7 @@
 
                         // Display detail data
                         // $('#results').append('<h4>Details:</h4>');
+                        $(this).closest("tr").find(".totDzn_" + row_id).val(quantity * dzns);
                         // master.details.forEach(function(detail) {
                         // $('#results').append('<div>Detail: ' + detail.detail_name +
                         //     '</div>'); // Adjust to match your detail field
@@ -553,17 +651,10 @@
                 currentIndex +
                 '" placeholder="P.T" readonly><input type="text" style="color: black; " placeholder="M.T" id="measurement" class = "measurement form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_' +
                 currentIndex + '" readonly> </td> ' +
-                '<td class="qty">' +
-                ' <input type="text" name="quantity[]" id="quantity" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_' +
-                currentIndex +
-                '" placeholder="Qty"></td>' +
-                // '<td class="total_unit"> </td>' +
-                // '<td class="total"></td>' +
-                '<td class="dozen"> <input type="text" name="dzn[]" id="dzn" class = "dozen form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} dozen_' +
-                currentIndex +
-                ' "  placeholder="Dzns "></td>' +
-                '<td class="totDzn"><input type="text" style="color: black;" name="total_dzn[]" class="totDzn form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} totDzn_' +
-                currentIndex + ' " placeholder="Tot Dzn" readonly></td>' +
+               '<td class="text-right unit" >' +
+                '<input type="text" name="quantity[]" class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty" placeholder="Quantity.... ">' +
+                ' </td>' +
+                '<td class="unit"><input type="text" name="unit[]" class="form-control  {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} unit" placeholder="Dzns... "></td>' +
                 '<td class="unit" >' +
                 '<textarea type="text" name="remarks[]" class="form-control  {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mt-0" placeholder="Please Enter remarks "></textarea>' +
                 ' </td>' +
@@ -736,7 +827,7 @@
             integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         {{-- <script src="{{ asset('js/common.js') }}"></script> --}}
-        {{-- <script src="{{ asset('js/dispatchNote.js') }}"></script> --}}
+        <script src="{{ asset('js/dispatchNote.js') }}"></script>
 
         {{-- <script src="{{ asset('plugins/global/vendors.min.js') }}"></script> --}}
         @vite(['resources/assets/js/elements/custom-search.js'])

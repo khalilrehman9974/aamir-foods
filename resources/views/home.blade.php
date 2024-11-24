@@ -1,74 +1,87 @@
 <x-base-layout :scrollspy="false">
 
     <x-slot:pageTitle>
-        {{$title}} 
+        {{ $title }}
     </x-slot>
+    <head>
+        <!-- Include necessary CSS and JS libraries -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+        <style>
+            .dropdown-menu {
+                max-height: 400px;
+                overflow-y: auto;
+            }
+        </style>
+    </head>
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <x-slot:headerFiles>
         <!--  BEGIN CUSTOM STYLE FILE  -->
-        <link rel="stylesheet" href="{{asset('plugins/apex/apexcharts.css')}}">
+
+        <link rel="stylesheet" href="{{ asset('plugins/apex/apexcharts.css') }}">
 
         @vite(['resources/scss/light/assets/components/list-group.scss'])
         @vite(['resources/scss/light/assets/widgets/modules-widgets.scss'])
 
         @vite(['resources/scss/dark/assets/components/list-group.scss'])
         @vite(['resources/scss/dark/assets/widgets/modules-widgets.scss'])
-        
+
         <!--  END CUSTOM STYLE FILE  -->
     </x-slot>
     <!-- END GLOBAL MANDATORY STYLES -->
-    
-    <div class="row layout-top-spacing">
 
+    <div class="row layout-top-spacing">
+        @include('components.navbar.style-vertical-menu')
         <!-- Sales -->
-        
+
         <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
-            <x-widgets._w-chart-one title="Revenue"/>
+            <x-widgets._w-chart-one title="Revenue" />
         </div>
-    
+
         <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
-            <x-widgets._w-chart-two title="Sales by Category"/>
+            <x-widgets._w-chart-two title="Sales by Category" />
         </div>
-    
+
         <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 col-12 layout-spacing">
-            <x-widgets._w-two title="Daily sales"/>
+            <x-widgets._w-two title="Daily sales" />
         </div>
-    
+
         <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 col-12 layout-spacing">
-            <x-widgets._w-three title="Summary"/>
+            <x-widgets._w-three title="Summary" />
         </div>
-    
+
         <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
-            <x-widgets._w-one title=""/>
+            <x-widgets._w-one title="" />
         </div>
-    
+
         <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
-            <x-widgets._w-activity-four title="Recent Activities"/>
+            <x-widgets._w-activity-four title="Recent Activities" />
         </div>
-    
+
         <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
-            <x-widgets._w-table-one title="Transactions"/>
+            <x-widgets._w-table-one title="Transactions" />
         </div>
-    
+
         <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
-            <x-widgets._w-wallet-one title="Total Balance"/>
+            <x-widgets._w-wallet-one title="Total Balance" />
         </div>
-        
+
         <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
-            <x-widgets._w-table-two title="Recent Orders"/>
+            <x-widgets._w-table-two title="Recent Orders" />
         </div>
-    
+
         <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
-            <x-widgets._w-table-three title="Top Selling Product"/>
+            <x-widgets._w-table-three title="Top Selling Product" />
         </div>
-        
+
     </div>
-    
+
     <!--  BEGIN CUSTOM SCRIPTS FILE  -->
     <x-slot:footerFiles>
 
-        <script src="{{asset('plugins/apex/apexcharts.min.js')}}"></script>
+        <script src="{{ asset('plugins/apex/apexcharts.min.js') }}"></script>
 
         {{-- Sales --}}
         @vite(['resources/assets/js/widgets/_wTwo.js'])

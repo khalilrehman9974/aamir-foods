@@ -17,6 +17,8 @@ return new class extends Migration
             $table->Increments('id');
             $table->integer('sale_order_master_id')->unsigned()->index();
             $table->integer('product_id');
+            $table->string('packing_type');
+            $table->string('measurement_type');
             $table->double('quantity');
             $table->double('dzn');
             $table->double('total_dzn');
@@ -32,7 +34,7 @@ return new class extends Migration
             ->references('id')->on('sale_order_masters')
             ->onDelete('cascade');
 
-           
+
         });
     }
 

@@ -1,9 +1,9 @@
-{{-- 
+{{--
 
 /**
 *
 * Created a new component <x-navbar.style-horizontal-menu/>.
-* 
+*
 */
 
 --}}
@@ -13,7 +13,7 @@
     <header class="header navbar navbar-expand-sm expand-header">
 
         <a href="javascript:void(0);" class="sidebarCollapse" data-placement="bottom"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></a>
-        
+
         <ul class="navbar-item theme-brand flex-row  text-center">
             <li class="nav-item theme-logo">
                 <a href="{{getRouterValue();}}/dashboard/analytics">
@@ -60,7 +60,38 @@
                 </a>
             </li>
 
-            <li class="nav-item dropdown notification-dropdown">
+            <li class="nav-item dropdown">
+                <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
+                <i class="fas fa-bell mx-0"></i>
+
+                </a>
+
+             <b>   <span id="notificationCount" class="count">&nbsp; {{ $messageCount }}</span> <!-- Initial value here -->
+             </b>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
+                    <p class="mb-0 font-weight-normal float-left dropdown-header">Notifications</p>
+                    @forelse ($messages as $message)
+                    <a class="dropdown-item preview-item">
+                        <div class="preview-thumbnail">
+                            <div class="preview-icon bg-success">
+                                <i class="ti-info-alt mx-0"></i>
+                            </div>
+                        </div>
+                        <div class="preview-item-content">
+                            <h6 class="preview-subject font-weight-normal">New Message</h6>
+                            <p class="font-weight-light small-text mb-0 text-muted">
+                                {{ $message->message }}<br>
+                                {{ $message->created_at->diffForHumans() }}
+                            </p>
+                        </div>
+                    </a>
+                    @empty
+                    <p class="text-center">No notifications</p>
+                    @endforelse
+                </div>
+            </li>
+
+            {{-- <li class="nav-item dropdown notification-dropdown">
                 <a href="javascript:void(0);" class="nav-link dropdown-toggle" id="notificationDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bell"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg><span class="badge badge-success"></span>
                 </a>
@@ -78,14 +109,14 @@
                                         <h6 class="">Kara Young</h6>
                                         <p class="">1 hr ago</p>
                                     </div>
-                                    
+
                                     <div class="icon-status">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="dropdown-item">
                             <div class="media ">
                                 <img src="{{Vite::asset('resources/images/profile-15.jpeg')}}" class="img-fluid me-2" alt="avatar">
@@ -117,7 +148,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="drodpown-title notification mt-2">
                             <h6 class="d-flex justify-content-between"><span class="align-self-center">Notifications</span> <span class="badge badge-secondary">16 New</span></h6>
                         </div>
@@ -169,11 +200,11 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
-                
-            </li>
+
+            </li> --}}
 
             <li class="nav-item dropdown user-profile-dropdown  order-lg-0 order-1">
                 <a href="javascript:void(0);" class="nav-link dropdown-toggle user" id="userProfileDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -217,9 +248,60 @@
                         </a>
                     </div>
                 </div>
-                
+
             </li>
         </ul>
     </header>
 </div>
 <!--  END NAVBAR  -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var notificationCount = document.getElementById('notificationCount');
+
+        var pusher = new Pusher('b23d71886d55f985f153', {
+            cluster: 'ap2'
+        });
+
+        var loggedUserId = '{{ $LoggedUserInfo['id'] }}';
+        var channel = pusher.subscribe('user.' + loggedUserId);
+
+        channel.bind('new-message', function(data) {
+            if (data.userId == loggedUserId) {
+                toastr.options = {
+                    "closeButton": true,          // Show close button
+                    "progressBar": true,          // Show progress bar
+                    "positionClass": "toast-top-right",  // Position of the toast
+                    "timeOut": "300000",          // Set timeout to 5 minutes (300,000 milliseconds)
+                    "extendedTimeOut": "300000",  // Extend timeout if the user hovers over the toast
+                    "tapToDismiss": false         // Prevent dismissing by clicking on the toast itself
+                };
+                toastr.info('Admin sent you a message: ' + data.message, 'New Message');
+
+                // Update notification count
+                var currentCount = parseInt(notificationCount.textContent) || 0;
+                notificationCount.textContent = currentCount + 1;
+
+                // Prepend new message to the dropdown menu
+                var dropdownMenu = document.querySelector('.dropdown-menu');
+                var messageItem = document.createElement('a');
+                messageItem.classList.add('dropdown-item', 'preview-item');
+                messageItem.innerHTML = `
+                    <div class="preview-thumbnail">
+                        <div class="preview-icon bg-success">
+                            <i class="ti-info-alt mx-0"></i>
+                        </div>
+                    </div>
+                    <div class="preview-item-content">
+                        <h6 class="preview-subject font-weight-normal">New Message</h6>
+                        <p class="font-weight-light small-text mb-0 text-muted">
+                            ${data.message}<br>
+                            Just now
+                        </p>
+                    </div>
+                `;
+                dropdownMenu.prepend(messageItem); // Prepend to show it first
+            }
+        });
+    });
+</script>

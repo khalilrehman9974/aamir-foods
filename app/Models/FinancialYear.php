@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class FinancialYear extends Model
 {
     const PER_PAGE = 10;
-
+    protected  $guarded = ['id'];
     protected $table = 'financial_years';
     /**
      * The attributes that are mass assignable.

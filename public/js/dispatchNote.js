@@ -9,7 +9,7 @@ $(document).on('click', 'body *', function() {
 
     function doAmountTotal() {
         $('#total-amount').text("");
-        console.log('in do amount total');
+        // console.log('in do amount total');
         var totalAmount = 0;
         $(".qty").each(function() {
             if (!isNaN(this.value) && this.value.length != 0) {
