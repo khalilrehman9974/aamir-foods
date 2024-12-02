@@ -42,11 +42,40 @@
                 </div>
 
                 <div class="col-lg-0 col-6 ">
-                    <a href="{{ route('dispatch-note.create') }}" class="btn btn-primary mt-2 mb-2 me-8"
+                    <a href="{{ route('dispatch-note.generate') }}" class="btn btn-primary mt-2 mb-2 me-8"
                         style="float : right; " style="">Create
                     </a>
+                    {{-- <button onclick="openInputDialog()">Create</button> --}}
+                    {{-- <div class="container">
+                        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#simpleModal">
+                            Create
+                        </button>
+                    </div>
 
+                    <! -- Simple Modal -->
+                        <div class="modal fade" id="simpleModal" role="dialog">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-body">
+                                        <label for="sale-order-number">
+                                            Sale Order Number:
+                                        </label>
+                                        <input type="text" style="color: black; "
+                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                            placeholder="Sale Order Number" id="number" name="number">
+                                    </div>
+                                    <div class="model-footer">
+                                        <a href="{{ route('dispatch-note.list') }}" style="float:right;"
+                                            class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div> --}}
                 </div>
+
+
             </div>
 
         </div>
@@ -79,17 +108,19 @@
                     </form>
                 </div>
                 <div class="col-md-3 mt-1 " role="group">
-                    <a href="{{ route('dispatch-note.list') }}" class="btn btn-primary _effect--ripple waves-effect waves-light" id="Refresh Cw"
-                        type="submit" >
+                    <a href="{{ route('dispatch-note.list') }}"
+                        class="btn btn-primary _effect--ripple waves-effect waves-light" id="Refresh Cw" type="submit">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round" class="feather feather-refresh-cw">
-                        <polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14">
-                            </polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15">
-                                </path>
-                            </svg>
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" class="feather feather-refresh-cw">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <polyline points="1 20 1 14 7 14">
+                            </polyline>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15">
+                            </path>
+                        </svg>
 
-                        </a>
+                    </a>
                 </div>
             </div>
             <div class="statbox widget box box-shadow">
@@ -154,7 +185,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ @$note->saleMan->name}}</h6>
+                                                    <h6 class="mb-0">{{ @$note->saleMan->name }}</h6>
 
                                                 </div>
                                             </div>
@@ -239,6 +270,8 @@
             </div>
         </div>
     </div>
+
+
     <x-slot:footerFiles>
         <script src="{{ asset('plugins/sweetalerts2/sweetalerts2.min.js') }}"></script>
         <script src="{{ asset('js/common.js') }}"></script>
@@ -247,6 +280,7 @@
             var config = {
                 routes: {
                     deleteMainHead: "{{ url('dispatch-note/delete') }}",
+                    dispatchNoteNumber: "{{ url('dispatch-note/dispatch-note.create') }}",
                 },
             }
         </script>

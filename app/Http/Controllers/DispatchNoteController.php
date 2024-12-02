@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Services\DispatchNoteService;
 use App\Http\Requests\DispatchNoteStoreRequest;
 use App\Models\SaleOrder;
+use App\Models\SaleOrderDetail;
 
 class DispatchNoteController extends Controller
 {
@@ -40,16 +41,29 @@ class DispatchNoteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(int $id)
     {
+        // dd($id);
         $pageTitle = 'Create Dispatch Note';
-        $maxid = DispatchNoteMaster::max('id') + 1;
+        $maxid = DispatchNoteMaster::count('sale_order_number',$id) + 1;
         $dropDownData = $this->dispatchNoteService->DropDownData();
+        $sale_Order = SaleOrder::find($id);
+        // dd($sale_Order);
         $dispatchNotes = DispatchNoteDetail::where('dispatch_note_master_id')->get();
 
-        return view('dispatch-note.create', compact('pageTitle', 'maxid', 'dropDownData', 'dispatchNotes'));
+
+        if (empty($sale_Order)) {
+            abort(404);
+        }
+
+        return view('dispatch-note.create', compact('pageTitle', 'maxid', 'dropDownData', 'dispatchNotes','sale_Order'));
     }
 
+    public function generate()
+    {
+        
+        return view('dispatch-note.generate');
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -105,7 +119,7 @@ class DispatchNoteController extends Controller
             $message = config('constants.wrong');
         }
 
-        return view('dispatch-note.create', compact('pageTitle', 'dropDownData', 'currentid', 'note', 'dispatchNotes'));
+        return view('dispatch-note.edit', compact('pageTitle', 'dropDownData', 'currentid', 'note', 'dispatchNotes'));
     }
 
        /**

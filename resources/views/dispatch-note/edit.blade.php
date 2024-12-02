@@ -84,7 +84,8 @@
                                                                     <div class="col-md-6 mt-3">
                                                                         <label for="">
                                                                             <h4>Dispatch Note Number
-                                                                                #:{{ @$maxid }}</h4>
+                                                                                #:{{ @$maxid }}
+                                                                                {{ @$currentid }}</h4>
                                                                         </label>
                                                                     </div>
                                                                 </div>
@@ -94,21 +95,24 @@
                                                                             Order#</label>
                                                                         <input type="text" id="saleOrder"
                                                                             name="sale_order_number"
-                                                                            style="color: black; "
-                                                                            value="{{ $sale_Order->id }}"
+                                                                            value="{{ old('sale_order_number', !empty($note->sale_order_number) ? $note->sale_order_number : '') }}"
                                                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} saleOrder"
                                                                             placeholder="Please Enter The SO Number"
-                                                                            readonly>
+                                                                            aria-label="Please Enter The SO Number">
                                                                     </div>
 
                                                                     <div class="col-md-6">
                                                                         <label for="inputState"
                                                                             class="form-label">Date</label>
+                                                                        {{-- <input type="text" id="date" name="date" value="{{ old('date', !empty($note->date) ? $note->date : '') }}"
+                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} flatpickr flatpickr-input"
+                                                                        placeholder="date" aria-label="date" > --}}
+
                                                                         <input id="date" name="date"
-                                                                            style="color: black; "
-                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} date flatpickr "
+                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} date flatpickr flatpickr-input"
                                                                             type="text" data-date-format="d-m-Y"
-                                                                            value="{{ $sale_Order->date }}"
+                                                                            value="{{ empty($note->date) ? null : \Illuminate\Support\Carbon::parse($note->date)->format('d-m-Y') }}"
+                                                                            {{-- value="{{ old('date', !empty($note->date) ? $note->date : '') }}" --}}
                                                                             placeholder="Select Date.." readonly>
                                                                     </div>
 
@@ -121,11 +125,16 @@
 
                                                                         <label for="inputState"
                                                                             class="form-label">Party</label>
-                                                                        <input id="party_id" style="color: black; "
-                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} "
-                                                                            type="text"
-                                                                            value="{{ $sale_Order->party->account_name }}"
-                                                                            placeholder="Select Date.." readonly>
+                                                                        <select id="party_id" name="party_id"
+                                                                            class="party_id form-select select2 mb-3 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                            <option selected="">Please select the
+                                                                                Party</option>
+                                                                            @foreach ($dropDownData['parties'] as $key => $value)
+                                                                                <option value="{{ $key }}"
+                                                                                    {{ (old('party_id') == $key ? 'selected' : '') || (!empty($note->party_id) ? collect($note->party_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                    {{ $value }}</option>
+                                                                            @endforeach
+                                                                        </select>
 
 
                                                                     </div>
@@ -134,86 +143,86 @@
                                                                             class="form-label">Sales
                                                                             Man</label>
 
-                                                                        <input type="text" style="color: black; "
+                                                                        <input type="text"
+                                                                            style="color: black; background-color: white;"
                                                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
                                                                             id="saleMan"
-                                                                            value="{{ $sale_Order->saleman }}"
                                                                             placeholder="Sale Man Name..." readonly>
+                                                                        {{-- <select id="sale_man_id" name="sale_man_id"
+                                                                        class="form-select select2 mb-3 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                        <option selected="">Please select the
+                                                                            product</option>
+                                                                        @foreach ($dropDownData['saleMans'] as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                {{ (old('sale_man_id') == $key ? 'selected' : '') || (!empty($note->sale_man_id) ? collect($note->sale_man_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                {{ $value }}</option>
+                                                                        @endforeach
+                                                                    </select> --}}
                                                                     </div>
                                                                 </div>
                                                                 <br>
-                                                                <div class="row">
-                                                                    <div class="col-md-6">
-                                                                        <label for="inputState"
-                                                                            class="form-label">Belt</label>
-                                                                        <input type="text" style="color: black; "
-                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                            placeholder="sector" name="sector"
-                                                                            value="{{ $sale_Order->belt }}" readonly>
+                                                                {{-- <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <label for="inputState"
+                                                                        class="form-label">Transporter</label>
+                                                                    <select id="transporter_id" name="transporter_id"
+                                                                        class="form-select select2 mb-3 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                        <option selected="">Please select the
+                                                                            Transporter</option>
+                                                                        @foreach ($dropDownData['transporters'] as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                {{ (old('transporter_id') == $key ? 'selected' : '') || (!empty($note->transporter_id) ? collect($note->transporter_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                {{ $value }}</option>
+                                                                        @endforeach
+                                                                    </select>
 
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label for="inputState"
-                                                                            class="form-label">Area
-                                                                        </label>
-                                                                        <input type="text" style="color: black; "
-                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                            placeholder="Area" id="area"
-                                                                            name="area"
-                                                                            value="{{ $sale_Order->area }}" readonly>
-                                                                    </div>
                                                                 </div>
-                                                                <br>
-                                                                <div class="row">
-                                                                    <div class="col-md-6">
-                                                                        <label for="inputState"
-                                                                            class="form-label">Delivered To</label>
-                                                                        <input type="text" style="color: black; "
-                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                            id="delivered_to" name="delivered_to"
-                                                                            value="{{ $sale_Order->delivered_to }}"
-                                                                            placeholder="Deliverd To" readonly>
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label for="inputState"
-                                                                            class="form-label">Vehicle No</label>
-                                                                        <input type="text" style="color: black; "
-                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                            placeholder="Vehicle No:" id="vehicle_no"
-                                                                            name="vehicle_no">
-                                                                    </div>
-
-                                                                    <div class="col-md-6">
-                                                                        <label for="inputState"
-                                                                            class="form-label">Builty No</label>
-                                                                        <input type="text" style="color: black; "
-                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                            placeholder="bility No:" id="bility_no"
-                                                                            name="bility_no">
-                                                                    </div>
-
-
-                                                                    <div class="col-md-6">
-                                                                        <label for="inputState"
-                                                                            class="form-label">Driver Name</label>
-                                                                        <input type="text" style="color: black; "
-                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                            placeholder="Driver Name:"
-                                                                            id="driver_name" name="driver_name">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label for="inputState"
-                                                                            class="form-label">Carriage</label>
-                                                                        <input type="text" style="color: black; "
-                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                            placeholder="Carriage" id="carriage"
-                                                                            name="carriage">
-                                                                    </div>
+                                                                <div class="col-md-6">
+                                                                    <label for="inputState" class="form-label">Driver
+                                                                        Contact
+                                                                        Number</label>
+                                                                    <input type="text"
+                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                        placeholder="contact_no" id="contact_no"
+                                                                        name="contact_no"
+                                                                        value="{{ old('contact_no', !empty($note->contact_no) ? $note->contact_no : '') }}"
+                                                                        aria-label="Enter The Contact Number">
                                                                 </div>
+                                                            </div>
+                                                            <br>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <label for="inputState" class="form-label">Bilty
+                                                                        No</label>
+                                                                    <input type="text"
+                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                        id="bilty_no" name="bilty_no"
+                                                                        value="{{ old('bilty_no', !empty($note->bilty_no) ? $note->bilty_no : '') }}"
+                                                                        placeholder="bilty_no" aria-label="bilty_no">
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label for="inputState"
+                                                                        class="form-label">Fare</label>
+                                                                    <input type="text"
+                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                        placeholder="Fare" id="Fare"
+                                                                        value="{{ old('fare', !empty($note->fare) ? $note->fare : '') }}"
+                                                                        name="fare" aria-label="fare">
+                                                                </div> --}}
+
+                                                                {{-- <div class="col-md-4">
+                                                                    <label for="inputState" class="form-label">Total
+                                                                        Amount</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="total_amount" name="total_amount"
+                                                                        placeholder="Total Amount"
+                                                                        aria-label="Total Amount" readonly>
+                                                                </div>
+                                                            </div> --}}
                                                                 <br>
 
                                                                 <div class="tab-content" id="pills-tabContent">
-                                                                    <div class="invoice-detail-items" style="padding: 0px 0px 0px 0px !important;">
+                                                                    <div class="invoice-detail-items">
 
                                                                         <div class="table-responsive">
 
@@ -224,11 +233,9 @@
                                                                                         </th>
                                                                                         <th>Product</th>
                                                                                         <th class="">
-                                                                                            P.T</th>
-                                                                                        <th class="">
-                                                                                            M.T</th>
-                                                                                        <th class="">
                                                                                             Quantity</th>
+                                                                                        <th class="">
+                                                                                            Dzns</th>
                                                                                         <th class="">Remarks</th>
 
 
@@ -238,7 +245,116 @@
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody>
+                                                                                    {{-- @foreach ($dispatchNotes as $note)
+                                                                                        <tr>
+                                                                                            <td
+                                                                                                class="delete-item-row">
+                                                                                                <ul
+                                                                                                    class="table-controls">
+                                                                                                    <li><a href="javascript:void(0);"
+                                                                                                            class="delete-item"
+                                                                                                            data-toggle="tooltip"
+                                                                                                            data-placement="top"
+                                                                                                            title=""
+                                                                                                            data-original-title="Delete"><svg
+                                                                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                                                                width="24"
+                                                                                                                height="24"
+                                                                                                                viewBox="0 0 24 24"
+                                                                                                                fill="none"
+                                                                                                                stroke="currentColor"
+                                                                                                                stroke-width="2"
+                                                                                                                stroke-linecap="round"
+                                                                                                                stroke-linejoin="round"
+                                                                                                                class="feather feather-x-circle">
+                                                                                                                <circle
+                                                                                                                    cx="12"
+                                                                                                                    cy="12"
+                                                                                                                    r="10">
+                                                                                                                </circle>
+                                                                                                                <line
+                                                                                                                    x1="15"
+                                                                                                                    y1="9"
+                                                                                                                    x2="9"
+                                                                                                                    y2="15">
+                                                                                                                </line>
+                                                                                                                <line
+                                                                                                                    x1="9"
+                                                                                                                    y1="9"
+                                                                                                                    x2="15"
+                                                                                                                    y2="15">
+                                                                                                                </line>
+                                                                                                            </svg></a>
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                            </td>
+                                                                                            <td class="product">
+                                                                                                <select id="product_id"
+                                                                                                    name="product_id[]"
+                                                                                                    class="mb-3 form-control select2 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                                                    <option
+                                                                                                        selected="">
+                                                                                                        Please select
+                                                                                                        the
+                                                                                                        product</option>
+                                                                                                    @foreach ($dropDownData['products'] as $key => $value)
+                                                                                                        <option
+                                                                                                            value="{{ $key }}"
+                                                                                                            {{ (old('product_id') == $key ? 'selected' : '') || (!empty($note->product_id) ? collect($note->product_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                                            {{ $value }}
+                                                                                                        </option>
+                                                                                                    @endforeach
+                                                                                                </select>
 
+                                                                                                <input type="text"
+                                                                                                    style="color: black;"
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_2"
+                                                                                                    id="packing"
+                                                                                                    placeholder="P.T"
+                                                                                                    readonly>
+
+                                                                                                <input type="text"
+                                                                                                    style="color: black;"
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_2"
+                                                                                                    placeholder="M.T"
+                                                                                                    id="measurement"
+                                                                                                    readonly>
+                                                                                            </td>
+
+                                                                                            <td class="quantity">
+                                                                                                <input type="text"
+                                                                                                    id="quantity"
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_2"
+                                                                                                    value="{{ old('quantity', !empty($saleOrder->quantity) ? $saleOrder->quantity : '') }}"
+                                                                                                    name="quantity[]"
+                                                                                                    placeholder="Qty">
+                                                                                            </td>
+
+                                                                                            <td class="total_unit">
+                                                                                                <input type="text"
+                                                                                                    id="dzn"
+                                                                                                    name="dzn[]"
+                                                                                                    value="{{ old('dzn', !empty($saleOrder->dzn) ? $saleOrder->dzn : '') }}"
+                                                                                                    class="dozen form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} dozen_2"
+                                                                                                    placeholder="Dzn">
+                                                                                            </td>
+                                                                                            <td class="total_dzns">
+                                                                                                <input type="text"
+                                                                                                    id="total_dzns"
+                                                                                                    style="color: black;"
+                                                                                                    name="total_dzn[]"
+                                                                                                    value="{{ old('total_dzn', !empty($saleOrder->total_dzn) ? $saleOrder->total_dzn : '') }}"
+                                                                                                    class="totDzn form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} totDzn_2"
+                                                                                                    placeholder="Tot.Dzns"
+                                                                                                    readonly>
+                                                                                            </td>
+                                                                                            <td class="unit">
+                                                                                                <textarea id="unit" type="text" name="remarks[]" placeholder="Please Enter Remarks "
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mt-0">{{ @$note->remarks }}</textarea>
+                                                                                            </td>
+
+                                                                                        </tr>
+                                                                                    @endforeach --}}
                                                                                     @if (empty($dispatchNotes))
                                                                                         <tr>
                                                                                             <td
@@ -299,16 +415,14 @@
                                                                                                         </option>
                                                                                                     @endforeach
                                                                                                 </select>
-                                                                                            </td>
-                                                                                            <td class="packing">
+
                                                                                                 <input type="text"
                                                                                                     style="color: black;"
                                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_2"
                                                                                                     id="packing"
                                                                                                     placeholder="P.T"
                                                                                                     readonly>
-                                                                                            </td>
-                                                                                            <td class="measurement">
+
                                                                                                 <input type="text"
                                                                                                     style="color: black;"
                                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_2"
@@ -317,9 +431,7 @@
                                                                                                     readonly>
                                                                                             </td>
 
-
-                                                                                            <td
-                                                                                                class="text-right unit">
+                                                                                            <td class="text-right unit">
                                                                                                 <input id="quantity"
                                                                                                     type="number"
                                                                                                     name="quantity[]"
@@ -327,8 +439,14 @@
                                                                                                     placeholder="Quantity.... "
                                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty">
                                                                                             </td>
-
                                                                                             <td class="unit">
+                                                                                                <input id="unit"
+                                                                                                    type="number"
+                                                                                                    name="unit[]"
+                                                                                                    value="{{ old('unit', !empty($note->unit) ? $note->unit : '') }}"
+                                                                                                    placeholder="Dzns... "
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} unit">
+                                                                                            </td>                                              <td class="unit">
                                                                                                 <textarea id="unit" type="text" name="remarks[]" placeholder="Please Enter Remarks "
                                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mt-0">{{ @$note->remarks }}</textarea>
                                                                                             </td>
@@ -344,7 +462,7 @@
                                                                             Item</a>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-xl-6 invoice-address-client invoice-detail-total mt-3"
+                                                               <div class="col-xl-6 invoice-address-client invoice-detail-total mt-3"
                                                                     style="float:right">
                                                                     <div class="invoice-address-client-fields">
                                                                         <div class="form-group row">
@@ -360,6 +478,19 @@
                                                                                     id="quantity-amount"
                                                                                     placeholder="Total Quantity"
                                                                                     readonly>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group row">
+                                                                            <label for="unit-amount"
+                                                                                class="col-sm-4 col-form-label col-form-label-sm ">Tot.
+                                                                                Dzns
+                                                                            </label>
+                                                                            <div class="col-sm-8">
+                                                                                <input type="text" id="unit-amount"
+                                                                                    style="color: black;"
+                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} unit-amount "
+                                                                                    id="unit-amount"
+                                                                                    placeholder="Total Unit" readonly>
                                                                             </div>
                                                                         </div>
 
@@ -516,21 +647,20 @@
                 '<li><a href="javascript:void(0);" class="delete-item" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></a></li>' +
                 '</ul>' +
                 '</td>' +
-                '<td class="product"><select id="product_id" name="product_id[]" class="form-control select2 custom-select form-control-sm"><option selected = "" > Please select the product </option> @foreach ($dropDownData['products'] as $key => $value) <option value = "{{ $key }}"{{ (old('product_id') == $key ? 'selected' : '') || (!empty($note->product_id) ? collect($note->product_id)->contains($key) : '') ? 'selected' : '' }}> {{ $value }}</option> @endforeach < /select> ' +
-                '</td> ' +
-                '<td class="packing" >' +
-                '<input id="packing" style="color: black; " type="text" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} " packing_' +
-                currentIndex +'" placeholder="P.T" readonly></td>' +
-                '<td class="measurement" >' +
-                '<input type="text" style="color: black; " placeholder="M.T" id="measurement" class = "measurement form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_' +
+                '<td class="product"><select id="product_id" name="product_id[]" class="form-control select2 custom-select form-control-sm"><option selected = "" > Please select the product </option> @foreach ($dropDownData['products'] as $key => $value) <option value = "{{ $key }}"{{ (old('product_id') == $key ? 'selected' : '') || (!empty($note->product_id) ? collect($note->product_id)->contains($key) : '') ? 'selected' : '' }}> {{ $value }}</option> @endforeach < /select> <input id="packing" style="color: black; " type="text" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} " packing_' +
+                currentIndex +
+                '" placeholder="P.T" readonly><input type="text" style="color: black; " placeholder="M.T" id="measurement" class = "measurement form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_' +
                 currentIndex + '" readonly> </td> ' +
-                '<td class="text-right unit" >' +
+               '<td class="text-right unit" >' +
                 '<input type="text" name="quantity[]" class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty" placeholder="Quantity.... ">' +
                 ' </td>' +
-                '<td class="text-right unit" >' +
+                '<td class="unit"><input type="text" name="unit[]" class="form-control  {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} unit" placeholder="Dzns... "></td>' +
+                '<td class="unit" >' +
                 '<textarea type="text" name="remarks[]" class="form-control  {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mt-0" placeholder="Please Enter remarks "></textarea>' +
                 ' </td>' +
-
+                // '<td class="text-right amount"><span class="editable-amount"><span class="currency"></span> <span class="amount">0.00</span></td>' +
+                // '<td class="text-right rate"><input type="text" class="form-control  {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" placeholder="Rate"></td>'+
+                // '<td class="text-right amount"><span class="editable-amount"><span class="currency"></span> <span class="amount">0.00</span></td>' +
                 '<div class="form-check form-check-primary form-check-inline me-0 mb-0">' +
                 // '<input class="form-check-input inbox-chkbox contact-chkbox" type="checkbox">' +
                 '</div>' +

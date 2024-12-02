@@ -8,7 +8,6 @@ $('#party').on('change', function () {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         success: function (response) {
-            console.log(response.name.name);
             $("#saleMan").val(response.name.name);
 
         },
@@ -27,7 +26,6 @@ $('#party').on('change', function () {
 });
 $('#party').on('change', function () {
     var name = $('#party :selected').text();
-    // console.log(name);
     let url = config.routes.getPartySectorDetail + '/' + name;
     $.ajax({
         url: url,
@@ -55,7 +53,6 @@ $('#party').on('change', function () {
 
 $('#party').on('change', function () {
     var name = $('#party :selected').text();
-    // console.log(name);
     let url = config.routes.getPartyAreaDetail + '/' + name;
     $.ajax({
         url: url,
@@ -80,102 +77,12 @@ $('#party').on('change', function () {
     })
 });
 
-// $(document).ready(function() {
-//     $('#product').on('change', function() {
-//         var name = $('#product :selected').text();
-//         // var index = $('#product').find(':selected').attr('data-id');
-//         // console.log($(this).data('id'));
-//         // console.log(index);
-//         // let url = config.routes.getProductMeasurementTypeDetail + '/' + name;
-//         let url = config.routes.getProductMeasurementTypeDetail + '/' + name;
-//         $.ajax({
-//             url: url,
-//             type: 'GET',
-//             headers: {
-//                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-//             },
-//             success: function(response) {
-//                 $("#measurement").val(response.measurement_type_id);
-//             },
-//             complete: function() {
-//                 $('#loading').css('display', 'none');
-//             },
-//             error: function(errorThrown) {
-//                 $('').val('');
-//                 var errors = errorThrown.responseJSON.errors;
-//                 Swal.fire({
-//                     icon: 'error',
-//                     title: 'Something went wrong',
-//                 })
-//             }
-//         })
-//     });
-//     $('#product').on('change', function() {
-//         var name = $('#product :selected').text();
-//         // var index = $('#product').find(':selected').attr('data-id');/
-//         // console.log($(this).data('id'));
-//         // console.log(index);
-//         // let url = config.routes.getProductMeasurementTypeDetail + '/' + name;
-//         let url = config.routes.getProductPackingTypeDetail + '/' + name;
-//         $.ajax({
-//             url: url,
-//             type: 'GET',
-//             headers: {
-//                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-//             },
-//             success: function(response) {
-//                 $("#packing").val(response.packing_type_id);
-//             },
-//             complete: function() {
-//                 $('#loading').css('display', 'none');
-//             },
-//             error: function(errorThrown) {
-//                 $('').val('');
-//                 var errors = errorThrown.responseJSON.errors;
-//                 Swal.fire({
-//                     icon: 'error',
-//                     title: 'Something went wrong',
-//                 })
-//             }
-//         })
-//     });
-// });
-
-
-// $('#product').on('change', function () {
-//     var name = $('#product :selected').text();
-//     // console.log(name);
-//     let url = config.routes.getProductPackingTypeDetail + '/' + name;
-//     $.ajax({
-//         url: url,
-//         type: 'GET',
-//         headers: {
-//             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-//         },
-//         success: function (response) {
-//             $("#packing").val(response.packing_type_id);
-//         },
-//         complete: function () {
-//             $('#loading').css('display', 'none');
-//         },
-//         error: function (errorThrown) {
-//             $('').val('');
-//             var errors = errorThrown.responseJSON.errors;
-//             Swal.fire({
-//                 icon: 'error',
-//                 title: 'Something went wrong',
-//             })
-//         }
-//     })
-// })
-
 
 //Runtime calculation
 $(document).on('click', 'body *', function () {
     $('.dozen').on("focusout", function () {
 
         var row_id = $(this).closest("tr").find(".row_id").val();
-        // console.log(row_id);
         let quantity = $(this).closest("tr").find(".qty_" + row_id).val();
         let dzns = $(this).closest("tr").find(".dozen_" + row_id).val();
         if (parseInt(quantity) > 0) {
@@ -189,7 +96,6 @@ $(document).on('click', 'body *', function () {
         var row_id = $(this).closest("tr").find(".row_id").val();
         let quantity = $(this).closest("tr").find(".totDzn_" + row_id).val();
         let price = $(this).closest("tr").find(".rate_" + row_id).val();
-        console.log(row_id + ", " + quantity + ", " + price);
         if (parseInt(quantity) > 0) {
             $(this).closest("tr").find(".amount_" + row_id).val(quantity * price);
         } else {
@@ -206,7 +112,6 @@ $(document).on('click', 'body *', function () {
 
     function doAmountTotal() {
         $('#total-amount').text("");
-        console.log('in do amount total');
         var totalAmount = 0;
         $(".amount").each(function () {
             if (!isNaN(this.value) && this.value.length != 0) {
@@ -246,7 +151,6 @@ $(document).on('click', 'body *', function () {
 
     function doAmountTotal() {
         $('#total-amount').text("");
-        console.log('in do amount total');
         var totalAmount = 0;
         $(".amount").each(function () {
             if (!isNaN(this.value) && this.value.length != 0) {
@@ -268,7 +172,6 @@ $(document).on('click', 'body *', function () {
 
     function doAmountTotal() {
         $('#total-amount').text("");
-        console.log('in do amount total');
         var totalAmount = 0;
         $(".amount").each(function () {
             if (!isNaN(this.value) && this.value.length != 0) {
@@ -279,33 +182,38 @@ $(document).on('click', 'body *', function () {
     }
 });
 
-$(document).on('click', 'body *', function () {
-    $('.qty').on("focusout", function () {
-        doAmountTotal();
-    });
+// $(document).on('click', 'body *', function () {
+//     $('.qty').on("focusout", function () {
+//         doAmountTotal();
+//     });
 
-    $('.delete-item').on("click", function () {
-        doAmountTotal();
-    });
+//     $('.delete-item').on("click", function () {
+//         doAmountTotal();
+//     });
 
-    function doAmountTotal() {
-        $('#boray-amount').text("");
-        $('#carton-amount').text("");
-        // console.log('in do amount total');
-        var totalAmount = 0;
-        $(".qty").each(function () {
-            if (!isNaN(this.value) && this.value.length != 0) {
-                totalAmount += parseFloat(this.value);
-            }
-        });
+//     function doAmountTotal() {
+//         $('#boray-amount').text("");
+//         $('#carton-amount').text("");
+//         // console.log('in do amount total');
+//         var totalAmount = 0;
+//         $(".qty").each(function () {
+//             if (!isNaN(this.value) && this.value.length != 0) {
+//                 totalAmount += parseFloat(this.value);
+//             }
+//         });
 
-        if (document.getElementById('packing').value == "Carton") {
-            $('#carton-amount').val(totalAmount.toFixed(2));
-        }
+//         // if (document.getElementById('packing').value == "Carton") {
+//         //     $('#carton-amount').val(totalAmount.toFixed(2));
+//         // }
 
-        if (document.getElementById('packing').value == "Boray") {
-            $('#boray-amount').val(totalAmount.toFixed(2));
-        }
-        // $('#quantity-amount').val(totalAmount.toFixed(2));
-    }
-});
+//         // if (document.getElementById('packing').value == "Boray") {
+//         //     $('#boray-amount').val(totalAmount.toFixed(2));
+//         // }
+//         if (document.getElementById('packing').value == "Carton") {
+//             $('#carton-amount').val(totalAmount.toFixed(2));
+//         } else {
+//             $('#boray-amount').val(totalAmount.toFixed(2));
+//         }
+//         // $('#quantity-amount').val(totalAmount.toFixed(2));
+//     }
+// });

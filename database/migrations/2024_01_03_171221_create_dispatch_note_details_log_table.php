@@ -15,10 +15,9 @@ return new class extends Migration
     {
         Schema::create('dispatch_note_details_log', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('dispatch_master_id');
+            $table->integer('dispatch_note_master_id')->unsigned()->index();
             $table->integer('product_id');
             $table->double('quantity');
-            $table->double('unit');
             $table->text('remarks')->nullable();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');

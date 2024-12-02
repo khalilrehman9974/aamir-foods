@@ -24,6 +24,10 @@ class CoaDetailAccount extends Model
         return $this->hasOne(CoaMainHead::class, 'account_code', 'main_head');
     }
 
+    public function saleOrder(){
+        return $this->belongsTo(SaleOrder::class);
+    }
+
     public function getControlHead()
     {
         return $this->hasOne(CoaControlHead::class, 'account_code', 'control_head');

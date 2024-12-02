@@ -123,7 +123,8 @@ Route::group(['middleware' => ['auth']], function () {
     //Dispatch note
     Route::group(['prefix' => 'dispatch-note'], function () {
         Route::get('list', ['as' => 'dispatch-note.list', 'uses' => 'App\Http\Controllers\DispatchNoteController@index']);
-        Route::get('create', ['as' => 'dispatch-note.create', 'uses' => 'App\Http\Controllers\DispatchNoteController@create']);
+        Route::get('generate', ['as' => 'dispatch-note.generate', 'uses' => 'App\Http\Controllers\DispatchNoteController@generate']);
+        Route::get('create/{id}', ['as' => 'dispatch-note.create', 'uses' => 'App\Http\Controllers\DispatchNoteController@create']);
         Route::post('save', ['as' => 'dispatch-note.save', 'uses' => 'App\Http\Controllers\DispatchNoteController@store']);
         Route::get('edit/{id}', ['as' => 'dispatch-note.edit', 'uses' => 'App\Http\Controllers\DispatchNoteController@edit']);
         Route::post('update', ['as' => 'dispatch-note.update', 'uses' => 'App\Http\Controllers\DispatchNoteController@update']);
@@ -481,7 +482,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('create', ['as' => 'sale-order.create', 'uses' => 'App\Http\Controllers\SaleOrderController@create']);
         Route::post('save', ['as' => 'sale-order.save', 'uses' => 'App\Http\Controllers\SaleOrderController@store']);
         Route::get('edit/{id}', ['as' => 'sale-order.edit', 'uses' => 'App\Http\Controllers\SaleOrderController@edit']);
-        Route::post('update', ['as' => 'sale-order.update', 'uses' => 'App\Http\Controllers\SaleOrderController@store']);
+        Route::post('update', ['as' => 'sale-order.update', 'uses' => 'App\Http\Controllers\SaleOrderController@update']);
         Route::delete('delete/{id}', ['as' => 'sale-order.delete', 'uses' => 'App\Http\Controllers\SaleOrderController@delete']);
         Route::get('get-party-sale-man/{name}', ['as' => 'party-sale-man', 'uses' => 'App\Http\Controllers\SaleOrderController@getSaleManDetail']);
         Route::get('get-party-sale-man-sector/{name}', ['as' => 'party-sale-man-sector', 'uses' => 'App\Http\Controllers\SaleOrderController@getSaleManSectorDetail']);

@@ -31,11 +31,13 @@ class SaleOrderController extends Controller
      * */
     public function index()
     {
+        $dropDownData = $this->saleOrderService->DropDownData();
         $pageTitle = 'List Of Sale Orders';
         $request = request()->all();
+        $param = request()->param;
         $saleOrders = $this->saleOrderService->searchSale($request);
 
-        return view('sale-orders.index', compact('saleOrders', 'pageTitle'));
+        return view('sale-orders.index', compact('saleOrders', 'pageTitle','param','dropDownData'));
     }
 
     /*
@@ -56,23 +58,28 @@ class SaleOrderController extends Controller
      * */
     public function store(Request $request)
     {
-        // dd($request);
         $request = $request->except('_token', 'id');
-        // DB::beginTransaction();
-        // try {
+        DB::beginTransaction();
+        try {
         //Insert data into sale tables.
         $saleOrderMasterData = $this->saleOrderService->prepareSaleOrderMasterData($request);
-        $saleOrderMasterInsert = $this->saleOrderService->findUpdateOrCreate(SaleOrder::class, ['id' => ''], $saleOrderMasterData);
+        $saleOrderMasterInsert = $this->saleOrderService->findUpdateOrCreate(SaleOrder::class, ['id' => !empty(request('id')) ? request('id') : null], $saleOrderMasterData);
         $saleOrderDetailData = $this->saleOrderService->prepareSaleOrderDetailData($request, $saleOrderMasterInsert->id);
         $this->saleOrderService->saveSaleOrder($saleOrderDetailData);
 
         DB::commit();
-        // } catch (\Exception $e) {
-        //     DB::rollback();
-        //     return redirect('sale-order/create')->with('error', $e->getMessage());
-        // }
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect('sale-order/create')->with('error', $e->getMessage());
+        }
         event(new AamirFoodsNotifications($saleOrderMasterData));
-        return redirect('sale-order/list')->with('message', config('constants.add'));
+        $message = config(
+            'constants.add'
+        );
+        if (request('id')) {
+            $message = config('constants.update');
+        }
+        return redirect('sale-order/list')->with('message', $message);
     }
 
     /*
@@ -104,7 +111,6 @@ class SaleOrderController extends Controller
         try {
 
             $request = request()->all();
-            SaleOrder::where('id', $request['id'])->delete();
             SaleOrderDetail::where('sale_order_master_id', $request['id'])->delete();
 
             //Save data into relevant tables.
@@ -155,7 +161,6 @@ class SaleOrderController extends Controller
     public function view($id)
     {
         $saleOrderMaster = $this->saleOrderService->getSaleOrderMasterById($id);
-        // $saleDetail = $this->saleOrderService->getSaleDetailById($id);
         if (empty($saleOrderMaster)) {
             $message = config('constants.wrong');
         }
@@ -174,7 +179,6 @@ class SaleOrderController extends Controller
     public function getSaleManSectorDetail($name)
     {
         $fetchSector = CoaDetailAccount::where('account_name', trim($name))->first('sector');
-        // dd($fetchSector);
         if ($fetchSector) {
             return response()->json(['status' => 'success', 'sector' => $fetchSector->sector]);
         }

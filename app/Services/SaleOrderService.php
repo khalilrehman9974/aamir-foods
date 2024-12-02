@@ -24,7 +24,7 @@ class SaleOrderService
     {
         $object = $model::firstOrNew($where);
 
-        foreach ($data as $property => $value){
+        foreach ($data as $property => $value) {
             $object->{$property} = $value;
         }
         $object->save();
@@ -38,25 +38,13 @@ class SaleOrderService
      * */
     public function getSaleOrderMasterById($id)
     {
-        return SaleOrder::leftjoin('parties', 'parties.id', '=', 'sale_order_masters.party_id')
-            ->leftjoin('salemans', 'salemans.id', '=', 'sale_order_masters.saleman_id')
+        return SaleOrder::leftjoin('detail_accounts', 'detail_accounts.account_code', '=', 'sale_order_masters.party_id')
+            ->leftjoin('sale_order_masters', 'sale_order_masters.party_id', '=', 'detail_accounts.account_code')
             ->select(
-                'sale_order_masters.id as id',
-                'sale_order_masters.date',
-                'sale_order_masters.bilty_no',
-                'sale_order_masters.remarks',
-                'sale_order_masters.created_at',
-                'sale_order_masters.deliverd_to',
-                'sale_order_masters.updated_at',
-                'sale_order_masters.transporter_id',
-                'sale_order_masters.total_amount',
-                'sale_order_masters.freight',
-                'sale_order_masters.scheme',
-                'sale_order_masters.commission',
-                'parties.name as partyName',
-                'salemans.id as salemanId'
+
+                'detail_accounts.account_code',
             )
-            ->where('sale_order_masters.id', $id)
+            ->where('detail_accounts.account_code', $id)
             ->first();
     }
 
@@ -67,18 +55,74 @@ class SaleOrderService
      * @return: object
      * */
 
-     public function searchSale($request)
+    // public function searchSale($request)
+    // {
+    public function searchSale($request)
     {
         $q = SaleOrder::query();
-        if (!empty($request['param'])) {
-            $q = SaleOrder::with('party')
+        if (!empty($request['date'])) {
+            $q->where('date', $request['date']);
+        } elseif (!empty($request['party_id'])) {
+            $q->where('party_id', $request['party_id']);
+        } 
+        // elseif (!empty($request['seller'])) {
+        //     $q->where('seller_id', $request['seller']);
+        // }
 
-            ->Where('party', 'like', '%' . $request['param'] . '%');
-
-        }
-        $saleOrders = $q->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
-
+        $saleOrders = $q->with(['parties'])->orderBy('updated_at', 'DESC')->paginate(config('constants.PER_PAGE'));
         return $saleOrders;
+
+    //     $q = SaleOrder::query();
+    //     if (!empty($request['param'])) {
+    //         $qr = CoaDetailAccount::leftjoin('sale_order_masters', 'sale_order_masters.party_id', '=', 'detail_accounts.account_code')
+    //             ->select(
+
+    //                 'detail_accounts.account_code',
+    //             )
+    //             ->where('detail_accounts.account_name', $request['param'])
+    //             ->first();
+    //         dd($qr);
+    //         $q->with('party')->where('date', 'LIKE', '%' . $request['param'] . '%')
+    //         ->orWhere('party_id', 'LIKE', $qr);
+    //     }
+
+    //     $saleOrders = $q->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
+    //     return $saleOrders;
+    // }
+    // // dd($request);
+    // if (!empty($request['param'])) {
+
+
+    //     dd($posts);
+    // }
+
+    // // dd($request);
+    // $q = SaleOrder::query();
+    // $posts = SaleOrder::join('detail_accounts', 'sale_order_masters.party_id', '=', 'detail_accounts.account_code') // Join the posts and users tables
+    //     ->where('detail_accounts.account_name', 'like', '%' . $request['param'] . '%') // Filter users by name (or any other condition)
+    //     ->select('detail_accounts.account_code') // Select the title column from posts table
+    //     ->get();
+    // dd($posts);
+    // $search = $request['param'];
+    // if (!empty($request['param'])) {
+    //     $q = SaleOrder::with('party')->where('date', 'like', '%' . $request['param'] . '%')
+    //     ->orWhere('total_amount', 'like', '%' . $request['param'] . '%')
+    // // ->orWhere('party_id', 'like', '%' . 'account_code' . '%')
+    // ->orWhereHas('parties',function($query) use ($search){
+    //     $query->where('account_name', 'like',"$search")
+    //     ->get();
+    // });
+    
+    // ->join('detail_accounts', 'sale_order_masters.party_id', '=', 'detail_accounts.account_name') // Join the sale Orders and Detail Account tables
+    //     ->where('sale_order_masters.party_id', 'like', $request['param'] ) // Filter Detail Account by name (or any other condition)
+    //     ->select('detail_accounts.account_code'); // Select the title column from posts table
+    //     // ->get(),
+    // }
+
+
+    // $saleOrders = $q->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
+
+    // return $saleOrders;
     }
 
 
@@ -105,7 +149,7 @@ class SaleOrderService
             'total_boray' => $request['total_boray'],
             'total_carton' => $request['total_carton'],
             'total_amount' => $request['total_amount'],
-            'created_by'=> Auth::user()->id,
+            'created_by' => Auth::user()->id,
             'updated_by' => Auth::user()->id
         ];
     }
@@ -113,10 +157,10 @@ class SaleOrderService
     public function DropDownData()
     {
         $result = [
-            'parties' => CoaDetailAccount::pluck('account_name','id'),
-            'saleMans' => SaleMan::pluck('name','id'),
-            'transporters' => Transporter::pluck('name','id'),
-            'products' => CoaInventoryDetailAccount::pluck('name','id'),
+            'parties' => CoaDetailAccount::pluck('account_name', 'id'),
+            'saleMans' => SaleMan::pluck('name', 'id'),
+            'transporters' => Transporter::pluck('name', 'id'),
+            'products' => CoaInventoryDetailAccount::pluck('name', 'id'),
 
         ];
 
@@ -139,7 +183,7 @@ class SaleOrderService
             'total_dzn' => $request['total_dzn'],
             'rate' => $request['rate'],
             'amount' => $request['amount'],
-            'created_by'=> Auth::user()->id,
+            'created_by' => Auth::user()->id,
             'updated_by' => Auth::user()->id,
             'sale_order_master_id' => $saleOrderParentId,
         ];
@@ -168,5 +212,4 @@ class SaleOrderService
             }
         }
     }
-
 }
