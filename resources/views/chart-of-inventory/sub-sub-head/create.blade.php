@@ -57,7 +57,8 @@
                                             <div class="col-lg-6 col-12 ">
                                                 <form
                                                     action="{{ !empty($subSubHead) ? route('co-inventory-sub-sub-head.update') : route('co-inventory-sub-sub-head.save') }}"
-                                                    method="POST" class="row g-3 needs-validation" autocomplete="off" novalidate>
+                                                    method="POST" class="row g-3 needs-validation" autocomplete="off"
+                                                    novalidate>
                                                     @csrf
                                                     <input type="hidden" name="id" id="id"
                                                         value="{{ isset($subSubHead->id) ? $subSubHead->id : '' }}" />
@@ -65,8 +66,8 @@
                                                         <div class="col-lg-0 col-12 form-group mb-4">
                                                             <label for="inputState" class="form-label">Main
                                                                 Head</label>
-                                                            <select id="main-head" name="main_head_id" class="form-select"
-                                                                required>
+                                                            <select id="main-head" name="main_head_id"
+                                                                class="form-select" required>
                                                                 <option selected>Please select main head
                                                                 </option>
                                                                 @foreach ($mainHeads as $index => $value)
@@ -119,7 +120,6 @@
                                                                     @endforeach
                                                                 </select>
                                                             @else
-
                                                                 <select id="sub-head" name="sub_head_id"
                                                                     class="form-select">
                                                                     <option selected>
@@ -165,12 +165,22 @@
                                                         </div>
 
                                                         <div class="col-lg-0 col-12 mt-3 ">
-                                                            <label for="price" class="form-label">Price
-                                                                 </label>
-                                                            <input id="price" type="text" name="price"
-                                                                value="{{ old('price', !empty($subSubHead->price) ? $subSubHead->price : '') }}"
-                                                                placeholder="Please Enter Price "
-                                                                class="form-control" required>
+                                                            <label for="price" class="form-label">Price Tag
+                                                            </label>
+                                                            <select id="price" name="price"
+                                                                class="mb-3 form-control select2 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} price" required>
+                                                                <option selected="">
+                                                                    Please select
+                                                                    the
+                                                                    Price Tag</option>
+                                                                @foreach ($dropDownData['priceTag'] as $key => $value)
+                                                                    <option value="{{ $key }}"
+                                                                        {{ (old('price') == $key ? 'selected' : '') || (!empty($subSubHead->price) ? collect($subSubHead->price)->contains($key) : '') ? 'selected' : '' }}>
+                                                                        {{ $value }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+
                                                         </div>
 
                                                         @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)

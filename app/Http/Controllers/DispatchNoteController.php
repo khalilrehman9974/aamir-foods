@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SaleOrder;
+use App\Models\PackingType;
 use Illuminate\Http\Request;
+use App\Models\MeasurementType;
 use App\Services\CommonService;
 use App\Models\DispatchNoteDetail;
 use App\Models\DispatchNoteMaster;
 use Illuminate\Support\Facades\DB;
 use App\Services\DispatchNoteService;
-use App\Http\Requests\DispatchNoteStoreRequest;
-use App\Models\SaleOrder;
-use App\Models\SaleOrderDetail;
+use App\Models\CoaInventoryDetailAccount;
 
 class DispatchNoteController extends Controller
 {
@@ -41,16 +42,13 @@ class DispatchNoteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(int $id)
+    public function create(Request $request)
     {
-        // dd($id);
         $pageTitle = 'Create Dispatch Note';
-        $maxid = DispatchNoteMaster::count('sale_order_number',$id) + 1;
+        $maxid = DispatchNoteMaster::count('sale_order_number',$request->id) + 1;
         $dropDownData = $this->dispatchNoteService->DropDownData();
-        $sale_Order = SaleOrder::find($id);
-        // dd($sale_Order);
+        $sale_Order = SaleOrder::find($request->id);
         $dispatchNotes = DispatchNoteDetail::where('dispatch_note_master_id')->get();
-
 
         if (empty($sale_Order)) {
             abort(404);
@@ -61,7 +59,6 @@ class DispatchNoteController extends Controller
 
     public function generate()
     {
-        
         return view('dispatch-note.generate');
     }
     /**
@@ -74,7 +71,7 @@ class DispatchNoteController extends Controller
     {
         $data = request()->except('id', 'token');
         DB::beginTransaction();
-        // try {
+        try {
             //Insert data into Dispatch tables.
             $dispatchMasterData = $this->dispatchNoteService->prepareDispatchMasterData($request);
             $dispatchMasterInsert = $this->dispatchNoteService->findUpdateOrCreate(DispatchNoteMaster::class, ['id' => ''], $dispatchMasterData);
@@ -82,10 +79,10 @@ class DispatchNoteController extends Controller
             $this->dispatchNoteService->saveDispatch($dispatchDetailData);
 
             DB::commit();
-        // } catch (\Exception $e) {
-        //     DB::rollback();
-        //     return redirect('dispatch-note/create')->with('error', $e->getMessage());
-        // }
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect('dispatch-note/create')->with('error', $e->getMessage());
+        }
         return redirect('dispatch-note/list')->with('message', config('constants.add'));
     }
 
@@ -112,7 +109,6 @@ class DispatchNoteController extends Controller
         $pageTitle = 'Update Dispatch Note';
         $currentid = $id;
         $note = DispatchNoteMaster::find($id);
-        // dd($note);
         $dropDownData = $this->dispatchNoteService->DropDownData();
         $dispatchNotes = DispatchNoteDetail::where('dispatch_note_master_id', $id)->get();
         if (empty($note)) {
@@ -170,10 +166,22 @@ class DispatchNoteController extends Controller
         if ($orderMasterData) {
             return response()->json($orderMasterData);
         }
-
-        // return redirect('dispatch-note/create')->with('error', 'No data found' );
-
-        // return response()->json(['status' => 'fail', 'message' => 'No data found'], 404);
         return response()->json(['message' => 'No data found'], 404);
+    }
+
+    public function getProductMeasurementType($name)
+    {
+        $fetchMeasurementType = CoaInventoryDetailAccount::where('name', trim($name))->first('measurement_type_id');
+        $measurement =  MeasurementType::where('id', $fetchMeasurementType->measurement_type_id)->first('name');
+
+        return response()->json(['status' => 'success', 'name' => $measurement]);
+    }
+
+    public function getProductPackingType($name)
+    {
+        $fetchPackingType = CoaInventoryDetailAccount::where('name', trim($name))->first('packing_type_id');
+        $packing =  PackingType::where('id', $fetchPackingType->packing_type_id)->first('name');
+
+        return response()->json(['status' => 'success', 'name' => $packing]);
     }
 }

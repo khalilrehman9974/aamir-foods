@@ -82,7 +82,7 @@
                                                                         class="form-label">Invoice# </label>
                                                                     <input id="invoice_no" type="text"
                                                                         style="color:black;" name="invoice_no"
-                                                                        value="{{ $invoiceNo }}"
+                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
 
@@ -91,7 +91,7 @@
                                                                         Order #</label>
                                                                     <input id="sale_order" type="sale_order"
                                                                         name="sale_order_number" style="color:black;"
-                                                                        value="{{ $dispatchNote->sale_order_number }}"
+                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
 
@@ -100,7 +100,7 @@
                                                                         class="form-label">Dispatch Note# </label>
                                                                     <input id="dispatch_note" type="dispatch_note"
                                                                         name="dispatch_note_number" style="color:black;"
-                                                                        value="{{ $dispatchNote->id }}"
+                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
                                                             </div>
@@ -111,16 +111,15 @@
                                                                         Date</label>
                                                                     <input type="text"
                                                                         class="form-control form-control-sm"
-                                                                        id="date" style="color:black;"
-                                                                        name="date"
-                                                                        value="{{ $dispatchNote->date }}"
+                                                                        id="date" style="color:black;" name="date"
+                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
                                                                         placeholder="Select The Date" readonly>
                                                                 </div>
                                                                 <div class="col-lg-0 col-6" style="float: right">
                                                                     <label for="date">
                                                                         Party</label>
                                                                     <input type="text" name="party_id"
-                                                                        value="{{ $dispatchNote->party_id }}"
+                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
                                                                         class="form-control form-control-sm"
                                                                         style="color:black;" id="party"
                                                                         placeholder="Select The Party" readonly>
@@ -134,7 +133,7 @@
                                                                     </label>
                                                                     <input id="sale_man" type="sale_man"
                                                                         name="saleman" style="color:black;"
-                                                                        value="{{ $dispatchNote->saleman }}"
+                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
                                                                         placeholder="Please Enter the Sale Man"
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
@@ -144,7 +143,7 @@
                                                                         class="form-label">Belt</label>
                                                                     <input id="belt" type="belt"
                                                                         name="sector" style="color:black;"
-                                                                        value="{{ $dispatchNote->sector }}"
+                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
                                                                         placeholder="Please Enter the Belt "
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
@@ -156,7 +155,7 @@
                                                                         class="form-label">Area</label>
                                                                     <input id="area" type="area"
                                                                         name="area" style="color:black;"
-                                                                        value="{{ $dispatchNote->area }}"
+                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
                                                                         placeholder="Please Enter the Area "
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
@@ -165,7 +164,7 @@
                                                                         class="form-label">Delivered To</label>
                                                                     <input id="deliverd_to" type="deliverd_to"
                                                                         name="deliverd_to" style="color:black;"
-                                                                        value="{{ $dispatchNote->delivered_to }}"
+                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
                                                                         placeholder="Please Enter the Delivered To Party "
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
@@ -176,7 +175,7 @@
                                                                         No</label>
                                                                     <input id="vehicle_no" type="vehicle_no"
                                                                         name="vehicle_no" style="color:black;"
-                                                                        value="{{ $dispatchNote->vehicle_no }}"
+                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
                                                                         placeholder="Please Enter the Vehicle No "
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
@@ -185,7 +184,7 @@
                                                                         Name</label>
                                                                     <input id="driver_name" type="driver_name"
                                                                         name="driver_name" style="color:black;"
-                                                                        value="{{ $dispatchNote->driver_name }}"
+                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
                                                                         placeholder="Please Enter the Driver Name "
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
@@ -196,7 +195,7 @@
                                                                         No</label>
                                                                     <input id="bility_no" type="bilty_no"
                                                                         name="bilty_no" style="color:black;"
-                                                                        value="{{ $dispatchNote->bility_no }}"
+                                                                       value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
                                                                         placeholder="Please Enter the Area "
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
@@ -244,10 +243,9 @@
                                                                             </thead>
                                                                             <tbody>
 
-                                                                                @if (!empty($dispatchNoteDetails))
+                                                                                @if (!empty($saleDetails))
 
-                                                                                    @foreach ($dispatchNoteDetails as $dispatchNoteDetail)
-                                                                                    {{-- {{dd($dispatchNoteDetail);}} --}}
+                                                                                    @foreach ($saleDetails as $saleDetail)
                                                                                         <tr
                                                                                             class="tr_clone validator_0">
                                                                                             <td
@@ -306,7 +304,7 @@
                                                                                                     name="product_id[]"
                                                                                                     placeholder="Please Select the Product"
                                                                                                     class="{{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} form-control  mb-3 select2 custom-select product_2"
-                                                                                                    >
+                                                                                                    required>
                                                                                                     <option
                                                                                                         value="">
                                                                                                         Select
@@ -314,17 +312,18 @@
                                                                                                         Product
                                                                                                     </option>
                                                                                                     @foreach ($dropDownData['products'] as $key => $value)
-                                                                                                    <option
-                                                                                                    value = "{{ $key }}" {{ (old('product_id') == $key ? 'selected' : '') || (!empty($dispatchNoteDetail->product_id) ? collect($dispatchNoteDetail->product_id)->contains($key) : '') ? 'selected' : '' }} >
-                                                                                                    {{ $value }} </option>
-                                                                                                     @endforeach
+                                                                                                        <option
+                                                                                                            value="{{ $key }}"
+                                                                                                            {{ (old('product_id') == $key ? 'selected' : '') || (!empty($dispatchNoteDetail->product_id) ? collect($dispatchNoteDetail->product_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                                            {{ $value }}
+                                                                                                        </option>
+                                                                                                    @endforeach
                                                                                                 </select>
                                                                                                 {{-- <input type="text"
                                                                                                     style="color: black;"
                                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} product_2"
-                                                                                                    id="product_id"
-                                                                                                    {{-- value=" {{ (old('product_id') 'selected' : '') || (!empty($dispatchNoteDetail->product_id) ? collect($dispatchNoteDetail->product_id)->contains($key) : '') ? 'selected' : '' }}"
-                                                                                                    value="{{ $dispatchNoteDetail->product_id }}"
+                                                                                                    id="product_id" value="{{ $saleDetail->product_id }}"
+                                                                                                    {{-- value="{{ old('product_id', !empty($saleDetail->product_id->name) ? $saleDetail->product_id : '') }}"
                                                                                                     name="product_id[]"
                                                                                                     placeholder="Product"
                                                                                                     readonly> --}}
@@ -332,7 +331,7 @@
                                                                                                     style="color: black;"
                                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_2"
                                                                                                     id="packing"
-                                                                                                    value="{{ old('packing_type', !empty($dispatchNoteDetail->packing_type) ? $dispatchNoteDetail->packing_type : '') }}"
+                                                                                                    value="{{ old('packing_type', !empty($saleDetail->packing_type) ? $saleDetail->packing_type : '') }}"
                                                                                                     name="packing_type[]"
                                                                                                     placeholder="P.T"
                                                                                                     readonly>
@@ -341,7 +340,7 @@
                                                                                                     style="color: black;"
                                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_2"
                                                                                                     placeholder="M.T"
-                                                                                                    value="{{ old('measurement_type', !empty($dispatchNoteDetail->measurement_type) ? $dispatchNoteDetail->measurement_type : '') }}"
+                                                                                                    value="{{ old('measurement_type', !empty($saleDetail->measurement_type) ? $saleDetail->measurement_type : '') }}"
                                                                                                     name="measurement_type[]"
                                                                                                     id="measurement"
                                                                                                     readonly>
@@ -351,7 +350,7 @@
                                                                                                 <input type="text"
                                                                                                     id="quantity"
                                                                                                     class="qty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_2"
-                                                                                                    value="{{ old('quantity', !empty($dispatchNoteDetail->quantity) ? $dispatchNoteDetail->quantity : '') }}"
+                                                                                                    value="{{ old('quantity', !empty($saleDetail->quantity) ? $saleDetail->quantity : '') }}"
                                                                                                     name="quantity[]"
                                                                                                     style="color:black;"
                                                                                                     placeholder="Qty"
@@ -362,7 +361,7 @@
                                                                                                 <input type="text"
                                                                                                     id="dzn"
                                                                                                     name="dzns[]"
-                                                                                                    value="{{ old('dzn', !empty($dispatchNoteDetail->dzn) ? $dispatchNoteDetail->dzn : '') }}"
+                                                                                                    value="{{ old('dzns', !empty($saleDetail->dzns) ? $saleDetail->dzns : '') }}"
                                                                                                     class="dozen form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} dozen_2"
                                                                                                     placeholder="Dzn"
                                                                                                     required>
@@ -372,7 +371,7 @@
                                                                                                     id="total_dzns"
                                                                                                     style="color: black;"
                                                                                                     name="total_dzns[]"
-                                                                                                    value="{{ old('total_dzn', !empty($dispatchNoteDetail->total_dzn) ? $dispatchNoteDetail->total_dzn : '') }}"
+                                                                                                    value="{{ old('total_dzns', !empty($saleDetail->total_dzns) ? $saleDetail->total_dzns : '') }}"
                                                                                                     class="totDzn form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} totDzn_2"
                                                                                                     placeholder="Tot.Dzns"
                                                                                                     readonly>
@@ -382,7 +381,7 @@
                                                                                                 <input type="text"
                                                                                                     id="rate"
                                                                                                     name="rate[]"
-                                                                                                    value="{{ old('rate', !empty($dispatchNoteDetail->rate) ? $dispatchNoteDetail->rate : '') }}"
+                                                                                                    value="{{ old('rate', !empty($saleDetail->rate) ? $saleDetail->rate : '') }}"
                                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} rate rate_2"
                                                                                                     placeholder="Rate"
                                                                                                     required>
@@ -392,7 +391,7 @@
                                                                                                 <input type="text"
                                                                                                     id="amount"
                                                                                                     style="color: black;"
-                                                                                                    value="{{ old('amount', !empty($dispatchNoteDetail->amount) ? $dispatchNoteDetail->amount : '') }}"
+                                                                                                    value="{{ old('amount', !empty($saleDetail->amount) ? $saleDetail->amount : '') }}"
                                                                                                     name="amount[]"
                                                                                                     class="amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} amount_2"
                                                                                                     placeholder="Amount"
@@ -420,7 +419,7 @@
                                                                                     Boray</label>
                                                                                 <input type="text"
                                                                                     style="color: black;"
-                                                                                    value="{{ old('total_boray', !empty($dispatchNote->total_boray) ? $dispatchNote->total_boray : '') }}"
+                                                                                    value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
                                                                                     id="boray-amount"
                                                                                     name="total_boray"
                                                                                     class="quantity-amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
@@ -430,7 +429,7 @@
                                                                                     Carton</label>
                                                                                 <input type="text"
                                                                                     style="color: black;"
-                                                                                    value="{{ old('total_carton', !empty($dispatchNote->total_carton) ? $dispatchNote->total_carton : '') }}"
+                                                                                    value="{{ old('total_carton', !empty($sale->total_carton) ? $sale->total_carton : '') }}"
                                                                                     id="carton-amount"
                                                                                     name="total_carton"
                                                                                     class="quantity-amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
@@ -454,7 +453,7 @@
                                                                                 <label for="invoice-detail-notes"
                                                                                     class="col-sm-12 col-form-label col-form-label-sm">Remarks</label>
                                                                                 <div class="col-sm-12">
-                                                                                    <textarea class="form-control" id="remarks" name="remarks" placeholder='Enter The Remarks' style="height: 88px;">{{ @$saleOrder->remarks }}</textarea>
+                                                                                    <textarea class="form-control" id="remarks" name="remarks" placeholder='Enter The Remarks' style="height: 88px;">{{ @$sale->remarks }}</textarea>
                                                                                 </div>
                                                                             </div>
 
@@ -482,7 +481,7 @@
                                                                                         Amount</label> --}}
                                                                                     <input type="text"
                                                                                         style="color: black;"
-                                                                                        id="gross-amount"
+                                                                                        id="gross-amount" value="{{ old('gross_bill', !empty($sale->gross_bill) ? $sale->gross_bill : '') }}"
                                                                                         name="gross_bill"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
                                                                                         placeholder="Gross.Amount"
@@ -509,7 +508,7 @@
                                                                                         style="color: black;"
                                                                                         id="carriage-amount"
                                                                                         name="carriage"
-                                                                                        value=" {{ $dispatchNote->carriage }} "
+                                                                                        value="{{ old('carriage', !empty($sale->carriage) ? $sale->carriage : '') }}"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} carriage"
                                                                                         placeholder="Carriage.Amount"
                                                                                         readonly>
@@ -533,7 +532,7 @@
                                                                                     <input type="text"
                                                                                         style="color: black;"
                                                                                         id="discount-amount"
-                                                                                        name="discount"
+                                                                                        name="discount" value="{{ old('discount', !empty($sale->discount) ? $sale->discount : '') }}"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount"
                                                                                         placeholder="Discount.Amount">
                                                                                 </div>
@@ -558,7 +557,7 @@
                                                                                     <input type="text"
                                                                                         style="color: black;"
                                                                                         id="commission-amount"
-                                                                                        name="commission"
+                                                                                        name="commission" value="{{ old('commission', !empty($sale->commission) ? $sale->commission : '') }}"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} commission"
                                                                                         placeholder="Commission.Amount">
                                                                                 </div>
@@ -582,7 +581,7 @@
                                                                                         Amount</label> --}}
                                                                                     <input type="text"
                                                                                         style="color: black;"
-                                                                                        id="net-amount"
+                                                                                        id="net-amount" value="{{ old('total_boray', !empty($sale->net_amount) ? $sale->net_amount : '') }}"
                                                                                         name="net_amount"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
                                                                                         placeholder="Net.Amount"
@@ -643,7 +642,7 @@
                 // data-id=currentIndex
                 '<td class="product"> <select id="product" type = "text" name = "product_id[]" class ="form-control select2 custom-select form-control-sm  product_' +
                 currentIndex +
-                '" placeholder = "Please Select the Product"   required ><option value = "" >Select the Product </option> @foreach ($dropDownData['products'] as $key => $value)<option value = "{{ $key }}" {{ (old('product_id') == $key ? 'selected' : '') || (!empty($dispatchNoteDetails->product_id) ? collect($dispatchNoteDetails->product_id)->contains($key) : '') ? 'selected' : '' }} >{{ $value }} </option> @endforeach </select> <input id="packing" name="packing_type[]" style="color: black; " type="text" class = "packing form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_' +
+                '" placeholder = "Please Select the Product"   required ><option value = "" >Select the Product </option> @foreach ($dropDownData['products'] as $key => $value)<option value = "{{ $key }}" {{ (old('product_id') == $key ? 'selected' : '') || (!empty($saleOrderDetail->product_id) ? collect($saleOrderDetail->product_id)->contains($key) : '') ? 'selected' : '' }} >{{ $value }} </option> @endforeach </select> <input id="packing" name="packing_type[]" style="color: black; " type="text" class = "packing form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_' +
                 currentIndex +
                 '" placeholder="P.T" readonly><input type="text" style="color: black; " placeholder="M.T" name="measurement_type[]" id="measurement" class = "measurement form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_' +
                 currentIndex + '" readonly> </td> ' +
@@ -695,6 +694,7 @@
                     }
                     doAmountTotal();
                 });
+
 
 
                 $('.delete-item').on("click", function() {

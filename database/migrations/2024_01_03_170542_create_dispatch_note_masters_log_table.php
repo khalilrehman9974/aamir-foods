@@ -17,7 +17,7 @@ return new class extends Migration
             $table->increments('id');
             $table->string('sale_order_number', 250);
             $table->date('date', 150);
-            $table->integer('party_id');
+            $table->string('party_id');
             $table->string('saleman', 250);
             $table->string('sector', 250);
             $table->string('area', 250);

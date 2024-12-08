@@ -82,11 +82,17 @@ class DispatchNoteService
     {
         $q = DispatchNoteMaster::query();
         if (!empty($request['param'])) {
-            $q = DispatchNoteMaster::with('party','transporter','saleMan')
-            ->where('po_no', 'like', '%' . $request['param'] . '%')
-            ->orWhere('fare', 'like', '%' . $request['param'] . '%')
-            ->orWhere('bilty_no', 'like', '%' . $request['param'] . '%')
-            ->orWhere('date', 'like', '%' . $request['param'] . '%');
+            $q = DispatchNoteMaster::where('date', 'like', '%' . $request['param'] . '%')
+            ->orWhere('sale_order_number', 'like', '%' . $request['param'] . '%')
+            ->orWhere('party_id', 'like', '%' . $request['param'] . '%')
+            ->orWhere('saleman', 'like', '%' . $request['param'] . '%')
+            ->orWhere('area', 'like', '%' . $request['param'] . '%')
+            ->orWhere('vehicle_no', 'like', '%' . $request['param'] . '%')
+            ->orWhere('bility_no', 'like', '%' . $request['param'] . '%')
+            ->orWhere('driver_name', 'like', '%' . $request['param'] . '%')
+            ->orWhere('total_boray', 'like', '%' . $request['param'] . '%')
+            ->orWhere('total_carton', 'like', '%' . $request['param'] . '%')
+            ->orWhere('sector', 'like', '%' . $request['param'] . '%');
         }
         $dispatchNotes = $q->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
 
@@ -102,14 +108,19 @@ class DispatchNoteService
     public function prepareDispatchMasterData($request)
     {
         return [
-            'po_no' => $request['po_no'],
+            'sale_order_number' => $request['sale_order_number'],
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
-            'sale_man_id' => $request['sale_man_id'],
             'party_id' => $request['party_id'],
-            'transporter_id' => $request['transporter_id'],
-            'bilty_no' => $request['bilty_no'],
-            'contact_no' => $request['contact_no'],
-            'fare' => $request['fare'],
+            'saleman' => $request['saleman'],
+            'sector' => $request['sector'],
+            'area' => $request['area'],
+            'delivered_to' => $request['delivered_to'],
+            'vehicle_no' => $request['vehicle_no'],
+            'bility_no' => $request['bility_no'],
+            'driver_name' => $request['driver_name'],
+            'carriage' => $request['carriage'],
+            'total_boray' => $request['total_boray'],
+            'total_carton' => $request['total_carton'],
             'created_by' => Auth::user()->id,
             'updated_by' => Auth::user()->id
         ];
@@ -124,8 +135,9 @@ class DispatchNoteService
     {
         return [
             'product_id' => $request['product_id'],
+            'packing_type' => $request['packing_type'],
+            'measurement_type' => $request['measurement_type'],
             'quantity' => $request['quantity'],
-            'unit' => $request['unit'],
             'remarks' => $request['remarks'],
             'dispatch_note_master_id' => $dispatchParentId,
         ];
@@ -141,7 +153,8 @@ class DispatchNoteService
         foreach ($data['product_id'] as $key => $value) {
             if (!empty($data['product_id'][$key])) {
                 $rec['product_id'] = $data['product_id'][$key];
-                $rec['unit'] = $data['unit'][$key];
+                $rec['packing_type'] = $data['packing_type'][$key];
+                $rec['measurement_type'] = $data['measurement_type'][$key];
                 $rec['quantity'] = $data['quantity'][$key];
                 $rec['remarks'] = $data['remarks'][$key];
                 $rec['created_by'] = Auth::user()->id;

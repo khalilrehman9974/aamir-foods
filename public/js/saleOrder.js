@@ -81,7 +81,6 @@ $('#party').on('change', function () {
 //Runtime calculation
 $(document).on('click', 'body *', function () {
     $('.dozen').on("focusout", function () {
-
         var row_id = $(this).closest("tr").find(".row_id").val();
         let quantity = $(this).closest("tr").find(".qty_" + row_id).val();
         let dzns = $(this).closest("tr").find(".dozen_" + row_id).val();

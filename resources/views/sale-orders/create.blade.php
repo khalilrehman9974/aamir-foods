@@ -981,7 +981,7 @@
         })
 
 
-
+        deleteItemRow();
         selectableDropdown(document.querySelectorAll('.invoice-select .dropdown-item'));
         selectableDropdown(document.querySelectorAll('.invoice-tax-select .dropdown-item'), getTaxValue);
         selectableDropdown(document.querySelectorAll('.invoice-discount-select .dropdown-item'), getDiscountValue);

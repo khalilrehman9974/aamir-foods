@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\CoaInventorySubHead;
 use App\Models\CoaInventoryMainHead;
 use App\Models\CoaInventorySubSubHead;
+use App\Models\PriceTag;
 
 /*
  * Class ChartInventorySubSubHeadService
@@ -43,6 +44,15 @@ class ChartInventorySubSubHeadService
     public function getSubHeadsByMainHead($mainHead)
     {
         return CoaInventorySubHead::where('main_head', $mainHead)->pluck('name', 'id');
+    }
+
+    public function DropDownData()
+    {
+        $result = [
+            'priceTag' => PriceTag::pluck('name','id'),
+        ];
+
+        return $result;
     }
 
     public function getListOfSubSubHeads($param = null)

@@ -67,43 +67,25 @@ class SaleService
      * */
     public function searchSale($request)
     {
-        $query = SaleMaster::groupBy(
-            'sale_masters.id',
-            'sale_masters.date',
-            'sale_masters.dispatch_note',
-            'sale_masters.type_id',
-            'sale_masters.party_id',
-            'sale_masters.bilty_no',
-            'sale_masters.remarks',
-            'sale_masters.created_at',
-            // 'sale_masters.deliverd_to',
-            'sale_masters.updated_at',
-            'sale_masters.saleman_id',
-            'sale_masters.transporter_id',
-            'sale_masters.total_amount',
-            'sale_masters.freight',
-            'sale_masters.scheme',
-            'sale_masters.commission',
-        );
+        $q = SaleMaster::query();
         if (!empty($request['param'])) {
-            $query = $query->where('sale_masters.id', "=", $request['param']);
-            //            $query = $query->orwhere('parties.name', "% like %", $request['param']);
+            $q = SaleMaster::where('date', 'like', '%' . $request['param'] . '%')
+            ->orWhere('sale_order_number', 'like', '%' . $request['param'] . '%')
+            ->orWhere('party_id', 'like', '%' . $request['param'] . '%')
+            ->orWhere('saleman', 'like', '%' . $request['param'] . '%')
+            ->orWhere('area', 'like', '%' . $request['param'] . '%')
+            ->orWhere('vehicle_no', 'like', '%' . $request['param'] . '%')
+            ->orWhere('bility_no', 'like', '%' . $request['param'] . '%')
+            ->orWhere('driver_name', 'like', '%' . $request['param'] . '%')
+            ->orWhere('total_boray', 'like', '%' . $request['param'] . '%')
+            ->orWhere('total_carton', 'like', '%' . $request['param'] . '%')
+            ->orWhere('sector', 'like', '%' . $request['param'] . '%');
         }
-        //        $query->select('sale_masters.id','sale_masters.date','sale_masters.amount','sale_masters.quantity');
-        $sales = $query->orderBy('id', 'DESC')->get();
+        $saleInvoices = $q->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
 
-        return $this->commonService->paginate($sales, Self::PER_PAGE);
+        return $saleInvoices;
     }
 
-    // /*
-    //  * Get list of products for selected category and brand.
-    //  * @param: $request
-    //  * @return Array
-    //  * */
-    // public function getProductsByCategoryBrand($request)
-    // {
-    //     return Product::where('brand_id', $request['brandCode'])->get();
-    // }
 
     /*
      * Prepare sale master data.
@@ -113,23 +95,29 @@ class SaleService
     public function prepareSaleMasterData($request)
     {
         return [
-            'dispatch_note' => $request['dispatch_note'],
-            'date' => $request['dispatch_note'],
-            'type_id' => $request['type_id'],
+            'dispatch_note_number' => $request['dispatch_note_number'],
+            'sale_order_number' => $request['sale_order_number'],
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'party_id' => $request['party_id'],
-            'bilty_no' => $request['bilty_no'],
+            'saleman' => $request['saleman'],
+            'sector' => $request['sector'],
+            'area' => $request['area'],
             'deliverd_to' => $request['deliverd_to'],
-            'saleman_id' => $request['saleman_id'],
-            'transporter_id' => $request['transporter_id'],
+            'vehicle_no' => $request['vehicle_no'],
+            'driver_name' => $request['driver_name'],
+            'bilty_no' => $request['bilty_no'],
             'business_id' => $request['business_id'],
             'f_year_id' => $request['f_year_id'],
             'remarks' => $request['remarks'],
-            'total_amount' => array_sum($request['total_amount']),
-            'freight' => $request['freight'],
-            'scheme' => $request['scheme'],
+            'total_boray' => $request['total_boray'],
+            'total_carton' => $request['total_carton'],
+            'gross_bill' => $request['gross_bill'],
+            'carriage' => $request['carriage'],
+            'discount' => $request['discount'],
             'commission' => $request['commission'],
-            $data['created_by'] = Auth::user()->id,
-            $data['updated_by'] = Auth::user()->id
+            'net_amount' => $request['net_amount'],
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id
         ];
     }
 
@@ -142,9 +130,11 @@ class SaleService
     {
         return [
             'product_id' => $request['product_id'],
+            'packing_type' => $request['packing_type'],
+            'measurement_type' => $request['measurement_type'],
             'quantity' => $request['quantity'],
-            'unit' => $request['unit'],
-            'total_unit' => $request['total_unit'],
+            'dzns' => $request['dzns'],
+            'total_dzns' => $request['total_dzns'],
             'rate' => $request['rate'],
             'amount' => $request['amount'],
             'sale_master_id' => $saleParentId,
@@ -160,11 +150,13 @@ class SaleService
         foreach ($data['product_id'] as $key => $value) {
             if (!empty($data['product_id'][$key])) {
                 $rec['product_id'] = $data['product_id'][$key];
-                $rec['unit'] = $data['unit'][$key];
+                $rec['packing_type'] = $data['packing_type'][$key];
+                $rec['measurement_type'] = $data['measurement_type'][$key];
                 $rec['quantity'] = $data['quantity'][$key];
+                $rec['dzns'] = $data['dzns'][$key];
+                $rec['total_dzns'] = $data['total_dzns'][$key];
                 $rec['rate'] = $data['rate'][$key];
                 $rec['amount'] = $data['amount'][$key];
-                $rec['total_unit'] = $data['total_unit'][$key];
                 $rec['sale_master_id'] = $data['sale_master_id'];
                 SaleDetail::create($rec);
             }

@@ -39,7 +39,7 @@
                     </div>
                 </div>
                 <div class="col-lg-0 col-6 ">
-                    <a href="{{ route('sale.create') }}" class="btn btn-primary mt-2 mb-2 me-8"
+                    <a href="{{ route('sale.generate') }}" class="btn btn-primary mt-2 mb-2 me-8"
                         style="float : right; " style="">Create
                     </a>
 
@@ -61,12 +61,10 @@
                         <input type="text" value="{{ @$request['param'] }}" name="param" id="param"
                             class="w-100 form-control product-search br-30" id="input-search"
                             placeholder="Search Sales...">
-                        <button class="btn btn-primary _effect--ripple waves-effect waves-light"
-                            type="submit">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round"
-                                class="feather feather-search">
+                        <button class="btn btn-primary _effect--ripple waves-effect waves-light" type="submit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="feather feather-search">
                                 <circle cx="11" cy="11" r="8"></circle>
                                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                             </svg>
@@ -91,11 +89,16 @@
                             <thead>
                                 <tr>
                                     <th scope="col"> <b>Id </b> </th>
-                                    <th scope="col" > <b>Dispatch Note# </b> </th>
+                                    <th scope="col"> <b>Dispatch Note# </b> </th>
+                                    <th scope="col"> <b>Sale Order# </b> </th>
                                     <th scope="col" style="width: 30%"> <b>Party </b> </th>
                                     <th scope="col" style="width: 30%"> <b>Sale Man </b> </th>
+                                    <th scope="col" style="width: 20%"> <b>Driver Name</b> </th>
                                     <th scope="col" style="width: 20%"> <b>Bilty Number </b> </th>
-                                    <th scope="col" style="width: 20%"> <b>Total Amount</b> </th>
+                                    <th scope="col" style="width: 20%"> <b>Carriage </b> </th>
+                                    <th scope="col" style="width: 20%"> <b>Discount </b> </th>
+                                    <th scope="col" style="width: 20%"> <b>Commission</b> </th>
+                                    <th scope="col" style="width: 20%"> <b>Net Amount</b> </th>
                                     {{-- <th scope="col" style="width: 80%"> <b>Remarks </b> </th> --}}
                                     <th class="text-center" scope="col"></th>
                                 </tr>
@@ -113,7 +116,15 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $sale->dispatch_note }}</h6>
+                                                    <h6 class="mb-0">{{ $sale->dispatch_note_number }}</h6>
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="media">
+                                                <div class="media-body align-self-center">
+                                                    <h6 class="mb-0">{{ $sale->sale_order_number }}</h6>
 
                                                 </div>
                                             </div>
@@ -129,7 +140,15 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $sale->saleman_id }}</h6>
+                                                    <h6 class="mb-0">{{ $sale->saleman }}</h6>
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="media">
+                                                <div class="media-body align-self-center">
+                                                    <h6 class="mb-0">{{ $sale->driver_name }}</h6>
 
                                                 </div>
                                             </div>
@@ -145,7 +164,31 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $sale->total_amount }}</h6>
+                                                    <h6 class="mb-0">{{ $sale->carriage }}</h6>
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="media">
+                                                <div class="media-body align-self-center">
+                                                    <h6 class="mb-0">{{ $sale->discount }}</h6>
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="media">
+                                                <div class="media-body align-self-center">
+                                                    <h6 class="mb-0">{{ $sale->commission }}</h6>
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="media">
+                                                <div class="media-body align-self-center">
+                                                    <h6 class="mb-0">{{ $sale->net_amount }}</h6>
 
                                                 </div>
                                             </div>
@@ -169,7 +212,7 @@
                                                         </svg>
                                                     </a>
                                                 @endif
-                                                @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
+                                                {{-- @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
                                                     <a href="{{ route('sale.delete') }}"
                                                         class="action-btn btn-delete bs-tooltip" data-toggle="tooltip"
                                                         data-placement="top" title="Delete">
@@ -190,7 +233,13 @@
                                                             </line>
                                                         </svg>
                                                     </a>
-                                                @endif
+                                                @endif --}}
+                                                <a href="{{ route('dispatch-note.create', ['id' => $sale->id]) }}"
+
+                                                    class="action-btn btn-edit bs-tooltip me-2"
+                                                    data-toggle="tooltip" data-placement="top" title="Enter Dispatch Info">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M48 0C21.5 0 0 21.5 0 48L0 368c0 26.5 21.5 48 48 48l16 0c0 53 43 96 96 96s96-43 96-96l128 0c0 53 43 96 96 96s96-43 96-96l32 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l0-64 0-32 0-18.7c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7L416 96l0-48c0-26.5-21.5-48-48-48L48 0zM416 160l50.7 0L544 237.3l0 18.7-128 0 0-96zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+                                                </a>
 
                                             </div>
                                         </td>
@@ -199,58 +248,13 @@
                             </tbody>
                         </table>
                     </div>
+                    <nav aria-label=" ListPagination">
+                        <ul class="pagination justify-content-end">
+                            {!! $sales->appends(request()->query())->links() !!}
+                        </ul>
+                    </nav>
                 </div>
-                <div class="inv-list-bottom-section d-sm-flex justify-content-sm-between text-center">
-                    <div class="inv-list-pages-count  mb-sm-0 mb-3">
-                        <div class="dataTables_info" id="invoice-list_info" role="status"
-                            aria-live="polite">Showing page 1 of 2
-                        </div>
-                    </div>
-                    <div class="inv-list-pagination">
-                        <div class="dataTables_paginate paging_simple_numbers"
-                            id="invoice-list_paginate">
-                            <ul class="pagination">
-                                <li class="paginate_button page-item previous disabled"
-                                    id="invoice-list_previous">
-                                    <a href="#" aria-controls="invoice-list" data-dt-idx="0"
-                                        tabindex="0" class="page-link">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                            height="24" viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
-                                            class="feather feather-arrow-left">
-                                            <line x1="19" y1="12" x2="5"
-                                                y2="12"></line>
-                                            <polyline points="12 19 5 12 12 5">
-                                            </polyline>
-                                        </svg></a>
-                                </li>
-                                <li class="paginate_button page-item active">
-                                    <a href="#" aria-controls="invoice-list" data-dt-idx="1"
-                                        tabindex="0" class="page-link">1</a>
-                                </li>
-                                <li class="paginate_button page-item ">
-                                    <a href="#" aria-controls="invoice-list" data-dt-idx="2"
-                                        tabindex="0" class="page-link">2</a>
-                                </li>
-                                <li class="paginate_button page-item next" id="invoice-list_next"><a
-                                        href="#" aria-controls="invoice-list" data-dt-idx="3"
-                                        tabindex="0" class="page-link">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                            height="24" viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
-                                            class="feather feather-arrow-right">
-                                            <line x1="5" y1="12" x2="19"
-                                                y2="12"></line>
-                                            <polyline points="12 5 19 12 12 19"></polyline>
-                                        </svg>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>

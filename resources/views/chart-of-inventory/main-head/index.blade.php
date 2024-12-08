@@ -101,7 +101,7 @@
                                                                 </svg>
                                                             </a>
                                                         @endif
-                                                        @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
+                                                        {{-- @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
                                                             <a href="javascript:void(0);"
                                                                class="action-btn btn-delete bs-tooltip delete"
                                                                data-toggle="tooltip"
@@ -125,7 +125,7 @@
                                                                     </line>
                                                                 </svg>
                                                             </a>
-                                                        @endif
+                                                        @endif --}}
 
                                                     </div>
                                                 </td>

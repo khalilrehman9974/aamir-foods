@@ -16,10 +16,12 @@ return new class extends Migration
         Schema::create('sale_details', function (Blueprint $table) {
             $table->Increments('id');
             $table->integer('sale_master_id')->unsigned()->index();
-            $table->integer('product_id');
+            $table->string('product_id');
+            $table->string('packing_type');
+            $table->string('measurement_type');
             $table->double('quantity');
-            $table->double('unit');
-            $table->double('total_unit');
+            $table->double('dzns');
+            $table->double('total_dzns');
             $table->double('rate');
             $table->double('amount');
             $table->timestamp('created_at');

@@ -84,8 +84,7 @@
                                                                     <div class="col-md-6 mt-3">
                                                                         <label for="">
                                                                             <h4>Dispatch Note Number
-                                                                                #:{{ @$maxid }}
-                                                                                {{ @$currentid }}</h4>
+                                                                                #:{{ @$currentid }}</h4>
                                                                         </label>
                                                                     </div>
                                                                 </div>
@@ -95,24 +94,21 @@
                                                                             Order#</label>
                                                                         <input type="text" id="saleOrder"
                                                                             name="sale_order_number"
+                                                                            style="color: black; "
                                                                             value="{{ old('sale_order_number', !empty($note->sale_order_number) ? $note->sale_order_number : '') }}"
                                                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} saleOrder"
                                                                             placeholder="Please Enter The SO Number"
-                                                                            aria-label="Please Enter The SO Number">
+                                                                            readonly>
                                                                     </div>
 
                                                                     <div class="col-md-6">
                                                                         <label for="inputState"
                                                                             class="form-label">Date</label>
-                                                                        {{-- <input type="text" id="date" name="date" value="{{ old('date', !empty($note->date) ? $note->date : '') }}"
-                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} flatpickr flatpickr-input"
-                                                                        placeholder="date" aria-label="date" > --}}
-
                                                                         <input id="date" name="date"
-                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} date flatpickr flatpickr-input"
+                                                                            style="color: black; "
+                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} date flatpickr "
                                                                             type="text" data-date-format="d-m-Y"
-                                                                            value="{{ empty($note->date) ? null : \Illuminate\Support\Carbon::parse($note->date)->format('d-m-Y') }}"
-                                                                            {{-- value="{{ old('date', !empty($note->date) ? $note->date : '') }}" --}}
+                                                                            value="{{ old('date', !empty($note->date) ? $note->date : '') }}"
                                                                             placeholder="Select Date.." readonly>
                                                                     </div>
 
@@ -125,16 +121,11 @@
 
                                                                         <label for="inputState"
                                                                             class="form-label">Party</label>
-                                                                        <select id="party_id" name="party_id"
-                                                                            class="party_id form-select select2 mb-3 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
-                                                                            <option selected="">Please select the
-                                                                                Party</option>
-                                                                            @foreach ($dropDownData['parties'] as $key => $value)
-                                                                                <option value="{{ $key }}"
-                                                                                    {{ (old('party_id') == $key ? 'selected' : '') || (!empty($note->party_id) ? collect($note->party_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                    {{ $value }}</option>
-                                                                            @endforeach
-                                                                        </select>
+                                                                        <input id="party_id" style="color: black; "
+                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} "
+                                                                            type="text" name="party_id"
+                                                                             value="{{ old('party_id', !empty($note->party_id) ? $note->party_id : '') }}"
+                                                                            placeholder="Select Party.." readonly>
 
 
                                                                     </div>
@@ -143,86 +134,92 @@
                                                                             class="form-label">Sales
                                                                             Man</label>
 
-                                                                        <input type="text"
-                                                                            style="color: black; background-color: white;"
+                                                                        <input type="text" style="color: black; "
                                                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                            id="saleMan"
+                                                                            id="saleMan" name="saleman"
+                                                                            value="{{ old('saleman', !empty($note->saleman) ? $note->saleman : '') }}"
                                                                             placeholder="Sale Man Name..." readonly>
-                                                                        {{-- <select id="sale_man_id" name="sale_man_id"
-                                                                        class="form-select select2 mb-3 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
-                                                                        <option selected="">Please select the
-                                                                            product</option>
-                                                                        @foreach ($dropDownData['saleMans'] as $key => $value)
-                                                                            <option value="{{ $key }}"
-                                                                                {{ (old('sale_man_id') == $key ? 'selected' : '') || (!empty($note->sale_man_id) ? collect($note->sale_man_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                {{ $value }}</option>
-                                                                        @endforeach
-                                                                    </select> --}}
                                                                     </div>
                                                                 </div>
                                                                 <br>
-                                                                {{-- <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <label for="inputState"
-                                                                        class="form-label">Transporter</label>
-                                                                    <select id="transporter_id" name="transporter_id"
-                                                                        class="form-select select2 mb-3 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
-                                                                        <option selected="">Please select the
-                                                                            Transporter</option>
-                                                                        @foreach ($dropDownData['transporters'] as $key => $value)
-                                                                            <option value="{{ $key }}"
-                                                                                {{ (old('transporter_id') == $key ? 'selected' : '') || (!empty($note->transporter_id) ? collect($note->transporter_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                {{ $value }}</option>
-                                                                        @endforeach
-                                                                    </select>
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <label for="inputState"
+                                                                            class="form-label">Belt</label>
+                                                                        <input type="text" style="color: black; "
+                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                            placeholder="sector" name="sector"
+                                                                            value="{{ old('sector', !empty($note->sector) ? $note->sector : '') }}"
+                                                                            readonly>
 
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <label for="inputState"
+                                                                            class="form-label">Area
+                                                                        </label>
+                                                                        <input type="text" style="color: black; "
+                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                            placeholder="Area" id="area"
+                                                                            name="area"
+                                                                            value="{{ old('area', !empty($note->area) ? $note->area : '') }}"
+                                                                            readonly>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="col-md-6">
-                                                                    <label for="inputState" class="form-label">Driver
-                                                                        Contact
-                                                                        Number</label>
-                                                                    <input type="text"
-                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                        placeholder="contact_no" id="contact_no"
-                                                                        name="contact_no"
-                                                                        value="{{ old('contact_no', !empty($note->contact_no) ? $note->contact_no : '') }}"
-                                                                        aria-label="Enter The Contact Number">
-                                                                </div>
-                                                            </div>
-                                                            <br>
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <label for="inputState" class="form-label">Bilty
-                                                                        No</label>
-                                                                    <input type="text"
-                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                        id="bilty_no" name="bilty_no"
-                                                                        value="{{ old('bilty_no', !empty($note->bilty_no) ? $note->bilty_no : '') }}"
-                                                                        placeholder="bilty_no" aria-label="bilty_no">
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <label for="inputState"
-                                                                        class="form-label">Fare</label>
-                                                                    <input type="text"
-                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                        placeholder="Fare" id="Fare"
-                                                                        value="{{ old('fare', !empty($note->fare) ? $note->fare : '') }}"
-                                                                        name="fare" aria-label="fare">
-                                                                </div> --}}
+                                                                <br>
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <label for="inputState"
+                                                                            class="form-label">Delivered To</label>
+                                                                        <input type="text" style="color: black; "
+                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                            id="delivered_to" name="delivered_to"
+                                                                            value="{{ old('delivered_to', !empty($note->delivered_to) ? $note->delivered_to : '') }}"
+                                                                            placeholder="Deliverd To" readonly>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <label for="inputState"
+                                                                            class="form-label">Vehicle No</label>
+                                                                        <input type="text" style="color: black; "
+                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                            placeholder="Vehicle No:" id="vehicle_no"
+                                                                            value="{{ old('vehicle_no', !empty($note->vehicle_no) ? $note->vehicle_no : '') }}"
+                                                                            name="vehicle_no">
+                                                                    </div>
 
-                                                                {{-- <div class="col-md-4">
-                                                                    <label for="inputState" class="form-label">Total
-                                                                        Amount</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="total_amount" name="total_amount"
-                                                                        placeholder="Total Amount"
-                                                                        aria-label="Total Amount" readonly>
+                                                                    <div class="col-md-6">
+                                                                        <label for="inputState"
+                                                                            class="form-label">Builty No</label>
+                                                                        <input type="text" style="color: black; "
+                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                            placeholder="bility No:" id="bility_no"
+                                                                            value="{{ old('bility_no', !empty($note->bility_no) ? $note->bility_no : '') }}"
+                                                                            name="bility_no">
+                                                                    </div>
+
+
+                                                                    <div class="col-md-6">
+                                                                        <label for="inputState"
+                                                                            class="form-label">Driver Name</label>
+                                                                        <input type="text" style="color: black; "
+                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                            placeholder="Driver Name:" value="{{ old('driver_name', !empty($note->driver_name) ? $note->driver_name : '') }}"
+                                                                            id="driver_name" name="driver_name">
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <label for="inputState"
+                                                                            class="form-label">Carriage</label>
+                                                                        <input type="text" style="color: black; "
+                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                            placeholder="Carriage" id="carriage"
+                                                                            value="{{ old('carriage', !empty($note->carriage) ? $note->carriage : '') }}"
+                                                                            name="carriage">
+                                                                    </div>
                                                                 </div>
-                                                            </div> --}}
                                                                 <br>
 
                                                                 <div class="tab-content" id="pills-tabContent">
-                                                                    <div class="invoice-detail-items">
+                                                                    <div class="invoice-detail-items"
+                                                                        style="padding: 0px 0px 0px 0px !important;">
 
                                                                         <div class="table-responsive">
 
@@ -233,9 +230,11 @@
                                                                                         </th>
                                                                                         <th>Product</th>
                                                                                         <th class="">
-                                                                                            Quantity</th>
+                                                                                            P.T</th>
                                                                                         <th class="">
-                                                                                            Dzns</th>
+                                                                                            M.T</th>
+                                                                                        <th class="">
+                                                                                            Quantity</th>
                                                                                         <th class="">Remarks</th>
 
 
@@ -245,213 +244,116 @@
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody>
-                                                                                    {{-- @foreach ($dispatchNotes as $note)
-                                                                                        <tr>
-                                                                                            <td
-                                                                                                class="delete-item-row">
-                                                                                                <ul
-                                                                                                    class="table-controls">
-                                                                                                    <li><a href="javascript:void(0);"
-                                                                                                            class="delete-item"
-                                                                                                            data-toggle="tooltip"
-                                                                                                            data-placement="top"
-                                                                                                            title=""
-                                                                                                            data-original-title="Delete"><svg
-                                                                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                                                                width="24"
-                                                                                                                height="24"
-                                                                                                                viewBox="0 0 24 24"
-                                                                                                                fill="none"
-                                                                                                                stroke="currentColor"
-                                                                                                                stroke-width="2"
-                                                                                                                stroke-linecap="round"
-                                                                                                                stroke-linejoin="round"
-                                                                                                                class="feather feather-x-circle">
-                                                                                                                <circle
-                                                                                                                    cx="12"
-                                                                                                                    cy="12"
-                                                                                                                    r="10">
-                                                                                                                </circle>
-                                                                                                                <line
-                                                                                                                    x1="15"
-                                                                                                                    y1="9"
-                                                                                                                    x2="9"
-                                                                                                                    y2="15">
-                                                                                                                </line>
-                                                                                                                <line
-                                                                                                                    x1="9"
-                                                                                                                    y1="9"
-                                                                                                                    x2="15"
-                                                                                                                    y2="15">
-                                                                                                                </line>
-                                                                                                            </svg></a>
-                                                                                                    </li>
-                                                                                                </ul>
-                                                                                            </td>
-                                                                                            <td class="product">
-                                                                                                <select id="product_id"
-                                                                                                    name="product_id[]"
-                                                                                                    class="mb-3 form-control select2 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
-                                                                                                    <option
-                                                                                                        selected="">
-                                                                                                        Please select
-                                                                                                        the
-                                                                                                        product</option>
-                                                                                                    @foreach ($dropDownData['products'] as $key => $value)
+
+                                                                                    @if (!empty($dispatchNotes))
+                                                                                        @foreach ($dispatchNotes as $dispatchNote)
+                                                                                            <tr>
+                                                                                                <td
+                                                                                                    class="delete-item-row">
+                                                                                                    <ul
+                                                                                                        class="table-controls">
+                                                                                                        <li><a href="javascript:void(0);"
+                                                                                                                class="delete-item"
+                                                                                                                data-toggle="tooltip"
+                                                                                                                data-placement="top"
+                                                                                                                title=""
+                                                                                                                data-original-title="Delete"><svg
+                                                                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                                                                    width="24"
+                                                                                                                    height="24"
+                                                                                                                    viewBox="0 0 24 24"
+                                                                                                                    fill="none"
+                                                                                                                    stroke="currentColor"
+                                                                                                                    stroke-width="2"
+                                                                                                                    stroke-linecap="round"
+                                                                                                                    stroke-linejoin="round"
+                                                                                                                    class="feather feather-x-circle">
+                                                                                                                    <circle
+                                                                                                                        cx="12"
+                                                                                                                        cy="12"
+                                                                                                                        r="10">
+                                                                                                                    </circle>
+                                                                                                                    <line
+                                                                                                                        x1="15"
+                                                                                                                        y1="9"
+                                                                                                                        x2="9"
+                                                                                                                        y2="15">
+                                                                                                                    </line>
+                                                                                                                    <line
+                                                                                                                        x1="9"
+                                                                                                                        y1="9"
+                                                                                                                        x2="15"
+                                                                                                                        y2="15">
+                                                                                                                    </line>
+                                                                                                                </svg></a>
+                                                                                                        </li>
+                                                                                                    </ul>
+                                                                                                </td>
+                                                                                                <td class="product">
+                                                                                                    <select
+                                                                                                        id="product_id"
+                                                                                                        name="product_id[]"
+                                                                                                        class="mb-3 form-control select2 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} product_2">
                                                                                                         <option
-                                                                                                            value="{{ $key }}"
-                                                                                                            {{ (old('product_id') == $key ? 'selected' : '') || (!empty($note->product_id) ? collect($note->product_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                                            {{ $value }}
+                                                                                                            selected="">
+                                                                                                            Please
+                                                                                                            select
+                                                                                                            the
+                                                                                                            product
                                                                                                         </option>
-                                                                                                    @endforeach
-                                                                                                </select>
+                                                                                                        @foreach ($dropDownData['products'] as $key => $value)
+                                                                                                            <option
+                                                                                                                value="{{ $key }}"
+                                                                                                                {{ (old('product_id') == $key ? 'selected' : '') || (!empty($dispatchNote->product_id) ? collect($dispatchNote->product_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                                                {{ $value }}
+                                                                                                            </option>
+                                                                                                        @endforeach
+                                                                                                    </select>
+                                                                                                </td>
+                                                                                                <td class="packing">
+                                                                                                    <input
+                                                                                                        type="text"
+                                                                                                        style="color: black;"
+                                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_2"
+                                                                                                        id="packing"
+                                                                                                        name="packing_type[]"
+                                                                                                        value="{{ old('packing_type', !empty($dispatchNote->packing_type) ? $dispatchNote->packing_type : '') }}"
+                                                                                                        placeholder="P.T"
+                                                                                                        readonly>
+                                                                                                </td>
+                                                                                                <td
+                                                                                                    class="measurement">
+                                                                                                    <input
+                                                                                                        type="text"
+                                                                                                        style="color: black;"
+                                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_2"
+                                                                                                        placeholder="M.T"
+                                                                                                        name="measurement_type[]"
+                                                                                                        id="measurement"
+                                                                                                        value="{{ old('measurement_type', !empty($dispatchNote->measurement_type) ? $dispatchNote->measurement_type : '') }}"
+                                                                                                        readonly>
+                                                                                                </td>
 
-                                                                                                <input type="text"
-                                                                                                    style="color: black;"
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_2"
-                                                                                                    id="packing"
-                                                                                                    placeholder="P.T"
-                                                                                                    readonly>
 
-                                                                                                <input type="text"
-                                                                                                    style="color: black;"
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_2"
-                                                                                                    placeholder="M.T"
-                                                                                                    id="measurement"
-                                                                                                    readonly>
-                                                                                            </td>
+                                                                                                <td
+                                                                                                    class="text-right unit">
+                                                                                                    <input
+                                                                                                        id="quantity"
+                                                                                                        type="number"
+                                                                                                        name="quantity[]"
+                                                                                                        value="{{ old('quantity', !empty($dispatchNote->quantity) ? $dispatchNote->quantity : '') }}"
+                                                                                                        placeholder="Quantity.... "
+                                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty2">
+                                                                                                </td>
 
-                                                                                            <td class="quantity">
-                                                                                                <input type="text"
-                                                                                                    id="quantity"
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_2"
-                                                                                                    value="{{ old('quantity', !empty($saleOrder->quantity) ? $saleOrder->quantity : '') }}"
-                                                                                                    name="quantity[]"
-                                                                                                    placeholder="Qty">
-                                                                                            </td>
+                                                                                                <td class="unit">
+                                                                                                    <textarea id="unit" type="text" name="remarks[]" placeholder="Please Enter Remarks "
+                                                                                                        class="mt-0 form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} remarks_2">{{ @$dispatchNote->remarks }}</textarea>
+                                                                                                </td>
 
-                                                                                            <td class="total_unit">
-                                                                                                <input type="text"
-                                                                                                    id="dzn"
-                                                                                                    name="dzn[]"
-                                                                                                    value="{{ old('dzn', !empty($saleOrder->dzn) ? $saleOrder->dzn : '') }}"
-                                                                                                    class="dozen form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} dozen_2"
-                                                                                                    placeholder="Dzn">
-                                                                                            </td>
-                                                                                            <td class="total_dzns">
-                                                                                                <input type="text"
-                                                                                                    id="total_dzns"
-                                                                                                    style="color: black;"
-                                                                                                    name="total_dzn[]"
-                                                                                                    value="{{ old('total_dzn', !empty($saleOrder->total_dzn) ? $saleOrder->total_dzn : '') }}"
-                                                                                                    class="totDzn form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} totDzn_2"
-                                                                                                    placeholder="Tot.Dzns"
-                                                                                                    readonly>
-                                                                                            </td>
-                                                                                            <td class="unit">
-                                                                                                <textarea id="unit" type="text" name="remarks[]" placeholder="Please Enter Remarks "
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mt-0">{{ @$note->remarks }}</textarea>
-                                                                                            </td>
+                                                                                            </tr>
+                                                                                        @endforeach
 
-                                                                                        </tr>
-                                                                                    @endforeach --}}
-                                                                                    @if (empty($dispatchNotes))
-                                                                                        <tr>
-                                                                                            <td
-                                                                                                class="delete-item-row">
-                                                                                                <ul
-                                                                                                    class="table-controls">
-                                                                                                    <li><a href="javascript:void(0);"
-                                                                                                            class="delete-item"
-                                                                                                            data-toggle="tooltip"
-                                                                                                            data-placement="top"
-                                                                                                            title=""
-                                                                                                            data-original-title="Delete"><svg
-                                                                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                                                                width="24"
-                                                                                                                height="24"
-                                                                                                                viewBox="0 0 24 24"
-                                                                                                                fill="none"
-                                                                                                                stroke="currentColor"
-                                                                                                                stroke-width="2"
-                                                                                                                stroke-linecap="round"
-                                                                                                                stroke-linejoin="round"
-                                                                                                                class="feather feather-x-circle">
-                                                                                                                <circle
-                                                                                                                    cx="12"
-                                                                                                                    cy="12"
-                                                                                                                    r="10">
-                                                                                                                </circle>
-                                                                                                                <line
-                                                                                                                    x1="15"
-                                                                                                                    y1="9"
-                                                                                                                    x2="9"
-                                                                                                                    y2="15">
-                                                                                                                </line>
-                                                                                                                <line
-                                                                                                                    x1="9"
-                                                                                                                    y1="9"
-                                                                                                                    x2="15"
-                                                                                                                    y2="15">
-                                                                                                                </line>
-                                                                                                            </svg></a>
-                                                                                                    </li>
-                                                                                                </ul>
-                                                                                            </td>
-                                                                                            <td class="product">
-                                                                                                <select id="product_id"
-                                                                                                    name="product_id[]"
-                                                                                                    class="mb-3 form-control select2 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
-                                                                                                    <option
-                                                                                                        selected="">
-                                                                                                        Please select
-                                                                                                        the
-                                                                                                        product</option>
-                                                                                                    @foreach ($dropDownData['products'] as $key => $value)
-                                                                                                        <option
-                                                                                                            value="{{ $key }}"
-                                                                                                            {{ (old('product_id') == $key ? 'selected' : '') || (!empty($note->product_id) ? collect($note->product_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                                            {{ $value }}
-                                                                                                        </option>
-                                                                                                    @endforeach
-                                                                                                </select>
-
-                                                                                                <input type="text"
-                                                                                                    style="color: black;"
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_2"
-                                                                                                    id="packing"
-                                                                                                    placeholder="P.T"
-                                                                                                    readonly>
-
-                                                                                                <input type="text"
-                                                                                                    style="color: black;"
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_2"
-                                                                                                    placeholder="M.T"
-                                                                                                    id="measurement"
-                                                                                                    readonly>
-                                                                                            </td>
-
-                                                                                            <td class="text-right unit">
-                                                                                                <input id="quantity"
-                                                                                                    type="number"
-                                                                                                    name="quantity[]"
-                                                                                                    value="{{ old('quantity', !empty($note->quantity) ? $note->quantity : '') }}"
-                                                                                                    placeholder="Quantity.... "
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty">
-                                                                                            </td>
-                                                                                            <td class="unit">
-                                                                                                <input id="unit"
-                                                                                                    type="number"
-                                                                                                    name="unit[]"
-                                                                                                    value="{{ old('unit', !empty($note->unit) ? $note->unit : '') }}"
-                                                                                                    placeholder="Dzns... "
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} unit">
-                                                                                            </td>                                              <td class="unit">
-                                                                                                <textarea id="unit" type="text" name="remarks[]" placeholder="Please Enter Remarks "
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mt-0">{{ @$note->remarks }}</textarea>
-                                                                                            </td>
-
-                                                                                        </tr>
                                                                                     @endif
                                                                                 </tbody>
                                                                             </table>
@@ -462,41 +364,32 @@
                                                                             Item</a>
                                                                     </div>
                                                                 </div>
-                                                               <div class="col-xl-6 invoice-address-client invoice-detail-total mt-3"
-                                                                    style="float:right">
-                                                                    <div class="invoice-address-client-fields">
-                                                                        <div class="form-group row">
-                                                                            <label for="gross-amount"
-                                                                                class="col-sm-4 col-form-label col-form-label-sm ">Tot.
-                                                                                Quantity
-                                                                            </label>
-                                                                            <div class="col-sm-8">
-                                                                                <input type="text"
-                                                                                    id="quantity-amount"
-                                                                                    style="color: black;"
-                                                                                    class="quantity-amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}  "
-                                                                                    id="quantity-amount"
-                                                                                    placeholder="Total Quantity"
-                                                                                    readonly>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="form-group row">
-                                                                            <label for="unit-amount"
-                                                                                class="col-sm-4 col-form-label col-form-label-sm ">Tot.
-                                                                                Dzns
-                                                                            </label>
-                                                                            <div class="col-sm-8">
-                                                                                <input type="text" id="unit-amount"
-                                                                                    style="color: black;"
-                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} unit-amount "
-                                                                                    id="unit-amount"
-                                                                                    placeholder="Total Unit" readonly>
-                                                                            </div>
-                                                                        </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="row">
+                                                                <div class="col-md-12" style="float: right;">
+                                                                    <div style="width: 40%; float: right;">
+                                                                        <label for="client-phone">Tot.
+                                                                            Boray</label>
+                                                                        <input type="text" style="color: black;"
+                                                                            value="{{ old('total_boray', !empty($note->total_boray) ? $note->total_boray : '') }}"
+                                                                            id="boray-amount" name="total_boray"
+                                                                            class="quantity-amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                            placeholder="Tot.Boray">
 
+                                                                        <label for="client-phone">Tot.
+                                                                            Carton</label>
+                                                                        <input type="text" style="color: black;"
+                                                                            value="{{ old('total_carton', !empty($note->total_carton) ? $note->total_carton : '') }}"
+                                                                            id="carton-amount" name="total_carton"
+                                                                            class="quantity-amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                            placeholder="Tot.Carton">
                                                                     </div>
+
                                                                 </div>
                                                             </div>
+
                                                         </div>
                                                         <div class="invoice-detail-terms">
 
@@ -539,102 +432,6 @@
         </div>
     </div>
 
-    <script>
-        $(document).ready(function() {
-            $('.saleOrder').on('keypress', function(e) {
-                if (e.which === 13) { // Enter key pressed
-                    e.preventDefault(); // Prevent default form submission
-                    fetchData();
-                }
-            });
-
-            function fetchData() {
-                var name = $('#saleOrder').val();
-                let url = config.routes.saleOrderData + '/' + name;
-                // $.ajax({
-                //     url: url,
-                //     method: 'GET',
-                //     data: { saleOrder: saleOrdersData },
-                //     headers: {
-                //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                //     },
-                //     success: function(data) {
-                //         displayData(data);
-                //     },
-                //     error: function(xhr) {
-                //         console.error('Error fetching data:', xhr);
-                //     }
-                // });
-
-                $.ajax({
-                    url: url,
-                    method: 'GET',
-
-                    success: function(orderMasterData) {
-                        // $('#results').empty(); // Clear previous results
-                        $('#date').val(orderMasterData.date);
-                        $('#party_id').val(orderMasterData.party_id).selected;
-                        // $('#date').val(orderMasterData.date);
-                        // Display master data
-                        // $('#results').append('<div> ' + orderMasterData.date + '</div>');
-                        // $('#results').append('<div>Description: ' + master.description + '</div>');
-
-                        // Display detail data
-                        // $('#results').append('<h4>Details:</h4>');
-                        $(this).closest("tr").find(".totDzn_" + row_id).val(quantity * dzns);
-                        // master.details.forEach(function(detail) {
-                        // $('#results').append('<div>Detail: ' + detail.detail_name +
-                        //     '</div>'); // Adjust to match your detail field
-                        // });
-                    },
-                    // error: function(xhr, status, error) {
-                    //     $('#results').empty();
-                    //     $('#results').alert('No data found');
-                    // }
-                    error: function(errorThrown) {
-                        $('#message').val('');
-                        var errors = errorThrown.responseJSON.errors;
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'No data found',
-                        })
-                    }
-                });
-
-
-                // $.ajax({
-                //     url: url,
-                //     type: 'GET',
-                //     headers: {
-                //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                //     },
-                //     success: function(response) {
-                //         // $(this).closest("tr").find(".packing" + row_id).val(response.name.name);
-                //         $(".packing_" + row_id).val(response.name.name);
-                //     },
-                //     complete: function() {
-                //         $('#loading').css('display', 'none');
-                //     },
-                //     error: function(errorThrown) {
-                //         $('').val('');
-                //         var errors = errorThrown.responseJSON.errors;
-                //         Swal.fire({
-                //             icon: 'error',
-                //             title: 'Something went wrong',
-                //         })
-                //     }
-                // })
-            }
-
-            function displayData(data) {
-                const container = $('#dataContainer');
-                container.empty(); // Clear previous data
-                data.forEach(item => {
-                    container.append(`<p>${item.name}</p>`); // Adjust according to your data structure
-                });
-            }
-        });
-    </script>
 
     <script>
         document.getElementsByClassName('additem')[0].addEventListener('click', function() {
@@ -647,20 +444,25 @@
                 '<li><a href="javascript:void(0);" class="delete-item" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></a></li>' +
                 '</ul>' +
                 '</td>' +
-                '<td class="product"><select id="product_id" name="product_id[]" class="form-control select2 custom-select form-control-sm"><option selected = "" > Please select the product </option> @foreach ($dropDownData['products'] as $key => $value) <option value = "{{ $key }}"{{ (old('product_id') == $key ? 'selected' : '') || (!empty($note->product_id) ? collect($note->product_id)->contains($key) : '') ? 'selected' : '' }}> {{ $value }}</option> @endforeach < /select> <input id="packing" style="color: black; " type="text" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} " packing_' +
+                '<td class="product"><select id="product_id" name="product_id[]" class="form-control select2 custom-select form-control-sm product_' +
                 currentIndex +
-                '" placeholder="P.T" readonly><input type="text" style="color: black; " placeholder="M.T" id="measurement" class = "measurement form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_' +
+                '  "><option selected = "" > Please select the product </option> @foreach ($dropDownData['products'] as $key => $value) <option value = "{{ $key }}"{{ (old('product_id') == $key ? 'selected' : '') || (!empty($dispatchNote->product_id) ? collect($dispatchNote->product_id)->contains($key) : '') ? 'selected' : '' }}> {{ $value }}</option> @endforeach < /select> ' +
+                '</td> ' +
+                '<td class="packing" >' +
+                '<input id="packing" style="color: black; " type="text" name="packing_type[]" value="{{ old('packing_type', !empty($dispatchNote->packing_type) ? $dispatchNote->packing_type : '') }}" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}  packing_' +
+                currentIndex + '" placeholder="P.T" readonly></td>' +
+                '<td class="measurement" >' +
+                '<input type="text" style="color: black; " placeholder="M.T" id="measurement" name="measurement_type[]" value="{{ old('measurement_type', !empty($dispatchNote->measurement_type) ? $dispatchNote->measurement_type : '') }}" class = "measurement form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_' +
                 currentIndex + '" readonly> </td> ' +
-               '<td class="text-right unit" >' +
-                '<input type="text" name="quantity[]" class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty" placeholder="Quantity.... ">' +
+                '<td class="text-right unit" >' +
+                '<input type="text" name="quantity[]" value="{{ old('quantity', !empty($dispatchNote->quantity) ? $dispatchNote->quantity : '') }}" class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_' +
+                currentIndex + '" placeholder="Quantity.... ">' +
                 ' </td>' +
-                '<td class="unit"><input type="text" name="unit[]" class="form-control  {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} unit" placeholder="Dzns... "></td>' +
-                '<td class="unit" >' +
-                '<textarea type="text" name="remarks[]" class="form-control  {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mt-0" placeholder="Please Enter remarks "></textarea>' +
+                '<td class="text-right unit" >' +
+                '<textarea type="text" name="remarks[]" class="form-control  {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mt-0 remarks_' +
+                currentIndex + '" placeholder="Please Enter remarks ">{{ @$dispatchNote->remarks }}</textarea>' +
                 ' </td>' +
-                // '<td class="text-right amount"><span class="editable-amount"><span class="currency"></span> <span class="amount">0.00</span></td>' +
-                // '<td class="text-right rate"><input type="text" class="form-control  {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" placeholder="Rate"></td>'+
-                // '<td class="text-right amount"><span class="editable-amount"><span class="currency"></span> <span class="amount">0.00</span></td>' +
+
                 '<div class="form-check form-check-primary form-check-inline me-0 mb-0">' +
                 // '<input class="form-check-input inbox-chkbox contact-chkbox" type="checkbox">' +
                 '</div>' +
@@ -672,105 +474,115 @@
             deleteItemRow();
             $('.select2').select2();
 
-            $(document).on('click', 'body *', function() {
-                $('.dozen').on("focusout", function() {
-                    //
+            $(document).ready(function() {
+                $(".product_" + currentIndex).on('change', function() {
                     var row_id = $(this).closest("tr").find(".row_id").val();
-                    let quantity = $(this).closest("tr").find(".qty_" + row_id).val()
-                    let dzns = $(this).closest("tr").find(".dozen_" + row_id).val();
-                    if (parseInt(quantity) > 0) {
+                    var productSelected = '.product_' + currentIndex;
+                    console.log(productSelected);
+                    var name = $(productSelected + ' :selected').text();
+                    let url = config.routes.getProductMeasurementTypeDetail + '/' + name;
+                    $.ajax({
+                        url: url,
+                        type: 'GET',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            $(".measurement_" + currentIndex).val(response.name.name);
+                        },
+                        complete: function() {
+                            $('#loading').css('display', 'none');
+                        },
+                        error: function(errorThrown) {
+                            $('').val('');
+                            var errors = errorThrown.responseJSON.errors;
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Something went wrong',
+                            })
+                        }
+                    })
+                });
+            });
+            $(document).ready(function() {
+                $(".product_" + currentIndex).on('change', function() {
+                    var row_id = $(this).closest("tr").find(".row_id").val();
+                    var productSelected = '.product_' + currentIndex;
+                    var name = $(productSelected + ' :selected').text();
+                    let url = config.routes.getProductPackingTypeDetail + '/' + name;
+                    $.ajax({
+                        url: url,
+                        type: 'GET',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            $(".packing_" + currentIndex).val(response.name.name);
+                        },
+                        complete: function() {
+                            $('#loading').css('display', 'none');
+                        },
+                        error: function(errorThrown) {
+                            $('').val('');
+                            var errors = errorThrown.responseJSON.errors;
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Something went wrong',
+                            })
+                        }
+                    })
+                });
+            });
+            $(document).on('click', 'body *', function() {
+                $('.qty').on("focusout", function() {
+                    doAmountTotal2();
+                });
 
-                        $(this).closest("tr").find(".totDzn_" + row_id).val(quantity * dzns);
-                    } else {
-                        $(this).closest("tr").find(".totDzn_" + row_id).val('');
+                $('.delete-item').on("click", function() {
+                    doAmountTotal2();
+                });
+
+                function doAmountTotal2() {
+                    $('#boray-amount').val("");
+                    $('#carton-amount').val("");
+                    var totalBorayAmount = 0;
+                    console.log(totalBorayAmount);
+                    var totalCartonAmount = 0;
+                    console.log(totalCartonAmount);
+                    var packingIndex = '.packing_' + currentIndex;
+
+                    $(".qty").each(function() {
+                        if (!isNaN(this.value) && this.value.length != 0) {
+                            var totalAmount = parseFloat(this.value);
+
+                            if (packingIndex.value === "Boray") {
+                                // console.log(packingType.value== Boray);
+                                totalBorayAmount += totalAmount;
+                            } else if (packingIndex.value === "Carton") {
+                                // console.log(packingType.value== Carton);
+                                totalCartonAmount += totalAmount;
+                            }
+
+                        }
+                    });
+
+                    // if (document.getElementById('packing').value == "Carton") {
+                    //     $('#carton-amount').val(totalAmount.toFixed(2));
+                    // }
+                    // if (document.getElementsByClassName('packing').value == "Boray") {
+                    //     $('#boray-amount').val(totalAmount.toFixed(2));
+                    // }
+
+                    // Assign calculated total amounts to their respective fields
+                    if (packingIndex.value === "Carton") {
+                        $('#carton-amount').val(totalCartonAmount.toFixed(2));
                     }
-                    doAmountTotal();
-                });
 
-
-                $('.delete-item').on("click", function() {
-                    doAmountTotal();
-                });
-
-                function doAmountTotal() {
-                    $('#total-amount').text("");
-                    // console.log('in do amount total');
-                    var totalAmount = 0;
-                    $(".amount").each(function() {
-                        if (!isNaN(this.value) && this.value.length != 0) {
-                            totalAmount += parseFloat(this.value);
-                        }
-                    });
-                    $('#gross-amount').val(totalAmount.toFixed(2));
-                    $('#net-amount').val(totalAmount.toFixed(2));
-                }
-
-                $("#freight, #scheme, #commission").on("focusout", function() {
-                    var totalAmount = 0;
-                    $(".amount").each(function() {
-                        if (!isNaN(this.value) && this.value.length != 0) {
-                            totalAmount += parseFloat(this.value);
-                        }
-                    });
-                    let freight = $("#freight").val() ? $("#freight").val() : 0;
-                    let scheme = $("#scheme").val() ? $("#scheme").val() : 0;
-                    let commission = $("#commission").val() ? $("#commission").val() : 0;
-
-                    var totalLessAmount = parseInt(freight) + parseInt(scheme) + parseInt(
-                        commission);
-                    $('#net-amount').val(totalLessAmount ? totalAmount.toFixed(2) -
-                        totalLessAmount : totalAmount.toFixed(2));
-                })
-
-
-
-            });
-
-            $(document).on('click', 'body *', function() {
-                $('.amount').on("focusout", function() {
-                    doAmountTotal();
-                });
-
-                $('.delete-item').on("click", function() {
-                    doAmountTotal();
-                });
-
-                function doAmountTotal() {
-                    $('#total-amount').text("");
-                    // console.log('in do amount total');
-                    var totalAmount = 0;
-                    $(".amount").each(function() {
-                        if (!isNaN(this.value) && this.value.length != 0) {
-                            totalAmount += parseFloat(this.value);
-                        }
-                    });
-                    $('#gross-amount').val(totalAmount.toFixed(2));
+                    if (packingIndex.value === "Boray") {
+                        $('#boray-amount').val(totalBorayAmount.toFixed(2));
+                    }
                 }
             });
-
-
-            $(document).on('click', 'body *', function() {
-                $('.amount').on("focusout", function() {
-                    doAmountTotal();
-                });
-
-                $('.delete-item').on("click", function() {
-                    doAmountTotal();
-                });
-
-                function doAmountTotal() {
-                    $('#total-amount').text("");
-                    // console.log('in do amount total');
-                    var totalAmount = 0;
-                    $(".amount").each(function() {
-                        if (!isNaN(this.value) && this.value.length != 0) {
-                            totalAmount += parseFloat(this.value);
-                        }
-                    });
-                    $('#gross-amount').val(totalAmount.toFixed(2));
-                }
-            });
-
 
         })
 
@@ -807,7 +619,9 @@
     <script>
         var config = {
             routes: {
-                saleOrderData: "{{ url('dispatch-note/get-sale-order-data') }}"
+                saleOrderData: "{{ url('dispatch-note/get-sale-order-data') }}",
+                getProductPackingTypeDetail: "{{ url('dispatch-note/get-product-packing-type') }}",
+                getProductMeasurementTypeDetail: "{{ url('dispatch-note/get-product-measurement-type') }}",
 
             },
         }

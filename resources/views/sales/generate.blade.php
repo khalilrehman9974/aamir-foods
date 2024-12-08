@@ -34,7 +34,7 @@
         <nav class="breadcrumb-style-one" aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Dispatch Note</li>
+                <li class="breadcrumb-item active" aria-current="page">Sale Invoice</li>
             </ol>
         </nav>
     </div>
@@ -53,7 +53,7 @@
                 <div class="widget-header">
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4>Create Dispatch Note</h4>
+                            <h4>Create Sale Invoice</h4>
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
                                         <div class="widget-content widget-content-area">
                                             <div class="row">
                                                 <div class="col-lg-12 col-12 ">
-                                                    <form class="row g-3" action="{{ route('dispatch-note.create') }}"
+                                                    <form class="row g-3" action="{{ route('sale.create') }}"
                                                         method="GET">
                                                         {{-- @csrf --}}
                                                         <div id="results">
@@ -78,15 +78,10 @@
                                                                     {{-- <input type="hidden" name="id" id="id"
                                                                         value="{{ isset($note->id) ? $note->id : '' }}" /> --}}
                                                                     <div class="col-md-6">
-                                                                        <label for="inputState" class="form-label">Sale
-                                                                            Order#</label>
+                                                                        <label for="inputState" class="form-label">Dispatch
+                                                                            Note#</label>
                                                                             <input type="text" name="id" id="id" class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                            placeholder="Please Enter The Sale Order Number" required>
-                                                                        {{-- <input type="text" id="saleOrder"
-                                                                            name="id" style="color: black; "
-                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} saleOrder"
-                                                                            placeholder="Please Enter The Sale Order Number"
-                                                                            required> --}}
+                                                                            placeholder="Please Enter The Dispatch Note Number" required>
                                                                     </div>
 
                                                                 </div>
@@ -97,7 +92,7 @@
 
                                                             <div class="row">
                                                                 <div class="col-xl-12 ">
-                                                                    <a href="{{ route('dispatch-note.list') }}"
+                                                                    <a href="{{ route('sale.sales') }}"
                                                                         style="float:right;"
                                                                         class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
                                                                     <button type="submit" style="float: right"
@@ -130,60 +125,18 @@
         </div>
     </div>
 
-    {{-- <script>
-        $(document).ready(function() {
-            $('.saleOrder').on('keypress', function(e) {
-                if (e.which === 13) { // Enter key pressed
-                    e.preventDefault(); // Prevent default form submission
-                    fetchData();
-                }
-            });
-
-            function fetchData() {
-                var id = $('#saleOrder').val();
-                console.log(id);
-                let url = config.routes.saleOrderData + '/' + id;
-                $.ajax({
-                    url: url,
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(data) {
-                        displayData(data);
-                    },
-                    error: function(xhr) {
-                        console.error('Error fetching data:', xhr);
-                    }
-                });
-            }
-        });
-
-        var config = {
-            routes: {
-                saleOrderData: "{{ url('dispatch-note/create') }}"
-
-            },
-        }
-    </script> --}}
 
     <x-slot:footerFiles>
         <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
 
-        {{-- <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
-        <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script> --}}
-
         <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
         <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
-        {{-- <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script> --}}
         <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
             integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="{{ asset('js/dispatchNote.js') }}"></script>
 
-        {{-- <script src="{{ asset('plugins/global/vendors.min.js') }}"></script> --}}
         @vite(['resources/assets/js/elements/custom-search.js'])
     </x-slot>
 

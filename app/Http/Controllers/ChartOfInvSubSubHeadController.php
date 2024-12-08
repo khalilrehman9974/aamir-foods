@@ -47,9 +47,10 @@ class ChartOfInvSubSubHeadController extends Controller
         $accountCode = $this->coInvSubSubHeadService->getMaxSubSubHeadCode();
         $mainHeads = $this->coInvSubSubHeadService->getMainHeads();
         $subHeads = $this->coInvSubSubHeadService->getSubHeads();
+        $dropDownData = $this->coInvSubSubHeadService->DropDownData();
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '24');
 
-        return view('chart-of-inventory.sub-sub-head.create', compact('permission','mainHeads','subHeads','pageTitle', 'accountCode'));
+        return view('chart-of-inventory.sub-sub-head.create', compact('permission','dropDownData', 'mainHeads','subHeads','pageTitle', 'accountCode'));
     }
 
     /**
@@ -77,12 +78,13 @@ class ChartOfInvSubSubHeadController extends Controller
         $subSubHead = CoaInventorySubSubHead::find($id);
         $mainHeads = $this->coInvSubSubHeadService->getMainHeads();
         $subHeads = $this->coInvSubSubHeadService->getSubHeads();
+        $dropDownData = $this->coInvSubSubHeadService->DropDownData();
         if (!$subSubHead) {
             return abort(404);
         }
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
 
-        return view('chart-of-inventory.sub-sub-head.create', compact('subHeads','subSubHead', 'mainHeads','permission', 'pageTitle'));
+        return view('chart-of-inventory.sub-sub-head.create', compact('subHeads','dropDownData','subSubHead', 'mainHeads','permission', 'pageTitle'));
     }
 
     /**

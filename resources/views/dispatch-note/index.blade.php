@@ -138,13 +138,19 @@
                             <thead>
                                 <tr>
                                     <th scope="col"><b>Id </b></th>
-                                    <th scope="col" style="width: 10%"><b>Date </b></th>
-                                    <th scope="col" style="width: 10%"><b>Purchase Order# </b></th>
-                                    <th scope="col" style="width: 20%"><b>Party </b></th>
-                                    <th scope="col" style="width: 20%"><b>Sale Mans </b></th>
-                                    <th scope="col" style="width: 20%"><b>Transporter </b></th>
-                                    <th scope="col" style="width: 10%"><b>Bilty No </b></th>
-                                    <th scope="col" style="width: 10%"><b>Fare </b></th>
+                                    <th scope="col" style="width: 10%"><b>Sale Order# </b></th>
+                                    <th scope="col" ><b>Date </b></th>
+                                    <th scope="col" ><b>Party </b></th>
+                                    <th scope="col" ><b>Sale Mans </b></th>
+                                    <th scope="col" ><b>Belt </b></th>
+                                    <th scope="col" ><b>Area </b></th>
+                                    <th scope="col" ><b>Delivered To </b></th>
+                                    <th scope="col" ><b>Vehicle No </b></th>
+                                    <th scope="col" ><b>Bility No </b></th>
+                                    <th scope="col" ><b>Driver Name</b></th>
+                                    <th scope="col" ><b>Carriage </b></th>
+                                    <th scope="col" ><b>Total Boray</b></th>
+                                    <th scope="col" ><b>Total Carton </b></th>
                                     <th class="text-center" scope="col"></th>
                                 </tr>
                             </thead>
@@ -161,6 +167,14 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
+                                                    <h6 class="mb-0">{{ @$note->sale_order_number }}</h6>
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="media">
+                                                <div class="media-body align-self-center">
                                                     <h6 class="mb-0">{{ @$note->date }}</h6>
 
                                                 </div>
@@ -169,7 +183,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ @$note->po_no }}</h6>
+                                                    <h6 class="mb-0">{{ @$note->party_id }}</h6>
 
                                                 </div>
                                             </div>
@@ -177,7 +191,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ @$note->party->account_name }}</h6>
+                                                    <h6 class="mb-0">{{ @$note->saleman }}</h6>
 
                                                 </div>
                                             </div>
@@ -185,7 +199,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ @$note->saleMan->name }}</h6>
+                                                    <h6 class="mb-0">{{ @$note->sector }}</h6>
 
                                                 </div>
                                             </div>
@@ -193,7 +207,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ @$note->transporter->name }}</h6>
+                                                    <h6 class="mb-0">{{ @$note->area }}</h6>
 
                                                 </div>
                                             </div>
@@ -201,7 +215,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ @$note->bilty_no }}</h6>
+                                                    <h6 class="mb-0">{{ @$note->delivered_to }}</h6>
 
                                                 </div>
                                             </div>
@@ -209,7 +223,47 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ @$note->fare }}</h6>
+                                                    <h6 class="mb-0">{{ @$note->vehicle_no }}</h6>
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="media">
+                                                <div class="media-body align-self-center">
+                                                    <h6 class="mb-0">{{ @$note->bility_no }}</h6>
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="media">
+                                                <div class="media-body align-self-center">
+                                                    <h6 class="mb-0">{{ @$note->driver_name }}</h6>
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="media">
+                                                <div class="media-body align-self-center">
+                                                    <h6 class="mb-0">{{ @$note->carriage }}</h6>
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="media">
+                                                <div class="media-body align-self-center">
+                                                    <h6 class="mb-0">{{ @$note->total_boray }}</h6>
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="media">
+                                                <div class="media-body align-self-center">
+                                                    <h6 class="mb-0">{{ @$note->total_carton }}</h6>
 
                                                 </div>
                                             </div>
@@ -231,7 +285,13 @@
                                                         </path>
                                                     </svg>
                                                 </a>
-                                                <a href="javascript:void(0);"
+                                                <a href="{{ route('sale.create', ['id' => $note->id]) }}"
+
+                                                    class="action-btn btn-edit bs-tooltip me-2"
+                                                    data-toggle="tooltip" data-placement="top" title="Enter Sale Invoice">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M288 256H96v64h192v-64zm89-151L279.1 7c-4.5-4.5-10.6-7-17-7H256v128h128v-6.1c0-6.3-2.5-12.4-7-16.9zm-153 31V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H248c-13.2 0-24-10.8-24-24zM64 72c0-4.4 3.6-8 8-8h80c4.4 0 8 3.6 8 8v16c0 4.4-3.6 8-8 8H72c-4.4 0-8-3.6-8-8V72zm0 64c0-4.4 3.6-8 8-8h80c4.4 0 8 3.6 8 8v16c0 4.4-3.6 8-8 8H72c-4.4 0-8-3.6-8-8v-16zm256 304c0 4.4-3.6 8-8 8h-80c-4.4 0-8-3.6-8-8v-16c0-4.4 3.6-8 8-8h80c4.4 0 8 3.6 8 8v16zm0-200v96c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16v-96c0-8.8 7.2-16 16-16h224c8.8 0 16 7.2 16 16z"/></svg>
+                                                </a>
+                                                {{-- <a href="javascript:void(0);"
                                                     class="action-btn btn-delete bs-tooltip delete"
                                                     data-id="{{ $note->id }}" data-toggle="tooltip"
                                                     data-placement="top" title="Delete">
@@ -250,7 +310,7 @@
                                                             y2="17">
                                                         </line>
                                                     </svg>
-                                                </a>
+                                                </a> --}}
                                                 {{-- @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
 
                                                 @endif --}}

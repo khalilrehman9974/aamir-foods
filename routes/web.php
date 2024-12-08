@@ -124,7 +124,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'dispatch-note'], function () {
         Route::get('list', ['as' => 'dispatch-note.list', 'uses' => 'App\Http\Controllers\DispatchNoteController@index']);
         Route::get('generate', ['as' => 'dispatch-note.generate', 'uses' => 'App\Http\Controllers\DispatchNoteController@generate']);
-        Route::get('create/{id}', ['as' => 'dispatch-note.create', 'uses' => 'App\Http\Controllers\DispatchNoteController@create']);
+        Route::get('create', ['as' => 'dispatch-note.create', 'uses' => 'App\Http\Controllers\DispatchNoteController@create']);
         Route::post('save', ['as' => 'dispatch-note.save', 'uses' => 'App\Http\Controllers\DispatchNoteController@store']);
         Route::get('edit/{id}', ['as' => 'dispatch-note.edit', 'uses' => 'App\Http\Controllers\DispatchNoteController@edit']);
         Route::post('update', ['as' => 'dispatch-note.update', 'uses' => 'App\Http\Controllers\DispatchNoteController@update']);
@@ -132,6 +132,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::delete('delete/{id}', ['as' => 'dispatch-note.delete', 'uses' => 'App\Http\Controllers\DispatchNoteController@destroy']);
         Route::post('show/{id}', ['as' => 'dispatch-note.show', 'uses' => 'App\Http\Controllers\DispatchNoteController@show']);
         Route::get('search', ['as' => 'dispatch-note.search', 'uses' => 'App\Http\Controllers\DispatchNoteController@search']);
+        Route::get('get-product-packing-type/{name}', ['as' => 'product-packing-type', 'uses' => 'App\Http\Controllers\DispatchNoteController@getProductPackingType']);
+        Route::get('get-product-measurement-type/{name}', ['as' => 'product-measurement-type', 'uses' => 'App\Http\Controllers\DispatchNoteController@getProductMeasurementType']);
     });
 
     Route::group(['prefix' => 'product', 'middleware' => 'auth'], function () {
@@ -240,7 +242,8 @@ Route::group(['middleware' => ['auth']], function () {
     //Sales
     Route::group(['prefix' => 'sale', 'middleware' => 'auth'], function () {
         Route::get('/sales-list', [App\Http\Controllers\SalesController::class, 'index'])->name('sale.sales');
-        Route::get('/create', [App\Http\Controllers\SalesController::class, 'create'])->name('sale.create');
+        Route::get('create', ['as' => 'sale.create', 'uses' => 'App\Http\Controllers\SalesController@create']);
+        Route::get('generate', ['as' => 'sale.generate', 'uses' => 'App\Http\Controllers\SalesController@generate']);
         Route::get('/edit/{id}', [App\Http\Controllers\SalesController::class, 'edit'])->name('sale.edit');
         Route::get('/view/{id}', [App\Http\Controllers\SalesController::class, 'view'])->name('sale.view');
         Route::post('/store', [App\Http\Controllers\SalesController::class, 'store'])->name('sale.store');

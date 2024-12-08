@@ -6,15 +6,18 @@ namespace App\Http\Controllers;
 use App\Models\SaleDetail;
 use App\Models\SaleMaster;
 use App\Models\StockLedger;
+use Illuminate\Http\Request;
 use App\Models\AccountLedger;
 use App\Services\SaleService;
 use App\Services\CommonService;
 use App\Models\SalePurchaseType;
+use App\Models\DispatchNoteDetail;
 use App\Models\DispatchNoteMaster;
 use Illuminate\Support\Facades\DB;
 use App\Services\StockLedgerService;
 use App\Services\AccountLedgerService;
 use App\Http\Requests\StoreSaleRequest;
+use App\Models\CoaInventoryDetailAccount;
 
 class SalesController extends Controller
 {
@@ -26,16 +29,16 @@ class SalesController extends Controller
 
 
 
-    public function __construct(CommonService $commonService,
-    SaleService $saleService,
-    StockLedgerService $stockLedgerService,
-    AccountLedgerService $accountLedgerService)
-    {
+    public function __construct(
+        CommonService $commonService,
+        SaleService $saleService,
+        StockLedgerService $stockLedgerService,
+        AccountLedgerService $accountLedgerService
+    ) {
         $this->commonService = $commonService;
         $this->saleService = $saleService;
         $this->stockLedgerService = $stockLedgerService;
         $this->accountLedgerService = $accountLedgerService;
-
     }
 
     /*
@@ -47,56 +50,67 @@ class SalesController extends Controller
         $request = request()->all();
         $sales = $this->saleService->searchSale($request);
 
-        return view('sales.index', compact('sales', 'request','pageTitle'));
+        return view('sales.index', compact('sales', 'request', 'pageTitle'));
     }
 
     /*
      * Show page of create sale.
      * */
-    public function create()
+    public function create(Request $request)
     {
-        $pageTitle = 'Sales';
-        $type = SalePurchaseType::where('name', 'Sale')->pluck('name', 'id');
+        $pageTitle = 'Sales Invoice';
         $dropDownData = $this->commonService->DropDownData();
         $invoiceNo = SaleMaster::max('id') + 1;
-        $saleDetails = SaleDetail::where('sale_master_id')->get();
-//        dd($dropDownData);
+        $dispatchNote = DispatchNoteMaster::find($request->id);
+        $dispatchNoteDetails = DispatchNoteDetail::where('dispatch_note_master_id', $request->id)->get();
+        // dd($dispatchNoteDetails);
 
-        return view('sales.create', compact( 'type','pageTitle','saleDetails', 'dropDownData', 'invoiceNo'));
+        if (empty($dispatchNote)) {
+            abort(404);
+        }
+
+        return view('sales.create', compact('pageTitle', 'dispatchNoteDetails', 'dropDownData', 'invoiceNo', 'dispatchNote'));
+    }
+
+
+    public function generate()
+    {
+        return view('sales.generate');
     }
 
     /*
      * Save sale into db.
      * @param: @request
      * */
-    public function store(StoreSaleRequest $request)
+    public function store(Request $request)
     {
+        // dd($request);
         $request = $request->except('_token', 'saleId');
         $session = $this->commonService->getSession();
-        DB::beginTransaction();
-       try {
-            $request['business_id'] = $session->business_id;
-            $request['f_year_id'] = $session->financial_year;
-            $request['type_id'] = $session->financial_year;
-            //Insert data into sale tables.
-            $saleMasterData = $this->saleService->prepareSaleMasterData($request);
-            $saleMasterInsert = $this->commonService->findUpdateOrCreate(SaleMaster::class, ['id' => ''], $saleMasterData);
-            $saleDetailData = $this->saleService->prepareSaleDetailData($request, $saleMasterInsert->id);
-            $this->saleService->saveSale($saleDetailData);
+        //     DB::beginTransaction();
+        //    try {
+        $request['business_id'] = $session->business_id;
+        $request['f_year_id'] = $session->financial_year;
 
-            //Insert data into stock table.
-            $this->stockLedgerService->prepareAndSaveData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'));
+        //Insert data into sale tables.
+        $saleMasterData = $this->saleService->prepareSaleMasterData($request);
+        $saleMasterInsert = $this->commonService->findUpdateOrCreate(SaleMaster::class, ['id' => ''], $saleMasterData);
+        $saleDetailData = $this->saleService->prepareSaleDetailData($request, $saleMasterInsert->id);
+        $this->saleService->saveSale($saleDetailData);
 
-            //Insert data into accounts ledger table.
-            $debitAccountData = $this->saleService->prepareAccountDebitData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'), config('contants.SALE_DESCRIPTION'));
-            $creditAccountData = $this->saleService->prepareAccountCreditData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'), config('contants.SALE_DESCRIPTION'));
-            AccountLedger::insert($debitAccountData);
-            AccountLedger::insert($creditAccountData);
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('sale/create')->with('error', $e->getMessage());
-        }
+        //Insert data into stock table.
+        // $this->stockLedgerService->prepareAndSaveData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'));
+
+        //Insert data into accounts ledger table.
+        // $debitAccountData = $this->saleService->prepareAccountDebitData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'), config('contants.SALE_DESCRIPTION'));
+        // $creditAccountData = $this->saleService->prepareAccountCreditData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'), config('contants.SALE_DESCRIPTION'));
+        // AccountLedger::insert($debitAccountData);
+        // AccountLedger::insert($creditAccountData);
+        DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('sale/create')->with('error', $e->getMessage());
+        // }
         return redirect('sale/sales-list')->with('message', config('constants.add'));
     }
 
@@ -105,14 +119,15 @@ class SalesController extends Controller
      * */
     public function edit($id)
     {
+        $pageTitle = 'Update Sales Invoice';
+
         $sale = SaleMaster::find($id);
-        $type = SalePurchaseType::where('name', 'Sale')->pluck('name', 'id');
         $saleDetails = SaleDetail::where('sale_master_id', $id)->get();
         if (empty($sale)) {
             $message = config('constants.wrong');
         }
 
-        return view('sales.create', compact('sale',  'type', 'saleDetails'));
+        return view('sales.edit', compact('sale','dropDownData','pageTitle','saleDetails'));
     }
 
     /*
@@ -169,7 +184,6 @@ class SalesController extends Controller
             } else {
                 return response()->json(['status' => 'fail', 'message' => config('constants.wrong')]);
             }
-
         } catch (\Exception $e) {
             DB::rollback();
             return redirect('sale/sales-list')->with('error', $e->getMessage());
