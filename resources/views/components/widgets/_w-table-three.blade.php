@@ -1,16 +1,16 @@
-{{-- 
+{{--
 
 /**
 *
 * Created a new component <x-rtl.widgets._w-table-three/>.
-* 
+*
 */
 
 --}}
 
 
 <div class="widget widget-table-three">
-    
+
     <div class="widget-heading">
         <h5 class="">{{$title}}</h5>
     </div>

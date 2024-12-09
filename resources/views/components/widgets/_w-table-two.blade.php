@@ -1,16 +1,16 @@
-{{-- 
+{{--
 
 /**
 *
 * Created a new component <x-rtl.widgets._w-table-two/>.
-* 
+*
 */
 
 --}}
 
 
 <div class="widget widget-table-two">
-    
+
     <div class="widget-heading">
         <h5 class="">{{$title}}</h5>
     </div>
@@ -35,7 +35,7 @@
                         <td><div class="td-content pricing"><span class="">$56.07</span></div></td>
                         <td><div class="td-content"><span class="badge badge-success">Paid</span></div></td>
                     </tr>
-                    
+
                     <tr>
                         <td><div class="td-content customer-name"><img src="{{Vite::asset('resources/images/profile-7.jpeg')}}" alt="avatar"><span>Andy King</span></div></td>
                         <td><div class="td-content product-brand text-warning">Nike Sport</div></td>
@@ -49,7 +49,7 @@
                         <td><div class="td-content product-invoice">#66894</div></td>
                         <td><div class="td-content pricing"><span class="">$126.04</span></div></td>
                         <td><div class="td-content"><span class="badge badge-success">Paid</span></div></td>
-                    </tr>                                            
+                    </tr>
                     <tr>
                         <td><div class="td-content customer-name"><img src="{{Vite::asset('resources/images/profile-5.jpeg')}}" alt="avatar"><span>Ryan Collins</span></div></td>
                         <td><div class="td-content product-brand text-warning">Sport</div></td>
