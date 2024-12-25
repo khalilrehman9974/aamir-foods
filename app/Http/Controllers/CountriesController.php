@@ -45,8 +45,10 @@ class CountriesController extends Controller
     public function create()
     {
         $pageTitle = 'Create Country';
+        $request = request()->all();
+        $countries = $this->CountryService->searchCountry($request);
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '24');
-        return view('countries.create', compact('permission','pageTitle'));
+        return view('countries.create', compact('countries','permission','pageTitle'));
     }
 
     /**
@@ -69,7 +71,7 @@ class CountriesController extends Controller
             $message = config('constants.update');
         }
         session()->flash('message', $message);
-        return redirect('country/list');
+        return redirect('country/create');
     }
 
 
@@ -82,10 +84,12 @@ class CountriesController extends Controller
     public function edit($id)
     {
         $pageTitle = 'Update The Country ';
+        $request = request()->all();
+        $countries = $this->CountryService->searchCountry($request);
         $country = Country::find($id);
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
 
-        return view('countries.create', compact('country', 'pageTitle', 'permission'));
+        return view('countries.create', compact('countries','country', 'pageTitle', 'permission'));
     }
 
     /**

@@ -13,7 +13,7 @@ class PurchaseOrderDetail extends Model
     protected $guarded = ['id'];
     protected $table = 'purchase_order_details';
 
-    protected $fillable = ['purchase_order_master_id','product_id', 'total_quantity','Schedule_date','Schedule_quantity','Delivery_date','Delivery_quantity','price','created_by','updated_by'];
+    protected $fillable = ['purchase_order_master_id','product_id', 'size','packing_type','measurement_type','quantity','price','amount','detail_remarks'];
 
     public function purchase_order_master_id(){
         return $this->belongsTo(PurchaseOrderMaster::class);

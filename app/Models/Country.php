@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Country extends Model
 {
     use SoftDeletes;
+    protected $table = 'countries';
     protected $guarded = ['id'];
     protected $fillable = ['name'];
 }

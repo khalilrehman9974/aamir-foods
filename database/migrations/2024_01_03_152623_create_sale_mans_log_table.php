@@ -17,10 +17,9 @@ return new class extends Migration
             $table->increments('id');
             $table->string('name', 250);
             $table->string('email', 150)->nullable();
+            $table->integer('business_id');
+            $table->integer('f_year_id')->unsigned()->index();
             $table->integer('country_id')->unsigned()->index();
-            $table->integer('zone_id')->unsigned()->index();
-            $table->integer('sector_id')->unsigned()->index();
-            $table->integer('area_id')->unsigned()->index();
             $table->string('designation', 150);
             $table->string('mobile_no', 50);
             $table->string('whatsapp_no', 50)->nullable();

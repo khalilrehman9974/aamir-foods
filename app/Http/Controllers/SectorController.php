@@ -47,8 +47,10 @@ class SectorController extends Controller
     {
         $pageTitle = 'Create Belt';
         $dropDownData = $this->SectorService->DropDownData();
+        $request = request()->all();
+        $sectors = $this->SectorService->searchSector($request);
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '24');
-        return view('sectors.create', compact('permission','dropDownData','pageTitle'));
+        return view('sectors.create', compact('permission','sectors','dropDownData','pageTitle'));
     }
 
     /**
@@ -71,7 +73,7 @@ class SectorController extends Controller
             $message = config('constants.update');
         }
         session()->flash('message', $message);
-        return redirect('sector/list');
+        return redirect('sector/create');
     }
 
     /**
@@ -95,10 +97,12 @@ class SectorController extends Controller
     {
         $pageTitle = 'Update The Belt ';
         $sector = Sector::find($id);
+        $request = request()->all();
+        $sectors = $this->SectorService->searchSector($request);
         $dropDownData = $this->SectorService->DropDownData();
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
 
-        return view('sectors.create', compact('sector', 'pageTitle','dropDownData','permission'));
+        return view('sectors.create', compact('sectors','sector', 'pageTitle','dropDownData','permission'));
     }
 
     /**
@@ -122,5 +126,13 @@ class SectorController extends Controller
     public function delete()
     {
         return $this->commonService->deleteResource(Sector::class);
+    }
+
+    public function fetchBelt(Request $request)
+    {
+
+        $data['belts'] = Sector::where("zone_id", $request->zone_id)->get(["id", "name"]);
+
+        return response()->json($data);
     }
 }

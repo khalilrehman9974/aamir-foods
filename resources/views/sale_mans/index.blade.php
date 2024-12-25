@@ -91,9 +91,6 @@
                                     <th scope="col" style="width: 5%"> <b>Id </b> </th>
                                     <th scope="col" style="width: 20%"> <b>Name </b> </th>
                                     <th scope="col" > <b>Mobile No </b> </th>
-                                    <th scope="col" > <b>Zone</b> </th>
-                                    <th scope="col" > <b>Belt</b> </th>
-                                    <th scope="col" > <b>Area</b> </th>
                                     <th scope="col" > <b>Designation </b> </th>
                                     <th class="text-center" scope="col"></th>
                                 </tr>
@@ -127,29 +124,6 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $saleMan->zone->name }}</h6>
-
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $saleMan->sectors->name }}</h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $saleMan->area->name }}</h6>
-
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
                                                     <h6 class="mb-0">{{ $saleMan->designation }}</h6>
 
                                                 </div>
@@ -173,7 +147,7 @@
                                                         </svg>
                                                     </a>
                                                 @endif
-                                                @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
+                                                {{-- @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
                                                     <a href="javascript:void(0)"
                                                         class="action-btn btn-delete bs-tooltip delete"
                                                         data-id="{{ $saleMan->id }}" data-toggle="tooltip"
@@ -195,7 +169,7 @@
                                                             </line>
                                                         </svg>
                                                     </a>
-                                                @endif
+                                                @endif --}}
 
                                             </div>
                                         </td>

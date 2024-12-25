@@ -10,8 +10,8 @@
         @vite(['resources/scss/light/assets/components/timeline.scss'])
         @vite(['resources/scss/light/assets/components/accordions.scss'])
         @vite(['resources/scss/dark/assets/components/accordions.scss'])
-        {{--@vite(['resources/scss/light/assets/elements/alert.scss']) --}}
-        {{--@vite(['resources/scss/dark/assets/elements/alert.scss']) --}}
+        {{-- @vite(['resources/scss/light/assets/elements/alert.scss']) --}}
+        {{-- @vite(['resources/scss/dark/assets/elements/alert.scss']) --}}
         <link rel="stylesheet" href="{{ asset('plugins/filepond/filepond.min.css') }}">
         <link rel="stylesheet" href="{{ asset('plugins/filepond/FilePondPluginImagePreview.min.css') }}">
         @vite(['resources/scss/light/plugins/filepond/custom-filepond.scss'])
@@ -164,7 +164,7 @@
                                                         <div class="col-lg- 0 col-12 form-group mb-2">
                                                             <label for="code" class="form-label">
                                                                 Account Code</label>
-                                                            <input id="code" type="text" name="code"
+                                                            <input id="code" type="text" name="code" style="color: black;"
                                                                 value="{{ old('code', !empty($detailAccount->code) ? $detailAccount->code : '') }}"
                                                                 class="form-control" readonly>
                                                         </div>
@@ -181,6 +181,106 @@
                                                                     {{ $errors->first('name') }}
                                                                 </div>
                                                             @endif
+                                                        </div>
+
+                                                        <div class="col-lg-0 col-12 ">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <label for="packing_type_id"
+                                                                        class="form-label">Packing
+                                                                        Type</label>
+                                                                    <select id="packing_type_id" type="text"
+                                                                        name="packing_type_id"
+                                                                        class="form-control select2 form-control mb-3 custom-select"
+                                                                        required>
+                                                                        <option value="">Select Packing Type
+                                                                        </option>
+                                                                        @foreach ($dropDownData['PackingType'] as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                {{ (old('packing_type_id') == $key ? 'selected' : '') || (!empty($detailAccount->packing_type_id) ? collect($detailAccount->packing_type_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                {{ $value }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                    {{-- <div class="invalid-feedback">
+                                                                            Please Select the Sector.
+                                                                        </div> --}}
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label for="measurement_type_id"
+                                                                        class="form-label">Measurement Type</label>
+                                                                    <select id="measurement_type_id" type="text"
+                                                                        name="measurement_type_id"
+                                                                        class="form-control select2 form-control mb-3 custom-select"
+                                                                        required>
+                                                                        <option value="">Select Measurement Type
+                                                                        </option>
+                                                                        @foreach ($dropDownData['MeasurementTypes'] as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                {{ (old('measurement_type_id') == $key ? 'selected' : '') || (!empty($detailAccount->measurement_type_id) ? collect($detailAccount->measurement_type_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                {{ $value }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                    {{-- <div class="invalid-feedback">
+                                                                            Please Select the Sector.
+                                                                        </div> --}}
+                                                                </div>
+                                                            </div>
+
+
+                                                        </div>
+                                                        <div class="col-lg-0 col-12 ">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <label for="name" class="form-label">
+                                                                        Size </label>
+                                                                    <input id="size" type="text"
+                                                                        name="size"
+                                                                        value="{{ old('size', !empty($detailAccount->size) ? $detailAccount->size : '') }}"
+                                                                        placeholder="Please The Size "
+                                                                        class="form-control" >
+                                                                    @if ($errors->has('size'))
+                                                                        <div class="invalid-feedback">
+                                                                            {{ $errors->first('size') }}
+                                                                        </div>
+                                                                    @endif
+                                                                </div>
+
+                                                                <div class="col-md-6">
+                                                                    <label for="min_limit" class="form-label">
+                                                                        Minimum Limit</label>
+                                                                    <input id="min_limit" type="text"
+                                                                        name="min_limit"
+                                                                        value="{{ old('min_limit', !empty($detailAccount->min_limit) ? $detailAccount->min_limit : '') }}"
+                                                                        placeholder="Please Enter Minimum limit"
+                                                                        class="form-control" required>
+                                                                    @if ($errors->has('min_limit'))
+                                                                        <div class="invalid-feedback">
+                                                                            {{ $errors->first('min_limit') }}
+                                                                        </div>
+                                                                    @endif
+                                                                </div>
+
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="col-lg-0 col-12 ">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <label for="max_limit" class="form-label">
+                                                                        Maximum Limit</label>
+                                                                    <input id="max_limit" type="text"
+                                                                        name="max_limit"
+                                                                        value="{{ old('max_limit', !empty($detailAccount->max_limit) ? $detailAccount->max_limit : '') }}"
+                                                                        placeholder="Please Enter Maximum limit"
+                                                                        class="form-control" required>
+                                                                    @if ($errors->has('max_limit'))
+                                                                        <div class="invalid-feedback">
+                                                                            {{ $errors->first('max_limit') }}
+                                                                        </div>
+                                                                    @endif
+                                                                </div>
+
+                                                            </div>
                                                         </div>
                                                         <div class="col-lg-0 col-12 form-group mb-4">
                                                             <label for="name" class="form-label">
@@ -201,90 +301,17 @@
                                                                     <div class="avatar me-2">
 
                                                                         <img alt="avatar"
-                                                                            @if ($detailAccount->image == null || !file_exists(base_path('resources/images/inventory/') . $detailAccount->image)) src="{{ Vite::asset('resources/images/no-attachments.png') }}"
+                                                                            @if ($detailAccount->image == null || !file_exists(base_path('public/resources/images/inventory/').'/'.$detailAccount->image)) src="{{ asset('images/no-attachments.png') }}"
 
                                                                          @else
-                                                                        src="{{ Vite::asset('resources/images/inventory/') . $detailAccount->image }}" @endif
+                                                                        src="{{asset('resources/images/inventory/').'/'.$detailAccount->image }}" @endif
                                                                             class="rounded-circle" />
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         @endif
 
-                                                        <div class="col-lg-0 col-12 ">
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <label for="packing_type_id" class="form-label">Packing
-                                                                        Type</label>
-                                                                    <select id="packing_type_id" type="text"
-                                                                        name="packing_type_id"
-                                                                        class="form-control select2 form-control mb-3 custom-select"
-                                                                        required>
-                                                                        <option value="">Select Packing Type</option>
-                                                                        @foreach ($dropDownData['PackingType'] as $key => $value)
-                                                                            <option value="{{ $key }}"
-                                                                                {{ (old('packing_type_id') == $key ? 'selected' : '') || (!empty($detailAccount->packing_type_id) ? collect($detailAccount->packing_type_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                {{ $value }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                    {{-- <div class="invalid-feedback">
-                                                                            Please Select the Sector.
-                                                                        </div> --}}
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <label for="measurement_type_id"
-                                                                        class="form-label">Measurement Type</label>
-                                                                    <select id="measurement_type_id" type="text"
-                                                                        name="measurement_type_id"
-                                                                        class="form-control select2 form-control mb-3 custom-select"
-                                                                        required>
-                                                                        <option value="">Select Measurement Type</option>
-                                                                        @foreach ($dropDownData['MeasurementTypes'] as $key => $value)
-                                                                            <option value="{{ $key }}"
-                                                                                {{ (old('measurement_type_id') == $key ? 'selected' : '') || (!empty($detailAccount->measurement_type_id) ? collect($detailAccount->measurement_type_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                {{ $value }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                    {{-- <div class="invalid-feedback">
-                                                                            Please Select the Sector.
-                                                                        </div> --}}
-                                                                </div>
-                                                            </div>
 
-                                                        </div>
-                                                        <div class="col-lg-0 col-12 ">
-                                                            <div class="row">
-
-                                                                <div class="col-md-6">
-                                                                    <label for="min_limit" class="form-label">
-                                                                        Minimum Limit</label>
-                                                                    <input id="min_limit" type="text" name="min_limit"
-                                                                        value="{{ old('min_limit', !empty($detailAccount->min_limit) ? $detailAccount->min_limit : '') }}"
-                                                                        placeholder="Please Enter Minimum limit"
-                                                                        class="form-control" required>
-                                                                    @if ($errors->has('min_limit'))
-                                                                        <div class="invalid-feedback">
-                                                                            {{ $errors->first('min_limit') }}
-                                                                        </div>
-                                                                    @endif
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <label for="max_limit" class="form-label">
-                                                                        Maximum Limit</label>
-                                                                    <input id="max_limit" type="text" name="max_limit"
-                                                                        value="{{ old('max_limit', !empty($detailAccount->max_limit) ? $detailAccount->max_limit : '') }}"
-                                                                        placeholder="Please Enter Maximum limit"
-                                                                        class="form-control" required>
-                                                                    @if ($errors->has('max_limit'))
-                                                                        <div class="invalid-feedback">
-                                                                            {{ $errors->first('max_limit') }}
-                                                                        </div>
-                                                                    @endif
-                                                                </div>
-                                                            </div>
-
-                                                        </div>
-                
 
 
 

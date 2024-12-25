@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Zone;
+use Illuminate\Http\Request;
 use App\Services\ZoneService;
 use App\Services\CommonService;
 use App\Services\PermissionService;
@@ -39,9 +40,11 @@ class ZoneController extends Controller
     {
         $pageTitle = 'Add Zone';
         $dropDownData = $this->zoneService->DropDownData();
+        $request = request()->all();
+        $zones = $this->zoneService->searchZone($request);
         // $sectors = Sector::pluck('name','id');
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
-        return view('zones.create', compact('permission', 'pageTitle', 'dropDownData'));
+        return view('zones.create', compact('permission','zones', 'pageTitle', 'dropDownData'));
     }
 
 
@@ -56,7 +59,7 @@ class ZoneController extends Controller
             $message = config('constants.update');
         }
         session()->flash('message', $message);
-        return redirect('zone/list');
+        return redirect('zone/create');
     }
 
 
@@ -65,9 +68,11 @@ class ZoneController extends Controller
         $pageTitle = 'Update The Zone';
         $zone = Zone::find($id);
         $dropDownData = $this->zoneService->DropDownData();
+        $request = request()->all();
+        $zones = $this->zoneService->searchZone($request);
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
 
-        return view('zones.create', compact('zone', 'pageTitle', 'dropDownData','permission'));
+        return view('zones.create', compact('zone','zones','pageTitle', 'dropDownData','permission'));
 
     }
 
@@ -75,5 +80,13 @@ class ZoneController extends Controller
     public function destroy()
     {
         return $this->commonService->deleteResource(Zone::class);
+    }
+
+    public function fetchZone(Request $request)
+    {
+
+        $data['zones'] = Zone::where("country_id", $request->country_id)->get(["id", "name"]);
+
+        return response()->json($data);
     }
 }

@@ -14,6 +14,7 @@ use App\Services\SaleReturnService;
 use App\Services\StockLedgerService;
 use App\Services\AccountLedgerService;
 use App\Http\Requests\StoreSaleReturnRequest;
+use App\Models\SaleMaster;
 
 class SalesReturnController extends Controller
 {
@@ -49,15 +50,30 @@ class SalesReturnController extends Controller
         return view('sale-return.index', compact('saleReturns', 'request','pageTitle'));
     }
 
+    public function generate()
+    {
+        return view('sale-return.generate');
+    }
+
     /*
      * Show page of create sale.
      * */
-    public function create()
+    public function create(Request $request)
     {
-        $pageTitle = 'Create Sale Returns';
+        $pageTitle = 'Create Sale Return Invoice';
         $dropDownData = $this->salereturnService->DropDownData();
+        $invoiceNo = SaleReturnMaster::max('id') + 1;
+        $saleInvoiceMaster = SaleMaster::find($request->id);
+        
+
+        if (empty($dispatchNote)) {
+            abort(404);
+        }
+
         return view('sale-return.create', compact( 'pageTitle','dropDownData'));
     }
+
+
 
     /*
      * Save sale into db.

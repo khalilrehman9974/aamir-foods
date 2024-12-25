@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class SaleReturnMaster extends Model
@@ -10,12 +9,9 @@ class SaleReturnMaster extends Model
     protected $guarded = ['id'];
     protected $table = 'sale_return_masters';
 
-    protected $fillable = ['dispatch_note','date', 'type_id','party_id','bilty_no','deliverd_to','saleman_id','transporter_id','business_id','f_year_id',
-    'remarks','total_amount','freight','scheme','commission'];
+    protected $fillable = ['sale_return_number','date','party_id','saleman','sector','area','deliverd_to','driver_name','bilty_no',
+    'transporter','business_id','f_year_id','remarks','gross_amount','boray_amount','carton_amount','scheme','commission','created_by','updated_by'];
 
-    public function type_id(){
-        return $this->hasOne(SalePurchaseType::class);
-    }
 
     public function party_id(){
         return $this->hasOne(CoaDetailAccount::class, 'id', 'party_id');

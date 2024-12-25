@@ -247,11 +247,11 @@
                                                                                 @if (!empty($dispatchNoteDetails))
 
                                                                                     @foreach ($dispatchNoteDetails as $dispatchNoteDetail)
-                                                                                    {{-- {{dd($dispatchNoteDetail);}} --}}
+                                                                                        {{-- {{dd($dispatchNoteDetail);}} --}}
                                                                                         <tr
                                                                                             class="tr_clone validator_0">
-                                                                                            <td
-                                                                                                class="delete-item-row">
+                                                                                            <td class="delete-item-row"
+                                                                                                style="padding: 0 px 0 px;">
                                                                                                 <ul
                                                                                                     class="table-controls">
                                                                                                     <li>
@@ -300,34 +300,35 @@
                                                                                                     value="2"
                                                                                                     hidden>
                                                                                             </td>
-                                                                                            <td class="product">
-                                                                                                <select id="product"
-                                                                                                    type="text"
+                                                                                            <td class="product"
+                                                                                                style="padding: 0 px 0 px !important;">
+                                                                                                {{-- <select id="product_id"
                                                                                                     name="product_id[]"
-                                                                                                    placeholder="Please Select the Product"
-                                                                                                    class="{{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} form-control  mb-3 select2 custom-select product_2"
-                                                                                                    >
+                                                                                                    class="mb-3 form-control select2 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} product_2">
                                                                                                     <option
-                                                                                                        value="">
-                                                                                                        Select
+                                                                                                        selected="">
+                                                                                                        Please
+                                                                                                        select
                                                                                                         the
-                                                                                                        Product
+                                                                                                        product
                                                                                                     </option>
-                                                                                                    @foreach ($dropDownData['products'] as $key => $value)
-                                                                                                    <option
-                                                                                                    value = "{{ $key }}" {{ (old('product_id') == $key ? 'selected' : '') || (!empty($dispatchNoteDetail->product_id) ? collect($dispatchNoteDetail->product_id)->contains($key) : '') ? 'selected' : '' }} >
-                                                                                                    {{ $value }} </option>
-                                                                                                     @endforeach
-                                                                                                </select>
-                                                                                                {{-- <input type="text"
+                                                                                                    @foreach ($dropDownData['products'][$dispatchNoteDetail->product_id] as $key => $value)
+                                                                                                        <option
+                                                                                                            value="{{ $key }}"
+                                                                                                            {{ (old('product_id') == $key ? 'selected' : '') || (!empty($dispatchNoteDetail->product_id) ? collect($dispatchNoteDetail->product_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                                            {{ $value }}
+                                                                                                        </option>
+                                                                                                    @endforeach
+                                                                                                </select> --}}
+                                                                                                <input type="text"
                                                                                                     style="color: black;"
                                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} product_2"
                                                                                                     id="product_id"
-                                                                                                    {{-- value=" {{ (old('product_id') 'selected' : '') || (!empty($dispatchNoteDetail->product_id) ? collect($dispatchNoteDetail->product_id)->contains($key) : '') ? 'selected' : '' }}"
-                                                                                                    value="{{ $dispatchNoteDetail->product_id }}"
+                                                                                                  value=" {{ (old('product_id') 'selected' : '') || (!empty($dispatchNoteDetail->product_id) ? collect($dispatchNoteDetail->product_id)->contains($key) : '') ? 'selected' : '' }}"
+                                                                                                    {{-- value="{{ ($dispatchNoteDetail->product_id ) ? 'selected' : '' }}" --}}
                                                                                                     name="product_id[]"
                                                                                                     placeholder="Product"
-                                                                                                    readonly> --}}
+                                                                                                    readonly>
                                                                                                 <input type="text"
                                                                                                     style="color: black;"
                                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_2"
@@ -347,7 +348,8 @@
                                                                                                     readonly>
                                                                                             </td>
 
-                                                                                            <td class="quantity">
+                                                                                            <td class="quantity"
+                                                                                                style="padding: 0 px 0 px !important;">
                                                                                                 <input type="text"
                                                                                                     id="quantity"
                                                                                                     class="qty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_2"
@@ -643,7 +645,7 @@
                 // data-id=currentIndex
                 '<td class="product"> <select id="product" type = "text" name = "product_id[]" class ="form-control select2 custom-select form-control-sm  product_' +
                 currentIndex +
-                '" placeholder = "Please Select the Product"   required ><option value = "" >Select the Product </option> @foreach ($dropDownData['products'] as $key => $value)<option value = "{{ $key }}" {{ (old('product_id') == $key ? 'selected' : '') || (!empty($dispatchNoteDetails->product_id) ? collect($dispatchNoteDetails->product_id)->contains($key) : '') ? 'selected' : '' }} >{{ $value }} </option> @endforeach </select> <input id="packing" name="packing_type[]" style="color: black; " type="text" class = "packing form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_' +
+                '" placeholder = "Please Select the Product"   required ><option value = "" >Select the Product </option> @foreach ($dropDownData['products'] as $key => $value)<option value = "{{ $key }}" {{ (old('product_id') == $key ? 'selected' : '') || (!empty($dispatchNoteDetail->product_id) ? collect($dispatchNoteDetail->product_id)->contains($key) : '') ? 'selected' : '' }} >{{ $value }} </option> @endforeach </select> <input id="packing" name="packing_type[]" style="color: black; " type="text" class = "packing form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_' +
                 currentIndex +
                 '" placeholder="P.T" readonly><input type="text" style="color: black; " placeholder="M.T" name="measurement_type[]" id="measurement" class = "measurement form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_' +
                 currentIndex + '" readonly> </td> ' +
@@ -672,7 +674,6 @@
 
             $(document).on('click', 'body *', function() {
                 $('.dozen').on("focusout", function() {
-                    console.log("Maaz Here");
                     var row_id = $(this).closest("tr").find(".row_id").val();
                     let quantity = $(this).closest("tr").find(".qty_" + row_id).val();
                     let dzns = $(this).closest("tr").find(".dozen_" + row_id).val();

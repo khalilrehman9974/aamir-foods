@@ -7,9 +7,13 @@ use App\Models\Zone;
 use App\Models\Sector;
 use App\Models\Country;
 use App\Models\SaleMan;
+use App\Models\SaleManArea;
+use App\Models\SaleManZone;
 use Illuminate\Http\Request;
+use App\Models\SaleManSector;
 use App\Services\CommonService;
 use App\Services\SaleManService;
+use Illuminate\Support\Facades\DB;
 use App\Services\PermissionService;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\SaleManRequest;
@@ -40,31 +44,44 @@ class SaleManController extends Controller
 
     public function create()
     {
+        $categories = Country::all();
         $countries = $this->saleManService->getCountries();
         $zones = $this->saleManService->getZones();
         $sectors = $this->saleManService->getSectors();
         $areas = $this->saleManService->getAreas();
         $pageTitle = 'Add SaleMan';
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
-        return view('sale_mans.create', compact('permission', 'countries','zones', 'sectors','areas','pageTitle'));
+        return view('sale_mans.create', compact('permission','categories','countries','zones', 'sectors','areas','pageTitle'));
     }
 
 
     public function store(SaleManRequest $request)
     {
-        $data = $request->except('_token', 'id');
-        $data['created_by'] = Auth::user()->id;
-        $data['updated_by'] = Auth::user()->id;
-        $this->saleManService->findUpdateOrCreate(SaleMan::class, ['id' => !empty(request('id')) ? request('id') : null], $data);
+        DB::beginTransaction();
+        try {
 
-        $message = config(
-            'constants.add'
-        );
-        if (request('id')) {
-            $message = config('constants.update');
+        $request = $request->except('_token', 'id');
+
+        $saleManMasterData = $this->saleManService->prepareSaleManMasterData($request);
+        $saleManMasterInsert = $this->saleManService->findUpdateOrCreate(SaleMan::class, ['id' => !empty(request('id')) ? request('id') : null], $saleManMasterData);
+
+        $saleManZoneData = $this->saleManService->prepareSaleManZonesData($request, $saleManMasterInsert->id);
+        $this->saleManService->saveSaleManZones($saleManZoneData);
+
+        $saleManSectorData = $this->saleManService->prepareSaleManSectorData($request, $saleManMasterInsert->id);
+        $this->saleManService->saveSaleManSectors($saleManSectorData);
+
+        $saleManAreaData = $this->saleManService->prepareSaleManAreaData($request, $saleManMasterInsert->id);
+        $this->saleManService->saveSaleManAreas($saleManAreaData);
+
+        DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect('saleMan/create')->with('error', $e->getMessage());
         }
-        session()->flash('message', $message);
-        return redirect('saleMan/list');
+
+        return redirect('saleMan/list')->with('message', config('constants.add'));
+
     }
 
 
@@ -76,6 +93,10 @@ class SaleManController extends Controller
         }
         $pageTitle = 'Update SaleMan';
         // $countries = Country::get(["name", "id"]);
+        $saleManZones = SaleManZone::with('zones')->where('master_id', $id)->get();
+        // dd($saleManZones);
+        $saleManSectors = SaleManSector::with('sectors')->where('master_id', $id)->get();
+        $saleManAreas = SaleManArea::with('areas')->where('master_id', $id)->get();
         $countries = $this->saleManService->getCountries();
         $zones = $this->saleManService->getZones();
         $sectors = $this->saleManService->getSectors();
@@ -83,7 +104,41 @@ class SaleManController extends Controller
 
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
 
-        return view('sale_mans.create', compact('saleMan','pageTitle','countries','zones','sectors', 'areas','permission'));
+        return view('sale_mans.edit', compact('saleMan','saleManZones','saleManSectors',
+        'saleManAreas','pageTitle','countries','zones','sectors', 'areas','permission'));
+    }
+
+
+
+    public function update(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+
+        SaleManZone::where('master_id', $request['id'])->delete();
+        SaleManSector::where('master_id', $request['id'])->delete();
+        SaleManArea::where('master_id', $request['id'])->delete();
+        $request = $request->except('_token', 'id');
+
+        $saleManMasterData = $this->saleManService->prepareSaleManMasterData($request);
+        $saleManMasterInsert = $this->saleManService->findUpdateOrCreate(SaleMan::class, ['id' => !empty(request('id')) ? request('id') : null], $saleManMasterData);
+
+        $saleManZoneData = $this->saleManService->prepareSaleManZonesData($request, $saleManMasterInsert->id);
+        $this->saleManService->saveSaleManZones($saleManZoneData);
+
+        $saleManSectorData = $this->saleManService->prepareSaleManSectorData($request, $saleManMasterInsert->id);
+        $this->saleManService->saveSaleManSectors($saleManSectorData);
+
+        $saleManAreaData = $this->saleManService->prepareSaleManAreaData($request, $saleManMasterInsert->id);
+        $this->saleManService->saveSaleManAreas($saleManAreaData);
+
+         DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect('saleMan/create')->with('error', $e->getMessage());
+        }
+
+        return redirect('saleMan/list')->with('message', config('constants.update'));
     }
 
 
@@ -94,7 +149,7 @@ class SaleManController extends Controller
 
     public function fetchZone(Request $request)
     {
-        $data['zones'] = Zone::where("country_id", $request->country_id)
+        $data['zones'] = Zone::whereIn("country_id", [$request->country_id])
             ->get(["name", "id"]);
 
         return response()->json($data);
@@ -102,8 +157,11 @@ class SaleManController extends Controller
 
     public function fetchSector(Request $request)
     {
-        $data['sectors'] = Sector::where("zone_id", $request->zone_id)
-            ->get(["name", "id"]);
+
+        $countries = $request->zone_id;
+        $data['sectors'] = Sector::whereIn("zone_id",$countries)
+            ->get();
+
         $data['areas'] = Area::where("sector_id", $request->sector_id)
             ->get(["name", "id"]);
 
@@ -112,9 +170,27 @@ class SaleManController extends Controller
 
     public function fetchArea(Request $request)
     {
-        $data['areas'] = Area::where("sector_id", $request->sector_id)
-            ->get(["name", "id"]);
-
+        $sectors = $request->sector_id;
+        $data['areas'] = Area::whereIn("sector_id", $sectors)
+            ->get();
         return response()->json($data);
+    }
+
+    public function getSubcategories(Request $request)
+    {
+        $subcategories = Zone::where('country_id', $request->category_id)->get();
+        return response()->json($subcategories);
+    }
+
+    public function getTypes(Request $request)
+    {
+        $types = Sector::where('zone_id', $request->subcategory_id)->get();
+        return response()->json($types);
+    }
+
+    public function getVariations(Request $request)
+    {
+        $variations = Area::where('sector_id', $request->type_id)->get();
+        return response()->json($variations);
     }
 }

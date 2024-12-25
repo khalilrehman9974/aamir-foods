@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->integer('measurement_type_id');
             $table->integer('packing_type_id');
+            $table->string('size')->nullable();
             $table->string('max_limit');
             $table->string('min_limit');
             $table->integer('created_by');

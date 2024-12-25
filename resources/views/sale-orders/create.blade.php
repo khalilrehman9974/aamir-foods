@@ -3,20 +3,17 @@
         {{ $pageTitle }}
     </x-slot>
     <x-slot:headerFiles>
+        <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
+        <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
+        @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
+        @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
             integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
         <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
         <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
-
-        <!--  BEGIN CUSTOM STYLE FILE  -->
-        <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
-        <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
-        @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
-        @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
-
-
         <!--  BEGIN CUSTOM STYLE FILE  -->
         <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
         <link rel="stylesheet" href="../src/plugins/src/filepond/filepond.min.css">
@@ -24,7 +21,7 @@
 
         <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
         <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
-
+        <!--  END CUSTOM STYLE FILE  -->
     </x-slot>
     <x-slot:scrollspyConfig>
         data-bs-spy="scroll" data-bs-target="#navSection" data-bs-offset="100"
@@ -102,13 +99,13 @@
 
                                                                 <div class="col-lg-0 col-12 ">
                                                                     <div class="row">
-                                                                        <div class="col-md-6 mt-5">
+                                                                        {{-- <div class="col-md-6 mt-5">
                                                                             <label for="party"
                                                                                 class="form-label">Party</label>
                                                                             <select id="party" type="text"
                                                                                 name="party_id"
                                                                                 placeholder="Please Select the Party Name"
-                                                                                class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} "
+                                                                                class="form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} select2 custom-select"
                                                                                 required>
                                                                                 <option value="">Select
                                                                                 </option>
@@ -125,6 +122,30 @@
                                                                                     <strong>{{ $message }}</strong>
                                                                                 </span>
                                                                             @enderror
+                                                                        </div> --}}
+                                                                        <div class="col-md-6 mt-5">
+                                                                            <label for="party"
+                                                                                class="form-label">Party</label>
+                                                                            <select id="party" type="text"
+                                                                                name="party_id"
+                                                                                placeholder="Please Select the Party Name"
+                                                                                class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} party"
+                                                                                required>
+                                                                                <option value="">Select
+                                                                                </option>
+                                                                                @foreach ($dropDownData['parties'] as $key => $value)
+                                                                                    <option value="{{ $key }}"
+                                                                                        {{ (old('party_id') == $key ? 'selected' : '') || (!empty($purchaseOrder->party_id) ? collect($purchaseOrder->party_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                        {{ $value }}
+                                                                                    </option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                            @error('party_id')
+                                                                                <span style="color:red".
+                                                                                    class="invalid-feedback">
+                                                                                    <strong>{{ $message }}</strong>
+                                                                                </span>
+                                                                            @enderror
                                                                         </div>
                                                                         <div class="col-md-6 mt-5">
                                                                             <label for="saleMan">
@@ -135,7 +156,7 @@
                                                                                 id="saleMan" name="saleman"
                                                                                 value="{{ old('saleman', !empty($saleOrder->saleman) ? $saleOrder->saleman : '') }}"
                                                                                 placeholder="Sale Man Name..."
-                                                                                readonly>
+                                                                                readonly multiple>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -692,29 +713,6 @@
     <script src="{{ asset('js/saleOrder.js') }}"></script>
 
 
-    <x-slot:footerFiles>
-        <script>
-            $('.select2').select2();
-        </script>
-
-        <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
-
-        <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
-        <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
-        {{-- <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script> --}}
-        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
-            integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-        {{-- <script src="{{ asset('plugins/global/vendors.min.js') }}"></script> --}}
-        @vite(['resources/assets/js/elements/custom-search.js'])
-
-
-
-
-    </x-slot>
     <script>
         document.getElementsByClassName('additem')[0].addEventListener('click', function() {
 
@@ -728,10 +726,9 @@
                 '</td>' +
                 '<td><input type="checkbox" name="row_id[]" class="row_id" value="' + currentIndex +
                 '" hidden></td>' +
-                // data-id=currentIndex
                 '<td class="product"> <select id="product" type = "text" name = "product_id[]" class ="form-control select2 custom-select form-control-sm  product_' +
                 currentIndex +
-                '" placeholder = "Please Select the Product"   required ><option value = "" >Select the Product </option> @foreach ($dropDownData['products'] as $key => $value)<option value = "{{ $key }}" {{ (old('product_id') == $key ? 'selected' : '') || (!empty($saleOrderDetail->product_id) ? collect($saleOrderDetail->product_id)->contains($key) : '') ? 'selected' : '' }} >{{ $value }} </option> @endforeach </select> <input id="packing" name="packing_type[]" style="color: black; " type="text" class = "packing form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_' +
+                '" placeholder = "Please Select the Product" required ><option value = "" >Select the Product </option> @foreach ($dropDownData['products'] as $key => $value)<option value = "{{ $key }}" {{ (old('product_id') == $key ? 'selected' : '') || (!empty($saleOrderDetail->product_id) ? collect($saleOrderDetail->product_id)->contains($key) : '') ? 'selected' : '' }} >{{ $value }} </option> @endforeach </select> <input id="packing" name="packing_type[]" style="color: black; " type="text" class = "packing form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_' +
                 currentIndex +
                 '" placeholder="P.T" readonly><input type="text" style="color: black; " placeholder="M.T" name="measurement_type[]" id="measurement" class = "measurement form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_' +
                 currentIndex + '" readonly> </td> ' +
@@ -820,7 +817,6 @@
 
             $(document).on('click', 'body *', function() {
                 $('.dozen').on("focusout", function() {
-
                     var row_id = $(this).closest("tr").find(".row_id").val();
                     let quantity = $(this).closest("tr").find(".qty_" + row_id).val();
                     let dzns = $(this).closest("tr").find(".dozen_" + row_id).val();
@@ -1006,6 +1002,93 @@
             // });
         });
     </script>
+
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2();
+            // console.log("DOM is loaded");
+
+            $('.party').on('change', function() {
+                var name = $('#party :selected').text();
+                let url = config.routes.getPartySaleManDetail + '/' + name;
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        $("#saleMan").val(response.name.name);
+
+                    },
+                    complete: function() {
+                        $('#loading').css('display', 'none');
+                    },
+                    error: function(errorThrown) {
+                        $('').val('');
+                        var errors = errorThrown.responseJSON.errors;
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Something went wrong',
+                        })
+                    }
+                })
+            });
+            $('.party').on('change', function() {
+                var name = $('#party :selected').text();
+                let url = config.routes.getPartySectorDetail + '/' + name;
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        $("#sector").val(response.sector);
+                    },
+                    complete: function() {
+                        $('#loading').css('display', 'none');
+                    },
+                    error: function(errorThrown) {
+                        $('').val('');
+                        var errors = errorThrown.responseJSON.errors;
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Something went wrong',
+                        })
+                    }
+                })
+            });
+
+
+            $('.party').on('change', function() {
+                var name = $('#party :selected').text();
+                let url = config.routes.getPartyAreaDetail + '/' + name;
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        $("#area").val(response.area);
+                    },
+                    complete: function() {
+                        $('#loading').css('display', 'none');
+                    },
+                    error: function(errorThrown) {
+                        $('').val('');
+                        var errors = errorThrown.responseJSON.errors;
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Something went wrong',
+                        })
+                    }
+                })
+            });
+
+        });
+    </script>
     <script>
         .invoice - detail - items {
             padding: 0 px!important;
@@ -1025,4 +1108,24 @@
             },
         }
     </script>
+    <x-slot:footerFiles>
+        <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
+
+        <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
+        <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>
+
+        <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
+        <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
+        {{-- <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script> --}}
+        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
+            integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        {{-- <script src="{{ asset('js/common.js') }}"></script> --}}
+
+        <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
+        @vite(['resources/assets/js/elements/custom-search.js'])
+
+    </x-slot>
 </x-base-layout>

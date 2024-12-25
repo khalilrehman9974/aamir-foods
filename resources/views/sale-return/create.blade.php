@@ -5,6 +5,13 @@
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <x-slot:headerFiles>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+            integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+
         <!--  BEGIN CUSTOM STYLE FILE  -->
         <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
         <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
@@ -19,7 +26,7 @@
 
         <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
         <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
-        <!--  END CUSTOM STYLE FILE  -->
+
     </x-slot>
 
     <x-slot:scrollspyConfig>
@@ -31,9 +38,8 @@
         <nav class="breadcrumb-style-one" aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Sale Return</li>
-                <li class="breadcrumb-item"><a href="{{ route('sale-return.sales-return') }}">List of Sale Returns</a>
-                </li>
+                <li class="breadcrumb-item active" aria-current="page">Sale</li>
+                <li class="breadcrumb-item"><a href="{{ route('sale-return.sales-return') }}">List of Sale Returns</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('sale-return.create') }}">Create</a></li>
 
             </ol>
@@ -46,7 +52,7 @@
                 <div class="widget-header">
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4>Create Sale Return</h4>
+                            <h4>Sale Return Invoice</h4>
                         </div>
                     </div>
                 </div>
@@ -68,360 +74,460 @@
                                                         @csrf
                                                         <input type="hidden" name="saleId" id="saleId"
                                                             value="{{ isset($sale->id) ? $sale->id : '' }}" />
+
                                                         <div class="form-group">
-                                                            <div class="row">
-                                                                <div class="col-md-6 ">
-                                                                    <label for="dispatch_note"
-                                                                        class="form-label">Dispatch Note# </label>
-                                                                    <input id="dispatch_note" type="dispatch_note"
-                                                                        name="dispatch_note"
-                                                                        value="{{ old('dispatch_note', !empty($sale->dispatch_note) ? $sale->dispatch_note : '') }}"
-                                                                        placeholder="Please Enter The Dispatch Note # "
-                                                                        class="form-control" required>
+                                                            <div class="row  invoice-content">
+                                                                <div class="col-lg-0 col-6">
+                                                                    <label for="sale_order_number"
+                                                                        class="form-label">Sale Return Invoice# </label>
+                                                                    <input id="sale_order_number" type="text"
+                                                                        style="color:black;" name="sale_order_number"
+                                                                        value="{{ $invoiceNo }}"
+                                                                        class="form-control form-control-sm" readonly>
                                                                 </div>
 
-                                                                <div class="col-md-6">
-                                                                    <label for="date">
-                                                                        Date</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="date" placeholder="Select The Date">
+                                                                <div class="col-lg-0 col-6">
+                                                                    <label for="date" class="form-label">Date</label>
+                                                                    <input id="date" type="date"
+                                                                        name="date" style="color:black;"
+                                                                        value="{{ $saleInvoiceMaster->date }}"
+                                                                        class="form-control form-control-sm" readonly>
                                                                 </div>
+
                                                             </div>
 
                                                             <div class="row">
-                                                                <div class="col-md-6 ">
-                                                                    <label for="party_id"
-                                                                        class="form-label">Party</label>
-                                                                    <select id="party_id" type="text"
+                                                                <div class="col-lg-0 col-6" style="float: right">
+                                                                    <label for="party_id">
+                                                                        Party</label>
+                                                                    <input type="text"
+                                                                        class="form-control form-control-sm"
+                                                                        id="party_id" style="color:black;"
                                                                         name="party_id"
-                                                                        value="{{ old('party_id', !empty($sale->party_id) ? $sale->party_id : '') }}"
-                                                                        placeholder="Please Select the Party Name"
-                                                                        class="form-control select2 custom-select"
-                                                                        required>
-                                                                        <option value="">Select</option>
-                                                                        @foreach ($dropDownData['parties'] as $key => $value)
-                                                                            <option value="{{ $key }}"
-                                                                                {{ (old('party_id') == $key ? 'selected' : '') || (!empty($sale->party_id) ? collect($sale->party_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                {{ $value }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                    <div class="invalid-feedback">
-                                                                    </div>
+                                                                        value="{{ $saleInvoiceMaster->party_id }}"
+                                                                        placeholder="Party " readonly>
                                                                 </div>
-                                                                <div class="col-md-6 ">
-                                                                    <label for="saleman_id" class="form-label">Sale
-                                                                        Man</label>
-                                                                    <select id="saleman_id" type="text"
-                                                                        name="saleman_id"
-                                                                        value="{{ old('saleman_id', !empty($sale->saleman_id) ? $sale->saleman_id : '') }}"
-                                                                        placeholder="Please Select the Sale Man"
-                                                                        class="form-control select2 form-control custom-select"
-                                                                        required>
-                                                                        <option value="">Select</option>
-                                                                        @foreach ($dropDownData['saleMans'] as $key => $value)
-                                                                            <option value="{{ $key }}"
-                                                                                {{ (old('saleman_id') == $key ? 'selected' : '') || (!empty($sale->saleman_id) ? collect($sale->saleman_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                {{ $value }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                    <div class="invalid-feedback">
+                                                                <div class="col-lg-0 col-6" style="float: right">
+                                                                    <label for="date">
+                                                                        Sale Man</label>
+                                                                    <input type="text" name="saleman"
+                                                                        value="{{ $saleInvoiceMaster->saleman }}"
+                                                                        class="form-control form-control-sm"
+                                                                        style="color:black;" id="saleman"
+                                                                        placeholder="Sale Man" readonly>
+                                                                </div>
 
-                                                                    </div>
+
+                                                            </div>
+                                                            <div class="row">
+
+                                                                <div class="col-lg-0 col-6">
+                                                                    <label for="belt"
+                                                                        class="form-label">Belt</label>
+                                                                    <input id="sector" type="sector"
+                                                                        name="sector" style="color:black;"
+                                                                        value="{{ $saleInvoiceMaster->sector }}"
+                                                                        placeholder="Please Enter the Belt "
+                                                                        class="form-control form-control-sm" readonly>
+                                                                </div>
+                                                                <div class="col-lg-0 col-6">
+                                                                    <label for="area"
+                                                                        class="form-label">Area</label>
+                                                                    <input id="area" type="area"
+                                                                        name="area" style="color:black;"
+                                                                        value="{{ $saleInvoiceMaster->area }}"
+                                                                        placeholder="Please Enter the Area "
+                                                                        class="form-control form-control-sm" readonly>
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-lg-0 col-6">
+                                                                    <label for="deliverd_to"
+                                                                        class="form-label">Delivered To</label>
+                                                                    <input id="deliverd_to" type="deliverd_to"
+                                                                        name="deliverd_to" style="color:black;"
+                                                                        placeholder="Deliverd To "
+                                                                        class="form-control form-control-sm" readonly>
+                                                                </div>
+                                                                <div class="col-lg-0 col-6">
+                                                                    <label for="driver_name" class="form-label">Driver
+                                                                        Name</label>
+                                                                    <input id="driver_name" type="driver_name"
+                                                                        name="driver_name" style="color:black;"
+                                                                        placeholder="Please Enter the Driver Name "
+                                                                        class="form-control form-control-sm" readonly>
                                                                 </div>
                                                             </div>
                                                             <div class="row">
-                                                                <div class="col-md-6 ">
+                                                                <div class="col-lg-0 col-6">
+                                                                    <label for="transporter" class="form-label">Transporter
+                                                                        </label>
+                                                                    <input id="transporter" type="transporter"
+                                                                        name="transporter" style="color:black;"
+                                                                        placeholder="Transporter ...."
+                                                                        class="form-control form-control-sm" readonly>
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-lg-0 col-6">
                                                                     <label for="bilty_no" class="form-label">Bilty
-                                                                        Number </label>
-                                                                    <input id="bilty_no" type="bilty_no"
-                                                                        name="bilty_no"
-                                                                        value="{{ old('bilty_no', !empty($sale->bilty_no) ? $sale->bilty_no : '') }}"
+                                                                        No</label>
+                                                                    <input id="bility_no" type="bilty_no"
+                                                                        name="bilty_no" style="color:black;"
                                                                         placeholder="Please Enter the Bilty No "
-                                                                        class="form-control" required>
+                                                                        class="form-control form-control-sm" readonly>
                                                                 </div>
-                                                                <div class="col-md-6 ">
-                                                                    <label for="transporter_id"
-                                                                        class="form-label">Transporter</label>
-                                                                    <select id="transporter_id" type="text"
-                                                                        name="transporter_id"
-                                                                        value="{{ old('transporter_id', !empty($sale->transporter_id) ? $sale->transporter_id : '') }}"
-                                                                        placeholder="Please Select the Transporter"
-                                                                        class="form-control select2 form-control mb-3 custom-select"
-                                                                        required>
-                                                                        <option value="">Select</option>
-                                                                        @foreach ($dropDownData['transporters'] as $key => $value)
-                                                                            <option value="{{ $key }}"
-                                                                                {{ (old('transporter_id') == $key ? 'selected' : '') || (!empty($sale->transporter_id) ? collect($sale->transporter_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                {{ $value }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                    <div class="invalid-feedback">
-
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-lg-12">
-                                                                <label for="deliverd_to" class="form-label">Deliverd
-                                                                    To</label>
-                                                                <input id="deliverd_to" type="text"
-                                                                    name="deliverd_to"
-                                                                    value="{{ old('deliverd_to', !empty($sale->deliverd_to) ? $sale->deliverd_to : '') }}"
-                                                                    placeholder="Deliverd to.. " class="form-control"
-                                                                    required>
                                                             </div>
                                                         </div>
 
-                                                        <div class="tab-content" id="pills-tabContent">
-                                                            <div class="invoice-detail-items">
+                                                        <div class="invoice-detail-terms"
+                                                            style="padding: 0px 0px 0px 0px !important;">
+                                                            <div class="tab-content mt-5" id="pills-tabContent">
+                                                                <div class="invoice-detail-items"
+                                                                    style="padding:0px 0px 0px 0px !important;">
 
-                                                                <div class="table-responsive">
-                                                                    <table class="table item-table">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th class="">
-                                                                                </th>
-                                                                                <th>Product</th>
-                                                                                <th class="">
-                                                                                    Qty</th>
-                                                                                <th class="">
-                                                                                    unit</th>
-                                                                                <th class="">
-                                                                                    Total Unit</th>
-                                                                                <th class="">
-                                                                                    Rate</th>
-                                                                                <th class="text-right">
-                                                                                    Amount</th>
+                                                                    <div class="table-responsive">
+                                                                        <table class="table item-table">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>
+                                                                                    </th>
+                                                                                    <th></th>
+                                                                                    <th scope="col"
+                                                                                        style="width: 30%">
+                                                                                        Product</th>
+                                                                                    <th class="">
+                                                                                        Quantity</th>
+                                                                                    {{-- <th class="">
+                                                                                                Packing Type</th> --}}
+                                                                                    <th class="">
+                                                                                        Dzns
+                                                                                    </th>
+                                                                                    <th class="text-right">
+                                                                                        Total
+                                                                                        Dzns</th>
+                                                                                    <th class="text-right">
+                                                                                        Rate
+                                                                                    </th>
 
-                                                                            </tr>
-                                                                            <tr aria-hidden="true"
-                                                                                class="mt-3 d-block table-row-hidden">
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <td class="delete-item-row">
-                                                                                    <ul class="table-controls">
-                                                                                        <li><a href="javascript:void(0);"
-                                                                                                class="delete-item"
-                                                                                                data-toggle="tooltip"
-                                                                                                data-placement="top"
-                                                                                                title=""
-                                                                                                data-original-title="Delete"><svg
-                                                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                                                    width="24"
-                                                                                                    height="24"
-                                                                                                    viewBox="0 0 24 24"
-                                                                                                    fill="none"
-                                                                                                    stroke="currentColor"
-                                                                                                    stroke-width="2"
-                                                                                                    stroke-linecap="round"
-                                                                                                    stroke-linejoin="round"
-                                                                                                    class="feather feather-x-circle">
-                                                                                                    <circle
-                                                                                                        cx="12"
-                                                                                                        cy="12"
-                                                                                                        r="10">
-                                                                                                    </circle>
-                                                                                                    <line
-                                                                                                        x1="15"
-                                                                                                        y1="9"
-                                                                                                        x2="9"
-                                                                                                        y2="15">
-                                                                                                    </line>
-                                                                                                    <line
-                                                                                                        x1="9"
-                                                                                                        y1="9"
-                                                                                                        x2="15"
-                                                                                                        y2="15">
-                                                                                                    </line>
-                                                                                                </svg></a>
-                                                                                        </li>
-                                                                                    </ul>
-                                                                                </td>
-                                                                                <td class="product">
-                                                                                    <select id="product_id"
-                                                                                        type="text"
-                                                                                        name="product_id[]"
-                                                                                        placeholder="Please Select the Product"
-                                                                                        class="form-control select2 form-control-sm custom-select"
-                                                                                        required>
-                                                                                        <option value="">
-                                                                                            Select the Product</option>
-                                                                                        @foreach ($dropDownData['products'] as $key => $value)
-                                                                                            <option
-                                                                                                value="{{ $key }}"
-                                                                                                {{ (old('product_id') == $key ? 'selected' : '') || (!empty($saleOrder->product_id) ? collect($saleOrder->product_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                                {{ $value }}
-                                                                                            </option>
-                                                                                        @endforeach
-                                                                                    </select>
-                                                                                </td>
+                                                                                    <th class="text-right">
+                                                                                        Amount
+                                                                                    </th>
 
-                                                                                <td class="text-right qty">
-                                                                                    <input type="text"
-                                                                                        class="form-control form-control-sm"
-                                                                                        placeholder="Qty">
-                                                                                </td>
-                                                                                <td class="unit">
-                                                                                    <input type="text"
-                                                                                        class="form-control form-control-sm"
-                                                                                        placeholder="unit">
-                                                                                </td>
-                                                                                <td class="text-right amount">
-                                                                                    <span class="editable-amount"><span
-                                                                                            class="currency"></span>
-                                                                                        <span
-                                                                                            class="amount">0.00</span></span>
-                                                                                </td>
-                                                                                <td class="rate">
-                                                                                    <input type="text"
-                                                                                        class="form-control form-control-sm"
-                                                                                        placeholder="Rate">
-                                                                                </td>
-                                                                                <td class="text-right amount">
-                                                                                    <span class="editable-amount"><span
-                                                                                            class="currency"></span>
-                                                                                        <span
-                                                                                            class="amount">0.00</span></span>
-                                                                                </td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
+                                                                                </tr>
+                                                                                <tr aria-hidden="true"
+                                                                                    class="mt-3 d-block table-row-hidden">
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+
+                                                                                @if (!empty($dispatchNoteDetails))
+
+                                                                                    @foreach ($dispatchNoteDetails as $dispatchNoteDetail)
+                                                                                        {{-- {{dd($dispatchNoteDetail);}} --}}
+                                                                                        <tr
+                                                                                            class="tr_clone validator_0">
+                                                                                            <td
+                                                                                                class="delete-item-row" style="padding: 0 px 0 px;">
+                                                                                                <ul
+                                                                                                    class="table-controls">
+                                                                                                    <li>
+                                                                                                        <a href="javascript:void(0);"
+                                                                                                            class="delete-item"
+                                                                                                            data-toggle="tooltip"
+                                                                                                            data-placement="top"
+                                                                                                            title=""
+                                                                                                            data-original-title="Delete">
+                                                                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                                                                width="24"
+                                                                                                                height="24"
+                                                                                                                viewBox="0 0 24 24"
+                                                                                                                fill="none"
+                                                                                                                stroke="currentColor"
+                                                                                                                stroke-width="2"
+                                                                                                                stroke-linecap="round"
+                                                                                                                stroke-linejoin="round"
+                                                                                                                class="feather feather-x-circle">
+                                                                                                                <circle
+                                                                                                                    cx="12"
+                                                                                                                    cy="12"
+                                                                                                                    r="10">
+                                                                                                                </circle>
+                                                                                                                <line
+                                                                                                                    x1="15"
+                                                                                                                    y1="9"
+                                                                                                                    x2="9"
+                                                                                                                    y2="15">
+                                                                                                                </line>
+                                                                                                                <line
+                                                                                                                    x1="9"
+                                                                                                                    y1="9"
+                                                                                                                    x2="15"
+                                                                                                                    y2="15">
+                                                                                                                </line>
+                                                                                                            </svg>
+                                                                                                        </a>
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <input type="text"
+                                                                                                    name="row_id[]"
+                                                                                                    class="row_id"
+                                                                                                    value="2"
+                                                                                                    hidden>
+                                                                                            </td>
+                                                                                            <td class="product" style="padding: 0 px 0 px !important;">
+                                                                                                <select id="product"
+                                                                                                    type="text"
+                                                                                                    name="product_id[]"
+                                                                                                    placeholder="Please Select the Product"
+                                                                                                    class="{{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} form-control  mb-3 select2 custom-select product_2">
+                                                                                                    <option
+                                                                                                        value="">
+                                                                                                        Select
+                                                                                                        the
+                                                                                                        Product
+                                                                                                    </option>
+                                                                                                    @foreach ($dropDownData['products'] as $key => $value)
+                                                                                                        <option
+                                                                                                            value = "{{ $key }}"
+                                                                                                            {{ (old('product_id') == $key ? 'selected' : '') || (!empty($dispatchNoteDetail->product_id) ? collect($dispatchNoteDetail->product_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                                            {{ $value }}
+                                                                                                        </option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                                {{-- <input type="text"
+                                                                                                    style="color: black;"
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} product_2"
+                                                                                                    id="product_id"
+                                                                                                    {{-- value=" {{ (old('product_id') 'selected' : '') || (!empty($dispatchNoteDetail->product_id) ? collect($dispatchNoteDetail->product_id)->contains($key) : '') ? 'selected' : '' }}"
+                                                                                                    value="{{ $dispatchNoteDetail->product_id }}"
+                                                                                                    name="product_id[]"
+                                                                                                    placeholder="Product"
+                                                                                                    readonly> --}}
+                                                                                                <input type="text"
+                                                                                                    style="color: black;"
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_2"
+                                                                                                    id="packing"
+                                                                                                    value="{{ old('packing_type', !empty($dispatchNoteDetail->packing_type) ? $dispatchNoteDetail->packing_type : '') }}"
+                                                                                                    name="packing_type[]"
+                                                                                                    placeholder="P.T"
+                                                                                                    readonly>
+
+                                                                                                <input type="text"
+                                                                                                    style="color: black;"
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_2"
+                                                                                                    placeholder="M.T"
+                                                                                                    value="{{ old('measurement_type', !empty($dispatchNoteDetail->measurement_type) ? $dispatchNoteDetail->measurement_type : '') }}"
+                                                                                                    name="measurement_type[]"
+                                                                                                    id="measurement"
+                                                                                                    readonly>
+                                                                                            </td>
+
+                                                                                            <td class="quantity" style="padding: 0 px 0 px !important;">
+                                                                                                <input type="text"
+                                                                                                    id="quantity"
+                                                                                                    class="qty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_2"
+                                                                                                    value="{{ old('quantity', !empty($dispatchNoteDetail->quantity) ? $dispatchNoteDetail->quantity : '') }}"
+                                                                                                    name="quantity[]"
+                                                                                                    style="color:black;"
+                                                                                                    placeholder="Qty"
+                                                                                                    readonly>
+                                                                                            </td>
+
+                                                                                            <td class="total_unit">
+                                                                                                <input type="text"
+                                                                                                    id="dzn"
+                                                                                                    name="dzns[]"
+                                                                                                    value="{{ old('dzn', !empty($dispatchNoteDetail->dzn) ? $dispatchNoteDetail->dzn : '') }}"
+                                                                                                    class="dozen form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} dozen_2"
+                                                                                                    placeholder="Dzn"
+                                                                                                    required>
+                                                                                            </td>
+                                                                                            <td class="total_dzns">
+                                                                                                <input type="text"
+                                                                                                    id="total_dzns"
+                                                                                                    style="color: black;"
+                                                                                                    name="total_dzns[]"
+                                                                                                    value="{{ old('total_dzn', !empty($dispatchNoteDetail->total_dzn) ? $dispatchNoteDetail->total_dzn : '') }}"
+                                                                                                    class="totDzn form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} totDzn_2"
+                                                                                                    placeholder="Tot.Dzns"
+                                                                                                    readonly>
+                                                                                            </td>
+
+                                                                                            <td class="rate">
+                                                                                                <input type="text"
+                                                                                                    id="rate"
+                                                                                                    name="rate[]"
+                                                                                                    value="{{ old('rate', !empty($dispatchNoteDetail->rate) ? $dispatchNoteDetail->rate : '') }}"
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} rate rate_2"
+                                                                                                    placeholder="Rate"
+                                                                                                    required>
+                                                                                            </td>
+
+                                                                                            <td class="amount">
+                                                                                                <input type="text"
+                                                                                                    id="amount"
+                                                                                                    style="color: black;"
+                                                                                                    value="{{ old('amount', !empty($dispatchNoteDetail->amount) ? $dispatchNoteDetail->amount : '') }}"
+                                                                                                    name="amount[]"
+                                                                                                    class="amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} amount_2"
+                                                                                                    placeholder="Amount"
+                                                                                                    readonly>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    @endforeach
+                                                                                @endif
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+
+                                                                    <a href="javascript:void(0);"
+                                                                        class="btn btn-dark additem" id="add-item"
+                                                                        hidden>Add
+                                                                        Item</a>
+
                                                                 </div>
 
-                                                                <a class="btn btn-dark additem">Add
-                                                                    Item</a>
+                                                                <div class="col-md-12">
+                                                                    <div class="row">
+                                                                        <div class="col-md-12" style="float: right;">
+                                                                            <div style="width: 40%; float: right;">
+                                                                                <label for="client-phone">Tot.
+                                                                                    Boray</label>
+                                                                                <input type="text"
+                                                                                    style="color: black;"
 
-                                                            </div>
+                                                                                    id="boray-amount"
+                                                                                    name="total_boray"
+                                                                                    class="quantity-amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                                    placeholder="Tot.Boray" readonly>
 
+                                                                                <label for="client-phone">Tot.
+                                                                                    Carton</label>
+                                                                                <input type="text"
+                                                                                    style="color: black;"
 
-                                                            <div class="invoice-detail-note">
-
-                                                                <div class="row">
-
-                                                                    <div class="col-md-12 align-self-center">
-
-                                                                        <div class="form-group row invoice-note">
-                                                                            <label for="invoice-detail-notes"
-                                                                                class="col-sm-12 col-form-label col-form-label-sm">Remarks</label>
-                                                                            <div class="col-sm-12">
-                                                                                <textarea class="form-control" id="remarks" placeholder='Enter The Remarks' style="height: 88px;"></textarea>
+                                                                                    id="carton-amount"
+                                                                                    name="total_carton"
+                                                                                    class="quantity-amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                                    placeholder="Tot.Carton" readonly>
                                                                             </div>
+
                                                                         </div>
 
                                                                     </div>
 
                                                                 </div>
 
-                                                            </div>
-                                                            <div class="invoice-detail-total">
+                                                                <div class="invoice-detail-note"
+                                                                    style="padding: 0px 0px 0px 0px !important;">
 
-                                                                <div class="row">
+                                                                    <div class="row">
 
-                                                                    <div class="col-md-12">
-                                                                        <div class="totals-row">
-                                                                            <div
-                                                                                class="invoice-totals-row invoice-summary-subtotal">
+                                                                        <div class="col-md-12 align-self-center">
 
-                                                                                <div class="invoice-summary-label">
-                                                                                    Gross Bill
+                                                                            <div class="form-group row invoice-note">
+                                                                                <label for="invoice-detail-notes"
+                                                                                    class="col-sm-12 col-form-label col-form-label-sm">Remarks</label>
+                                                                                <div class="col-sm-12">
+                                                                                    <textarea class="form-control" id="remarks" name="remarks" placeholder='Enter The Remarks' style="height: 88px;">{{ @$saleInvoiceMaster->remarks }}</textarea>
                                                                                 </div>
-
-                                                                                <div class="invoice-summary-value">
-                                                                                    <div class="subtotal-amount">
-                                                                                        <span
-                                                                                            class="currency">$</span><span
-                                                                                            class="amount">0.00</span>
-                                                                                    </div>
-                                                                                </div>
-
                                                                             </div>
 
+                                                                        </div>
 
+                                                                    </div>
 
-                                                                            <div
-                                                                                class="invoice-totals-row invoice-summary-total">
-
-                                                                                <div class="invoice-summary-label">
-                                                                                    Less: Freight</div>
-
-                                                                                <div class="invoice-summary-value">
-                                                                                    <div class="freight">
-                                                                                        <input id="freight"
-                                                                                            type="text"
-                                                                                            name="freight"
-                                                                                            value="{{ old('freight', !empty($sale->freight) ? $sale->freight : '') }}"
-                                                                                            class="form-control">
-                                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12" style="margin-top: 20px;">
+                                                                    <div class="row">
+                                                                        <div class="col-md-6">
+                                                                        </div>
+                                                                        <div class="col-md-6" style="float: right; ">
+                                                                            <div class="row">
+                                                                                <div class="col-md-2 class-label"
+                                                                                    style="color: black;">
+                                                                                    {{-- Tot. Amount --}}
+                                                                                    <label for=""><b>Gross.
+                                                                                            Amount
+                                                                                            :</b></label>
                                                                                 </div>
-
+                                                                                <div class="col-md-4"
+                                                                                    style="width: 70%; float: right; margin-left:10%;">
+                                                                                    {{-- <label for="client-phone">Tot.
+                                                                                        Amount</label> --}}
+                                                                                    <input type="text"
+                                                                                        style="color: black;"
+                                                                                        id="gross-amount"
+                                                                                        name="gross_bill"
+                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                                        placeholder="Gross.Amount"
+                                                                                        readonly>
+                                                                                </div>
                                                                             </div>
+                                                                        </div>
+                                                                    </div>
 
-                                                                            <div
-                                                                                class="invoice-totals-row invoice-summary-tax">
-
-                                                                                <div class="invoice-summary-label">
-                                                                                    Less: Scheme
+                                                                    <div class="row" style="margin-top: 10px;">
+                                                                        <div class="col-md-6">
+                                                                        </div>
+                                                                        <div class="col-md-6" style="float: right; ">
+                                                                            <div class="row">
+                                                                                <div class="col-md-2 class-label"
+                                                                                    style="color: black;">
+                                                                                    {{-- Tot. Amount --}}
+                                                                                    <label for=""><b>Offer/
+                                                                                            Discount:</b></label>
                                                                                 </div>
-
-                                                                                <div class="scheme">
-                                                                                    <input id="scheme"
-                                                                                        type="text" name="scheme"
-                                                                                        value="{{ old('scheme', !empty($sale->scheme) ? $sale->scheme : '') }}"
-                                                                                        class="form-control">
+                                                                                <div class="col-md-4"
+                                                                                    style="width: 70%; float: right; margin-left:10%;">
+                                                                                    <input type="text"
+                                                                                        style="color: black;"
+                                                                                        id="discount-amount"
+                                                                                        name="scheme"
+                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount"
+                                                                                        placeholder="Discount.Amount">
                                                                                 </div>
-
                                                                             </div>
-
-                                                                            <div
-                                                                                class="invoice-totals-row invoice-summary-tax">
-
-                                                                                <div class="invoice-summary-label">
-                                                                                    Less: Commission
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row" style="margin-top: 10px;">
+                                                                        <div class="col-md-6">
+                                                                        </div>
+                                                                        <div class="col-md-6" style="float: right; ">
+                                                                            <div class="row">
+                                                                                <div class="col-md-2 class-label"
+                                                                                    style="color: black;">
+                                                                                    {{-- Tot. Amount --}}
+                                                                                    <label
+                                                                                        for=""><b>Commission:</b></label>
                                                                                 </div>
-
-                                                                                <div class="commission">
-                                                                                    <input id="commission"
-                                                                                        type="text"
+                                                                                <div class="col-md-4"
+                                                                                    style="width: 70%; float: right; margin-left:10%;">
+                                                                                    {{-- <label for="client-phone">Tot.
+                                                                                        Amount</label> --}}
+                                                                                    <input type="text"
+                                                                                        style="color: black;"
+                                                                                        id="commission-amount"
                                                                                         name="commission"
-                                                                                        value="{{ old('commission', !empty($sale->commission) ? $sale->commission : '') }}"
-                                                                                        class="form-control">
+                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} commission"
+                                                                                        placeholder="Commission.Amount">
                                                                                 </div>
-
                                                                             </div>
-
-                                                                            <div
-                                                                                class="invoice-totals-row invoice-summary-balance-due">
-
-                                                                                <div class="invoice-summary-label">
-                                                                                    Total</div>
-
-                                                                                <div class="invoice-summary-value">
-                                                                                    <div class="balance-due-amount">
-                                                                                        <span
-                                                                                            class="currency">$</span><span>0.00</span>
-                                                                                    </div>
-                                                                                </div>
-
-                                                                            </div>
-
-                                                                            {{-- <input id="deliverd_to" type="text"
-                                                                                        name="deliverd_to"
-                                                                                        value="{{ old('deliverd_to', !empty($sale->deliverd_to) ? $sale->deliverd_to : '') }}"
-                                                                                        placeholder="Deliverd to.. "
-                                                                                        class="form-control" required>
-                                                                                </div> --}}
                                                                         </div>
                                                                     </div>
-
                                                                 </div>
-
                                                             </div>
                                                         </div>
-                                                        <a href="{{ route('sale-return.sales-return') }}"
-                                                            style="float: right;"
-                                                            class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
-                                                        @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
+                                                        <div class="form-group">
+                                                            <a href="{{ route('sale-return.sale-return') }}" style="float: right;"
+                                                                class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
+                                                            @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
+                                                            @endif
                                                             <button type="submit" style="float: right"
                                                                 class="btn btn-success  rounded bs-popover me-1 mt-5 mb-4 "
                                                                 data-bs-container="body" data-bs-placement="right"
@@ -432,12 +538,14 @@
                                                                     Update
                                                                 @endif
                                                             </button>
-                                                        @endif
+                                                        </div>
+                                                    </form>
                                                 </div>
-                                                </form>
                                             </div>
+
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -446,56 +554,210 @@
             </div>
         </div>
     </div>
-    </div>
+    <script src="{{ asset('js/saleInvoice.js') }}"></script>
 
-    <x-slot:footerFiles>
-        <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
-        <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>
-
-        <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
-        <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
-        <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script>
-
-        <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
-        @vite(['resources/assets/js/elements/custom-search.js'])
-
-
-
-
-    </x-slot>
     <script>
         document.getElementsByClassName('additem')[0].addEventListener('click', function() {
 
             let getTableElement = document.querySelector('.item-table');
             let currentIndex = getTableElement.rows.length;
-
             let $html = '<tr>' +
                 '<td class="delete-item-row">' +
                 '<ul class="table-controls">' +
                 '<li><a href="javascript:void(0);" class="delete-item" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></a></li>' +
                 '</ul>' +
                 '</td>' +
-                '<td class="product"><select id="product_id" type = "text" name = "product_id[]" placeholder = "Please Select the Product" class = "form-control select2 form-control-sm custom-select" required ><option value = "" > Select the Product </option> @foreach ($dropDownData['products'] as $key => $value)<option value = "{{ $key }}"{{ (old('product_id') == $key ? 'selected' : '') || (!empty($saleOrder->product_id) ? collect($saleOrder->product_id)->contains($key) : '') ? 'selected' : '' }}>{{ $value }} </option> @endforeach </select>' +
-                '<td class="rate">' +
-                '<input type="text" class="form-control  form-control-sm" placeholder="Qty">' +
-                ' </td>' +
-                '<td class="text-right qty"><input type="text" class="form-control  form-control-sm" placeholder="unit"></td>' +
-                '<td class="text-right amount"><span class="editable-amount"><span class="currency"></span> <span class="amount">0.00</span></td>' +
-                '<td class="text-right rate"><input type="text" class="form-control  form-control-sm" placeholder="Rate"></td>' +
-                '<td class="text-right amount"><span class="editable-amount"><span class="currency"></span> <span class="amount">0.00</span></td>' +
-                '<div class="form-check form-check-primary form-check-inline me-0 mb-0">' +
-                // '<input class="form-check-input inbox-chkbox contact-chkbox" type="checkbox">' +
+                '<td><input type="checkbox" name="row_id[]" class="row_id" value="' + currentIndex +
+                '" hidden></td>' +
+                // data-id=currentIndex
+                '<td class="product"> <select id="product" type = "text" name = "product_id[]" class ="form-control select2 custom-select form-control-sm  product_' +
+                currentIndex +
+                '" placeholder = "Please Select the Product"   required ><option value = "" >Select the Product </option> @foreach ($dropDownData['products'] as $key => $value)<option value = "{{ $key }}" {{ (old('product_id') == $key ? 'selected' : '') || (!empty($dispatchNoteDetails->product_id) ? collect($dispatchNoteDetails->product_id)->contains($key) : '') ? 'selected' : '' }} >{{ $value }} </option> @endforeach </select> <input id="packing" name="packing_type[]" style="color: black; " type="text" class = "packing form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_' +
+                currentIndex +
+                '" placeholder="P.T" readonly><input type="text" style="color: black; " placeholder="M.T" name="measurement_type[]" id="measurement" class = "measurement form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_' +
+                currentIndex + '" readonly> </td> ' +
+                '<td class="qty">' +
+                ' <input type="text" name="quantity[]" style="color:black;" id="quantity" class = "qty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_' +
+                currentIndex +
+                '" placeholder="Qty" required></td>' +
+                // '<td class="total_unit"> </td>' +
+                // '<td class="total"></td>' +
+                '<td class="dozen"> <input type="text" name="dzns[]" id="dzn" class = "dozen form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} dozen_' +
+                currentIndex +
+                ' "  placeholder="Dzns " required></td>' +
+                '<td class="totDzn"><input type="text" style="color: black;" name="total_dzns[]" class="totDzn form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} totDzn_' +
+                currentIndex + ' " placeholder="Tot Dzn" readonly></td>' +
+                '<td class="rate"><input type="text"  id="rate" name="rate[]" class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} rate rate_' +
+                currentIndex + ' " placeholder="Rate" required></td>' +
+                '<td class="amount"><input type="text"  id="amount" style="color: black;" name="amount[]" class="amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} amount_' +
+                currentIndex + ' " placeholder="Amount" readonly></td>' +
                 '</div>' +
                 '</div>' +
                 '</td>' +
                 '</tr>';
-
             $(".item-table tbody").append($html);
-            deleteItemRow();
+
+
+
+            $(document).on('click', 'body *', function() {
+                $('.dozen').on("focusout", function() {
+                    console.log("Maaz Here");
+                    var row_id = $(this).closest("tr").find(".row_id").val();
+                    let quantity = $(this).closest("tr").find(".qty_" + row_id).val();
+                    let dzns = $(this).closest("tr").find(".dozen_" + row_id).val();
+                    if (parseInt(quantity) > 0) {
+                        $(this).closest("tr").find(".totDzn_" + row_id).val(quantity * dzns);
+                    } else {
+                        $(this).closest("tr").find(".totDzn_" + row_id).val('');
+                    }
+                });
+                $('.rate').on("focusout", function() {
+
+                    var row_id = $(this).closest("tr").find(".row_id").val();
+                    let quantity = $(this).closest("tr").find(".totDzn_" + row_id).val();
+                    let price = $(this).closest("tr").find(".rate_" + row_id).val();
+                    // console.log(row_id + ", " + quantity + ", " + price);
+                    if (parseInt(quantity) > 0) {
+                        $(this).closest("tr").find(".amount_" + row_id).val(quantity * price);
+                    } else {
+                        $(this).closest("tr").find(".amount_" + row_id).val('');
+                    }
+                    doAmountTotal();
+                });
+
+
+                $('.delete-item').on("click", function() {
+                    doAmountTotal();
+                });
+
+                function doAmountTotal() {
+                    $('#total-amount').text("");
+                    var totalAmount = 0;
+                    $(".amount").each(function() {
+                        if (!isNaN(this.value) && this.value.length != 0) {
+                            totalAmount += parseFloat(this.value);
+                        }
+                    });
+                    $('#gross-amount').val(totalAmount.toFixed(2));
+                    $('#net-amount').val(totalAmount.toFixed(2));
+                }
+
+                $(".carriage, .discount, .commission").on("focusout", function() {
+                    var totalAmount = 0;
+                    $(".amount").each(function() {
+                        if (!isNaN(this.value) && this.value.length != 0) {
+                            totalAmount += parseFloat(this.value);
+                        }
+                    });
+                    let carriage = $(".carriage").val() ? $(".carriage").val() : 0;
+                    let discount = $(".discount").val() ? $(".discount").val() : 0;
+                    let commission = $(".commission").val() ? $(".commission").val() : 0;
+
+                    var totalLessAmount = parseInt(carriage) + parseInt(discount) + parseInt(
+                        commission);
+                    $('#net-amount').val(totalLessAmount ? totalAmount.toFixed(2) -
+                        totalLessAmount : totalAmount.toFixed(2));
+                })
+
+            });
+
+            $(document).on('click', 'body *', function() {
+                $('.amount').on("focusout", function() {
+                    doAmountTotal();
+                });
+
+                $('.delete-item').on("click", function() {
+                    doAmountTotal();
+                });
+
+                function doAmountTotal() {
+                    $('#total-amount').text("");
+                    var totalAmount = 0;
+                    $(".amount").each(function() {
+                        if (!isNaN(this.value) && this.value.length != 0) {
+                            totalAmount += parseFloat(this.value);
+                        }
+                    });
+                    $('#gross-amount').val(totalAmount.toFixed(2));
+                }
+            });
+
+
+            $(document).on('click', 'body *', function() {
+                $('.amount').on("focusout", function() {
+                    doAmountTotal();
+                });
+
+                $('.delete-item').on("click", function() {
+                    doAmountTotal();
+                });
+
+                function doAmountTotal() {
+                    $('#total-amount').text("");
+                    var totalAmount = 0;
+                    $(".amount").each(function() {
+                        if (!isNaN(this.value) && this.value.length != 0) {
+                            totalAmount += parseFloat(this.value);
+                        }
+                    });
+                    $('#gross-amount').val(totalAmount.toFixed(2));
+                }
+            });
+
+            $(document).on('click', 'body *', function() {
+                $('.qty').on("focusout", function() {
+                    doAmountTotal2();
+                });
+
+                $('.delete-item').on("click", function() {
+                    doAmountTotal2();
+                });
+
+                function doAmountTotal2() {
+                    $('#boray-amount').val("");
+                    $('#carton-amount').val("");
+                    var totalBorayAmount = 0;
+                    console.log(totalBorayAmount);
+                    var totalCartonAmount = 0;
+                    console.log(totalCartonAmount);
+                    var packingIndex = '.packing_' + currentIndex;
+
+                    $(".qty").each(function() {
+                        if (!isNaN(this.value) && this.value.length != 0) {
+                            var totalAmount = parseFloat(this.value);
+
+                            if (packingIndex.value === "Boray") {
+                                // console.log(packingType.value== Boray);
+                                totalBorayAmount += totalAmount;
+                            } else if (packingIndex.value === "Carton") {
+                                // console.log(packingType.value== Carton);
+                                totalCartonAmount += totalAmount;
+                            }
+
+                        }
+                    });
+
+                    // if (document.getElementById('packing').value == "Carton") {
+                    //     $('#carton-amount').val(totalAmount.toFixed(2));
+                    // }
+                    // if (document.getElementsByClassName('packing').value == "Boray") {
+                    //     $('#boray-amount').val(totalAmount.toFixed(2));
+                    // }
+
+                    // Assign calculated total amounts to their respective fields
+                    if (packingIndex.value === "Carton") {
+                        $('#carton-amount').val(totalCartonAmount.toFixed(2));
+                    }
+
+                    if (packingIndex.value === "Boray") {
+                        $('#boray-amount').val(totalBorayAmount.toFixed(2));
+                    }
+                }
+            });
 
         })
 
-        deleteItemRow();
+        // deleteItemRow();
         selectableDropdown(document.querySelectorAll('.invoice-select .dropdown-item'));
         selectableDropdown(document.querySelectorAll('.invoice-tax-select .dropdown-item'), getTaxValue);
         selectableDropdown(document.querySelectorAll('.invoice-discount-select .dropdown-item'), getDiscountValue);
@@ -512,5 +774,16 @@
                 })
             }
         }
+
     </script>
+    <x-slot:footerFiles>
+        <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
+        <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
+        <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
+        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
+            integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    </x-slot>
 </x-base-layout>

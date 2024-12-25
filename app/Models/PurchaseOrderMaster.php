@@ -12,7 +12,8 @@ class PurchaseOrderMaster extends Model
     protected $guarded = ['id'];
     protected $table = 'purchase_order_masters';
 
-    protected $fillable = ['Name','company_name', 'date','address','remarks','grand_total','created_by','updated_by'];
+    protected $fillable = ['date','party_id', 'contact_person','status','remarks','gross_total','tax_amount','shipping_amount',
+    'other_amount','total_amount','business_id','f_year_id','created_by','updated_by'];
 
-    
+
 }

@@ -147,9 +147,9 @@
                                             <div class="media">
                                                 <div class="avatar me-2">
                                                     <img alt="avatar"
-                                                        @if ($account->image == null || !file_exists(base_path('resources/images/inventory/') . $account->image)) src="{{ Vite::asset('resources/images/no-attachments.png') }}"
+                                                        @if ($account->image == null || !file_exists(base_path('public/resources/images/inventory/').'/'. $account->image)) src="{{ asset('images/no-attachments.png') }}"
                                                                      @else
-                                                                         src="{{ Vite::asset('resources/images/inventory/') . $account->image }}" @endif
+                                                                         src="{{ asset('resources/images/inventory/').'/'. $account->image }}" @endif
                                                         class="rounded-circle" />
                                                 </div>
                                                 <div class="media-body align-self-center">

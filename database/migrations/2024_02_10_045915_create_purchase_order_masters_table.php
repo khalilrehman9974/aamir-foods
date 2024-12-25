@@ -15,12 +15,16 @@ return new class extends Migration
     {
         Schema::create('purchase_order_masters', function (Blueprint $table) {
             $table->Increments('id');
-            $table->string('name');
-            $table->string('company_name');
             $table->date('date');
-            $table->string('address');
+            $table->foreignId('party_id')->constrained('detail_accounts')->onDelete('cascade');
+            $table->string('contact_person');
+            $table->string('status', 250);
             $table->text('remarks')->nullable();
-            $table->double('grand_total');
+            $table->double('gross_total');
+            $table->double('tax_amount')->nullable();
+            $table->double('shipping_amount')->nullable();
+            $table->double('other_amount')->nullable();
+            $table->double('total_amount');
             $table->integer('business_id');
             $table->integer('f_year_id')->unsigned()->index();
             $table->timestamp('created_at');

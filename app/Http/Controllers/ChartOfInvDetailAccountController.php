@@ -79,7 +79,7 @@ class ChartOfInvDetailAccountController extends Controller
         $data['created_by'] = Auth::user()->id;
         $data['updated_by'] = Auth::user()->id;
         if ($request->image) {
-            $fileName = Str::random(20) . '_' . '(' . $request->image->getClientOriginalName() . ')';
+            $fileName = $request->image->getClientOriginalName();
             $data['image'] = $fileName;
         }
         $saved = $this->coInventoryDetailAccountService->findUpdateOrCreate(CoaInventoryDetailAccount::class, ['id' => !empty(request('id')) ? request('id') : null], $data);

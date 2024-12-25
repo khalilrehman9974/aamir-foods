@@ -15,19 +15,22 @@ return new class extends Migration
     {
         Schema::create('sale_return_masters', function (Blueprint $table) {
             $table->Increments('id');
-            $table->string('dispatch_note');
-            $table->integer('type_id')->unsigned()->index();
+            $table->string('sale_return_number');
             $table->date('date');
-            $table->integer('party_id');
-            $table->string('bilty_no');
+            $table->string('party_id');
+            $table->string('saleman');
+            $table->string('sector');
+            $table->string('area');
             $table->string('deliverd_to');
-            $table->integer('saleman_id')->unsigned()->index();
-            $table->integer('transporter_id');
+            $table->string('driver_name');
+            $table->string('bilty_no');
+            $table->string('transporter');
             $table->integer('business_id');
             $table->integer('f_year_id')->unsigned()->index();
             $table->text('remarks')->nullable();
-            $table->double('total_amount')->nullable();
-            $table->double('freight')->nullable();
+            $table->double('gross_amount');
+            $table->double('boray_amount')->nullable();
+            $table->double('carton_amount')->nullable();
             $table->double('scheme')->nullable();
             $table->double('commission')->nullable();
             $table->timestamp('created_at');
@@ -35,14 +38,6 @@ return new class extends Migration
             $table->timestamp('deleted_at')->nullable();
             $table->string('created_by');
             $table->string('updated_by');
-
-            $table->foreign('type_id')
-            ->references('id')->on('sale_purchase_type')
-            ->onDelete('cascade');
-
-            $table->foreign('saleman_id')
-            ->references('id')->on('sale_mans')
-            ->onDelete('cascade');
 
             $table->foreign('f_year_id')
             ->references('id')->on('financial_years')

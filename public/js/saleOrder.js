@@ -1,4 +1,5 @@
-$('#party').on('change', function () {
+$('.party').on('change', function () {
+    console.log("Sale order js file");
     var name = $('#party :selected').text();
     let url = config.routes.getPartySaleManDetail + '/' + name;
     $.ajax({
@@ -24,7 +25,7 @@ $('#party').on('change', function () {
         }
     })
 });
-$('#party').on('change', function () {
+$('.party').on('change', function () {
     var name = $('#party :selected').text();
     let url = config.routes.getPartySectorDetail + '/' + name;
     $.ajax({
@@ -51,7 +52,7 @@ $('#party').on('change', function () {
 });
 
 
-$('#party').on('change', function () {
+$('.party').on('change', function () {
     var name = $('#party :selected').text();
     let url = config.routes.getPartyAreaDetail + '/' + name;
     $.ajax({

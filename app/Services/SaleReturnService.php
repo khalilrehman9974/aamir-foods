@@ -78,40 +78,66 @@ class SaleReturnService
             ->get();
     }
 
-    /*
+     /*
      * Search sale record.
      * @queries: $queries
      * @return: object
      * */
     public function searchSaleReturn($request)
     {
-        $query = SaleReturnMaster::groupBy(
-            'sale_return_masters.id',
-            'sale_return_masters.date',
-            'sale_return_masters.dispatch_note',
-            'sale_return_masters.type_id',
-            'sale_return_masters.party_id',
-            'sale_return_masters.bilty_no',
-            'sale_return_masters.remarks',
-            'sale_return_masters.created_at',
-            'sale_return_masters.deliverd_to',
-            'sale_return_masters.updated_at',
-            'sale_return_masters.saleman_id',
-            'sale_return_masters.transporter_id',
-            'sale_return_masters.total_amount',
-            'sale_return_masters.freight',
-            'sale_return_masters.scheme',
-            'sale_return_masters.commission',
-        );
+        $q = SaleReturnMaster::query();
         if (!empty($request['param'])) {
-            $query = $query->where('sale_return_masters.id', "=", $request['param']);
-            //            $query = $query->orwhere('parties.name', "% like %", $request['param']);
+            $q = SaleReturnMaster::with('party_id')->where('date', 'like', '%' . $request['param'] . '%')
+            ->orWhere('sale_order_number', 'like', '%' . $request['param'] . '%')
+            ->orWhere('party_id', 'like', '%' . $request['param'] . '%')
+            ->orWhere('saleman', 'like', '%' . $request['param'] . '%')
+            ->orWhere('area', 'like', '%' . $request['param'] . '%')
+            ->orWhere('vehicle_no', 'like', '%' . $request['param'] . '%')
+            ->orWhere('bility_no', 'like', '%' . $request['param'] . '%')
+            ->orWhere('driver_name', 'like', '%' . $request['param'] . '%')
+            ->orWhere('total_boray', 'like', '%' . $request['param'] . '%')
+            ->orWhere('total_carton', 'like', '%' . $request['param'] . '%')
+            ->orWhere('sector', 'like', '%' . $request['param'] . '%');
         }
-        //        $query->select('sale_return_masters.id','sale_return_masters.date','sale_return_masters.amount','sale_return_masters.quantity');
-        $sales = $query->orderBy('id', 'DESC')->get();
+        $saleInvoices = $q->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
 
-        return $this->commonService->paginate($sales, Self::PER_PAGE);
+        return $saleInvoices;
     }
+
+    /*
+     * Search sale record.
+     * @queries: $queries
+     * @return: object
+     * */
+    // public function searchSaleReturn($request)
+    // {
+    //     $query = SaleReturnMaster::groupBy(
+    //         'sale_return_masters.id',
+    //         'sale_return_masters.date',
+    //         'sale_return_masters.dispatch_note',
+    //         'sale_return_masters.type_id',
+    //         'sale_return_masters.party_id',
+    //         'sale_return_masters.bilty_no',
+    //         'sale_return_masters.remarks',
+    //         'sale_return_masters.created_at',
+    //         'sale_return_masters.deliverd_to',
+    //         'sale_return_masters.updated_at',
+    //         'sale_return_masters.saleman_id',
+    //         'sale_return_masters.transporter_id',
+    //         'sale_return_masters.total_amount',
+    //         'sale_return_masters.freight',
+    //         'sale_return_masters.scheme',
+    //         'sale_return_masters.commission',
+    //     );
+    //     if (!empty($request['param'])) {
+    //         $query = $query->where('sale_return_masters.id', "=", $request['param']);
+    //         //            $query = $query->orwhere('parties.name', "% like %", $request['param']);
+    //     }
+    //     //        $query->select('sale_return_masters.id','sale_return_masters.date','sale_return_masters.amount','sale_return_masters.quantity');
+    //     $sales = $query->orderBy('id', 'DESC')->get();
+
+    //     return $this->commonService->paginate($sales, Self::PER_PAGE);
+    // }
 
     // /*
     //  * Get list of products for selected category and brand.

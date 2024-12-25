@@ -17,12 +17,13 @@ return new class extends Migration
             $table->Increments('id');
             $table->integer('purchase_order_master_id')->unsigned()->index();
             $table->integer('product_id');
-            $table->double('total_quantity');
-            $table->date('Schedule_date');
-            $table->double('Schedule_quantity');
-            $table->date('Delivery_date');
-            $table->double('Delivery_quantity');
+            $table->string('size')->nullable();
+            $table->string('packing_type');
+            $table->string('measurement_type');
+            $table->double('quantity');
             $table->double('price');
+            $table->double('amount');
+            $table->string('detail_remarks')->nullable();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')->nullable();

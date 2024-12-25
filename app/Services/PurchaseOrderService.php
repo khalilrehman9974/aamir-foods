@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Carbon;
+use App\Models\CoaDetailAccount;
 use App\Models\PurchaseOrderDetail;
 use App\Models\PurchaseOrderMaster;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +18,18 @@ class PurchaseOrderService
     public function __construct(CommonService $commonService)
     {
         $this->commonService = $commonService;
+    }
+
+    public function findUpdateOrCreate($model, array $where, array $data)
+    {
+        $object = $model::firstOrNew($where);
+
+        foreach ($data as $property => $value) {
+            $object->{$property} = $value;
+        }
+        $object->save();
+
+        return $object;
     }
 
     /*
@@ -43,7 +57,8 @@ class PurchaseOrderService
     public function DropDownData()
     {
         $result = [
-            'products' => CoaInventoryDetailAccount::pluck('name','id')
+            'products' => CoaInventoryDetailAccount::pluck('name','id'),
+            'parties' => CoaDetailAccount::pluck('account_name','account_code')
         ];
 
         return $result;
@@ -71,9 +86,9 @@ class PurchaseOrderService
      {
          $q = PurchaseOrderMaster::query();
          if (!empty($request['param'])) {
-             $q = PurchaseOrderMaster::where('name', 'like', '%' . $request['param'] . '%');
+             $q = PurchaseOrderMaster::where('contact_person', 'like', '%' . $request['param'] . '%');
          }
-         $porders = $q->orderBy('name', 'ASC')->paginate(config('constants.PER_PAGE'));
+         $porders = $q->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
 
          return $porders;
      }
@@ -87,16 +102,22 @@ class PurchaseOrderService
      * */
     public function preparePOrderMasterData($request)
     {
-
+        $session = $this->commonService->getSession();
         return [
-            'Name' => $request['Name'],
-            'company_name' => $request['company_name'],
-            'date' => $request['date'],
-            'address' => $request['address'],
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'party_id' => $request['party_id'],
+            'contact_person' => $request['contact_person'],
+            'status' => $request['status'],
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
             'remarks' => $request['remarks'],
-            'grand_total' => $request['grand_total'],
-            $data['created_by'] = Auth::user()->id,
-            $data['updated_by'] = Auth::user()->id
+            'gross_total' => $request['gross_total'],
+            'tax_amount' => $request['tax_amount'],
+            'shipping_amount' => $request['shipping_amount'],
+            'other_amount' => $request['other_amount'],
+            'total_amount' => $request['total_amount'],
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id
         ];
     }
 
@@ -109,14 +130,13 @@ class PurchaseOrderService
     {
         return [
             'product_id' => $request['product_id'],
-            'total_quantity' => $request['total_quantity'],
-            'Schedule_date' => $request['Schedule_date'],
-            'Schedule_quantity' => $request['Schedule_quantity'],
-            'Delivery_date' => $request['Delivery_date'],
-            'Delivery_quantity' => $request['Delivery_quantity'],
+            'packing_type' => $request['packing_type'],
+            'measurement_type' => $request['measurement_type'],
+            'size' => $request['size'],
+            'quantity' => $request['quantity'],
             'price' => $request['price'],
-            $data['created_by'] = Auth::user()->id,
-            $data['updated_by'] = Auth::user()->id,
+            'amount' => $request['amount'],
+            'detail_remarks' => $request['detail_remarks'],
             'purchase_order_master_id' => $purchaseOrderParentId,
         ];
     }
@@ -130,14 +150,13 @@ class PurchaseOrderService
         foreach ($data['product_id'] as $key => $value) {
             if (!empty($data['product_id'][$key])) {
                 $rec['product_id'] = $data['product_id'][$key];
-                $rec['total_quantity'] = $data['total_quantity'][$key];
-                $rec['Schedule_date'] = $data['Schedule_date'][$key];
-                $rec['Schedule_quantity'] = $data['Schedule_quantity'][$key];
-                $rec['Delivery_date'] = $data['Delivery_date'][$key];
-                $rec['Delivery_quantity'] = $data['Delivery_quantity'][$key];
+                $rec['packing_type'] = $data['packing_type'][$key];
+                $rec['measurement_type'] = $data['measurement_type'][$key];
+                $rec['size'] = $data['size'][$key];
+                $rec['quantity'] = $data['quantity'][$key];
                 $rec['price'] = $data['price'][$key];
-                $rec['created_by'] = Auth::user()->id;
-                $rec['updated_by'] = Auth::user()->id;
+                $rec['amount'] = $data['amount'][$key];
+                $rec['detail_remarks'] = $data['detail_remarks'][$key];
                 $rec['purchase_order_master_id'] = $data['purchase_order_master_id'];
                 PurchaseOrderDetail::create($rec);
             }

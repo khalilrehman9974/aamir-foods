@@ -61,8 +61,10 @@
                             <img src="{{ Vite::asset('resources/images/profile-30.png') }}" alt="avatar">
                         </div>
                         <div class="profile-content">
-                            <h6 class="">{{ \Illuminate\Support\Facades\Auth::user()->name ?? '' }}</h6>
-                            <p class="">{{ \Illuminate\Support\Facades\Auth::user()->designation ?? '' }}</p>
+                            <h6 style="color: black" class="">
+                                {{ \Illuminate\Support\Facades\Auth::user()->name ?? '' }}</h6>
+                            <p style="color: black" class="">
+                                {{ \Illuminate\Support\Facades\Auth::user()->designation ?? '' }}</p>
                         </div>
                     </div>
                 </div>
@@ -196,7 +198,7 @@
                                 <line x1="12" y1="1" x2="12" y2="23"></line>
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                             </svg>
-                            <span>Inventory</span>
+                            <span>Sale Module</span>
                         </div>
                         <div>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -208,25 +210,70 @@
                     </a>
                     <ul class="collapse submenu list-unstyled {{ Request::is('*/app/invoice/*') ? 'show' : '' }}"
                         id="invoice" data-bs-parent="#accordionExample">
+                        <li class="{{ Request::routeIs('invoice-preview') ? 'active' : '' }}">
+                            <a href="{{ route('sale-order.list') }}">Sale Order </a>
+                        </li>
                         <li class="">
                             <a href="{{ route('dispatch-note.list') }} "> Dispatch Note </a>
                         </li>
-                        <li class="{{ Request::routeIs('invoice-preview') ? 'active' : '' }}">
-                            <a href="{{ route('store-issue-note.list') }}"> Store Issue Note </a>
+                        <li class="{{ Request::routeIs('sale-preview') ? 'active' : '' }}">
+                            <a href="{{ route('sale.sales') }}">Sale Invoice</a>
+
+                        </li>
+                        <li class="{{ Request::routeIs('sale-preview') ? 'active' : '' }}">
+                            <a href="{{ route('sale-return.sales-return') }}">Sale Return</a>
+
                         </li>
                         <li class="{{ Request::routeIs('invoice-preview') ? 'active' : '' }}">
-                            <a href="{{ route('storeReturn.list') }}">Store return </a>
+                            <a href="{{ route('claim.list') }}">Claim & Rate Adjustment</a>
+                        </li>
+
+
+
+
+
+
+                    </ul>
+                </li>
+
+                <li class="menu {{ Request::is('*/app/purchase_module/*') ? 'active' : '' }}">
+                    <a href="#purchase_module" data-bs-toggle="collapse"
+                        aria-expanded="{{ Request::is('*/app/purchase_module/*') ? 'true' : 'false' }}"
+                        class="dropdown-toggle">
+                        <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" class="feather feather-dollar-sign">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            </svg>
+                            <span>Purchase Module </span>
+                        </div>
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </div>
+                    </a>
+                    <ul class="collapse submenu list-unstyled {{ Request::is('*/app/purchase_module/*') ? 'show' : '' }}"
+                        id="purchase_module" data-bs-parent="#accordionExample">
+
+                        <li class="{{ Request::routeIs('invoice-preview') ? 'active' : '' }}">
+                            <a href="{{ route('purchase-order.list') }}">Purchase Order</a>
                         </li>
                         <li class="{{ Request::routeIs('invoice-preview') ? 'active' : '' }}">
                             <a href="{{ route('grn.list') }}">GRN </a>
                         </li>
-                        <li class="{{ Request::routeIs('invoice-preview') ? 'active' : '' }}">
-                            <a href="{{ route('purchase-order.list') }}">Purchase Order </a>
-                        </li>
-                        <li class="{{ Request::routeIs('invoice-preview') ? 'active' : '' }}">
-                            <a href="{{ route('sale-order.list') }}">Sale Order </a>
-                        </li>
 
+                        <li class="{{ Request::routeIs('purchase-preview') ? 'active' : '' }}">
+                            <a href="{{ route('purchase.list') }}">Purchase</a>
+
+                        </li>
+                        <li class="{{ Request::routeIs('purchase-preview') ? 'active' : '' }}">
+                            <a href="{{ route('purchase-return.list') }}">Purchase Return</a>
+                        </li>
                     </ul>
                 </li>
 
@@ -314,45 +361,19 @@
                             <li><a href="{{ route('permission.list') }}"> <span>User Rights Management</span></a>
                             </li>
                         @endif
-                    </ul>
-                </li>
 
-                <li class="menu {{ Request::is('*/app/sale/*') ? 'active' : '' }}">
-                    <a href="#sale" data-bs-toggle="collapse"
-                        aria-expanded="{{ Request::is('*/app/sale /*') ? 'true' : 'false' }}"
-                        class="dropdown-toggle">
-                        <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" class="feather feather-dollar-sign">
-                                <line x1="12" y1="1" x2="12" y2="23"></line>
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            </svg>
-                            <span>Sale </span>
-                        </div>
-                        <div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
-                                <polyline points="9 18 15 12 9 6"></polyline>
-                            </svg>
-                        </div>
-                    </a>
-                    <ul class="collapse submenu list-unstyled {{ Request::is('*/app/sale/*') ? 'show' : '' }}"
-                        id="sale" data-bs-parent="#accordionExample">
-
-                        <li class="{{ Request::routeIs('sale-preview') ? 'active' : '' }}">
-                            <a href="{{ route('sale.sales') }}">Sale Invoice</a>
-
+                        <li class="{{ Request::routeIs('invoice-preview') ? 'active' : '' }}">
+                            <a href="{{ route('store-issue-note.list') }}"> Store Issue Note </a>
                         </li>
-                        <li class="{{ Request::routeIs('sale-preview') ? 'active' : '' }}">
-                            <a href="{{ route('sale-return.sales-return') }}">Sale Return</a>
-
+                        <li class="{{ Request::routeIs('invoice-preview') ? 'active' : '' }}">
+                            <a href="{{ route('storeReturn.list') }}">Store return </a>
                         </li>
                     </ul>
                 </li>
 
-                <li class="menu {{ Request::is('*/app/purchase/*') ? 'active' : '' }}">
+
+
+                {{-- <li class="menu {{ Request::is('*/app/purchase/*') ? 'active' : '' }}">
                     <a href="#purchase" data-bs-toggle="collapse"
                         aria-expanded="{{ Request::is('*/app/purchase /*') ? 'true' : 'false' }}"
                         class="dropdown-toggle">
@@ -384,7 +405,7 @@
                             <a href="{{ route('purchase-return.list') }}">Purchase Return</a>
                         </li>
                     </ul>
-                </li>
+                </li> --}}
 
                 <li class="menu {{ Request::is('*/app/voucher/*') ? 'active' : '' }}">
                     <a href="#voucher" data-bs-toggle="collapse"

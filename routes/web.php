@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SaleManController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,12 +22,19 @@ Route::get('/barebone', function () {
 });
 
 Route::post('api/fetch-zones', [App\Http\Controllers\SaleManController::class, 'fetchZone']);
+Route::post('api/fetchAreas', [App\Http\Controllers\AreasController::class, 'fetchArea']);
+Route::post('api/fetchZones', [App\Http\Controllers\ZoneController::class, 'fetchZone']);
+Route::post('api/fetchBelts', [App\Http\Controllers\SectorController::class, 'fetchBelt']);
 Route::post('api/fetch-sectors', [App\Http\Controllers\SaleManController::class, 'fetchSector']);
 Route::post('api/fetch-areas', [App\Http\Controllers\SaleManController::class, 'fetchArea']);
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::post('/get-subcategories', [SaleManController::class, 'getSubcategories']);
+Route::post('/get-types', [SaleManController::class, 'getTypes']);
+Route::post('/get-variations', [SaleManController::class, 'getVariations']);
 
 Route::group(['middleware' => ['auth']], function () {
 
@@ -207,9 +215,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('create', ['as' => 'saleMan.create', 'uses' => 'App\Http\Controllers\SaleManController@create']);
         Route::post('save', ['as' => 'saleMan.save', 'uses' => 'App\Http\Controllers\SaleManController@store']);
         Route::get('edit/{id}', ['as' => 'saleMan.edit', 'uses' => 'App\Http\Controllers\SaleManController@edit']);
-        Route::post('update', ['as' => 'saleMan.update', 'uses' => 'App\Http\Controllers\SaleManController@store']);
+        Route::post('update', ['as' => 'saleMan.update', 'uses' => 'App\Http\Controllers\SaleManController@update']);
         Route::delete('delete/{id}', ['as' => 'saleMan.delete', 'uses' => 'App\Http\Controllers\SaleManController@destroy']);
-
     });
 
     Route::group(['prefix' => 'assignSector', 'middleware' => 'auth'], function () {
@@ -256,6 +263,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'sale-return', 'middleware' => 'auth'], function () {
         Route::get('/sales-return-list', [App\Http\Controllers\SalesReturnController::class, 'index'])->name('sale-return.sales-return');
         Route::get('/create', [App\Http\Controllers\SalesReturnController::class, 'create'])->name('sale-return.create');
+        Route::get('generate', ['as' => 'sale-return.generate', 'uses' => 'App\Http\Controllers\SalesReturnController@generate']);
         Route::get('/edit/{id}', [App\Http\Controllers\SalesReturnController::class, 'edit'])->name('sale-return.edit');
         Route::get('/view/{id}', [App\Http\Controllers\SalesReturnController::class, 'view'])->name('sale-return.view');
         Route::post('/store', [App\Http\Controllers\SalesReturnController::class, 'store'])->name('sale-return.store');
@@ -430,6 +438,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('edit/{id}', ['as' => 'purchase-order.edit', 'uses' => 'App\Http\Controllers\PurchaseOrderController@edit']);
         Route::post('update', ['as' => 'purchase-order.update', 'uses' => 'App\Http\Controllers\PurchaseOrderController@store']);
         Route::delete('delete/{id}', ['as' => 'purchase-order.delete', 'uses' => 'App\Http\Controllers\PurchaseOrderController@destroy']);
+        Route::get('get-product-packing-type/{name}', ['as' => 'product-packing-type', 'uses' => 'App\Http\Controllers\PurchaseOrderController@getProductPackingType']);
+        Route::get('get-product-measurement-type/{name}', ['as' => 'product-measurement-type', 'uses' => 'App\Http\Controllers\PurchaseOrderController@getProductMeasurementType']);
+        Route::get('get-product-size/{name}', ['as' => 'product-size', 'uses' => 'App\Http\Controllers\PurchaseOrderController@getProductSize']);
     });
 
     Route::group(['prefix' => 'priceTag', 'middleware' => 'auth'], function () {
@@ -471,15 +482,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::delete('delete/{id}', ['as' => 'PackingType.delete', 'uses' => 'App\Http\Controllers\PackingTypeController@delete']);
     });
 
-    Route::group(['prefix' => 'purchase-order', 'middleware' => 'auth'], function () {
-        Route::get('list', ['as' => 'purchase-order.list', 'uses' => 'App\Http\Controllers\PurchaseOrderController@index']);
-        Route::get('create', ['as' => 'purchase-order.create', 'uses' => 'App\Http\Controllers\PurchaseOrderController@create']);
-        Route::post('save', ['as' => 'purchase-order.store', 'uses' => 'App\Http\Controllers\PurchaseOrderController@store']);
-        Route::get('edit/{id}', ['as' => 'purchase-order.edit', 'uses' => 'App\Http\Controllers\PurchaseOrderController@edit']);
-        Route::post('update', ['as' => 'purchase-order.update', 'uses' => 'App\Http\Controllers\PurchaseOrderController@store']);
-        Route::delete('delete/{id}', ['as' => 'purchase-order.delete', 'uses' => 'App\Http\Controllers\PurchaseOrderController@destroy']);
-    });
 
+    //sale order
     Route::group(['prefix' => 'sale-order', 'middleware' => 'auth'], function () {
         Route::get('list', ['as' => 'sale-order.list', 'uses' => 'App\Http\Controllers\SaleOrderController@index']);
         Route::get('create', ['as' => 'sale-order.create', 'uses' => 'App\Http\Controllers\SaleOrderController@create']);
@@ -492,6 +496,21 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('get-party-sale-man-area/{name}', ['as' => 'party-sale-man-area', 'uses' => 'App\Http\Controllers\SaleOrderController@getSaleManAreaDetail']);
         Route::get('get-product-packing-type/{name}', ['as' => 'product-packing-type', 'uses' => 'App\Http\Controllers\SaleOrderController@getProductPackingType']);
         Route::get('get-product-measurement-type/{name}', ['as' => 'product-measurement-type', 'uses' => 'App\Http\Controllers\SaleOrderController@getProductMeasurementType']);
+    });
+
+    //Claim & rate Adjustment
+    Route::group(['prefix' => 'claim', 'middleware' => 'auth'], function () {
+        Route::get('list', ['as' => 'claim.list', 'uses' => 'App\Http\Controllers\ClaimRateAdjustmentController@index']);
+        Route::get('create', ['as' => 'claim.create', 'uses' => 'App\Http\Controllers\ClaimRateAdjustmentController@create']);
+        Route::post('save', ['as' => 'claim.save', 'uses' => 'App\Http\Controllers\ClaimRateAdjustmentController@store']);
+        Route::get('edit/{id}', ['as' => 'claim.edit', 'uses' => 'App\Http\Controllers\ClaimRateAdjustmentController@edit']);
+        Route::post('update', ['as' => 'claim.update', 'uses' => 'App\Http\Controllers\ClaimRateAdjustmentController@update']);
+        Route::delete('delete/{id}', ['as' => 'claim.delete', 'uses' => 'App\Http\Controllers\ClaimRateAdjustmentController@delete']);
+        Route::get('get-party-sale-man/{name}', ['as' => 'party-sale-man', 'uses' => 'App\Http\Controllers\ClaimRateAdjustmentController@getSaleManDetail']);
+        Route::get('get-party-sale-man-sector/{name}', ['as' => 'party-sale-man-sector', 'uses' => 'App\Http\Controllers\ClaimRateAdjustmentController@getSaleManSectorDetail']);
+        Route::get('get-party-sale-man-area/{name}', ['as' => 'party-sale-man-area', 'uses' => 'App\Http\Controllers\ClaimRateAdjustmentController@getSaleManAreaDetail']);
+        Route::get('get-product-packing-type/{name}', ['as' => 'product-packing-type', 'uses' => 'App\Http\Controllers\ClaimRateAdjustmentController@getProductPackingType']);
+        Route::get('get-product-measurement-type/{name}', ['as' => 'product-measurement-type', 'uses' => 'App\Http\Controllers\ClaimRateAdjustmentController@getProductMeasurementType']);
     });
 
     Route::group(['prefix' => 'storeReturn'], function () {

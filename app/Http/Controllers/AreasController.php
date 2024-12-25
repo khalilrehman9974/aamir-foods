@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Area;
 use App\Models\Sector;
+use Illuminate\Http\Request;
 use App\Services\AreaService;
 use App\Services\CommonService;
 use App\Services\PermissionService;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\AreaStoreRequest;
+use App\Models\Zone;
 
 class AreasController extends Controller
 {
@@ -41,8 +43,10 @@ class AreasController extends Controller
         $pageTitle = 'Create Area';
         $dropDownData = $this->areaService->DropDownData();
         $sectors = Sector::pluck('name','id');
+        $request = request()->all();
+        $areas = $this->areaService->searchArea($request);
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
-        return view('areas.create', compact('permission', 'pageTitle', 'dropDownData', 'sectors'));
+        return view('areas.create', compact('permission','areas', 'pageTitle', 'dropDownData', 'sectors'));
     }
 
 
@@ -57,18 +61,20 @@ class AreasController extends Controller
             $message = config('constants.update');
         }
         session()->flash('message', $message);
-        return redirect('area/list');
+        return redirect('area/create');
     }
 
-    
+
     public function edit($id)
     {
         $pageTitle = 'Update The Area';
         $area = Area::find($id);
+        $request = request()->all();
+        $areas = $this->areaService->searchArea($request);
         $dropDownData = $this->areaService->DropDownData();
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
 
-        return view('areas.create', compact('area', 'pageTitle', 'dropDownData','permission'));
+        return view('areas.create', compact('area','areas', 'pageTitle', 'dropDownData','permission'));
 
     }
 
@@ -77,4 +83,15 @@ class AreasController extends Controller
     {
         return $this->commonService->deleteResource(Area::class);
     }
+
+    public function fetchArea(Request $request)
+    {
+
+        $data['areas'] = Area::where("sector_id", $request->sector_id)->get(["id", "name"]);
+
+        return response()->json($data);
+    }
+
+
+   
 }

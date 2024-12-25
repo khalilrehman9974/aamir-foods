@@ -4,15 +4,24 @@
     </x-slot>
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <x-slot:headerFiles>
-        <!--  BEGIN CUSTOM STYLE FILE  -->
-        {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
-            integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
-        @vite(['resources/scss/light/assets/components/tabs.scss'])
-        @vite(['resources/scss/dark/assets/components/tabs.scss'])
         <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
+        <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
         @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
         @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+            integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+        <!--  BEGIN CUSTOM STYLE FILE  -->
+        <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="../src/plugins/src/filepond/filepond.min.css">
+        <link rel="stylesheet" href="../src/plugins/src/filepond/FilePondPluginImagePreview.min.css">
+
+        <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
+        <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
         <!--  END CUSTOM STYLE FILE  -->
     </x-slot>
     <!-- END GLOBAL MANDATORY STYLES -->
@@ -59,8 +68,9 @@
                                 <div class="row ">
                                     <div class="col-md-6">
                                         <label for="validationCustom01" class="form-label">Name</label>
-                                        <input type="text" name="name" class="form-control" id="name"
-                                            value="{{ isset($saleMan->name) ? $saleMan->name : '' }}"
+                                        <input type="text" name="name"
+                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                            id="name" value="{{ isset($saleMan->name) ? $saleMan->name : '' }}"
                                             placeholder="Enter Sale Man Name" required>
                                         @error('name')
                                             <span style="color:red" class="invalid-feedback">
@@ -73,7 +83,8 @@
                                         <label class="form-label">Email</label>
                                         <input type="email" name="email"
                                             value="{{ isset($saleMan->email) ? $saleMan->email : '' }}"
-                                            placeholder="Enter Sale Man Email" class="form-control">
+                                            placeholder="Enter Sale Man Email"
+                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
                                         @error('email')
                                             <div class="invalid-feedback">
                                                 {{ $message }}
@@ -88,7 +99,9 @@
                                     <div class="col-md-6 mt-3">
                                         <label for="validationCustom01" class="form-label">Mobile
                                             Number</label>
-                                        <input type="text" name="mobile_no" class="form-control" id="mobile_no"
+                                        <input type="text" name="mobile_no"
+                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                            id="mobile_no"
                                             value="{{ isset($saleMan->mobile_no) ? $saleMan->mobile_no : '' }}"
                                             placeholder="Enter The Mobile Number" required>
                                         @error('mobile_no')
@@ -100,7 +113,9 @@
                                     <div class="col-md-6 mt-3">
                                         <label for="validationCustom01" class="form-label">WhatsApp
                                             Number</label>
-                                        <input type="text" name="whatsapp_no" class="form-control" id="whatsapp_no"
+                                        <input type="text" name="whatsapp_no"
+                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                            id="whatsapp_no"
                                             value="{{ isset($saleMan->whatsapp_no) ? $saleMan->whatsapp_no : '' }}"
                                             placeholder="Enter The WhatsApp Number">
                                         @error('whatsapp_no')
@@ -116,7 +131,8 @@
                                             <label class="form-label">Reference</label>
                                             <input type="reference" name="reference"
                                                 value="{{ isset($saleMan->reference) ? $saleMan->reference : '' }}"
-                                                placeholder="Reference..." class="form-control">
+                                                placeholder="Reference..."
+                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
                                             @error('reference')
                                                 <div class="invalid-feedback">
                                                     {{ $message }}
@@ -125,9 +141,25 @@
                                         </div>
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">Designation</label>
-                                            <input type="designation" name="designation"
-                                                value="{{ isset($saleMan->designation) ? $saleMan->designation : '' }}"
-                                                placeholder="Designation..." class="form-control">
+
+                                            <select id="designation" type="text" name="designation"
+                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mb-3 select2 custom-select"
+                                                    required>
+                                                    <option value="Order Booker">Order Booker
+                                                    </option>
+                                                    <option value="SO">
+                                                        SO
+                                                    </option>
+                                                    <option value="TSO">TSO
+                                                    </option>
+                                                    <option value="ASM">ASM
+                                                    </option>
+                                                    <option value="ZSM">ZSM
+                                                    </option>
+                                                    <option value="NSM">NSM
+                                                    </option>
+                                                </select>
+
                                             @error('designation')
                                                 <div class="invalid-feedback">
                                                     {{ $message }}
@@ -140,7 +172,9 @@
                                     <div class="row">
                                         <div class="col-xl-6 col-lg-6 mt-3">
                                             <label class="form-label" for="product-title-input">Country</label>
-                                            <select id="country-dropdown" class="form-control" name="country_id">
+                                            <select id="country-dropdown"
+                                                class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                name="country_id">
 
                                                 <option value="">-- Select Country --</option>
                                                 {{-- @foreach ($countries as $data)
@@ -161,15 +195,11 @@
 
                                         <div class="col-xl-6 col-lg-6 mt-3">
                                             <label class="form-label" for="product-title-input">Zones</label>
-                                            @if (!empty($saleMan))
-                                                <select id="zone-dropdown" name="zone_id" class="form-control"
-                                                    required>
-                                                    @foreach ($zones as $key => $value)
-                                                        <option value="{{ $key }}"
-                                                            {{ !empty($saleMan) && $saleMan->zone_id == $key ? 'selected' : '' }}
-                                                            {{ $key == old('zone_id') ? 'selected' : '' }}>
-                                                            {{ $value }}</option>
-                                                    @endforeach
+                                            @if (empty($saleMan))
+                                                <select id="zone-dropdown" name="zone_id[]"
+                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} zone-dropdown"
+                                                    multiple>
+                                                    <option value="">-- Select Zones --</option>
                                                 </select>
                                             @else
                                                 {{-- <select id="zone-dropdown" name="zone_id" class="form-select"
@@ -180,8 +210,21 @@
                                                             {{ $value }}</option>
                                                     @endforeach
                                                 </select> --}}
-                                                <select id="zone-dropdown" name="zone_id" class="form-control">
-                                                    <option value="">-- Select Zones --</option>
+                                                <select id="zone-dropdown" name="zone_id[]"
+                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} zone-dropdown"
+                                                    required multiple>
+                                                    @foreach ($zones as $key => $value)
+                                                        <option value="{{ $key }}"
+                                                            {{ (old('zone_id') == $key ? 'selected' : '') || (!empty($saleManZones->zone_id) ? collect($saleManZones->zone_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                            {{ $value }}
+                                                        </option>
+                                                    @endforeach
+                                                    {{-- @foreach ($zones as $key => $value)
+                                                        <option value="{{ $key }}"
+                                                            {{ !empty($saleManZones) && $saleManZones->zone_id == $key ? 'selected' : '' }}
+                                                            {{ $key == old('zone_id') ? 'selected' : '' }}>
+                                                            {{ $value }}</option>
+                                                    @endforeach --}}
                                                 </select>
 
                                             @endif
@@ -196,16 +239,11 @@
                                     <div class="row">
                                         <div class="col-xl-6 col-lg-6 mt-3">
                                             <label class="form-label" for="product-title-input">Belt</label>
-                                            @if (!empty($saleMan))
-                                                <select id="sector-dropdown" name="sector_id" class="form-select"
-                                                    required>
-
-                                                    @foreach ($sectors as $key => $value)
-                                                        <option value="{{ $key }}"
-                                                            {{ !empty($saleMan) && $saleMan->sector_id == $key ? 'selected' : '' }}
-                                                            {{ $key == old('sector_id') ? 'selected' : '' }}>
-                                                            {{ $value }}</option>
-                                                    @endforeach
+                                            @if (empty($saleMan))
+                                                <select id="sector-dropdown" name="sector_id[]"
+                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sector-dropdown"
+                                                    multiple>
+                                                    <option value="">-- Select Belt --</option>
                                                 </select>
                                             @else
                                                 {{-- <select id="sector-dropdown" name="sector_id" class="form-select"
@@ -216,10 +254,24 @@
                                                             {{ $value }}</option>
                                                     @endforeach
                                                 </select> --}}
+                                                <select id="sector-dropdown" name="sector_id[]"
+                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sector-dropdown"
+                                                    multiple required>
 
-                                                <select id="sector-dropdown" name="sector_id" class="form-control">
-                                                    <option value="">-- Select Belt --</option>
+                                                    @foreach ($sectors as $key => $value)
+                                                        <option value="{{ $key }}"
+                                                            {{ (old('sector_id') == $key ? 'selected' : '') || (!empty($saleManSectors->sector_id) ? collect($saleManSectors->sector_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                            {{ $value }}
+                                                        </option>
+                                                    @endforeach
+                                                    {{-- @foreach ($sectors as $key => $value)
+                                                    <option value="{{ $key }}"
+                                                        {{ !empty($saleManSectors) && $saleManSectors->sector_id == $key ? 'selected' : '' }}
+                                                        {{ $key == old('sector_id') ? 'selected' : '' }}>
+                                                        {{ $value }}</option>
+                                                @endforeach --}}
                                                 </select>
+
 
                                             @endif
                                             {{-- <select id="sector-dropdown" name="sector_id" class="form-control">
@@ -229,16 +281,11 @@
 
                                         <div class="col-xl-6 col-lg-6 mt-3">
                                             <label class="form-label" for="product-title-input">Area</label>
-                                            @if (!empty($saleMan))
-                                                <select id="area-dropdown" name="area_id" class="form-select"
-                                                    required>
-
-                                                    @foreach ($areas as $key => $value)
-                                                        <option value="{{ $key }}"
-                                                            {{ !empty($saleMan) && $saleMan->area_id == $key ? 'selected' : '' }}
-                                                            {{ $key == old('area_id') ? 'selected' : '' }}>
-                                                            {{ $value }}</option>
-                                                    @endforeach
+                                            @if (empty($saleMan))
+                                                <select id="area-dropdown" name="area_id[]"
+                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} area-dropdown"
+                                                    multiple>
+                                                    <option value="">-- Select Area --</option>
                                                 </select>
                                             @else
                                                 {{-- <select id="area-dropdown" name="area_id" class="form-select"
@@ -249,10 +296,25 @@
                                                             {{ $value }}</option>
                                                     @endforeach
                                                 </select> --}}
+                                                <select id="area-dropdown" name="area_id[]"
+                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} area-dropdown"
+                                                    multiple required>
 
-                                                <select id="area-dropdown" name="area_id" class="form-control">
-                                                    <option value="">-- Select Area --</option>
+                                                    @foreach ($areas as $key => $value)
+                                                        <option value="{{ $key }}"
+                                                            {{ (old('area_id') == $key ? 'selected' : '') || (!empty($saleManAreas->area_id) ? collect($saleManAreas->area_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                            {{ $value }}
+                                                        </option>
+                                                    @endforeach
+
+                                                    {{-- @foreach ($areas as $key => $value)
+                                                        <option value="{{ $key }}"
+                                                            {{ !empty($saleManAreas) && $saleManAreas->area_id == $key ? 'selected' : '' }}
+                                                            {{ $key == old('area_id') ? 'selected' : '' }}>
+                                                            {{ $value }}</option>
+                                                    @endforeach --}}
                                                 </select>
+
 
                                             @endif
                                             {{-- <select id="area-dropdown" name="area_id" class="form-control">
@@ -333,93 +395,127 @@
                 }, false);
             });
         }, false);
+    </script>
 
-        $('#country-dropdown').on('change', function() {
-            var idCountry = this.value;
-            $("#zone-dropdown").html('');
-            $.ajax({
-                url: "{{ url('api/fetch-zones') }}",
-                type: "POST",
-                data: {
-                    country_id: idCountry,
-                    _token: '{{ csrf_token() }}'
-                },
-                dataType: 'json',
-                success: function(result) {
-                    $('#zone-dropdown').html(
-                        '<option value="">-- Select zone --</option>');
-                    $.each(result.zones, function(key, data) {
-                        $("#zone-dropdown").append('<option value="' + data
-                            .id + '">' + data.name + '</option>');
-                    });
-                    $('#sector-dropdown').html(
-                        '<option value="">-- Select Belt --</option>');
-                    $('#area-dropdown').html('<option value="">-- Select Area --</option>');
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2();
 
-                }
+            $('#country-dropdown').on('change', function() {
+                var idCountry = this.value;
+
+                $("#zone-dropdown").html('');
+                $.ajax({
+                    url: "{{ url('api/fetch-zones') }}",
+                    type: "POST",
+                    data: {
+                        country_id: idCountry,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    dataType: 'json',
+                    success: function(result) {
+                        $('#zone-dropdown').html(
+                            '<option value="">-- Select zone --</option>');
+                        $.each(result.zones, function(key, data) {
+                            $("#zone-dropdown").append('<option value="' + data
+                                .id + '">' + data.name + '</option>');
+                        });
+                        $('#sector-dropdown').html(
+                            '<option value="">-- Select Belt --</option>');
+                        $('#area-dropdown').html('<option value="">-- Select Area --</option>');
+
+                    }
+                });
             });
-        });
 
-        /*------------------------------------------
-        --------------------------------------------
-        zone Dropdown Change Event
-        --------------------------------------------
-        --------------------------------------------*/
-        $('#zone-dropdown').on('change', function() {
-            var idZone = this.value;
-            $("#sector-dropdown").html('');
-            $.ajax({
-                url: "{{ url('api/fetch-sectors') }}",
-                type: "POST",
-                data: {
-                    zone_id: idZone,
-                    _token: '{{ csrf_token() }}'
-                },
-                dataType: 'json',
-                success: function(res) {
-                    $('#sector-dropdown').html(
-                        '<option value="">-- Select Belt --</option>');
-                    $.each(res.sectors, function(key, value) {
-                        $("#sector-dropdown").append('<option value="' + value
-                            .id + '">' + value.name + '</option>');
-                    });
-                    $('#area-dropdown').html('<option value="">-- Select Area --</option>');
-                }
-            });
-        });
+            /*------------------------------------------
+            --------------------------------------------
+            zone Dropdown Change Event
+            --------------------------------------------
+            --------------------------------------------*/
+            $('#zone-dropdown').on('change', function() {
+                var zones = document.querySelectorAll('.zone-dropdown');
+                zones.forEach(function(zone) {
+                    // var selectedValue = zone.value; // Get the selected value of each dropdown
+                    var selectedValues = Array.from(zone.selectedOptions).map(option => option
+                        .value);
+                    console.log(selectedValues); // Log or use the value
 
-        $('#sector-dropdown').on('change', function() {
-            var sectorId = this.value;
-            $("#area-dropdown").html('');
-            $.ajax({
-                url: "{{ url('api/fetch-areas') }}",
-                type: "POST",
-                data: {
-                    sector_id: sectorId,
-                    _token: '{{ csrf_token() }}'
-                },
-                dataType: 'json',
-                success: function(resul) {
-                    $('#area-dropdown').html('<option value="">-- Select Area --</option>');
-                    $.each(resul.areas, function(key, value) {
-                        $("#area-dropdown").append('<option value="' + value
-                            .id + '">' + value.name + '</option>');
+                    $("#sector-dropdown").html('');
+                    $.ajax({
+                        url: "{{ url('api/fetch-sectors') }}",
+                        type: "POST",
+                        data: {
+                            zone_id: selectedValues,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        dataType: 'json',
+                        success: function(res) {
+                            $('#sector-dropdown').html(
+                                '<option value="">-- Select Belt --</option>');
+                            $.each(res.sectors, function(key, value) {
+                                $("#sector-dropdown").append('<option value="' +
+                                    value.id +
+                                    '">' + value.name + '</option>');
+                            });
+                            $('#area-dropdown').html(
+                                '<option value="">-- Select Area --</option>');
+                        }
                     });
-                }
+                });
             });
+
+            $('#sector-dropdown').on('change', function() {
+
+                var sectors = document.querySelectorAll('.sector-dropdown');
+                sectors.forEach(function(sector) {
+                    var selectedValues = Array.from(sector.selectedOptions).map(option => option
+                        .value);
+                    // var sectorId = this.value;
+                    $("#area-dropdown").html('');
+                    $.ajax({
+                        url: "{{ url('api/fetch-areas') }}",
+                        type: "POST",
+                        data: {
+                            sector_id: selectedValues,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        dataType: 'json',
+                        success: function(resul) {
+                            $('#area-dropdown').html(
+                                '<option value="">-- Select Area --</option>');
+                            $.each(resul.areas, function(key, value) {
+                                $("#area-dropdown").append('<option value="' +
+                                    value.id + '">' + value.name +
+                                    '</option>');
+                            });
+                        }
+                    });
+                });
+            });
+
         });
     </script>
 
     <x-slot:footerFiles>
+        <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
+
         <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
         <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>
 
         <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
         <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
+        {{-- <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script> --}}
+        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
+            integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        {{-- <script src="{{ asset('js/common.js') }}"></script> --}}
 
         <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])
-        <script src="{{ asset('js/saleMan.js') }}"></script>
+        {{-- <script src="{{ asset('js/saleMan.js') }}"></script> --}}
 
     </x-slot>
 

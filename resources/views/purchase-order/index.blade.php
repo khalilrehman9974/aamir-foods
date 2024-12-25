@@ -89,11 +89,11 @@
                             <thead>
                                 <tr>
                                     <th scope="col"> <b>Id </b> </th>
-                                    <th scope="col" style="width: 30%"> <b>Name</b> </th>
-                                    <th scope="col" style="width: 30%"> <b>Company Name </b> </th>
-                                    <th scope="col" style="width: 10%"> <b>Date </b> </th>
-                                    <th scope="col" style="width: 40%"> <b>Address </b> </th>
-                                    <th scope="col" style="width: 20%"> <b>Total Amount</b> </th>
+                                    <th scope="col" style="width: 10%"> <b>Date</b> </th>
+                                    <th scope="col" style="width: 20%"> <b>Party</b> </th>
+                                    <th scope="col" style="width: auto"> <b>Contact Person </b> </th>
+                                    <th scope="col" style="width: auto"> <b>Status </b> </th>
+                                    <th scope="col" style="width: auto"> <b>Net Amount</b> </th>
                                     {{-- <th scope="col" style="width: 80%"> <b>Remarks </b> </th> --}}
                                     <th class="text-center" scope="col"></th>
                                 </tr>
@@ -111,7 +111,8 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $order->name }}</h6>
+                                                    {{-- <h6 class="mb-0">{{ $order->date }}</h6> --}}
+                                                    <h6 class="mb-0">{{ \Carbon\Carbon::parse($order->date)->format('d-m-Y') }}</h6>
 
                                                 </div>
                                             </div>
@@ -119,7 +120,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $order->company_name }}</h6>
+                                                    <h6 class="mb-0">{{ $order->party_id }}</h6>
 
                                                 </div>
                                             </div>
@@ -127,7 +128,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $order->date }}</h6>
+                                                    <h6 class="mb-0">{{ $order->contact_person }}</h6>
 
                                                 </div>
                                             </div>
@@ -135,7 +136,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $order->address }}</h6>
+                                                    <h6 class="mb-0">{{ $order->status }}</h6>
 
                                                 </div>
                                             </div>
@@ -143,7 +144,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $order->grand_total }}</h6>
+                                                    <h6 class="mb-0">{{ $order->total_amount }}</h6>
 
                                                 </div>
                                             </div>
@@ -153,7 +154,7 @@
                                         <td class="text-center">
                                             <div class="action-btns">
                                                 @if ((!empty($permission->edit_access) && $permission->edit_access == 1) || Auth::user()->is_admin == 1)
-                                                    <a href="{{ route('purchase-order.edit', ['id' => $purchaseOrder->id]) }}"
+                                                    <a href="{{ route('purchase-order.edit', ['id' => $order->id]) }}"
                                                         class="action-btn btn-edit bs-tooltip me-2"
                                                         data-toggle="tooltip" data-placement="top" title="Edit">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24"
@@ -167,7 +168,7 @@
                                                         </svg>
                                                     </a>
                                                 @endif
-                                                @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
+                                                {{-- @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
                                                     <a href="javascript:void(0)"
                                                         class="action-btn btn-delete bs-tooltip delete"
                                                         data-id="{{ $purchaseOrder->id }}" data-toggle="tooltip"
@@ -189,7 +190,7 @@
                                                             </line>
                                                         </svg>
                                                     </a>
-                                                @endif
+                                                @endif --}}
 
                                             </div>
                                         </td>

@@ -64,6 +64,8 @@ class SalesController extends Controller
         $dispatchNote = DispatchNoteMaster::find($request->id);
         $dispatchNoteDetails = DispatchNoteDetail::where('dispatch_note_master_id', $request->id)->get();
         // dd($dispatchNoteDetails);
+        // $user = CoaInventoryDetailAccount::where('code', $dispatchNoteDetails->{"product_id"})->first();
+        // dd($user);
 
         if (empty($dispatchNote)) {
             abort(404);

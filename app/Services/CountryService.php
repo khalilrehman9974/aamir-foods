@@ -48,10 +48,12 @@ use Symfony\Component\Console\Input\Input;
         if (!empty($request['param'])) {
             $q = Country::where('name', 'like', '%' . $request['param'] . '%');
         }
-        $countries = $q->orderBy('name', 'ASC')->paginate(config('constants.PER_PAGE'));
+        $country = $q->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
 
-        return $countries;
+        return $country;
     }
+
+
 
 
 }
