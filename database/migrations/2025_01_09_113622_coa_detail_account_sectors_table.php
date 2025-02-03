@@ -13,26 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('sale_man_sectors', function (Blueprint $table) {
+        Schema::create('coa_detail_account_sectors', function (Blueprint $table) {
             $table->Increments('id');
-            $table->integer('master_id')->unsigned()->index();
+            $table->foreignId('master_account_id')->constrained('detail_accounts')->onDelete('cascade');
             $table->integer('sector_id')->unsigned()->index();
-            $table->integer('zone_id')->unsigned()->index();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')->nullable();
-
-            $table->foreign('master_id')
-                ->references('id')->on('sale_mans')
-                ->onDelete('cascade');
 
             $table->foreign('sector_id')
                 ->references('id')->on('sectors')
                 ->onDelete('cascade');
 
-            $table->foreign('zone_id')
-                ->references('id')->on('zones')
-                ->onDelete('cascade');
         });
     }
 
@@ -43,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sale_man_sectors');
+        Schema::dropIfExists('coa_detail_account_sectors');
     }
 };

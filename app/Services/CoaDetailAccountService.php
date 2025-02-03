@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 /*
@@ -6,21 +7,35 @@ namespace App\Services;
  * @package App\Services
  * */
 
-use App\Models\CoaDetAccountDetail;
-use App\Models\CoaDetailAccount;
-use App\Models\CoaInventorySubSubHead;
+use App\Models\Area;
+use App\Models\SaleMan;
+use App\Models\PriceTag;
 use App\Models\CoaSubHead;
 use App\Models\CoaSubSubHead;
-use App\Models\SaleMan;
-use Illuminate\Support\Facades\Auth;
+use App\Models\CoaDetailAccount;
 use Illuminate\Support\Facades\DB;
+use App\Models\CoaDetAccountDetail;
+use App\Models\DetailAccountPrices;
+use App\Models\CoaDetailAccountArea;
+use Illuminate\Support\Facades\Auth;
+use App\Models\DetailAccountProducts;
+use App\Models\CoaInventorySubSubHead;
+use App\Models\CoaDetailAccountSectors;
+use App\Models\CoaInventoryDetailAccount;
 
-class CoaDetailAccountService {
-    const PER_PAGE = 2;
+class CoaDetailAccountService
+{
+
+    protected $commonService;
+
+    public function __construct(CommonService $commonService)
+    {
+        $this->commonService = $commonService;
+    }
 
     public function getListOfDetailAccounts($param = null)
     {
-        $q = CoaDetailAccount::with('getMainHead','getControlHead', 'getSubHead', 'getSubSubHead','SaleMan');
+        $q = CoaDetailAccount::with('getMainHead', 'getControlHead', 'getSubHead', 'getSubSubHead', 'SaleMan');
         if (!empty($param)) {
             $q->where('account_name', 'LIKE', '%' . $param . '%');
         }
@@ -41,33 +56,16 @@ class CoaDetailAccountService {
             return $getDetailAccount + 1;
         }
         return 1;
-//        if ($getDetailAccount) {
-//            $detailAccountCode = (int)substr($getDetailAccount->account_code, 3, 6) + 1;
-//            return $getDetailAccount->sub_head . $detailAccountCode;
-//        }
-//        return $subSubHeadCode . config('constants.account_codes.5th_level');
     }
 
-    public function storeAccountData($request)
-    {
-        DB::beginTransaction();
-//        try {
-            $mainData = $this->prepareMainAccountData($request);
-            $detailData = $this->prepareAdditionalInformationData($request);
-            $this->findUpdateOrCreate(CoaDetailAccount::class, ['id' => !empty(request('id')) ? request('id') : null], $mainData);
-            $this->findUpdateOrCreate(CoaDetAccountDetail::class, ['id' => !empty(request('id')) ? request('id') : null], $detailData);
-            DB::commit();
-//        } catch (\Throwable $exception) {
-//            DB::rollback();
-////            return back()->withError('User with ID: '.$request->user_id.' not found!')->withInput();
-//        }
-    }
 
     public function DropDownData()
     {
         $result = [
-            'saleMans' => SaleMan::pluck('name','id'),
-            'products' => CoaInventorySubSubHead::pluck('name','id'),
+            'saleMans' => SaleMan::pluck('name', 'id'),
+            'invetoryThirdLevel' => CoaInventorySubSubHead::pluck('name', 'id'),
+            'products' => CoaInventoryDetailAccount::pluck('name', 'id'),
+            'priceTags' => PriceTag::pluck('name', 'id'),
         ];
 
         return $result;
@@ -84,8 +82,6 @@ class CoaDetailAccountService {
             'account_code' => $request->account_code,
             'account_name' => $request->account_name,
             'saleMan_id' => $request->saleMan_id,
-            'sector' => $request->sector,
-            'area' => $request->area,
             'product_id' => $request->product_id,
             'price' => $request->price,
             'discount' => $request->discount,
@@ -98,18 +94,19 @@ class CoaDetailAccountService {
         ];
     }
 
-    public function prepareAdditionalInformationData($request)
+    public function prepareAdditionalInformationData($request, $detailAccountMasterInsert)
     {
         return [
-            'address' => $request->address,
-            'cnic' => $request->cnic,
-            'contact_no_1' => $request->contact_no_1,
-            'contact_no_2' => $request->contact_no_2,
-            'email' => $request->email,
-            'opening_balance' => $request->opening_balance,
-            'credit_limit' => $request->credit_limit,
+            'address' => $request['address'],
+            'cnic' => $request['cnic'],
+            'contact_no_1' => $request['contact_no_1'],
+            'contact_no_2' => $request['contact_no_2'],
+            'email' => $request['email'],
+            'opening_balance' => $request['opening_balance'],
+            'credit_limit' => $request['credit_limit'],
             'created_by' => Auth::user()->id,
-            'updated_by' => Auth::user()->id
+            'updated_by' => Auth::user()->id,
+            'det_account_code' => $detailAccountMasterInsert
         ];
     }
 
@@ -133,4 +130,139 @@ class CoaDetailAccountService {
         return $object;
     }
 
+    public function prepareDetailAccountMasterData($request)
+    {
+        $session = $this->commonService->getSession();
+        return [
+            'main_head' => $request['main_head'],
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'control_head' => $request['control_head'],
+            'sub_head' => $request['sub_head'],
+            'sub_sub_head' => $request['sub_sub_head'],
+            'account_code' => $request['account_code'],
+            'account_name' => $request['account_name'],
+            'saleMan_id' => $request['saleMan_id'],
+            'commision' => $request['commision'],
+            'mode' => $request['mode'],
+            'status' => $request['status'],
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id
+        ];
+    }
+
+    public function prepareDetailAccountSectorsData($request, $detailAccountMasterInsert)
+    {
+
+        return [
+            'sector_id' => $request['sector_id'],
+            'master_account_id' => $detailAccountMasterInsert,
+        ];
+    }
+
+    /*
+     * Save sale data.
+     * @param: $data
+     * */
+    public function saveDetailAccountSectors($data)
+    {
+        foreach ($data['sector_id'] as $key => $value) {
+            if (!empty($data['sector_id'][$key])) {
+                $rec['sector_id'] = $data['sector_id'][$key];
+                $rec['master_account_id'] = $data['master_account_id'];
+                CoaDetailAccountSectors::create($rec);
+            }
+        }
+    }
+
+    public function prepareDetailAccountAreasData($request, $detailAccountMasterInsert)
+    {
+        return [
+            'area_id' => $request['area_id'],
+            'master_account_id' => $detailAccountMasterInsert,
+        ];
+    }
+
+    /*
+     * Save sale data.
+     * @param: $data
+     * */
+    public function saveDetailAccountAreas($data)
+    {
+        foreach ($data['area_id'] as $key => $value) {
+            if (!empty($data['area_id'][$key])) {
+                $rec['area_id'] = $data['area_id'][$key];
+                $arrayId = $rec['area_id'];
+                $rec['sector_id'] = Area::where("id", $arrayId)->value("sector_id");
+                $rec['master_account_id'] = $data['master_account_id'];
+                CoaDetailAccountArea::create($rec);
+            }
+        }
+    }
+
+
+
+
+    public function prepareDetailAccountDetailData($request, $detailAccountMasterInsert)
+    {
+
+
+        return [
+            'inventory_third_level' => $request['inventory_third_level'],
+            'price_tag_id' => $request['price_tag_id'],
+            'coa_detail_account_code' => $detailAccountMasterInsert,
+        ];
+    }
+
+    /*
+     * Save sale data.
+     * @param: $data
+     * */
+    public function saveDetailAccount($data)
+    {
+        foreach ($data['inventory_third_level'] as $key => $value) {
+            if (!empty($data['inventory_third_level'][$key])) {
+                $rec['inventory_third_level'] = $data['inventory_third_level'][$key];
+                $rec['price_tag_id'] = $data['price_tag_id'][$key];
+                $rec['coa_detail_account_code'] = $data['coa_detail_account_code'];
+                DetailAccountPrices::create($rec);
+            }
+        }
+    }
+
+    public function prepareDetailAccountProductData($request, $detailAccountMasterInsert)
+    {
+
+        return [
+            'product_id' => $request['product_id'],
+            'master_price_tag' => $request['master_price_tag'],
+            'master_third_level' => $request['master_third_level'],
+            'price' => $request['price'],
+            'scheme' => $request['scheme'],
+            'discount' => $request['discount'],
+            'detail_account_id' => $detailAccountMasterInsert,
+        ];
+    }
+
+    /*
+     * Save sale data.
+     * @param: $data
+     * */
+    public function saveDetailAccountProducts($data)
+    {
+        // dd($data);
+
+        foreach ($data['master_price_tag'] as $key => $value) {
+            if (!empty($data['master_price_tag'][$key])) {
+                $rec['product_id'] = $data['product_id'][$key];
+                $rec['master_price_tag'] = $data['master_price_tag'][$key];
+                $rec['master_third_level'] = $data['master_third_level'][$key];
+                $rec['price'] = $data['price'][$key];
+                $rec['scheme'] = $data['scheme'][$key];
+                $rec['discount'] = $data['discount'][$key];
+                $rec['detail_account_id'] = $data['detail_account_id'];
+                DetailAccountProducts::create($rec);
+            }
+        }
+    }
 }

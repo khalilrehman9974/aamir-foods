@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Models\PriceTag;
 use App\Models\CoaInventorySubHead;
 use App\Models\CoaInventoryMainHead;
+use Illuminate\Support\Facades\Auth;
 use App\Models\CoaInventorySubSubHead;
-use App\Models\PriceTag;
+use App\Models\InventorySubSubHeadPriceTagModel;
 
 /*
  * Class ChartInventorySubSubHeadService
@@ -54,6 +56,43 @@ class ChartInventorySubSubHeadService
 
         return $result;
     }
+
+    public function prepareAccountMasterData($request)
+    {
+        return [
+            'code' => $request['code'],
+            'name' => $request['name'],
+            'main_head_id' => $request['main_head_id'],
+            'sub_head_id' => $request['sub_head_id'],
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id
+        ];
+    }
+
+    public function prepareAccountDetailData($request, $detailAccountMasterInsert)
+    {
+
+        return [
+            'priceTag' => $request['priceTag'],
+            'sub_sub_head_id' => $detailAccountMasterInsert,
+        ];
+    }
+
+    /*
+     * Save sale data.
+     * @param: $data
+     * */
+    public function savePriceTags($data)
+    {
+        foreach ($data['priceTag'] as $key => $value) {
+            if (!empty($data['priceTag'][$key])) {
+                $rec['priceTag'] = $data['priceTag'][$key];
+                $rec['sub_sub_head_id'] = $data['sub_sub_head_id'];
+                InventorySubSubHeadPriceTagModel::create($rec);
+            }
+        }
+    }
+
 
     public function getListOfSubSubHeads($param = null)
     {

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('sub_head')->nullable()->constrained('coa_inventory_sub_heads')->onDelete('cascade');
             $table->foreignId('sub_sub_head')->nullable()->constrained('coa_inventory_sub_sub_heads')->onDelete('cascade');
             $table->integer('code');
+            $table->integer('priceTag_id');
             $table->string('name');
             $table->string('image')->nullable();
             $table->integer('measurement_type_id');

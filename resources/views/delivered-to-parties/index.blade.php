@@ -29,13 +29,13 @@
                                     <nav class="breadcrumb-style-one" aria-label="breadcrumb">
                                         <ol class="breadcrumb">
                                             <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                                            <li class="breadcrumb-item"><a href="{{ route('detail-account.list') }}">{{ $pageTitle }}</a></li>
+                                            <li class="breadcrumb-item"><a href="{{ route('delivered-to-parties.list') }}">{{ $pageTitle }}</a></li>
                                         </ol>
                                     </nav>
                                 </div>
                             </div>
                             <div class="col-lg-0 col-6 ">
-                                <a href="{{ route('detail-account.create') }}" class="btn btn-primary mt-2 mb-2 me-8"
+                                <a href="{{ route('delivered-to-parties.create') }}" class="btn btn-primary mt-2 mb-2 me-8"
                                    style="float : right; " style="">Create
                                 </a>
 
@@ -49,7 +49,7 @@
                             <form method="get" action="{{ route('sub-sub-head.list') }}" class="form-inline my-2 my-lg-0 justify-content-center">
                                 <div class="w-100">
                                     <input type="text" name="search" class="w-100 form-control product-search br-30" id="input-search"
-                                           placeholder="Search Account...">
+                                           placeholder="Search Party...">
                                     <button class="btn btn-primary" type="submit">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -76,24 +76,23 @@
                                     <table class="table table-bordered">
                                         <thead>
                                         <tr>
-                                            <th scope="col" style="width: 10%"> <b>Main Head </b> </th>
-                                            <th scope="col" style="width: 10%"> <b>Control Head </b> </th>
-                                            <th scope="col" style="width: 10%"> <b>Sub Head </b> </th>
-                                            <th scope="col" style="width: 10%"> <b>Sub-Sub Head </b> </th>
-                                            <th scope="col" style="width: 15%"> <b>Account Code </b> </th>
-                                            <th scope="col" style="width: 35%"> <b>Account Name </b> </th>
-                                            <th scope="col" style="width: 35%"> <b>Sale Man </b> </th>
+                                            <th scope="col" style="width: 10%"> <b>ID</b> </th>
+                                            <th scope="col" style="width: 20%"> <b>Coa Party</b> </th>
+                                            <th scope="col" style="width: 20%"> <b>Name</b> </th>
+                                            <th scope="col" style="width: 20%"> <b>Sale Man</b> </th>
+                                            <th scope="col" style="width: 10%"> <b>Mode</b> </th>
+                                            <th scope="col" style="width: 10%"> <b>Status</b> </th>
                                             <th class="text-center" scope="col"></th>
                                         </tr>
                                         </thead>
                                         <tbody>
 {{--                                        @if( !$detailAccounts->empty() )--}}
-                                        @foreach ($detailAccounts as $account)
-                                            <tr id="row_{{ $account->id }}">
+                                        @foreach ($deliveredToParties as $deliveredToPartie)
+                                            <tr id="row_{{$deliveredToPartie->id}}">
                                                 <td>
                                                     <div class="media">
                                                         <div class="media-body align-self-center">
-                                                            <h6 class="mb-0">{{ $account->getMainHead->account_name }}</h6>
+                                                            <h6 class="mb-0">{{ $deliveredToPartie->id }}</h6>
 
                                                         </div>
                                                     </div>
@@ -101,7 +100,17 @@
                                                 <td>
                                                     <div class="media">
                                                         <div class="media-body align-self-center">
-                                                            <h6 class="mb-0">{{ $account->getControlHead->account_name }}</h6>
+                                                            <h6 class="mb-0">{{ $deliveredToPartie->Party->account_name}}</h6>
+
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+
+                                                <td>
+                                                    <div class="media">
+                                                        <div class="media-body align-self-center">
+                                                            <h6 class="mb-0">{{ $deliveredToPartie->party_name }}</h6>
 
                                                         </div>
                                                     </div>
@@ -109,7 +118,7 @@
                                                 <td>
                                                     <div class="media">
                                                         <div class="media-body align-self-center">
-                                                            <h6 class="mb-0">{{ $account->getSubHead->account_name }}</h6>
+                                                            <h6 class="mb-0">{{ $deliveredToPartie->SaleMan->name}}</h6>
 
                                                         </div>
                                                     </div>
@@ -117,7 +126,7 @@
                                                 <td>
                                                     <div class="media">
                                                         <div class="media-body align-self-center">
-                                                            <h6 class="mb-0">{{ $account->getSubSubHead->account_name }}</h6>
+                                                            <h6 class="mb-0">{{ $deliveredToPartie->mode}}</h6>
 
                                                         </div>
                                                     </div>
@@ -125,23 +134,7 @@
                                                 <td>
                                                     <div class="media">
                                                         <div class="media-body align-self-center">
-                                                            <h6 class="mb-0">{{ $account->account_code }}</h6>
-
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="media">
-                                                        <div class="media-body align-self-center">
-                                                            <h6 class="mb-0">{{ $account->account_name }}</h6>
-
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="media">
-                                                        <div class="media-body align-self-center">
-                                                            <h6 class="mb-0">{{ $account->SaleMan->name}}</h6>
+                                                            <h6 class="mb-0">{{ $deliveredToPartie->status}}</h6>
 
                                                         </div>
                                                     </div>
@@ -150,7 +143,7 @@
                                                 <td class="text-center">
                                                     <div class="action-btns">
                                                         @if ((!empty($permission->edit_access) && $permission->edit_access == 1) || Auth::user()->is_admin == 1)
-                                                            <a href="{{ route('detail-account.edit', ['id' => $account->id]) }}"
+                                                            <a href="{{ route('delivered-to-parties.edit', ['id' => $deliveredToPartie->id]) }}"
                                                                class="action-btn btn-edit bs-tooltip me-2"
                                                                data-toggle="tooltip" data-placement="top" title="Edit">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24"
@@ -166,7 +159,7 @@
                                                         @endif
                                                         {{-- @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
                                                             <a href="javascript:void(0);"
-                                                               class="action-btn btn-delete bs-tooltip delete" data-toggle="tooltip" data-id="{{ $account->id  }}"
+                                                               class="action-btn btn-delete bs-tooltip delete" data-toggle="tooltip" data-id="{{ $deliveredToPartie->id  }}"
                                                                data-placement="top" title="Delete">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                                      height="24" viewBox="0 0 24 24" fill="none"
@@ -200,7 +193,7 @@
 {{--                                    @endif--}}
                                 <nav aria-label="Page navigation">
                                     <ul class="pagination justify-content-end">
-                                        {!! $detailAccounts->appends(request()->query())->links() !!}
+                                        {!! $deliveredToParties->appends(request()->query())->links() !!}
                                     </ul>
                                 </nav>
                             </div>
@@ -211,12 +204,5 @@
                     <script src="{{asset('js/common.js')}}"></script>
                     <script src="{{asset('plugins/sweetalerts2/sweetalerts2.min.js')}}"></script>
                     @vite(['resources/assets/js/elements/custom-search.js'])
-                    <script>
-                        var config = {
-                            routes: {
-                                deleteMainHead: "{{ url('detail-account/delete') }}",
-                            },
-                        }
-                    </script>
                     </x-slot>
 </x-base-layout>

@@ -1,58 +1,3 @@
-$(".delete").on('click', function () {
-    var id = $(this).attr('data-id');
-    var ajax_url = config.routes.deleteMainHead;
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                type: "DELETE",
-                url: ajax_url + '/' + id,
-                data: {"id": id},
-                beforeSend: function () {
-                    $('#loading').css('display', 'block');
-                },
-                success: function (data) {
-                    if (data.status == 'success') {
-                        // toastr.success(data.message);
-                        Swal.fire(
-                            'Deleted!',
-                            'Record has been deleted.',
-                            'success'
-                        )
-                        $("#row_" + id).remove();
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Something went wrong',
-                        })
-                    }
-                },
-                complete: function () {
-                    $('#loading').css('display', 'none');
-                },
-                error: function (errorThrown) {
-                    var errors = errorThrown.responseJSON.errors;
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Something went wrong',
-                    })
-                }
-            });
-
-        }
-    });
-});
-
 $('#main-head').on('change', function () {
     var mainCode = $('#main-head :selected').val();
     $("#control-head").val('');
@@ -115,7 +60,6 @@ $(document).on('click', 'body *', function () {
 
     function doAmountTotal() {
         $('#total-amount').text("");
-        console.log('in do amount total');
         var totalAmount = 0;
         $(".amount").each(function () {
             if (!isNaN(this.value) && this.value.length != 0) {
@@ -126,7 +70,7 @@ $(document).on('click', 'body *', function () {
         $('#net-amount').val(totalAmount.toFixed(2));
     }
 
-    $("#freight, #scheme, #commission").on("focusout", function (){
+    $("#freight, #scheme, #commission").on("focusout", function () {
         var totalAmount = 0;
         $(".amount").each(function () {
             if (!isNaN(this.value) && this.value.length != 0) {
@@ -146,13 +90,11 @@ $(document).on('click', 'body *', function () {
 });
 
 $(document).ready(function () {
-    console.log("DOM is ready");
     $('.select2').select2();
-    console.log("DOM is loaded");
 });
 
 $("#dispatch_note").on("keypress", function (event) {
-    if ($("#dispatch_note").val() !== "" ) {
+    if ($("#dispatch_note").val() !== "") {
         if (event.which == 13) {
             alert(event.which);
             event.preventDefault()
@@ -160,20 +102,19 @@ $("#dispatch_note").on("keypress", function (event) {
     }
 });
 
-$(document).on('click', 'body *', function() {
-    $('.amount').on("focusout", function() {
+$(document).on('click', 'body *', function () {
+    $('.amount').on("focusout", function () {
         doAmountTotal();
     });
 
-    $('.delete-item').on("click", function() {
+    $('.delete-item').on("click", function () {
         doAmountTotal();
     });
 
     function doAmountTotal() {
         $('#total-amount').text("");
-        console.log('in do amount total');
         var totalAmount = 0;
-        $(".amount").each(function() {
+        $(".amount").each(function () {
             if (!isNaN(this.value) && this.value.length != 0) {
                 totalAmount += parseFloat(this.value);
             }
@@ -217,6 +158,8 @@ $('#code').on('keypress', function (event) {
 
 
 
+
+
 $('#party').on('change', function () {
     var name = $('#party :selected').text();
     // console.log(name);
@@ -257,7 +200,6 @@ $(document).on('click', 'body *', function () {
 
     function doAmountTotal() {
         $('#total-amount').text("");
-        console.log('in do amount total');
         var totalAmount = 0;
         $(".amount").each(function () {
             if (!isNaN(this.value) && this.value.length != 0) {

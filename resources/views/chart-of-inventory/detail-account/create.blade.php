@@ -136,7 +136,7 @@
                                                                 Head</label>
                                                             @if (!empty($detailAccount))
                                                                 <select id="sub-sub-head" name="sub_sub_head"
-                                                                    class="form-select" required>
+                                                                    class="form-select sub-sub-head" required>
 
                                                                     @foreach ($subSubHeads as $key => $value)
                                                                         <option value="{{ $key }}"
@@ -147,7 +147,7 @@
                                                                 </select>
                                                             @else
                                                                 <select id="sub-sub-head" name="sub_sub_head"
-                                                                    class="form-select">
+                                                                    class="form-select sub-sub-head">
                                                                     @foreach ($subHeads as $key => $value)
                                                                         <option value="{{ $key }}"
                                                                             {{ $key == old('sub_sub_head') ? 'selected' : '' }}>
@@ -161,211 +161,237 @@
                                                                 </div>
                                                             @endif
                                                         </div>
-                                                        <div class="col-lg- 0 col-12 form-group mb-2">
-                                                            <label for="code" class="form-label">
-                                                                Account Code</label>
-                                                            <input id="code" type="text" name="code" style="color: black;"
-                                                                value="{{ old('code', !empty($detailAccount->code) ? $detailAccount->code : '') }}"
-                                                                class="form-control" readonly>
-                                                        </div>
-                                                        <br>
-                                                        <div class="col-lg-0 col-12 form-group mb-4">
-                                                            <label for="name" class="form-label">
-                                                                Account Name </label>
-                                                            <input id="name" type="text" name="name"
-                                                                value="{{ old('name', !empty($detailAccount->name) ? $detailAccount->name : '') }}"
-                                                                placeholder="Please Enter Detail Account "
-                                                                class="form-control" required>
-                                                            @if ($errors->has('name'))
-                                                                <div class="invalid-feedback">
-                                                                    {{ $errors->first('name') }}
-                                                                </div>
+
+
+                                                        <div class="col-xl-12 col-lg-12">
+                                                            <label class="form-label" for="product-title-input">Price
+                                                                Tag</label>
+                                                            @if (!empty($detailAccount))
+                                                                <select id="priceTag-dropdown" name="priceTag_id"
+                                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} priceTag-dropdown"
+                                                                    required>
+                                                                    @foreach ($priceTags as $key => $value)
+                                                                        <option value="{{ $key }}"
+                                                                            {{ !empty($detailAccount) && $detailAccount->priceTag_id == $key ? 'selected' : '' }}
+                                                                            {{ $key == old('priceTag_id') ? 'selected' : '' }}>
+                                                                            {{ $value }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            @else
+                                                                <select id="priceTag-dropdown" name="priceTag_id"
+                                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} priceTag-dropdown"
+                                                                    required>
+                                                                    <option value="">-- Select Price Tags --
+                                                                    </option>
+                                                                </select>
                                                             @endif
                                                         </div>
-
-                                                        <div class="col-lg-0 col-12 ">
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <label for="packing_type_id"
-                                                                        class="form-label">Packing
-                                                                        Type</label>
-                                                                    <select id="packing_type_id" type="text"
-                                                                        name="packing_type_id"
-                                                                        class="form-control select2 form-control mb-3 custom-select"
-                                                                        required>
-                                                                        <option value="">Select Packing Type
-                                                                        </option>
-                                                                        @foreach ($dropDownData['PackingType'] as $key => $value)
-                                                                            <option value="{{ $key }}"
-                                                                                {{ (old('packing_type_id') == $key ? 'selected' : '') || (!empty($detailAccount->packing_type_id) ? collect($detailAccount->packing_type_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                {{ $value }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                    {{-- <div class="invalid-feedback">
-                                                                            Please Select the Sector.
-                                                                        </div> --}}
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <label for="measurement_type_id"
-                                                                        class="form-label">Measurement Type</label>
-                                                                    <select id="measurement_type_id" type="text"
-                                                                        name="measurement_type_id"
-                                                                        class="form-control select2 form-control mb-3 custom-select"
-                                                                        required>
-                                                                        <option value="">Select Measurement Type
-                                                                        </option>
-                                                                        @foreach ($dropDownData['MeasurementTypes'] as $key => $value)
-                                                                            <option value="{{ $key }}"
-                                                                                {{ (old('measurement_type_id') == $key ? 'selected' : '') || (!empty($detailAccount->measurement_type_id) ? collect($detailAccount->measurement_type_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                {{ $value }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                    {{-- <div class="invalid-feedback">
-                                                                            Please Select the Sector.
-                                                                        </div> --}}
-                                                                </div>
-                                                            </div>
-
-
-                                                        </div>
-                                                        <div class="col-lg-0 col-12 ">
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <label for="name" class="form-label">
-                                                                        Size </label>
-                                                                    <input id="size" type="text"
-                                                                        name="size"
-                                                                        value="{{ old('size', !empty($detailAccount->size) ? $detailAccount->size : '') }}"
-                                                                        placeholder="Please The Size "
-                                                                        class="form-control" >
-                                                                    @if ($errors->has('size'))
-                                                                        <div class="invalid-feedback">
-                                                                            {{ $errors->first('size') }}
-                                                                        </div>
-                                                                    @endif
-                                                                </div>
-
-                                                                <div class="col-md-6">
-                                                                    <label for="min_limit" class="form-label">
-                                                                        Minimum Limit</label>
-                                                                    <input id="min_limit" type="text"
-                                                                        name="min_limit"
-                                                                        value="{{ old('min_limit', !empty($detailAccount->min_limit) ? $detailAccount->min_limit : '') }}"
-                                                                        placeholder="Please Enter Minimum limit"
-                                                                        class="form-control" required>
-                                                                    @if ($errors->has('min_limit'))
-                                                                        <div class="invalid-feedback">
-                                                                            {{ $errors->first('min_limit') }}
-                                                                        </div>
-                                                                    @endif
-                                                                </div>
-
-                                                            </div>
-
-                                                        </div>
-                                                        <div class="col-lg-0 col-12 ">
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <label for="max_limit" class="form-label">
-                                                                        Maximum Limit</label>
-                                                                    <input id="max_limit" type="text"
-                                                                        name="max_limit"
-                                                                        value="{{ old('max_limit', !empty($detailAccount->max_limit) ? $detailAccount->max_limit : '') }}"
-                                                                        placeholder="Please Enter Maximum limit"
-                                                                        class="form-control" required>
-                                                                    @if ($errors->has('max_limit'))
-                                                                        <div class="invalid-feedback">
-                                                                            {{ $errors->first('max_limit') }}
-                                                                        </div>
-                                                                    @endif
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-0 col-12 form-group mb-4">
-                                                            <label for="name" class="form-label">
-                                                                Upload Product Image </label>
-
-                                                            <div style='height: 0px;width: 0px; overflow:;'>
-                                                                <input id="image" name="image" type="file"
-                                                                    value="Upload" onchange="sub(this)" />
-                                                            </div>
-                                                        </div>
-                                                        <br>
-                                                        <br>
-                                                        <br>
-
-                                                        @if (@$detailAccount)
-                                                            <div class="col-lg-0 col-12 form-group mb-4">
-                                                                <div class="media">
-                                                                    <div class="avatar me-2">
-
-                                                                        <img alt="avatar"
-                                                                            @if ($detailAccount->image == null || !file_exists(base_path('public/resources/images/inventory/').'/'.$detailAccount->image)) src="{{ asset('images/no-attachments.png') }}"
-
-                                                                         @else
-                                                                        src="{{asset('resources/images/inventory/').'/'.$detailAccount->image }}" @endif
-                                                                            class="rounded-circle" />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        @endif
-
-
-
-
-
-                                                        {{--                                                            <div class="control-group input-group"> --}}
-                                                        {{--                                                                <input type="file" name="file[]" class="form-control">&nbsp;&nbsp; --}}
-                                                        {{--                                                                <div class="input-group-btn"> --}}
-                                                        {{--                                                                    <button class="btn btn-danger delete-attachment" type="button"><i --}}
-                                                        {{--                                                                            class="glyphicon glyphicon-remove" disabled="disabled"></i>x --}}
-                                                        {{--                                                                    </button> --}}
-                                                        {{--                                                                </div> --}}
-                                                        {{--                                                            </div> --}}
-                                                        {{--                                                                <div class="col-md-6 mx-auto"> --}}
-
-                                                        {{--                                                                    <div class="multiple-file-upload"> --}}
-
-                                                        {{--                                                                        <input  onclick="document.getElementById('image').click()" --}}
-                                                        {{--                                                                               class="file-upload-multiple" --}}
-                                                        {{--                                                                               name="image1" --}}
-                                                        {{--                                                                               id="image1"> --}}
-                                                        {{--                                                                    </div> --}}
-                                                        {{--                                                                </div> --}}
-
-                                                        {{--                                                            <div class="col-md-6 mx-auto"> --}}
-
-
-                                                        {{--                                                                    <input type="file" --}}
-                                                        {{--                                                                           class="" --}}
-                                                        {{--                                                                           name="image1" --}}
-                                                        {{--                                                                           id="image1"  onclick="getFile()> --}}
-                                                        {{--                                                            </div> --}}
-
-
-
-                                                        {{--                                                        @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1) --}}
-                                                        @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
-                                                            <div class="col-lg-0 col-12 form-group mb-4">
-
-                                                                <button type="submit"
-                                                                    class="btn btn-success  rounded bs-popover me-1 mt-5 mb-4 "
-                                                                    data-bs-container="body" data-bs-placement="right"
-                                                                    data-bs-content="Tooltip on right">
-                                                                    @if (!isset($detailAccount))
-                                                                        Save
-                                                                    @else
-                                                                        Update
-                                                                    @endif
-                                                                </button>
-                                                        @endif
-                                                        <a href="{{ route('co-inventory-detail-account.list') }}"
-                                                            class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
                                                     </div>
 
-                                                </form>
+                                                    <div class="col-lg- 0 col-12 form-group mb-2">
+                                                        <label for="code" class="form-label">
+                                                            Account Code</label>
+                                                        <input id="code" type="text" name="code"
+                                                            style="color: black;"
+                                                            value="{{ old('code', !empty($detailAccount->code) ? $detailAccount->code : '') }}"
+                                                            class="form-control" readonly>
+                                                    </div>
+                                                    <br>
+                                                    <div class="col-lg-0 col-12 form-group mb-4">
+                                                        <label for="name" class="form-label">
+                                                            Account Name </label>
+                                                        <input id="name" type="text" name="name"
+                                                            value="{{ old('name', !empty($detailAccount->name) ? $detailAccount->name : '') }}"
+                                                            placeholder="Please Enter Detail Account "
+                                                            class="form-control" required>
+                                                        @if ($errors->has('name'))
+                                                            <div class="invalid-feedback">
+                                                                {{ $errors->first('name') }}
+                                                            </div>
+                                                        @endif
+                                                    </div>
+
+                                                    <div class="col-lg-0 col-12 ">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <label for="packing_type_id"
+                                                                    class="form-label">Packing
+                                                                    Type</label>
+                                                                <select id="packing_type_id" type="text"
+                                                                    name="packing_type_id"
+                                                                    class="form-control select2 form-control mb-3 custom-select"
+                                                                    required>
+                                                                    <option value="">Select Packing Type
+                                                                    </option>
+                                                                    @foreach ($dropDownData['PackingType'] as $key => $value)
+                                                                        <option value="{{ $key }}"
+                                                                            {{ (old('packing_type_id') == $key ? 'selected' : '') || (!empty($detailAccount->packing_type_id) ? collect($detailAccount->packing_type_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                            {{ $value }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                                {{-- <div class="invalid-feedback">
+                                                                            Please Select the Sector.
+                                                                        </div> --}}
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label for="measurement_type_id"
+                                                                    class="form-label">Measurement Type</label>
+                                                                <select id="measurement_type_id" type="text"
+                                                                    name="measurement_type_id"
+                                                                    class="form-control select2 form-control mb-3 custom-select"
+                                                                    required>
+                                                                    <option value="">Select Measurement Type
+                                                                    </option>
+                                                                    @foreach ($dropDownData['MeasurementTypes'] as $key => $value)
+                                                                        <option value="{{ $key }}"
+                                                                            {{ (old('measurement_type_id') == $key ? 'selected' : '') || (!empty($detailAccount->measurement_type_id) ? collect($detailAccount->measurement_type_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                            {{ $value }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                                {{-- <div class="invalid-feedback">
+                                                                            Please Select the Sector.
+                                                                        </div> --}}
+                                                            </div>
+                                                        </div>
+
+
+                                                    </div>
+                                                    <div class="col-lg-0 col-12 ">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <label for="name" class="form-label">
+                                                                    Size </label>
+                                                                <input id="size" type="text" name="size"
+                                                                    value="{{ old('size', !empty($detailAccount->size) ? $detailAccount->size : '') }}"
+                                                                    placeholder="Please The Size "
+                                                                    class="form-control">
+                                                                @if ($errors->has('size'))
+                                                                    <div class="invalid-feedback">
+                                                                        {{ $errors->first('size') }}
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+
+                                                            <div class="col-md-6">
+                                                                <label for="min_limit" class="form-label">
+                                                                    Minimum Limit</label>
+                                                                <input id="min_limit" type="text" name="min_limit"
+                                                                    value="{{ old('min_limit', !empty($detailAccount->min_limit) ? $detailAccount->min_limit : '') }}"
+                                                                    placeholder="Please Enter Minimum limit"
+                                                                    class="form-control" required>
+                                                                @if ($errors->has('min_limit'))
+                                                                    <div class="invalid-feedback">
+                                                                        {{ $errors->first('min_limit') }}
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-lg-0 col-12 ">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <label for="max_limit" class="form-label">
+                                                                    Maximum Limit</label>
+                                                                <input id="max_limit" type="text" name="max_limit"
+                                                                    value="{{ old('max_limit', !empty($detailAccount->max_limit) ? $detailAccount->max_limit : '') }}"
+                                                                    placeholder="Please Enter Maximum limit"
+                                                                    class="form-control" required>
+                                                                @if ($errors->has('max_limit'))
+                                                                    <div class="invalid-feedback">
+                                                                        {{ $errors->first('max_limit') }}
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-0 col-12 form-group mb-4">
+                                                        <label for="name" class="form-label">
+                                                            Upload Product Image </label>
+
+                                                        <div style='height: 0px;width: 0px; overflow:;'>
+                                                            <input id="image" name="image" type="file"
+                                                                value="Upload" onchange="sub(this)" />
+                                                        </div>
+                                                    </div>
+                                                    <br>
+                                                    <br>
+                                                    <br>
+
+                                                    @if (@$detailAccount)
+                                                        <div class="col-lg-0 col-12 form-group mb-4">
+                                                            <div class="media">
+                                                                <div class="avatar me-2">
+
+                                                                    <img alt="avatar"
+                                                                        @if (
+                                                                            $detailAccount->image == null ||
+                                                                                !file_exists(base_path('public/resources/images/inventory/') . '/' . $detailAccount->image)) src="{{ asset('images/no-attachments.png') }}"
+
+                                                                         @else
+                                                                        src="{{ asset('resources/images/inventory/') . '/' . $detailAccount->image }}" @endif
+                                                                        class="rounded-circle" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+
+
+
+
+
+                                                    {{--                                                            <div class="control-group input-group"> --}}
+                                                    {{--                                                                <input type="file" name="file[]" class="form-control">&nbsp;&nbsp; --}}
+                                                    {{--                                                                <div class="input-group-btn"> --}}
+                                                    {{--                                                                    <button class="btn btn-danger delete-attachment" type="button"><i --}}
+                                                    {{--                                                                            class="glyphicon glyphicon-remove" disabled="disabled"></i>x --}}
+                                                    {{--                                                                    </button> --}}
+                                                    {{--                                                                </div> --}}
+                                                    {{--                                                            </div> --}}
+                                                    {{--                                                                <div class="col-md-6 mx-auto"> --}}
+
+                                                    {{--                                                                    <div class="multiple-file-upload"> --}}
+
+                                                    {{--                                                                        <input  onclick="document.getElementById('image').click()" --}}
+                                                    {{--                                                                               class="file-upload-multiple" --}}
+                                                    {{--                                                                               name="image1" --}}
+                                                    {{--                                                                               id="image1"> --}}
+                                                    {{--                                                                    </div> --}}
+                                                    {{--                                                                </div> --}}
+
+                                                    {{--                                                            <div class="col-md-6 mx-auto"> --}}
+
+
+                                                    {{--                                                                    <input type="file" --}}
+                                                    {{--                                                                           class="" --}}
+                                                    {{--                                                                           name="image1" --}}
+                                                    {{--                                                                           id="image1"  onclick="getFile()> --}}
+                                                    {{--                                                            </div> --}}
+
+
+
+                                                    {{--                                                        @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1) --}}
+                                                    @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
+                                                        <div class="col-lg-0 col-12 form-group mb-4">
+
+                                                            <button type="submit"
+                                                                class="btn btn-success  rounded bs-popover me-1 mt-5 mb-4 "
+                                                                data-bs-container="body" data-bs-placement="right"
+                                                                data-bs-content="Tooltip on right">
+                                                                @if (!isset($detailAccount))
+                                                                    Save
+                                                                @else
+                                                                    Update
+                                                                @endif
+                                                            </button>
+                                                    @endif
+                                                    <a href="{{ route('co-inventory-detail-account.list') }}"
+                                                        class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
                                             </div>
+
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
@@ -376,6 +402,38 @@
             </div>
         </div>
     </div>
+
+    </div>
+
+    <script>
+        $('.sub-sub-head').on('change', function() {
+            var idProduct = this.value;
+            console.log(idProduct);
+            $('.priceTag-dropdown').html('');
+            $.ajax({
+                url: config.routes.getProductPriceTags,
+                type: "GET",
+                data: {
+                    product_id: idProduct,
+                    _token: '{{ csrf_token() }}'
+                },
+                dataType: 'json',
+                success: function(result) {
+                    $('.priceTag-dropdown').html(
+                        '<option value="">-- Select Price Tag --</option>');
+                    $.each(result.priceTags, function(key, data) {
+                        $('.priceTag-dropdown').append(
+                            '<option value="' +
+                            data.id +
+                            '">' + data.name + '</option>');
+                    });
+
+                }
+            });
+        });
+    </script>
+
+
     <x-slot:footerFiles>
 
         <script src="{{ asset('plugins/filepond/filepond.min.js') }}"></script>
@@ -397,6 +455,7 @@
                     getSubHeads: "{{ url('co-inv-detail-account/get-sub-head-accounts') }}",
                     getSubSubHeads: "{{ url('co-inv-detail-account/get-sub-sub-head-accounts') }}",
                     getDetailAccountCode: "{{ url('co-inv-detail-account/get-detail-account-code') }}",
+                    getProductPriceTags: "{{ url('co-inv-detail-account/get-product-price-tags') }}",
                 },
             }
 

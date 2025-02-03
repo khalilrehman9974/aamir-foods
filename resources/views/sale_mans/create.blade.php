@@ -143,22 +143,22 @@
                                             <label class="form-label">Designation</label>
 
                                             <select id="designation" type="text" name="designation"
-                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mb-3 select2 custom-select"
-                                                    required>
-                                                    <option value="Order Booker">Order Booker
-                                                    </option>
-                                                    <option value="SO">
-                                                        SO
-                                                    </option>
-                                                    <option value="TSO">TSO
-                                                    </option>
-                                                    <option value="ASM">ASM
-                                                    </option>
-                                                    <option value="ZSM">ZSM
-                                                    </option>
-                                                    <option value="NSM">NSM
-                                                    </option>
-                                                </select>
+                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mb-3 select2 custom-select"
+                                                required>
+                                                <option value="Order Booker">Order Booker
+                                                </option>
+                                                <option value="SO">
+                                                    SO
+                                                </option>
+                                                <option value="TSO">TSO
+                                                </option>
+                                                <option value="ASM">ASM
+                                                </option>
+                                                <option value="ZSM">ZSM
+                                                </option>
+                                                <option value="NSM">NSM
+                                                </option>
+                                            </select>
 
                                             @error('designation')
                                                 <div class="invalid-feedback">
@@ -177,11 +177,6 @@
                                                 name="country_id">
 
                                                 <option value="">-- Select Country --</option>
-                                                {{-- @foreach ($countries as $data)
-                                                    <option value="{{ $data->id }}" >
-                                                        {{ $data->name }}
-                                                    </option>
-                                                @endforeach --}}
                                                 @foreach ($countries as $index => $value)
                                                     <option value="{{ $index }}"
                                                         {{ (old('country_id') == $index ? 'selected' : '') || (!empty($saleMan->country_id) ? collect($saleMan->country_id)->contains($index) : '') ? 'selected' : '' }}>
@@ -195,42 +190,13 @@
 
                                         <div class="col-xl-6 col-lg-6 mt-3">
                                             <label class="form-label" for="product-title-input">Zones</label>
-                                            @if (empty($saleMan))
-                                                <select id="zone-dropdown" name="zone_id[]"
-                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} zone-dropdown"
-                                                    multiple>
-                                                    <option value="">-- Select Zones --</option>
-                                                </select>
-                                            @else
-                                                {{-- <select id="zone-dropdown" name="zone_id" class="form-select"
-                                                    required>
-                                                    @foreach ($zones as $key => $value)
-                                                        <option value="{{ $key }}"
-                                                            {{ $key == old('zone_id') ? 'selected' : '' }}>
-                                                            {{ $value }}</option>
-                                                    @endforeach
-                                                </select> --}}
-                                                <select id="zone-dropdown" name="zone_id[]"
-                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} zone-dropdown"
-                                                    required multiple>
-                                                    @foreach ($zones as $key => $value)
-                                                        <option value="{{ $key }}"
-                                                            {{ (old('zone_id') == $key ? 'selected' : '') || (!empty($saleManZones->zone_id) ? collect($saleManZones->zone_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                            {{ $value }}
-                                                        </option>
-                                                    @endforeach
-                                                    {{-- @foreach ($zones as $key => $value)
-                                                        <option value="{{ $key }}"
-                                                            {{ !empty($saleManZones) && $saleManZones->zone_id == $key ? 'selected' : '' }}
-                                                            {{ $key == old('zone_id') ? 'selected' : '' }}>
-                                                            {{ $value }}</option>
-                                                    @endforeach --}}
-                                                </select>
+                                            <select id="zone-dropdown" name="zone_id[]"
+                                                class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} zone-dropdown"
+                                                multiple>
+                                                <option value="select-all">Select All</option>
 
-                                            @endif
-                                            {{-- <select id="zone-dropdown" name="zone_id" class="form-control">
-                                                <option value="">-- Select Zones --</option>
-                                            </select> --}}
+                                            </select>
+
                                         </div>
                                     </div>
                                 </div>
@@ -239,87 +205,23 @@
                                     <div class="row">
                                         <div class="col-xl-6 col-lg-6 mt-3">
                                             <label class="form-label" for="product-title-input">Belt</label>
-                                            @if (empty($saleMan))
-                                                <select id="sector-dropdown" name="sector_id[]"
-                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sector-dropdown"
-                                                    multiple>
-                                                    <option value="">-- Select Belt --</option>
-                                                </select>
-                                            @else
-                                                {{-- <select id="sector-dropdown" name="sector_id" class="form-select"
-                                                    required>
-                                                    @foreach ($sectors as $key => $value)
-                                                        <option value="{{ $key }}"
-                                                            {{ $key == old('sector_id') ? 'selected' : '' }}>
-                                                            {{ $value }}</option>
-                                                    @endforeach
-                                                </select> --}}
-                                                <select id="sector-dropdown" name="sector_id[]"
-                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sector-dropdown"
-                                                    multiple required>
-
-                                                    @foreach ($sectors as $key => $value)
-                                                        <option value="{{ $key }}"
-                                                            {{ (old('sector_id') == $key ? 'selected' : '') || (!empty($saleManSectors->sector_id) ? collect($saleManSectors->sector_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                            {{ $value }}
-                                                        </option>
-                                                    @endforeach
-                                                    {{-- @foreach ($sectors as $key => $value)
-                                                    <option value="{{ $key }}"
-                                                        {{ !empty($saleManSectors) && $saleManSectors->sector_id == $key ? 'selected' : '' }}
-                                                        {{ $key == old('sector_id') ? 'selected' : '' }}>
-                                                        {{ $value }}</option>
-                                                @endforeach --}}
-                                                </select>
-
-
-                                            @endif
-                                            {{-- <select id="sector-dropdown" name="sector_id" class="form-control">
-                                                <option value="">-- Select Belt --</option>
-                                            </select> --}}
+                                            <select id="sector-dropdown" name="sector_id[]"
+                                                class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sector-dropdown"
+                                                multiple>
+                                                <option value="select-all">Select All</option>
+                                            </select>
                                         </div>
 
                                         <div class="col-xl-6 col-lg-6 mt-3">
                                             <label class="form-label" for="product-title-input">Area</label>
-                                            @if (empty($saleMan))
-                                                <select id="area-dropdown" name="area_id[]"
-                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} area-dropdown"
-                                                    multiple>
-                                                    <option value="">-- Select Area --</option>
-                                                </select>
-                                            @else
-                                                {{-- <select id="area-dropdown" name="area_id" class="form-select"
-                                                    required>
-                                                    @foreach ($areas as $key => $value)
-                                                        <option value="{{ $key }}"
-                                                            {{ $key == old('area_id') ? 'selected' : '' }}>
-                                                            {{ $value }}</option>
-                                                    @endforeach
-                                                </select> --}}
-                                                <select id="area-dropdown" name="area_id[]"
-                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} area-dropdown"
-                                                    multiple required>
 
-                                                    @foreach ($areas as $key => $value)
-                                                        <option value="{{ $key }}"
-                                                            {{ (old('area_id') == $key ? 'selected' : '') || (!empty($saleManAreas->area_id) ? collect($saleManAreas->area_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                            {{ $value }}
-                                                        </option>
-                                                    @endforeach
+                                            <select id="area-dropdown" name="area_id[]"
+                                                class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} area-dropdown"
+                                                multiple>
+                                                <option value="select-all">Select All</option>
 
-                                                    {{-- @foreach ($areas as $key => $value)
-                                                        <option value="{{ $key }}"
-                                                            {{ !empty($saleManAreas) && $saleManAreas->area_id == $key ? 'selected' : '' }}
-                                                            {{ $key == old('area_id') ? 'selected' : '' }}>
-                                                            {{ $value }}</option>
-                                                    @endforeach --}}
-                                                </select>
+                                            </select>
 
-
-                                            @endif
-                                            {{-- <select id="area-dropdown" name="area_id" class="form-control">
-                                                <option value="">-- Select Area --</option>
-                                            </select> --}}
                                         </div>
                                     </div>
                                 </div>
@@ -398,13 +300,16 @@
     </script>
 
     <script>
+
         $(document).ready(function() {
+            // Initialize select2
             $('.select2').select2();
 
+            // Fetch and populate zones based on country
             $('#country-dropdown').on('change', function() {
                 var idCountry = this.value;
-
-                $("#zone-dropdown").html('');
+                $("#zone-dropdown").html(
+                    '<option value="select-all">Select All</option>'); // Add Select All option
                 $.ajax({
                     url: "{{ url('api/fetch-zones') }}",
                     type: "POST",
@@ -414,86 +319,116 @@
                     },
                     dataType: 'json',
                     success: function(result) {
-                        $('#zone-dropdown').html(
-                            '<option value="">-- Select zone --</option>');
                         $.each(result.zones, function(key, data) {
-                            $("#zone-dropdown").append('<option value="' + data
-                                .id + '">' + data.name + '</option>');
+                            $("#zone-dropdown").append('<option value="' + data.id +
+                                '">' + data.name + '</option>');
                         });
-                        $('#sector-dropdown').html(
-                            '<option value="">-- Select Belt --</option>');
-                        $('#area-dropdown').html('<option value="">-- Select Area --</option>');
-
                     }
                 });
             });
 
-            /*------------------------------------------
-            --------------------------------------------
-            zone Dropdown Change Event
-            --------------------------------------------
-            --------------------------------------------*/
+            // Zone Dropdown Change Event
             $('#zone-dropdown').on('change', function() {
-                var zones = document.querySelectorAll('.zone-dropdown');
-                zones.forEach(function(zone) {
-                    // var selectedValue = zone.value; // Get the selected value of each dropdown
-                    var selectedValues = Array.from(zone.selectedOptions).map(option => option
-                        .value);
-                    console.log(selectedValues); // Log or use the value
+                var selectedValues = Array.from(this.selectedOptions).map(option => option.value);
 
-                    $("#sector-dropdown").html('');
+                // If "Select All" is selected, select all other options except "Select All"
+                if (selectedValues.includes("select-all")) {
+                    // Select all options except "Select All"
+                    $(this).find('option').not('[value="select-all"]').prop('selected', true);
+                }
+
+                // If "Select All" is deselected, deselect all options
+                if (selectedValues.length === 0) {
+                    $(this).find('option').prop('selected', false);
+                }
+
+                // Make sure to update select2
+                $(this).trigger('change.select2');
+
+                // Make sure that if "Select All" is checked, we pass all available zone ids
+                var zoneIds = selectedValues.filter(value => value !== "select-all");
+                // console.log(zoneIds);
+
+                if (zoneIds.length > 0) {
+                    // Proceed with fetching sectors based on selected zones
                     $.ajax({
                         url: "{{ url('api/fetch-sectors') }}",
                         type: "POST",
                         data: {
-                            zone_id: selectedValues,
+                            zone_id: zoneIds,
                             _token: '{{ csrf_token() }}'
                         },
                         dataType: 'json',
                         success: function(res) {
                             $('#sector-dropdown').html(
-                                '<option value="">-- Select Belt --</option>');
+                                '<option value="select-all">Select All</option>');
                             $.each(res.sectors, function(key, value) {
-                                $("#sector-dropdown").append('<option value="' +
-                                    value.id +
-                                    '">' + value.name + '</option>');
+                                $("#sector-dropdown").append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
                             });
-                            $('#area-dropdown').html(
-                                '<option value="">-- Select Area --</option>');
                         }
                     });
-                });
+                }
             });
 
+            // Sector Dropdown Change Event
             $('#sector-dropdown').on('change', function() {
+                var selectedValues = Array.from(this.selectedOptions).map(option => option.value);
 
-                var sectors = document.querySelectorAll('.sector-dropdown');
-                sectors.forEach(function(sector) {
-                    var selectedValues = Array.from(sector.selectedOptions).map(option => option
-                        .value);
-                    // var sectorId = this.value;
-                    $("#area-dropdown").html('');
+                // If "Select All" is selected, select all other options except "Select All"
+                if (selectedValues.includes("select-all")) {
+                    // Select all options except "Select All"
+                    $(this).find('option').not('[value="select-all"]').prop('selected', true);
+                }
+
+                // If "Select All" is deselected, deselect all options
+                if (selectedValues.length === 0) {
+                    $(this).find('option').prop('selected', false);
+                }
+
+                // Make sure to update select2
+                $(this).trigger('change.select2');
+
+                var sectorIds = selectedValues.filter(value => value !== "select-all");
+
+                if (sectorIds.length > 0) {
+                    // Fetch areas based on selected sectors
                     $.ajax({
                         url: "{{ url('api/fetch-areas') }}",
                         type: "POST",
                         data: {
-                            sector_id: selectedValues,
+                            sector_id: sectorIds,
                             _token: '{{ csrf_token() }}'
                         },
                         dataType: 'json',
                         success: function(resul) {
                             $('#area-dropdown').html(
-                                '<option value="">-- Select Area --</option>');
+                                '<option value="select-all">Select All</option>');
                             $.each(resul.areas, function(key, value) {
-                                $("#area-dropdown").append('<option value="' +
-                                    value.id + '">' + value.name +
-                                    '</option>');
+                                $("#area-dropdown").append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
                             });
                         }
                     });
-                });
+                }
             });
+            $('#area-dropdown').on('change', function() {
+                var selectedValues = Array.from(this.selectedOptions).map(option => option.value);
 
+                // If "Select All" is selected, select all other options except "Select All"
+                if (selectedValues.includes("select-all")) {
+                    // Select all options except "Select All"
+                    $(this).find('option').not('[value="select-all"]').prop('selected', true);
+                }
+
+                // If "Select All" is deselected, deselect all options
+                if (selectedValues.length === 0) {
+                    $(this).find('option').prop('selected', false);
+                }
+
+                // Make sure to update select2
+                $(this).trigger('change.select2');
+            });
         });
     </script>
 

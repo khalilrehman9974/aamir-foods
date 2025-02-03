@@ -101,7 +101,6 @@
                                 <th scope="col" style="width: 20%"> <b>Sub Account </b> </th>
                                 <th scope="col" style="width: 20%"> <b>Account Code </b> </th>
                                 <th scope="col" style="width: 30%"> <b>Sub Sub Account Name </b> </th>
-                                <th scope="col" style="width: 20%"> <b>Price </b> </th>
                                 <th class="text-center" scope="col"></th>
                             </tr>
                             </thead>
@@ -137,15 +136,6 @@
                                         <div class="media">
                                             <div class="media-body align-self-center">
                                                 <h6 class="mb-0">{{ $head->name }}</h6>
-
-                                            </div>
-                                        </div>
-                                    </td>
-
-                                    <td>
-                                        <div class="media">
-                                            <div class="media-body align-self-center">
-                                                <h6 class="mb-0">{{ $head->price }}</h6>
 
                                             </div>
                                         </div>

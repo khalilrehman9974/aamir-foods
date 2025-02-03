@@ -156,32 +156,108 @@
                                                                                 id="saleMan" name="saleman"
                                                                                 value="{{ old('saleman', !empty($saleOrder->saleman) ? $saleOrder->saleman : '') }}"
                                                                                 placeholder="Sale Man Name..."
-                                                                                readonly multiple>
+                                                                                readonly>
                                                                         </div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="col-lg-0 col-12 ">
                                                                     <div class="row">
-                                                                        <div class="col-md-6 mt-5">
-                                                                            <label for="sector">
-                                                                                Belt</label>
-                                                                            <input type="text"
-                                                                                style="color: black; background-color: white;"
-                                                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                                id="sector" name="belt"
-                                                                                value="{{ old('belt', !empty($saleOrder->belt) ? $saleOrder->belt : '') }}"
-                                                                                placeholder="Sector Name..." readonly>
+                                                                        <div class="col-xl-6 col-lg-6 mt-5">
+                                                                            <label class="form-label"
+                                                                                for="product-title-input">Belt</label>
+                                                                            @if (empty($saleOrder))
+                                                                                <select id="sector-dropdown"
+                                                                                    name="sector_id"
+                                                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sector-dropdown"
+                                                                                    required>
+                                                                                    {{-- <option value="select-all"
+                                                                                        class="select-all-option">Select All
+                                                                                    </option> --}}
+                                                                                </select>
+
+                                                                                {{-- <select id="sector-dropdown" name="zone_id[]">
+                                                                                    <option value="select-all" class="select-all-option">Select All</option>
+                                                                                    @foreach ($zones as $key => $value)
+                                                                                        <option value="{{ $key }}"
+                                                                                            {{ (old('zone_id') && in_array($key, old('zone_id'))) || (!empty($saleManZones->pluck('zone_id')->toArray()) && in_array($key, $saleManZones->pluck('zone_id')->toArray())) ? 'selected' : '' }}>
+                                                                                            {{ $value }}
+                                                                                        </option>
+                                                                                    @endforeach
+                                                                                </select> --}}
+                                                                            @else
+                                                                                {{-- <select id="sector-dropdown" name="sector" class="form-select"
+                                                                                    required>
+                                                                                    @foreach ($sectors as $key => $value)
+                                                                                        <option value="{{ $key }}"
+                                                                                            {{ $key == old('sector') ? 'selected' : '' }}>
+                                                                                            {{ $value }}</option>
+                                                                                    @endforeach
+                                                                                </select> --}}
+                                                                                <select id="sector-dropdown"
+                                                                                    name="sector_id"
+                                                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sector-dropdown"
+                                                                                    required>
+                                                                                    @foreach ($sectors as $key => $value)
+                                                                                        <option
+                                                                                            value="{{ $key }}"
+                                                                                            @php
+$isSelected = old('sector_id') == $key || $detailAccountSectors->pluck('sector_id')->contains($key); @endphp
+                                                                                            {{ $isSelected ? 'selected' : '' }}>
+                                                                                            {{ $value }}
+                                                                                        </option>
+                                                                                    @endforeach
+                                                                                    {{-- @foreach ($zones as $key => $value)
+                                                                                        <option value="{{ $key }}"
+                                                                                            {{ !empty($saleManZones) && $saleManZones->zone_id == $key ? 'selected' : '' }}
+                                                                                            {{ $key == old('zone_id') ? 'selected' : '' }}>
+                                                                                            {{ $value }}</option>
+                                                                                    @endforeach --}}
+                                                                                </select>
+                                                                            @endif
                                                                         </div>
-                                                                        <div class="col-md-6 mt-5">
-                                                                            <label for="date">
-                                                                                Area</label>
-                                                                            <input type="text"
-                                                                                style="color: black; background-color: white;"
-                                                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                                id="area" name="area"
-                                                                                value="{{ old('area', !empty($saleOrder->area) ? $saleOrder->area : '') }}"
-                                                                                placeholder="Area Name..." readonly>
+                                                                        <div class="col-xl-6 col-lg-6 mt-5">
+                                                                            <label class="form-label"
+                                                                                for="product-title-input">Area</label>
+                                                                            @if (empty($saleOrder))
+                                                                                <select id="area-dropdown"
+                                                                                    name="area_id"
+                                                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} area-dropdown"
+                                                                                    required>
+                                                                                    <option value="">-- Select
+                                                                                        Areas --
+                                                                                    </option>
+                                                                                </select>
+                                                                            @else
+                                                                                {{-- <select id="area-dropdown" name="area" class="form-select"
+                                                                                    required>
+                                                                                    @foreach ($sectors as $key => $value)
+                                                                                        <option value="{{ $key }}"
+                                                                                            {{ $key == old('sector') ? 'selected' : '' }}>
+                                                                                            {{ $value }}</option>
+                                                                                    @endforeach
+                                                                                </select> --}}
+                                                                                <select id="area-dropdown"
+                                                                                    name="area_id[]"
+                                                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} area-dropdown"
+                                                                                    required>
+                                                                                    @foreach ($areas as $key => $value)
+                                                                                        <option
+                                                                                            value="{{ $key }}"
+                                                                                            @php
+$isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->contains($key); @endphp
+                                                                                            {{ $isSelected ? 'selected' : '' }}>
+                                                                                            {{ $value }}
+                                                                                        </option>
+                                                                                    @endforeach
+                                                                                    {{-- @foreach ($zones as $key => $value)
+                                                                                        <option value="{{ $key }}"
+                                                                                            {{ !empty($saleManZones) && $saleManZones->zone_id == $key ? 'selected' : '' }}
+                                                                                            {{ $key == old('zone_id') ? 'selected' : '' }}>
+                                                                                            {{ $value }}</option>
+                                                                                    @endforeach --}}
+                                                                                </select>
+                                                                            @endif
                                                                         </div>
 
                                                                     </div>
@@ -712,6 +788,62 @@
 
     <script src="{{ asset('js/saleOrder.js') }}"></script>
 
+    <script>
+        $(document).ready(function() {
+            let getTableElement = document.querySelector('.item-table');
+            let currentIndex = getTableElement.rows.length;
+            console.log(currentIndex);
+            $(".additem").on('click', function() {
+                var partyId = $(".party").val();
+                // var row_id = $(this).closest("tr").find(".row_id").val();
+                // var productSelected = '.product_' + row_id;
+                // var name = $(productSelected + ' :selected').text();
+                // let url = config.routes.getProductMeasurementTypeDetail + '/' + name;
+                // $.ajax({
+                //     url: url,
+                //     type: 'GET',
+                //     headers: {
+                //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                //     },
+                //     success: function(response) {
+                //         $(".measurement_" + row_id).val(response.name.name);
+                //     },
+                //     complete: function() {
+                //         $('#loading').css('display', 'none');
+                //     },
+                //     error: function(errorThrown) {
+                //         $('').val('');
+                //         var errors = errorThrown.responseJSON.errors;
+                //         Swal.fire({
+                //             icon: 'error',
+                //             title: 'Something went wrong',
+                //         })
+                //     }
+                // })
+
+                $.ajax({
+                    url: config.routes.getProducts,
+                    type: "GET",
+                    data: {
+                        party_id: partyId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    dataType: 'json',
+                    success: function(result) {
+
+                        $.each(result.products, function(key, data) {
+                            $('.product_' + currentIndex).append(
+                                '<option value="' +
+                                data.id +
+                                '">' + data.name +
+                                '</option>');
+                        });
+
+                    }
+                });
+            });
+        });
+    </script>
 
     <script>
         document.getElementsByClassName('additem')[0].addEventListener('click', function() {
@@ -728,7 +860,7 @@
                 '" hidden></td>' +
                 '<td class="product"> <select id="product" type = "text" name = "product_id[]" class ="form-control select2 custom-select form-control-sm  product_' +
                 currentIndex +
-                '" placeholder = "Please Select the Product" required ><option value = "" >Select the Product </option> @foreach ($dropDownData['products'] as $key => $value)<option value = "{{ $key }}" {{ (old('product_id') == $key ? 'selected' : '') || (!empty($saleOrderDetail->product_id) ? collect($saleOrderDetail->product_id)->contains($key) : '') ? 'selected' : '' }} >{{ $value }} </option> @endforeach </select> <input id="packing" name="packing_type[]" style="color: black; " type="text" class = "packing form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_' +
+                '" placeholder = "Please Select the Product" required ><option value = "" >Select the Product </option>  </select> <input id="packing" name="packing_type[]" style="color: black; " type="text" class = "packing form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_' +
                 currentIndex +
                 '" placeholder="P.T" readonly><input type="text" style="color: black; " placeholder="M.T" name="measurement_type[]" id="measurement" class = "measurement form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_' +
                 currentIndex + '" readonly> </td> ' +
@@ -754,7 +886,7 @@
             $(".item-table tbody").append($html);
             deleteItemRow();
             $('.select2').select2();
-
+            // add-item
             $(document).ready(function() {
                 $(".product_" + currentIndex).on('change', function() {
                     var row_id = $(this).closest("tr").find(".row_id").val();
@@ -784,6 +916,9 @@
                     })
                 });
             });
+
+
+
             $(document).ready(function() {
                 $(".product_" + currentIndex).on('change', function() {
                     var row_id = $(this).closest("tr").find(".row_id").val();
@@ -935,9 +1070,7 @@
                     $('#boray-amount').val("");
                     $('#carton-amount').val("");
                     var totalBorayAmount = 0;
-                    console.log(totalBorayAmount);
                     var totalCartonAmount = 0;
-                    console.log(totalCartonAmount);
                     var packingIndex = '.packing_' + currentIndex;
 
                     $(".qty").each(function() {
@@ -996,6 +1129,63 @@
         }
 
         $(document).ready(function() {
+            $(".additem").on('click', function() {
+                var partyId = $(".party").val();
+
+                var row_id = $(this).closest("tr").find(".row_id").val();
+                // var row_id = $(this).closest("tr").find(".row_id").val();
+                // var productSelected = '.product_' + row_id;
+                // var name = $(productSelected + ' :selected').text();
+                // let url = config.routes.getProductMeasurementTypeDetail + '/' + name;
+                // $.ajax({
+                //     url: url,
+                //     type: 'GET',
+                //     headers: {
+                //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                //     },
+                //     success: function(response) {
+                //         $(".measurement_" + row_id).val(response.name.name);
+                //     },
+                //     complete: function() {
+                //         $('#loading').css('display', 'none');
+                //     },
+                //     error: function(errorThrown) {
+                //         $('').val('');
+                //         var errors = errorThrown.responseJSON.errors;
+                //         Swal.fire({
+                //             icon: 'error',
+                //             title: 'Something went wrong',
+                //         })
+                //     }
+                // })
+
+                $.ajax({
+                    url: config.routes.getProducts,
+                    type: "GET",
+                    data: {
+                        party_id: partyId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    dataType: 'json',
+                    success: function(result) {
+                        $('.product_' + row_id).html(
+                            '<option value="">-- Select Products2 --</option>'
+                        );
+
+                        $.each(result.products, function(key, data) {
+                            $('.product_' + row_id).append(
+                                '<option value="' +
+                                data.id +
+                                '">' + data.name +
+                                '</option>');
+                        });
+
+                    }
+                });
+            });
+        });
+
+        $(document).ready(function() {
             $('.select2').select2();
             // $(document.body).on("change", ".product", function() {
             //     $('.select2').select2();
@@ -1035,56 +1225,64 @@
                 })
             });
             $('.party').on('change', function() {
-                var name = $('#party :selected').text();
-                let url = config.routes.getPartySectorDetail + '/' + name;
+                var idParty = this.value;
+                $(".sector-dropdown").html('');
+                $(".area-dropdown").html('');
                 $.ajax({
-                    url: url,
-                    type: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    url: config.routes.getPartySectorDetail,
+                    type: "GET",
+                    data: {
+                        party_id: idParty,
+                        _token: '{{ csrf_token() }}'
                     },
-                    success: function(response) {
-                        $("#sector").val(response.sector);
-                    },
-                    complete: function() {
-                        $('#loading').css('display', 'none');
-                    },
-                    error: function(errorThrown) {
-                        $('').val('');
-                        var errors = errorThrown.responseJSON.errors;
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Something went wrong',
-                        })
+                    dataType: 'json',
+                    success: function(result) {
+                        $('.sector-dropdown').html(
+                            '<option value="">-- Select Sector --</option>'
+                        );
+
+                        $.each(result.sectors, function(key, data) {
+                            $('.sector-dropdown').append(
+                                '<option value="' +
+                                data.id +
+                                '">' + data.name +
+                                '</option>');
+                        });
+
                     }
-                })
+                });
+
             });
 
 
-            $('.party').on('change', function() {
-                var name = $('#party :selected').text();
-                let url = config.routes.getPartyAreaDetail + '/' + name;
+            $('.sector-dropdown').on('change', function() {
+                var idSector = this.value;
+                var idParty = $('.party').val();
+                $(".area-dropdown").html('');
                 $.ajax({
-                    url: url,
-                    type: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    url: config.routes.getPartyAreaDetail,
+                    type: "GET",
+                    data: {
+                        party_id: idParty,
+                        sector_id: idSector,
+                        _token: '{{ csrf_token() }}'
                     },
-                    success: function(response) {
-                        $("#area").val(response.area);
-                    },
-                    complete: function() {
-                        $('#loading').css('display', 'none');
-                    },
-                    error: function(errorThrown) {
-                        $('').val('');
-                        var errors = errorThrown.responseJSON.errors;
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Something went wrong',
-                        })
+                    dataType: 'json',
+                    success: function(result) {
+                        $('.area-dropdown').html(
+                            '<option value="">-- Select Area --</option>'
+                        );
+
+                        $.each(result.areas, function(key, data) {
+                            $('.area-dropdown').append(
+                                '<option value="' +
+                                data.id +
+                                '">' + data.name +
+                                '</option>');
+                        });
+
                     }
-                })
+                });
             });
 
         });
@@ -1099,6 +1297,7 @@
     <script>
         var config = {
             routes: {
+                getProducts: "{{ url('sale-order/get-products') }}",
                 getPartySaleManDetail: "{{ url('sale-order/get-party-sale-man') }}",
                 getPartySectorDetail: "{{ url('sale-order/get-party-sale-man-sector') }}",
                 getPartyAreaDetail: "{{ url('sale-order/get-party-sale-man-area') }}",

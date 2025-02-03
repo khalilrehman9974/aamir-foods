@@ -55,8 +55,9 @@ class SaleManController extends Controller
     }
 
 
-    public function store(SaleManRequest $request)
+    public function store(Request $request)
     {
+
         DB::beginTransaction();
         try {
 
@@ -92,15 +93,22 @@ class SaleManController extends Controller
             return abort(404);
         }
         $pageTitle = 'Update SaleMan';
-        // $countries = Country::get(["name", "id"]);
         $saleManZones = SaleManZone::with('zones')->where('master_id', $id)->get();
-        // dd($saleManZones);
         $saleManSectors = SaleManSector::with('sectors')->where('master_id', $id)->get();
+        // dd($saleManSectors);
         $saleManAreas = SaleManArea::with('areas')->where('master_id', $id)->get();
+
+        $zonesArray = $saleManZones->pluck('zone_id')->toArray();
+        $sectorsArray = $saleManSectors->pluck('sector_id')->toArray();
+        // dd($sectorsArray);
+
         $countries = $this->saleManService->getCountries();
         $zones = $this->saleManService->getZones();
-        $sectors = $this->saleManService->getSectors();
-        $areas = $this->saleManService->getAreas();
+
+        $fetchSectors = Sector::whereIn('zone_id', $zonesArray)->get();
+        $sectors = $fetchSectors->pluck('name','id')->toArray();
+        $fetchAreas = Area::whereIn('sector_id', $sectorsArray)->get();
+        $areas = $fetchAreas->pluck('name','id')->toArray();
 
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
 

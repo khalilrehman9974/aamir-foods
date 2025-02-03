@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('sale_man_areas', function (Blueprint $table) {
             $table->Increments('id');
             $table->integer('master_id')->unsigned()->index();
+            $table->integer('sector_id')->unsigned()->index();
             $table->integer('area_id')->unsigned()->index();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
@@ -24,6 +25,10 @@ return new class extends Migration
             $table->foreign('master_id')
             ->references('id')->on('sale_mans')
             ->onDelete('cascade');
+
+            $table->foreign('sector_id')
+                ->references('id')->on('sectors')
+                ->onDelete('cascade');
 
             $table->foreign('area_id')
                 ->references('id')->on('areas')

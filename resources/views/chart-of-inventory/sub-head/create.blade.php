@@ -119,7 +119,6 @@
         </div>
     </div>
         <x-slot:footerFiles>
-{{--            <script src="{{asset('js/common.js')}}"></script>--}}
             <script src="{{asset('plugins/sweetalerts2/sweetalerts2.min.js')}}"></script>
             <script src="{{asset('plugins/sweetalerts2/custom-sweetalert.js')}}"></script>
             <script>

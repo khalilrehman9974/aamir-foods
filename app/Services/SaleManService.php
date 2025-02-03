@@ -42,7 +42,7 @@ class SaleManService
     *
     * @return object $object.
     * */
-    public function findUpdateOrCreate($model, array $where, array $data )
+    public function findUpdateOrCreate($model, array $where, array $data)
     {
         $object = $model::firstOrNew($where);
 
@@ -54,25 +54,14 @@ class SaleManService
         return $object;
     }
 
-    // public function searchSaleMan($params)
-    // {
-    //     $q = SaleMan::query();
-    //     if (!empty($param['name']))
-    //     {
-    //         $q->where('name', 'LIKE', '%'. $param['name'] . '%');
-    //     }
-
-    //     $area = $q->orderBy('name', 'ASC')->paginate(SaleMan::PER_PAGE);
-    //     return $area;
-    // }
 
     public function searchSaleMan($request)
     {
         $q = SaleMan::query();
         if (!empty($request['param'])) {
-            $q = SaleMan::with('country','zone','sectors','area')->where('name', 'like', '%' . $request['param'] . '%');
+            $q = SaleMan::with('country')->where('name', 'like', '%' . $request['param'] . '%');
         }
-        $saleMans = $q->orderBy('name', 'ASC')->paginate(config('constants.PER_PAGE'));
+        $saleMans = $q->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
 
         return $saleMans;
     }
@@ -100,7 +89,6 @@ class SaleManService
 
     public function prepareSaleManMasterData($request)
     {
-
         $session = $this->commonService->getSession();
         return [
             'name' => $request['name'],
@@ -153,6 +141,8 @@ class SaleManService
             if (!empty($data['sector_id'][$key])) {
                 $rec['sector_id'] = $data['sector_id'][$key];
                 $rec['master_id'] = $data['master_id'];
+                $arrayId = $rec['sector_id'];
+                $rec['zone_id'] = Sector::where("id", $arrayId)->value("zone_id");
                 SaleManSector::create($rec);
             }
         }
@@ -171,26 +161,12 @@ class SaleManService
         foreach ($data['area_id'] as $key => $value) {
             if (!empty($data['area_id'][$key])) {
                 $rec['area_id'] = $data['area_id'][$key];
+                $arrayId = $rec['area_id'];
+                $rec['sector_id'] = Area::where("id", $arrayId)->value("sector_id");
                 $rec['master_id'] = $data['master_id'];
                 SaleManArea::create($rec);
             }
         }
     }
-
-
-
-    // public function search($params)
-    // {
-    //     $q = SaleMan::query();
-    //     if (!empty($param['name']))
-    //     {
-    //         $q->where('name', 'LIKE', '%'. $param['name'] . '%');
-    //     }
-
-
-
-    //     $saleMan = $q->orderBy('name', 'ASC')->paginate(SaleMan::PER_PAGE);
-    //     return $saleMan;
-    // }
 
 }

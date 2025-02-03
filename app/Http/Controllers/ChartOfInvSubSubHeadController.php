@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\CommonService;
+use Illuminate\Support\Facades\DB;
 use App\Services\PermissionService;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CoaInventorySubSubHead;
+use App\Models\InventorySubSubHeadPriceTagModel;
+use App\Models\PriceTag;
 use App\Services\ChartInventorySubSubHeadService;
 
 class ChartOfInvSubSubHeadController extends Controller
@@ -61,30 +64,63 @@ class ChartOfInvSubSubHeadController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->except('_token','id');
-        $data['created_by'] = Auth::user()->id;
-        $data['updated_by'] = Auth::user()->id;
-        $saved = $this->coInvSubSubHeadService->findUpdateOrCreate(CoaInventorySubSubHead::class, ['id'=>!empty(request('id')) ? request('id') : null], $data);
-        if ($saved) {
-            $message = request('id') ? config('constants.update') : config('constants.add');
+        $request = $request->except('_token', 'id');
+        DB::beginTransaction();
+        try {
+
+            $accountMasterData = $this->coInvSubSubHeadService->prepareAccountMasterData($request);
+            $accountMasterInsert = $this->coInvSubSubHeadService->findUpdateOrCreate(CoaInventorySubSubHead::class, ['id' => !empty(request('id')) ? request('id') : null], $accountMasterData);
+
+            $detailAccountData = $this->coInvSubSubHeadService->prepareAccountDetailData($request, $accountMasterInsert->id);
+            $this->coInvSubSubHeadService->savePriceTags($detailAccountData);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect('co-inv-sub-sub-head/create')->with('error', $e->getMessage());
         }
-        session()->flash('message', $message);
-        return redirect('co-inv-sub-sub-head/list');
+        $message = config('constants.add');
+        return redirect('co-inv-sub-sub-head/list')->with('message', $message);
     }
 
     public function edit($id)
     {
         $pageTitle = 'Update Inventory Sub Sub Head';
         $subSubHead = CoaInventorySubSubHead::find($id);
+        $priceTags = InventorySubSubHeadPriceTagModel::where('sub_sub_head_id', $id)->get();
         $mainHeads = $this->coInvSubSubHeadService->getMainHeads();
         $subHeads = $this->coInvSubSubHeadService->getSubHeads();
         $dropDownData = $this->coInvSubSubHeadService->DropDownData();
+        $options = PriceTag::all();
         if (!$subSubHead) {
             return abort(404);
         }
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
 
-        return view('chart-of-inventory.sub-sub-head.create', compact('subHeads','dropDownData','subSubHead', 'mainHeads','permission', 'pageTitle'));
+        return view('chart-of-inventory.sub-sub-head.create', compact('subHeads','options','priceTags','dropDownData','subSubHead', 'mainHeads','permission', 'pageTitle'));
+    }
+
+
+    public function update(Request $request)
+    {
+
+        DB::beginTransaction();
+        try {
+            InventorySubSubHeadPriceTagModel::where('sub_sub_head_id', $request['id'])->delete();
+            $accountMasterData = $this->coInvSubSubHeadService->prepareAccountMasterData($request);
+            $accountMasterInsert = $this->coInvSubSubHeadService->findUpdateOrCreate(CoaInventorySubSubHead::class, ['id' => !empty(request('id')) ? request('id') : null], $accountMasterData);
+
+            $detailAccountData = $this->coInvSubSubHeadService->prepareAccountDetailData($request, $accountMasterInsert->id);
+            $this->coInvSubSubHeadService->savePriceTags($detailAccountData);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            // return redirect('co-inv-sub-sub-head/edit/{$request}')->with('error', $e->getMessage());
+            return redirect()->route('co-inv-sub-sub-head.edit', ['request' => $request->id])->with('error', $e->getMessage());
+        }
+        $message = config('constants.update');
+        return redirect('co-inv-sub-sub-head/list')->with('message', $message);
     }
 
     /**

@@ -12,7 +12,7 @@ class CoaInventoryDetailAccount extends Model
 
     use HasFactory;
 
-    protected $fillable = ['main_head', 'sub_head','sub_sub_head', 'code', 'name', 'image','measurement_type_id','packing_type_id','size','max_limit','min_limit'];
+    protected $fillable = ['main_head', 'sub_head','sub_sub_head', 'code', 'priceTag_id', 'name', 'image','measurement_type_id','packing_type_id','size','max_limit','min_limit'];
 
     public function getMainHead()
     {
@@ -37,5 +37,10 @@ class CoaInventoryDetailAccount extends Model
     public function packingType()
     {
         return $this->hasOne(PackingType::class, 'id', 'packing_type_id');
+    }
+
+    public function priceTag()
+    {
+        return $this->hasOne(PriceTag::class, 'id', 'priceTag_id');
     }
 }

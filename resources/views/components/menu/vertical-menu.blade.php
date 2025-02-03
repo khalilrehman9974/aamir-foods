@@ -362,6 +362,10 @@
                             </li>
                         @endif
 
+                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                            <a href="{{ route('delivered-to-parties.list') }}">Delivered To Parties</a>
+                        </li>
+
                         <li class="{{ Request::routeIs('invoice-preview') ? 'active' : '' }}">
                             <a href="{{ route('store-issue-note.list') }}"> Store Issue Note </a>
                         </li>

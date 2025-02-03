@@ -4,7 +4,7 @@
     </x-slot>
     <x-slot:headerFiles>
         <meta name="csrf-token" content="{{ csrf_token() }}" />
-        <script src="{{ asset('js/jquery.min.js') }}"></script>
+        {{-- <script src="{{ asset('js/jquery.min.js') }}"></script> --}}
         @vite(['resources/scss/light/assets/elements/search.scss', 'resources/scss/dark/assets/elements/search.scss'])
         <link rel="stylesheet" href="{{ asset('plugins/sweetalerts2/sweetalerts2.css') }}">
     </x-slot>
@@ -195,7 +195,7 @@
     <x-slot:footerFiles>
         <script src="{{ asset('js/common.js') }}"></script>
         <script src="{{ asset('plugins/sweetalerts2/sweetalerts2.min.js') }}"></script>
-        @vite(['resources/assets/js/elements/custom-search.js'])
+        {{-- @vite(['resources/assets/js/elements/custom-search.js']) --}}
         <script>
             var config = {
                 routes: {

@@ -12,7 +12,7 @@ class SaleManSector extends Model
     protected $guarded = ['id'];
     protected $table = 'sale_man_sectors';
 
-    protected $fillable = ['master_id', 'sector_id'];
+    protected $fillable = ['master_id','zone_id' ,'sector_id'];
 
     public function country_master(){
         return $this->hasMany(SaleMan::class,'id', 'master_id');
@@ -20,6 +20,10 @@ class SaleManSector extends Model
 
     public function sectors(){
         return $this->hasMany(Sector::class,'id', 'sector_id');
+    }
+
+    public function zones(){
+        return $this->hasMany(Zone::class,'id', 'zone_id');
     }
 
 }

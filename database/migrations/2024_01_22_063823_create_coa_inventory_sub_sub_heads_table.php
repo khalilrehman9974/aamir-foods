@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->integer('code')->index();
             $table->string('name');
-            $table->integer('price');
             $table->foreignId('main_head_id')->nullable()->constrained('coa_inventory_main_heads')->onDelete('cascade');
             $table->foreignId('sub_head_id')->nullable()->constrained('coa_inventory_sub_heads')->onDelete('cascade');
             $table->bigInteger('created_by');

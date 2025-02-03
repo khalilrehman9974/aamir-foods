@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PriceTag;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Services\CommonService;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\CoaInventoryDetailAccount;
 use App\Services\CoaInventorySubHeadService;
 use App\Http\Requests\CoInvDetailAccountRequest;
+use App\Models\InventorySubSubHeadPriceTagModel;
 use App\Services\CoaInventoryDetailAccountService;
 
 class ChartOfInvDetailAccountController extends Controller
@@ -93,18 +95,24 @@ class ChartOfInvDetailAccountController extends Controller
 
     public function edit($id)
     {
+
         $pageTitle = 'Update Inventory Sub Head';
         $dropDownData = $this->coInventoryDetailAccountService->DropDownData();
         $detailAccount = CoaInventoryDetailAccount::find($id);
         $mainHeads = $this->coInvSubHeadService->getMainHeads();
         $subHeads = $this->commonService->getInventorySubHeads($detailAccount->main_head);
         $subSubHeads = $this->commonService->getInventorySubSubHeads($detailAccount->sub_head);
+        $fetchPriceTags = InventorySubSubHeadPriceTagModel::where("sub_sub_head_id", $detailAccount->sub_sub_head)->get();
+        $priceTagId = $fetchPriceTags->pluck('priceTag')->toArray();
+        $priceTag = PriceTag::whereIn("id", $priceTagId)->get();
+        $priceTags = $priceTag->pluck('name','id')->toArray();
+
         if (!$detailAccount) {
             return abort(404);
         }
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
 
-        return view('chart-of-inventory.detail-account.create', compact('detailAccount','subSubHeads', 'dropDownData', 'subHeads', 'mainHeads', 'permission', 'pageTitle'));
+        return view('chart-of-inventory.detail-account.create', compact('detailAccount','subSubHeads','priceTags', 'dropDownData', 'subHeads', 'mainHeads', 'permission', 'pageTitle'));
     }
 
     /**
@@ -143,6 +151,20 @@ class ChartOfInvDetailAccountController extends Controller
             return response()->json(['status' => 'success', 'data' => $detailAccounts]);
         }
         return response()->json(['status' => 'fail', 'data' => []]);
+    }
+
+    public function getProductDetails(Request $request)
+    {
+
+        $fetchPriceTags = InventorySubSubHeadPriceTagModel::where("sub_sub_head_id", $request->product_id)->get();
+        $priceTagId = $fetchPriceTags->pluck('priceTag')->toArray();
+        $data['priceTags'] = PriceTag::whereIn("id", $priceTagId)->get();
+
+        if ($data['priceTags']->isEmpty()) {
+            return response()->json(['message' => 'no data found'], 404);
+        }
+
+        return response()->json($data);
     }
 }
 

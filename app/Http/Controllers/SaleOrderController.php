@@ -13,7 +13,12 @@ use App\Models\CoaDetailAccount;
 use App\Services\SaleOrderService;
 use Illuminate\Support\Facades\DB;
 use App\Events\AamirFoodsNotifications;
+use App\Models\Area;
+use App\Models\CoaDetailAccountArea;
+use App\Models\CoaDetailAccountSectors;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\DetailAccountProducts;
+use App\Models\Sector;
 
 class SaleOrderController extends Controller
 {
@@ -176,23 +181,25 @@ class SaleOrderController extends Controller
         return response()->json(['status' => 'success', 'name' => $saleManName]);
     }
 
-    public function getSaleManSectorDetail($name)
+    public function getSaleManSectorDetail(Request $request)
     {
-        $fetchSector = CoaDetailAccount::where('account_name', trim($name))->first('sector');
-        if ($fetchSector) {
-            return response()->json(['status' => 'success', 'sector' => $fetchSector->sector]);
-        }
-        return response()->json(['status' => 'fail', 'data' => []]);
+        $fetchSector = CoaDetailAccountSectors::where('master_account_id', $request->party_id)->get();
+        $sectorsArray = $fetchSector->pluck('sector_id')->toArray();
+        $data['sectors'] = Sector::whereIn("id", $sectorsArray)->get();
+        // if ($fetchSector) {
+        //     return response()->json(['status' => 'success', 'sector' => $fetchSector->sector]);
+        // }
+        return response()->json($data);
     }
 
-    public function getSaleManAreaDetail($name)
+    public function getSaleManAreaDetail(Request $request)
     {
-        $fetchArea = CoaDetailAccount::where('account_name', trim($name))->first('area');
 
-        if ($fetchArea) {
-            return response()->json(['status' => 'success', 'area' => $fetchArea->area]);
-        }
-        return response()->json(['status' => 'fail', 'data' => []]);
+        $fetchArea = CoaDetailAccountArea::where('master_account_id', $request->party_id)->where('sector_id', $request->sector_id)->get();
+        $areasArray = $fetchArea->pluck('area_id')->toArray();
+        $data['areas'] = Area::whereIn("id", $areasArray)->get();
+
+        return response()->json($data);
     }
 
     public function getProductMeasurementType($name)
@@ -209,5 +216,14 @@ class SaleOrderController extends Controller
         $packing =  PackingType::where('id', @$fetchPackingType->packing_type_id)->first('name');
 
         return response()->json(['status' => 'success', 'name' => $packing]);
+    }
+
+    public function getProducts(Request $request)
+    {
+        $fetchProducts = DetailAccountProducts::where('detail_account_id', $request->party_id)->get();
+        $productsArray = $fetchProducts->pluck('product_id')->toArray();
+        $data['products'] = CoaInventoryDetailAccount::whereIn("id", $productsArray)->get();
+
+        return response()->json($data);
     }
 }

@@ -20,6 +20,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CoaInventorySubSubHead;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\PriceTag;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class CommonService
@@ -147,6 +148,11 @@ class CommonService
     public function getInventorySubSubHeads($subHead = null)
     {
         return CoaInventorySubSubHead::where('sub_head_id', $subHead)->pluck('name', 'id');
+    }
+
+    public function getInventoryPriceTags($priceTag = null)
+    {
+        return PriceTag::where('id', $priceTag)->pluck('name', 'id');
     }
 
     public function getInventoryMainHeads()

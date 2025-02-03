@@ -22,13 +22,9 @@ return new class extends Migration
             $table->integer('account_code')->unsigned();
             $table->string('account_name', 200);
             $table->integer('saleMan_id')->unsigned()->index();
-            $table->string('sector');
-            $table->string('area');
-            $table->integer('product_id')->unsigned()->index();
-            $table->string('price');
-            $table->string('discount')->nullable();
-            $table->string('scheme')->nullable();
-            $table->string('commision')->nullable();
+            $table->integer('business_id');
+            $table->integer('f_year_id');
+            $table->string('commision')->default(0)->nullable();
             $table->string('mode');
             $table->string('status');
             $table->integer('created_by');

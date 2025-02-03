@@ -6,18 +6,26 @@
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <x-slot:headerFiles>
+        <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
+        <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
+        @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
+        @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
             integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        @vite(['resources/scss/light/assets/components/timeline.scss'])
-        @vite(['resources/scss/light/assets/components/accordions.scss'])
-        @vite(['resources/scss/dark/assets/components/accordions.scss'])
-        <link rel="stylesheet" href="{{ asset('plugins/filepond/filepond.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('plugins/filepond/FilePondPluginImagePreview.min.css') }}">
-        @vite(['resources/scss/light/plugins/filepond/custom-filepond.scss'])
-        @vite(['resources/scss/dark/plugins/filepond/custom-filepond.scss'])
 
+        <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+        <!--  BEGIN CUSTOM STYLE FILE  -->
+        <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="../src/plugins/src/filepond/filepond.min.css">
+        <link rel="stylesheet" href="../src/plugins/src/filepond/FilePondPluginImagePreview.min.css">
+
+        <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
+        <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
         <!--  END CUSTOM STYLE FILE  -->
+
     </x-slot>
     <!-- END GLOBAL MANDATORY STYLES -->
 
@@ -141,6 +149,7 @@
                                                             <label for="code" class="form-label">Sub Sub Account
                                                                 Code</label>
                                                             <input id="code" type="text" name="code"
+                                                                style="color: black;"
                                                                 value="{{ old('code', !empty($subSubHead->code) ? $subSubHead->code : '') }}"
                                                                 class="form-control" readonly>
                                                             <div class="invalid-feedback">
@@ -148,12 +157,7 @@
                                                             </div>
                                                         </div>
                                                         <br>
-                                                        {{-- <div class="col-lg-0 col-12 ">
-                                                            <label for="code" class="form-label">Code</label>
-                                                            <input id="code" type="text" name="code" readonly
-                                                                   value="{{ @$subSubHead ? '' : $accountCode  }} {{ old('code', !empty($subSubHead->code) ? $subSubHead->code : '') }}"
-                                                                   class="form-control" required>
-                                                        </div> --}}
+
 
                                                         <div class="col-lg-0 col-12 ">
                                                             <label for="name" class="form-label">Sub Sub Account
@@ -167,19 +171,37 @@
                                                         <div class="col-lg-0 col-12 mt-3 ">
                                                             <label for="price" class="form-label">Price Tag
                                                             </label>
-                                                            <select id="price" name="price"
-                                                                class="mb-3 form-control select2 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} price" required>
-                                                                <option selected="">
-                                                                    Please select
-                                                                    the
-                                                                    Price Tag</option>
-                                                                @foreach ($dropDownData['priceTag'] as $key => $value)
-                                                                    <option value="{{ $key }}"
-                                                                        {{ (old('price') == $key ? 'selected' : '') || (!empty($subSubHead->price) ? collect($subSubHead->price)->contains($key) : '') ? 'selected' : '' }}>
-                                                                        {{ $value }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
+
+                                                            @if (!empty($subSubHead))
+
+                                                                <select id="price" name="priceTag[]"
+                                                                    class="mb-3 form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} price select2 custom-select"
+                                                                    required multiple>
+                                                                    <option value="select-all">Select All</option>
+
+                                                                    @foreach ($dropDownData['priceTag'] as $key => $value)
+                                                                        <option value="{{ $key }}"
+                                                                            @php
+$isSelected = old('priceTag') == $key || $priceTags->pluck('priceTag')->contains($key); @endphp
+                                                                            {{ $isSelected ? 'selected' : '' }}>
+                                                                            {{ $value }}
+                                                                        </option>
+                                                                    @endforeach
+
+                                                                </select>
+                                                            @else
+                                                                <select id="price" name="priceTag[]"
+                                                                    class="mb-3 form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} price select2 custom-select"
+                                                                    required multiple>
+                                                                    <option value="select-all">Select All</option>
+                                                                    @foreach ($dropDownData['priceTag'] as $key => $value)
+                                                                        <option value="{{ $key }}"
+                                                                            {{ (old('priceTag') == $key ? 'selected' : '') || (!empty($priceTags->priceTag) ? collect($priceTags->priceTag)->contains($key) : '') ? 'selected' : '' }}>
+                                                                            {{ $value }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+                                                            @endif
 
                                                         </div>
 
@@ -213,11 +235,53 @@
             </div>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            // Initialize select2
+            $('.select2').select2();
+            $('.price').on('change', function() {
+                var selectedValues = Array.from(this.selectedOptions).map(option => option.value);
+
+                // If "Select All" is selected, select all other options except "Select All"
+                if (selectedValues.includes("select-all")) {
+                    // Select all options except "Select All"
+                    $(this).find('option').not('[value="select-all"]').prop('selected', true);
+                }
+
+                // If "Select All" is deselected, deselect all options
+                if (selectedValues.length === 0) {
+                    $(this).find('option').prop('selected', false);
+                }
+
+                // Make sure to update select2
+                $(this).trigger('change.select2');
+            });
+        });
+    </script>
+
     <x-slot:footerFiles>
         <script src="{{ asset('js/inventory-sub-sub-head.js') }}"></script>
         <script src="{{ asset('plugins/sweetalerts2/sweetalerts2.min.js') }}"></script>
         <script src="{{ asset('plugins/sweetalerts2/custom-sweetalert.js') }}"></script>
 
+        <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
+
+        <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
+        <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>
+
+        <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
+        <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
+        {{-- <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script> --}}
+        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
+            integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="{{ asset('js/common.js') }}"></script>
+
+        <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
+        @vite(['resources/assets/js/elements/custom-search.js'])
         <script>
             var config = {
                 routes: {

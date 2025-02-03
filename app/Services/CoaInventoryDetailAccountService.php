@@ -64,7 +64,7 @@ class CoaInventoryDetailAccountService
 
     public function getListOfDetailAccounts($param = null)
     {
-        $q = CoaInventoryDetailAccount::with('getMainHead', 'getSubHead','getSubSubHead');
+        $q = CoaInventoryDetailAccount::with('getMainHead', 'getSubHead','getSubSubHead','priceTag');
         if (!empty($param)) {
             $q->where('name', 'LIKE', '%' . $param . '%');
         }

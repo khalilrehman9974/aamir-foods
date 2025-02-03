@@ -106,15 +106,32 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('create', ['as' => 'detail-account.create', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@create']);
         Route::post('save', ['as' => 'detail-account.save', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@store']);
         Route::get('edit/{id}', ['as' => 'detail-account.edit', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@edit']);
-        Route::post('update', ['as' => 'detail-account.update', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@store']);
+        Route::post('update', ['as' => 'detail-account.update', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@update']);
         Route::delete('delete/{id}', ['as' => 'detail-account.delete', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@destroy']);
         Route::get('search', ['as' => 'detail-account.search', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@search']);
         Route::get('get-detail-account-code/{code}', ['as' => 'detail-account-code', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@getMaxDetailAccountCode']);
         Route::get('get-sub-sub-account/{id}', ['as' => 'sub-sub-head-by-sub-head', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@getSubSubHeadAccountsBySubHead']);
-        Route::get('get-saleMan-detail/{name}', ['as' => 'saleMan-detail', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@getSaleManDetail']);
-        Route::get('get-saleMan-area-detail/{name}', ['as' => 'saleMan-area-detail', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@getSaleManAreaDetail']);
+        Route::get('get-saleMan-detail', ['as' => 'saleMan-detail', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@getSaleManDetail']);
+        Route::get('get-saleMan-area-detail', ['as' => 'saleMan-area-detail', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@getSaleManAreaDetail']);
         Route::get('get-product-price/{name}', ['as' => 'product-price', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@getProductPrice']);
+        Route::get('get-products', ['as' => 'products', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@getProducts']);
+        Route::get('get-product-price-tags', ['as' => 'product-price-tags', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@getProductDetails']);
     });
+
+
+    //Delivered To Parties routes
+    Route::group(['prefix' => 'delivered-to-parties', 'middleware' => 'auth'], function () {
+        Route::get('list', ['as' => 'delivered-to-parties.list', 'uses' => 'App\Http\Controllers\DeliveredToPartiesController@index']);
+        Route::get('create', ['as' => 'delivered-to-parties.create', 'uses' => 'App\Http\Controllers\DeliveredToPartiesController@create']);
+        Route::post('save', ['as' => 'delivered-to-parties.save', 'uses' => 'App\Http\Controllers\DeliveredToPartiesController@store']);
+        Route::get('edit/{id}', ['as' => 'delivered-to-parties.edit', 'uses' => 'App\Http\Controllers\DeliveredToPartiesController@edit']);
+        Route::post('update', ['as' => 'delivered-to-parties.update', 'uses' => 'App\Http\Controllers\DeliveredToPartiesController@update']);
+        Route::delete('delete/{id}', ['as' => 'delivered-to-parties.delete', 'uses' => 'App\Http\Controllers\DeliveredToPartiesController@destroy']);
+        Route::get('search', ['as' => 'delivered-to-parties.search', 'uses' => 'App\Http\Controllers\DeliveredToPartiesController@search']);
+        Route::get('get-saleMan-detail', ['as' => 'saleMan-detail', 'uses' => 'App\Http\Controllers\DeliveredToPartiesController@getSaleManDetail']);
+        Route::get('get-saleMan-area-detail', ['as' => 'saleMan-area-detail', 'uses' => 'App\Http\Controllers\DeliveredToPartiesController@getSaleManAreaDetail']);
+    });
+
 
     //Store issue note
     Route::group(['prefix' => 'store-issue-note'], function () {
@@ -412,7 +429,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('create', ['as' => 'co-inventory-sub-sub-head.create', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@create']);
         Route::get('edit/{id}', ['as' => 'co-inventory-sub-sub-head.edit', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@edit']);
         Route::post('save', ['as' => 'co-inventory-sub-sub-head.save', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@store']);
-        Route::post('update', ['as' => 'co-inventory-sub-sub-head.update', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@store']);
+        Route::post('update', ['as' => 'co-inventory-sub-sub-head.update', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@update']);
         Route::delete('delete/{id}', ['as' => 'co-inventory-sub-sub-head.delete', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@destroy']);
         Route::get('get-sub-head-accounts/{id}', ['as' => 'sub-head-accounts-by-main-head', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@getSubHeadAccountsByMainHead']);
         Route::get('get-sub-sub-head-account-code/{code}', ['as' => 'sub-sub-head-account', 'uses' => 'App\Http\Controllers\ChartOfInvSubSubHeadController@getMaxSubSubHeadCode']);
@@ -429,6 +446,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('get-detail-account-code/{code}', ['as' => 'detail-account', 'uses' => 'App\Http\Controllers\ChartOfInvDetailAccountController@getMaxDetailAccountCode']);
         Route::get('get-sub-head-accounts/{id}', ['as' => 'sub-head-accounts-by-main-head', 'uses' => 'App\Http\Controllers\ChartOfInvDetailAccountController@getSubHeadAccountsByMainHead']);
         Route::get('get-sub-sub-head-accounts/{id}', ['as' => 'sub-sub-head-accounts-by-sub-head', 'uses' => 'App\Http\Controllers\ChartOfInvDetailAccountController@getSubSubHeadAccountsBySubHead']);
+        Route::get('get-product-price-tags', ['as' => 'product-price-tags', 'uses' => 'App\Http\Controllers\ChartOfInvDetailAccountController@getProductDetails']);
     });
 
     Route::group(['prefix' => 'purchase-order', 'middleware' => 'auth'], function () {
@@ -492,10 +510,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('update', ['as' => 'sale-order.update', 'uses' => 'App\Http\Controllers\SaleOrderController@update']);
         Route::delete('delete/{id}', ['as' => 'sale-order.delete', 'uses' => 'App\Http\Controllers\SaleOrderController@delete']);
         Route::get('get-party-sale-man/{name}', ['as' => 'party-sale-man', 'uses' => 'App\Http\Controllers\SaleOrderController@getSaleManDetail']);
-        Route::get('get-party-sale-man-sector/{name}', ['as' => 'party-sale-man-sector', 'uses' => 'App\Http\Controllers\SaleOrderController@getSaleManSectorDetail']);
-        Route::get('get-party-sale-man-area/{name}', ['as' => 'party-sale-man-area', 'uses' => 'App\Http\Controllers\SaleOrderController@getSaleManAreaDetail']);
+        Route::get('get-party-sale-man-sector', ['as' => 'party-sale-man-sector', 'uses' => 'App\Http\Controllers\SaleOrderController@getSaleManSectorDetail']);
+        Route::get('get-party-sale-man-area', ['as' => 'party-sale-man-area', 'uses' => 'App\Http\Controllers\SaleOrderController@getSaleManAreaDetail']);
         Route::get('get-product-packing-type/{name}', ['as' => 'product-packing-type', 'uses' => 'App\Http\Controllers\SaleOrderController@getProductPackingType']);
         Route::get('get-product-measurement-type/{name}', ['as' => 'product-measurement-type', 'uses' => 'App\Http\Controllers\SaleOrderController@getProductMeasurementType']);
+        Route::get('get-products', ['as' => 'get-products', 'uses' => 'App\Http\Controllers\SaleOrderController@getProducts']);
     });
 
     //Claim & rate Adjustment

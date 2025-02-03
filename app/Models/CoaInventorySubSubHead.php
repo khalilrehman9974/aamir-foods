@@ -16,4 +16,6 @@ class CoaInventorySubSubHead extends Model
     public function getSubHead() {
         return $this->hasOne(CoaInventorySubHead::class, 'id', 'sub_head_id');
     }
+
+
 }

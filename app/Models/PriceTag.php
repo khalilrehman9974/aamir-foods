@@ -11,4 +11,9 @@ class PriceTag extends Model
     use SoftDeletes;
     protected  $guarded = ['id'];
     protected $fillable = ['name'];
+
+    public function priceTags()
+    {
+        return $this->belongsToMany(InventorySubSubHeadPriceTagModel::class);
+    }
 }
