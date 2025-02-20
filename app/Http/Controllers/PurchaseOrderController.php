@@ -11,6 +11,7 @@ use App\Models\PurchaseOrderDetail;
 use App\Models\PurchaseOrderMaster;
 use App\Services\PurchaseOrderService;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\PurchaseMaster;
 
 class PurchaseOrderController extends Controller
 {
@@ -45,11 +46,13 @@ class PurchaseOrderController extends Controller
     public function create()
     {
         $pageTitle = 'Create Purchase Order';
-        $invoiceNo = PurchaseOrderMaster::max('id') + 1;
+        $poNo = PurchaseOrderMaster::max('id') + 1;
         $dropDownData = $this->purchaseOrderService->DropDownData();
         $purchaseOrderDetails = PurchaseOrderDetail::where('purchase_order_master_id')->get();
-        return view('purchase-order.create', compact('pageTitle','purchaseOrderDetails','invoiceNo','dropDownData'));
+        return view('purchase-order.create', compact('pageTitle','purchaseOrderDetails','poNo','dropDownData'));
     }
+
+
 
     /*
      * Save POrder into db.
@@ -57,11 +60,11 @@ class PurchaseOrderController extends Controller
      * */
     public function store(Request $request)
     {
-        // dd($request);
         $request = $request->except('_token', 'id');
         // try {
         //     DB::beginTransaction();
             //Insert data into POrder tables.
+            PurchaseOrderDetail::where('purchase_order_master_id', $request['id'])->delete();
             $pOrderMasterData = $this->purchaseOrderService->preparePOrderMasterData($request);
             $pOrderMasterInsert = $this->purchaseOrderService->findUpdateOrCreate(PurchaseOrderMaster::class, ['id' => ''], $pOrderMasterData);
             $pOrderDetailData = $this->purchaseOrderService->preparePOrderDetailData($request, $pOrderMasterInsert->id);
@@ -80,13 +83,37 @@ class PurchaseOrderController extends Controller
     public function edit($id)
     {
         $pageTitle = 'Update Purchase Order';
+        $poNo = $id;
+        $dropDownData = $this->purchaseOrderService->DropDownData();
         $purchaseOrder = PurchaseOrderMaster::find($id);
+        // dd($purchaseOrder);
         $purchaseOrderDetails = PurchaseOrderDetail::where('purchase_order_master_id', $id)->get();
         if (empty($purchaseOrder)) {
             $message = config('constants.wrong');
         }
 
-        return view('purchase-order.create', compact('purchaseOrder','pageTitle','purchaseOrderDetails'));
+        return view('purchase-order.create', compact('dropDownData','purchaseOrder','poNo','pageTitle','purchaseOrderDetails'));
+    }
+
+    public function update(Request $request)
+    {
+        // dd($request);
+
+        // try {
+        //     DB::beginTransaction();
+            //Insert data into POrder tables.
+            $request = $request->all();
+            PurchaseOrderDetail::where('purchase_order_master_id', $request['id'])->delete();
+            $pOrderMasterData = $this->purchaseOrderService->preparePOrderMasterData($request);
+            $pOrderMasterInsert = $this->purchaseOrderService->findUpdateOrCreate(PurchaseOrderMaster::class, ['id' => ''], $pOrderMasterData);
+            $pOrderDetailData = $this->purchaseOrderService->preparePOrderDetailData($request, $pOrderMasterInsert->id);
+            $this->purchaseOrderService->savePOrder($pOrderDetailData);
+            DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('purchase-order/create')->with('error', $e->getMessage());
+        // }
+        return redirect('purchase-order/list')->with('message', config('constants.add'));
     }
 
     /*
@@ -113,23 +140,32 @@ class PurchaseOrderController extends Controller
 
     public function getProductMeasurementType($name)
     {
-        $fetchMeasurementType = CoaInventoryDetailAccount::where('name', trim($name))->first('measurement_type_id');
+        $fetchMeasurementType = CoaInventoryDetailAccount::where('id', $name)->first('measurement_type_id');
         $measurement =  MeasurementType::where('id', $fetchMeasurementType->measurement_type_id)->first('name');
 
-        return response()->json(['status' => 'success', 'name' => $measurement]);
+        if ($measurement) {
+            return response()->json(['status' => 'success', 'name' => $measurement]);
+        }
+        return response()->json(['status' => 'fail', 'data' => []]);
     }
 
     public function getProductPackingType($name)
     {
-        $fetchPackingType = CoaInventoryDetailAccount::where('name', trim($name))->first('packing_type_id');
+        $fetchPackingType = CoaInventoryDetailAccount::where('id', $name)->first('packing_type_id');
         $packing =  PackingType::where('id', @$fetchPackingType->packing_type_id)->first('name');
 
-        return response()->json(['status' => 'success', 'name' => $packing]);
+
+        if ($packing) {
+            return response()->json(['status' => 'success', 'name' => $packing]);
+        }
+        return response()->json(['status' => 'fail', 'data' => []]);
+
+
     }
 
     public function getProductSize($name)
     {
-        $fetchSize = CoaInventoryDetailAccount::where('name', trim($name))->first('size');
+        $fetchSize = CoaInventoryDetailAccount::where('id', $name)->first('size');
 
         if ($fetchSize) {
             return response()->json(['status' => 'success', 'size' => $fetchSize->size]);

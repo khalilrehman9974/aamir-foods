@@ -1,49 +1,19 @@
-$(document).on('click', 'body *', function() {
-    $('.qty').on("focusout", function() {
-        doAmountTotal();
+$(document).on('click', 'body *', function () {
+    $('.dzn').on("focusout", function () {
+        var row_id = $(this).closest("tr").find(".row_id").val();
+        // console.log("row_id");
+        let quantity = $(this).closest("tr").find(".qty_" + row_id).val();
+        let dzns = $(this).closest("tr").find(".dzn_" + row_id).val();
+        if (parseInt(quantity) > 0) {
+            $(this).closest("tr").find(".totalDzn_" + row_id).val(quantity * dzns);
+        } else {
+            $(this).closest("tr").find(".totalDzn_" + row_id).val('');
+        }
     });
 
-    $('.delete-item').on("click", function() {
-        doAmountTotal();
-    });
-
-    function doAmountTotal() {
-        $('#total-amount').text("");
-        // console.log('in do amount total');
-        var totalAmount = 0;
-        $(".qty").each(function() {
-            if (!isNaN(this.value) && this.value.length != 0) {
-                totalAmount += parseFloat(this.value);
-            }
-        });
-        $('#quantity-amount').val(totalAmount.toFixed(2));
-    }
 });
 
-$(document).on('click', 'body *', function() {
-    $('.unit').on("focusout", function() {
-        doAmountTotal();
-    });
-
-    $('.delete-item').on("click", function() {
-        doAmountTotal();
-    });
-
-    function doAmountTotal() {
-        $('#total-amount').text("");
-        console.log('in do amount total');
-        var totalAmount = 0;
-        $(".unit").each(function() {
-            if (!isNaN(this.value) && this.value.length != 0) {
-                totalAmount += parseFloat(this.value);
-            }
-        });
-        $('#unit-amount').val(totalAmount.toFixed(2));
-    }
-});
 
 $(document).ready(function () {
-    console.log("DOM is ready");
     $('.select2').select2();
-    console.log("DOM is loaded");
 });

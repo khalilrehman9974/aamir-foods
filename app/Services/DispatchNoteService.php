@@ -11,6 +11,7 @@ use App\Models\DispatchNoteDetail;
 use App\Models\DispatchNoteMaster;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\DispatchNoteImages;
 
 class DispatchNoteService
 {
@@ -70,10 +71,8 @@ class DispatchNoteService
                 'dispatch_note_masters.bilty_no',
                 'dispatch_note_masters.fare',
                 'dispatch_note_masters.contact_no',
-                'saleMans.name as saleManName',
-            )
-            ->where('dispatch_note_masters.id', $id)
-            ->first();
+                'saleMans.name as saleManName'
+            )->where('dispatch_note_masters.id', $id)->first();
     }
 
 
@@ -99,6 +98,29 @@ class DispatchNoteService
         return $dispatchNotes;
     }
 
+    public function prepareSOMasterData($saleOrder)
+    {
+        $status= 'Dispatched';
+        return [
+            'date' => Carbon::parse($saleOrder['date'])->format('Y-m-d'),
+            'party_id' => $saleOrder['party_id'],
+            'business_id' => $saleOrder['business_id'],
+            'f_year_id' => $saleOrder['f_year_id'],
+            'saleman' => $saleOrder['saleman'],
+            'belt' => $saleOrder['belt'],
+            'area' => $saleOrder['area'],
+            'delivered_to' => $saleOrder['delivered_to'],
+            'status' => $status,
+            'total_boray' => $saleOrder['total_boray'],
+            'total_carton' => $saleOrder['total_carton'],
+            'remarks' => $saleOrder['remarks'],
+            'total_amount' => $saleOrder['total_amount'],
+            'created_at' => $saleOrder['created_at'],
+            'updated_at' => $saleOrder['updated_at'],
+            'created_by' => $saleOrder['created_by'],
+            'updated_by' => $saleOrder['updated_by']
+        ];
+    }
 
     /*
      * Prepare dispatch master data.
@@ -115,6 +137,7 @@ class DispatchNoteService
             'sector' => $request['sector'],
             'area' => $request['area'],
             'delivered_to' => $request['delivered_to'],
+            'transporter_id' => $request['transporter_id'],
             'vehicle_no' => $request['vehicle_no'],
             'bility_no' => $request['bility_no'],
             'driver_name' => $request['driver_name'],
@@ -138,6 +161,8 @@ class DispatchNoteService
             'packing_type' => $request['packing_type'],
             'measurement_type' => $request['measurement_type'],
             'quantity' => $request['quantity'],
+            'dzn' => $request['dzn'],
+            'total_dzn' => $request['total_dzn'],
             'remarks' => $request['remarks'],
             'dispatch_note_master_id' => $dispatchParentId,
         ];
@@ -156,6 +181,8 @@ class DispatchNoteService
                 $rec['packing_type'] = $data['packing_type'][$key];
                 $rec['measurement_type'] = $data['measurement_type'][$key];
                 $rec['quantity'] = $data['quantity'][$key];
+                $rec['dzn'] = $data['dzn'][$key];
+                $rec['total_dzn'] = $data['total_dzn'][$key];
                 $rec['remarks'] = $data['remarks'][$key];
                 $rec['created_by'] = Auth::user()->id;
                 $rec['updated_by'] = Auth::user()->id;
@@ -164,6 +191,98 @@ class DispatchNoteService
             }
         }
     }
+
+
+    public function prepareDispatchNoteImagesData($request, $dispatchNoteParentId)
+    {
+
+        $imagePaths = [];
+
+        if (isset($request['images'])) {
+            foreach ($request['images'] as $file) {
+                $destinationPath = public_path('images/dispatchNote');
+
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
+                }
+
+                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $file->move($destinationPath, $filename);
+
+                $imagePaths[] = $filename;
+            }
+
+            return [
+                'images' => $imagePaths,
+                'dispatch_note_id' => $dispatchNoteParentId,
+            ];
+        } else {
+
+            return [
+                'dispatch_note_id' => $dispatchNoteParentId,
+            ];
+        }
+    }
+
+    public function saveDispatchNoteImages($data)
+    {
+        if (empty($data['images'])) {
+            $rec['images'] = null;
+            $rec['dispatch_note_id'] = $data['dispatch_note_id'];
+            DispatchNoteImages::create($rec);
+
+        } else {
+            foreach ($data['images'] as $key => $value) {
+                if (!empty($value)) {
+                    $rec['images'] = $value;
+                    $rec['dispatch_note_id'] = $data['dispatch_note_id'];
+                    DispatchNoteImages::create($rec);
+                }
+            }
+        }
+
+    }
+
+
+    public function prepareLedgerData($request, $dispatchParentId)
+    {
+        return [
+            'product_id' => $request['product_id'],
+            'packing_type' => $request['packing_type'],
+            'measurement_type' => $request['measurement_type'],
+            'quantity' => $request['quantity'],
+            'dzn' => $request['dzn'],
+            'total_dzn' => $request['total_dzn'],
+            'remarks' => $request['remarks'],
+            'dispatch_note_master_id' => $dispatchParentId,
+        ];
+    }
+
+    /*
+     * Save dispatch data.
+     * @param: $data
+     * */
+    public function saveLedger($data)
+    {
+        DispatchNoteDetail::where('dispatch_note_master_id', $data['dispatch_note_master_id'])->delete();
+        foreach ($data['product_id'] as $key => $value) {
+            if (!empty($data['product_id'][$key])) {
+                $rec['product_id'] = $data['product_id'][$key];
+                $rec['packing_type'] = $data['packing_type'][$key];
+                $rec['measurement_type'] = $data['measurement_type'][$key];
+                $rec['quantity'] = $data['quantity'][$key];
+                $rec['dzn'] = $data['dzn'][$key];
+                $rec['total_dzn'] = $data['total_dzn'][$key];
+                $rec['remarks'] = $data['remarks'][$key];
+                $rec['created_by'] = Auth::user()->id;
+                $rec['updated_by'] = Auth::user()->id;
+                $rec['dispatch_note_master_id'] = $data['dispatch_note_master_id'];
+                DispatchNoteDetail::create($rec);
+            }
+        }
+    }
+
+
 
     // public function prepareAccountCreditData($request, $saleParentId, $dataType, $description)
     // {

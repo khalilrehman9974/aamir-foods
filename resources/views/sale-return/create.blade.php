@@ -39,7 +39,8 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Sale</li>
-                <li class="breadcrumb-item"><a href="{{ route('sale-return.sales-return') }}">List of Sale Returns</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('sale-return.sales-return') }}">List of Sale Returns</a>
+                </li>
                 <li class="breadcrumb-item"><a href="{{ route('sale-return.create') }}">Create</a></li>
 
             </ol>
@@ -87,9 +88,10 @@
                                                                 </div>
 
                                                                 <div class="col-lg-0 col-6">
-                                                                    <label for="date" class="form-label">Date</label>
-                                                                    <input id="date" type="date"
-                                                                        name="date" style="color:black;"
+                                                                    <label for="date"
+                                                                        class="form-label">Date</label>
+                                                                    <input id="date" type="date" name="date"
+                                                                        style="color:black;"
                                                                         value="{{ $saleInvoiceMaster->date }}"
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
@@ -161,8 +163,9 @@
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-lg-0 col-6">
-                                                                    <label for="transporter" class="form-label">Transporter
-                                                                        </label>
+                                                                    <label for="transporter"
+                                                                        class="form-label">Transporter
+                                                                    </label>
                                                                     <input id="transporter" type="transporter"
                                                                         name="transporter" style="color:black;"
                                                                         placeholder="Transporter ...."
@@ -229,8 +232,8 @@
                                                                                         {{-- {{dd($dispatchNoteDetail);}} --}}
                                                                                         <tr
                                                                                             class="tr_clone validator_0">
-                                                                                            <td
-                                                                                                class="delete-item-row" style="padding: 0 px 0 px;">
+                                                                                            <td class="delete-item-row"
+                                                                                                style="padding: 0 px 0 px;">
                                                                                                 <ul
                                                                                                     class="table-controls">
                                                                                                     <li>
@@ -279,7 +282,8 @@
                                                                                                     value="2"
                                                                                                     hidden>
                                                                                             </td>
-                                                                                            <td class="product" style="padding: 0 px 0 px !important;">
+                                                                                            <td class="product"
+                                                                                                style="padding: 0 px 0 px !important;">
                                                                                                 <select id="product"
                                                                                                     type="text"
                                                                                                     name="product_id[]"
@@ -327,7 +331,8 @@
                                                                                                     readonly>
                                                                                             </td>
 
-                                                                                            <td class="quantity" style="padding: 0 px 0 px !important;">
+                                                                                            <td class="quantity"
+                                                                                                style="padding: 0 px 0 px !important;">
                                                                                                 <input type="text"
                                                                                                     id="quantity"
                                                                                                     class="qty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_2"
@@ -400,7 +405,6 @@
                                                                                     Boray</label>
                                                                                 <input type="text"
                                                                                     style="color: black;"
-
                                                                                     id="boray-amount"
                                                                                     name="total_boray"
                                                                                     class="quantity-amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
@@ -410,7 +414,6 @@
                                                                                     Carton</label>
                                                                                 <input type="text"
                                                                                     style="color: black;"
-
                                                                                     id="carton-amount"
                                                                                     name="total_carton"
                                                                                     class="quantity-amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
@@ -524,7 +527,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <a href="{{ route('sale-return.sale-return') }}" style="float: right;"
+                                                            <a href="{{ route('sale-return.sales-return') }}"
+                                                                style="float: right;"
                                                                 class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
                                                             @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
                                                             @endif
@@ -774,7 +778,6 @@
                 })
             }
         }
-
     </script>
     <x-slot:footerFiles>
         <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>

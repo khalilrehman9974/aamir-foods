@@ -84,12 +84,11 @@ class PurchaseReturnService
     {
         $q = PurchaseReturnMaster::query();
         if (!empty($request['param'])) {
-            $q = PurchaseReturnMaster::with('type', 'party')
-                ->where('grn_no', 'like', '%' . $request['param'] . '%')
+            $q = PurchaseReturnMaster::with( 'party','transporter')
                 ->orwhere('date', 'like', '%' . $request['param'] . '%')
                 ->orwhere('bill_no', 'like', '%' . $request['param'] . '%');
         }
-        $pRorders = $q->orderBy('grn_no', 'ASC')->paginate(config('constants.PER_PAGE'));
+        $pRorders = $q->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
 
         return $pRorders;
     }
@@ -113,18 +112,21 @@ class PurchaseReturnService
     {
         $session = $this->commonService->getSession();
         return [
-            'grn_no' => $request['grn_no'],
+            'purchase_invoice_no' => $request['purchase_invoice_no'],
+            'purchase_order_no' => $request['purchase_order_no'],
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
-            'type' => config('constants.transaction.Purchase-Return'),
             'party_id' => $request['party_id'],
-            'bill_no' => $request['bill_no'],
             'transporter_id' => $request['transporter_id'],
+            'supplier_bill_no' => $request['supplier_bill_no'],
+            'unloaded_by' => $request['unloaded_by'],
             'business_id' => $session->business_id,
             'f_year_id' => $session->financial_year,
             'remarks' => $request['remarks'],
-            'total_amount' => $request['total_amount'],
-            'fare' => $request['fare'],
-            'carriage_inward' => $request['carriage_inward'],
+            'gross_bill' => $request['gross_bill'],
+            'carriage' => $request['carriage'],
+            'total_quantity' => $request['total_quantity'],
+            'tax' => $request['tax'],
+            'net_amount' => $request['net_amount'],
             'created_by' => Auth::user()->id,
             'updated_by' => Auth::user()->id
         ];
@@ -139,12 +141,14 @@ class PurchaseReturnService
     {
         return [
             'product_id' => $request['product_id'],
+            'packing_type' => $request['packing_type'],
+            'measurement_type' => $request['measurement_type'],
+            'size' => $request['size'],
             'quantity' => $request['quantity'],
-            'unit' => $request['unit'],
-            'total_unit' => $request['total_unit'],
-            'rate' => $request['rate'],
+            'price' => $request['price'],
             'amount' => $request['amount'],
             'purchase_return_master_id' => $purchaseParentId,
+
         ];
     }
 
@@ -157,11 +161,12 @@ class PurchaseReturnService
         foreach ($data['product_id'] as $key => $value) {
             if (!empty($data['product_id'][$key])) {
                 $rec['product_id'] = $data['product_id'][$key];
-                $rec['unit'] = $data['unit'][$key];
+                $rec['packing_type'] = $data['packing_type'][$key];
+                $rec['measurement_type'] = $data['measurement_type'][$key];
+                $rec['size'] = $data['size'][$key];
                 $rec['quantity'] = $data['quantity'][$key];
-                $rec['rate'] = $data['rate'][$key];
+                $rec['price'] = $data['price'][$key];
                 $rec['amount'] = $data['amount'][$key];
-                $rec['total_unit'] = $data['total_unit'][$key];
                 $rec['purchase_return_master_id'] = $data['purchase_return_master_id'];
                 PurchaseReturnDetail::create($rec);
             }

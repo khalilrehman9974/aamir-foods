@@ -21,12 +21,12 @@ return new class extends Migration
             $table->string('sub_sub_head', 30);
             $table->integer('account_code')->unsigned();
             $table->string('account_name', 200);
-            $table->integer('saleMan_id')->unsigned()->index();
+            $table->integer('saleMan_id')->unsigned()->index()->nullable();
             $table->integer('business_id');
             $table->integer('f_year_id');
             $table->string('commision')->default(0)->nullable();
-            $table->string('mode');
-            $table->string('status');
+            $table->string('mode')->nullable();
+            $table->string('status')->nullable();
             $table->integer('created_by');
             $table->integer('updated_by');
             $table->dateTime('deleted_at')->nullable();

@@ -17,18 +17,20 @@ return new class extends Migration
             $table->Increments('id');
             $table->string('purchase_order_no');
             $table->date('date');
-            $table->string('supplier_name');
-            $table->string('fare')->nullable();
-            $table->string('supplier_bill_no')->nullable();
-            $table->integer('transporter_id')->unsigned()->index()->nullable();
+            $table->foreignId('party_id')->constrained('detail_accounts')->onDelete('cascade');
+            $table->double('fare');
+            $table->string('supplier_bill_no');
+            $table->string('unloaded_by');
+            $table->integer('transporter_id')->unsigned()->index();
             $table->integer('business_id');
             $table->integer('f_year_id')->unsigned()->index();
+            $table->double('total_quantity');
             $table->text('remarks')->nullable();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')->nullable();
-            $table->string('created_by');
-            $table->string('updated_by');
+            $table->bigInteger('created_by');
+            $table->bigInteger('updated_by');
 
 
             $table->foreign('transporter_id')

@@ -14,13 +14,14 @@ return new class extends Migration
     public function up()
     {
         Schema::create('purchase_return_details', function (Blueprint $table) {
-            $table->Increments('id');
+            $table->increments('id')->unsigned();
             $table->integer('purchase_return_master_id')->unsigned()->index();
-            $table->integer('product_id');
+            $table->integer('product_id')->unsigned()->index();
+            $table->string('packing_type');
+            $table->string('measurement_type');
+            $table->string('size')->nullable();
             $table->double('quantity');
-            $table->double('unit');
-            $table->double('total_unit');
-            $table->double('rate');
+            $table->double('price');
             $table->double('amount');
             $table->timestamp('created_at');
             $table->timestamp('updated_at');

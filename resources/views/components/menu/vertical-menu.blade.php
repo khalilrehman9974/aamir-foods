@@ -17,9 +17,7 @@
     $jvPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '5');
     $chartofAccountPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '6');
     $userRegistrationPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '7');
-    $companyRegistrationPermission = $permissionObj->getUserPermission(
-        \Illuminate\Support\Facades\Auth::user()->id,
-        '8',
+    $companyRegistrationPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id,'8',
     );
     $projectPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '9');
     $donorPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '10');
@@ -213,9 +211,9 @@
                         <li class="{{ Request::routeIs('invoice-preview') ? 'active' : '' }}">
                             <a href="{{ route('sale-order.list') }}">Sale Order </a>
                         </li>
-                        <li class="">
+                        {{-- <li class="">
                             <a href="{{ route('dispatch-note.list') }} "> Dispatch Note </a>
-                        </li>
+                        </li> --}}
                         <li class="{{ Request::routeIs('sale-preview') ? 'active' : '' }}">
                             <a href="{{ route('sale.sales') }}">Sale Invoice</a>
 
@@ -231,6 +229,39 @@
 
 
 
+
+
+                    </ul>
+                </li>
+                <li class="menu {{ Request::is('*/app/invoice/dispatch/*') ? 'active' : '' }}">
+                    <a href="#dispatchinvoice" data-bs-toggle="collapse"
+                        aria-expanded="{{ Request::is('*/app/invoice/*') ? 'true' : 'false' }}"
+                        class="dropdown-toggle">
+                        <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" class="feather feather-dollar-sign">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            </svg>
+                            <span>Dispatch Module</span>
+                        </div>
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </div>
+                    </a>
+                    <ul class="collapse submenu list-unstyled {{ Request::is('*/app/invoice/dispatch/*') ? 'show' : '' }}"
+                        id="dispatchinvoice" data-bs-parent="#accordionExample">
+                        <li class="{{ Request::routeIs('invoice-preview') ? 'active' : '' }}">
+                            <a href="{{ route('sale-order.approvedlist') }}">Approved SO </a>
+                        </li>
+                        <li class="">
+                            <a href="{{ route('dispatch-note.list') }} "> Dispatch Note </a>
+                        </li>
 
 
                     </ul>

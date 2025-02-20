@@ -1,29 +1,82 @@
 
 
 //Runtime calculation
-$(document).on('click', 'body *', function () {
-    $('.dozen').on("focusout", function () {
-        var row_id = $(this).closest("tr").find(".row_id").val();
-        let quantity = $(this).closest("tr").find(".qty_" + row_id).val();
-        let dzns = $(this).closest("tr").find(".dozen_" + row_id).val();
-        if (parseInt(quantity) > 0) {
-            $(this).closest("tr").find(".totDzn_" + row_id).val(quantity * dzns);
-        } else {
-            $(this).closest("tr").find(".totDzn_" + row_id).val('');
-        }
-    });
-    $('.rate').on("focusout", function () {
 
-        var row_id = $(this).closest("tr").find(".row_id").val();
-        let totalDzns = $(this).closest("tr").find(".totDzn_" + row_id).val();
-        let rate = $(this).closest("tr").find(".rate_" + row_id).val();
-        if (parseInt(totalDzns) > 0) {
-            $(this).closest("tr").find(".amount_" + row_id).val(totalDzns * rate);
+
+$(document).ready(function () {
+    // Function to update the amount
+    let getTableElement = document.querySelector('.item-table');
+    let currentIndex = getTableElement.rows.length;
+
+    function updateAmount(row_id) {
+        let quantity = $(".totDzn_" + row_id).val();
+        let price = $(".rate_" + row_id).val();
+
+        if (parseFloat(quantity) > 0 && parseFloat(price) > 0) {
+            $(".amount_" + row_id).val((quantity * price).toFixed(2)); // Format to 2 decimal places
         } else {
-            $(this).closest("tr").find(".amount_" + row_id).val('');
+            $(".amount_" + row_id).val('');
         }
         doAmountTotal();
+    }
+
+    // Event listener for dozen input (Calculate totDzn)
+    // $(document).on("focusout", ".dozen", function () {
+    //     var row_id = $(this).closest("tr").find(".row_id").val();
+    //     let quantity = $(this).closest("tr").find(".qty_" + row_id).val();
+    //     let dzns = $(this).closest("tr").find(".dozen_" + row_id).val();
+
+    //     if (parseInt(quantity) > 0) {
+    //         $(this).closest("tr").find(".totDzn_" + row_id).val(quantity * dzns);
+    //     } else {
+    //         $(this).closest("tr").find(".totDzn_" + row_id).val('');
+    //     }
+    //     updateAmount(row_id); // Update amount when dozen changes
+    // });
+
+    // Event listener for rate input (when manually changed)
+    $(document).on("input", ".rate", function () {
+        var row_id = $(this).closest("tr").find(".row_id").val();
+        console.log(row_id);
+        updateAmount(row_id);
     });
+
+    // Run on page load to handle controller-filled rate values
+    $(".rate").each(function () {
+        var row_id = $(this).closest("tr").find(".row_id").val();
+        updateAmount(row_id); // Ensure amount is calculated on page load
+    });
+
+    // Observer to detect when the rate is set automatically by the controller
+    $(".rate").each(function () {
+        var targetNode = this;
+        var observer = new MutationObserver(function (mutationsList) {
+            mutationsList.forEach(function (mutation) {
+                if (mutation.type === "attributes" && mutation.attributeName === "value") {
+                    var row_id = $(targetNode).closest("tr").find(".row_id").val();
+                    updateAmount(row_id);
+                }
+            });
+        });
+
+        observer.observe(targetNode, { attributes: true, attributeFilter: ["value"] });
+    });
+
+    // $('.rate').on("focusout", function () {
+
+    //     var row_id = $(this).closest("tr").find(".row_id").val();
+    //     let totalDzns = $(this).closest("tr").find(".totDzn_" + row_id).val();
+    //     let rate = $(this).closest("tr").find(".rate_" + row_id).val();
+    //     if (parseInt(totalDzns) > 0) {
+    //         $(this).closest("tr").find(".amount_" + row_id).val(totalDzns * rate);
+    //     } else {
+    //         $(this).closest("tr").find(".amount_" + row_id).val('');
+    //     }
+    //     doAmountTotal();
+    // });
+
+
+
 
     $('.delete-item').on("click", function () {
         doAmountTotal();
@@ -31,7 +84,6 @@ $(document).on('click', 'body *', function () {
 
     function doAmountTotal() {
         $('#total-amount').text("");
-        console.log('in do amount total');
         var totalAmount = 0;
         $(".amount").each(function () {
             if (!isNaN(this.value) && this.value.length != 0) {
@@ -42,7 +94,7 @@ $(document).on('click', 'body *', function () {
         // $('#net-amount').val(totalAmount.toFixed(2));
     }
 
-    $(".carriage, .discount, .commission").on("focusout", function (){
+    $(".carriage, .discount, .commission").on("input", function () {
         var totalAmount = 0;
         $(".amount").each(function () {
             if (!isNaN(this.value) && this.value.length != 0) {
@@ -62,13 +114,11 @@ $(document).on('click', 'body *', function () {
 });
 
 $(document).ready(function () {
-    console.log("DOM is ready");
     $('.select2').select2();
-    console.log("DOM is loaded");
 });
 
 $("#dispatch_note").on("keypress", function (event) {
-    if ($("#dispatch_note").val() !== "" ) {
+    if ($("#dispatch_note").val() !== "") {
         if (event.which == 13) {
             alert(event.which);
             event.preventDefault()
@@ -76,20 +126,19 @@ $("#dispatch_note").on("keypress", function (event) {
     }
 });
 
-$(document).on('click', 'body *', function() {
-    $('.amount').on("focusout", function() {
+$(document).on('click', 'body *', function () {
+    $('.amount').on("focusout", function () {
         doAmountTotal();
     });
 
-    $('.delete-item').on("click", function() {
+    $('.delete-item').on("click", function () {
         doAmountTotal();
     });
 
     function doAmountTotal() {
         $('#total-amount').text("");
-        console.log('in do amount total');
         var totalAmount = 0;
-        $(".amount").each(function() {
+        $(".amount").each(function () {
             if (!isNaN(this.value) && this.value.length != 0) {
                 totalAmount += parseFloat(this.value);
             }
@@ -135,7 +184,6 @@ $('#code').on('keypress', function (event) {
 
 $('#party').on('change', function () {
     var name = $('#party :selected').text();
-    // console.log(name);
     let url = config.routes.getPartyCode + '/' + name;
     // let url = "{{ url('co-inv-party/get-party-account') }}" + '/' + subCode;
     $.ajax({
@@ -173,7 +221,6 @@ $(document).on('click', 'body *', function () {
 
     function doAmountTotal() {
         $('#total-amount').text("");
-        console.log('in do amount total');
         var totalAmount = 0;
         $(".amount").each(function () {
             if (!isNaN(this.value) && this.value.length != 0) {

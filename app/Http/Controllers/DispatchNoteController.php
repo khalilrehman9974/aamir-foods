@@ -2,14 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
+use App\Models\Sector;
+use App\Models\SaleMan;
 use App\Models\SaleOrder;
 use App\Models\PackingType;
+use App\Models\SaleManArea;
 use Illuminate\Http\Request;
+use App\Models\SaleManSector;
 use App\Models\MeasurementType;
+use App\Models\SaleOrderDetail;
 use App\Services\CommonService;
+use App\Models\CoaDetailAccount;
+use App\Models\DeliveredToParties;
 use App\Models\DispatchNoteDetail;
+use App\Models\DispatchNoteImages;
 use App\Models\DispatchNoteMaster;
 use Illuminate\Support\Facades\DB;
+use App\Models\DetailAccountProducts;
 use App\Services\DispatchNoteService;
 use App\Models\CoaInventoryDetailAccount;
 
@@ -34,7 +44,7 @@ class DispatchNoteController extends Controller
         $param = request()->param;
         $dispatchNotes = $this->dispatchNoteService->searchDispatch($request);
 
-        return view('dispatch-note.index', compact('dispatchNotes','pageTitle', 'param'));
+        return view('dispatch-note.index', compact('dispatchNotes', 'pageTitle', 'param'));
     }
 
     /**
@@ -45,16 +55,31 @@ class DispatchNoteController extends Controller
     public function create(Request $request)
     {
         $pageTitle = 'Create Dispatch Note';
-        $maxid = DispatchNoteMaster::count('sale_order_number',$request->id) + 1;
+        $maxid = DispatchNoteMaster::count('sale_order_number', $request->id) + 1;
         $dropDownData = $this->dispatchNoteService->DropDownData();
         $sale_Order = SaleOrder::find($request->id);
-        $dispatchNotes = DispatchNoteDetail::where('dispatch_note_master_id')->get();
+        // dd($sale_Order['status']);
+        if ($sale_Order['status'] === 'Pending') {
+            return back()->with('message', 'This Sale Order status is pending. Please update the status.');
+        } else {
+            $parties = CoaDetailAccount::where('id', $sale_Order->party_id)->pluck('account_name', 'id');
+            $saleMans = SaleMan::where('id', $sale_Order->saleman)->pluck('name', 'id');
+            $sectors = Sector::where('id', $sale_Order->belt)->pluck('name', 'id');
+            $areas = Area::where('id', $sale_Order->area)->pluck('name', 'id');
+            $getProducts = DetailAccountProducts::where('detail_account_id', $sale_Order->party_id)->get();
+            $productsArray = $getProducts->pluck('product_id')->toArray();
+            $products = CoaInventoryDetailAccount::whereIn('id', $productsArray)->pluck('name', 'id');
+
+            $deliveredToParties = DeliveredToParties::where('id', $sale_Order->delivered_to)->pluck('party_name', 'id');
+            $saleOrderDetails = SaleOrderDetail::where('sale_order_master_id', $sale_Order->id)->get();
+        }
+
 
         if (empty($sale_Order)) {
             abort(404);
         }
 
-        return view('dispatch-note.create', compact('pageTitle', 'maxid', 'dropDownData', 'dispatchNotes','sale_Order'));
+        return view('dispatch-note.create', compact('pageTitle', 'maxid', 'products', 'deliveredToParties', 'areas', 'sectors', 'saleMans', 'dropDownData', 'parties', 'saleOrderDetails', 'sale_Order'));
     }
 
     public function generate()
@@ -69,20 +94,34 @@ class DispatchNoteController extends Controller
      */
     public function store(Request $request)
     {
-        $data = request()->except('id', 'token');
-        DB::beginTransaction();
-        try {
-            //Insert data into Dispatch tables.
-            $dispatchMasterData = $this->dispatchNoteService->prepareDispatchMasterData($request);
-            $dispatchMasterInsert = $this->dispatchNoteService->findUpdateOrCreate(DispatchNoteMaster::class, ['id' => ''], $dispatchMasterData);
-            $dispatchDetailData = $this->dispatchNoteService->prepareDispatchDetailData($request, $dispatchMasterInsert->id);
-            $this->dispatchNoteService->saveDispatch($dispatchDetailData);
+        // dd($request);
+        $saleOrder = SaleOrder::where('id', $request->sale_order_number)->first();
+        // dd($saleOrder);
 
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('dispatch-note/create')->with('error', $e->getMessage());
-        }
+        $updateSaleOrderStatus = $this->dispatchNoteService->prepareSOMasterData($saleOrder);
+        $dispatchMasterInsert = $this->commonService->findUpdateOrCreate(SaleOrder::class, ['id' => $saleOrder->id], $updateSaleOrderStatus);
+
+        $request = $request->except('_token', 'id');
+        // $data = $request->except('id', 'token');
+        // DB::beginTransaction();
+        // try {
+        //Insert data into Dispatch tables.
+        $dispatchMasterData = $this->dispatchNoteService->prepareDispatchMasterData($request);
+        $dispatchMasterInsert = $this->dispatchNoteService->findUpdateOrCreate(DispatchNoteMaster::class, ['id' => ''], $dispatchMasterData);
+        $dispatchDetailData = $this->dispatchNoteService->prepareDispatchDetailData($request, $dispatchMasterInsert->id);
+        $this->dispatchNoteService->saveDispatch($dispatchDetailData);
+
+        $dispatchNoteImages = $this->dispatchNoteService->prepareDispatchNoteImagesData($request, $dispatchMasterInsert->id);
+        $this->dispatchNoteService->saveDispatchNoteImages($dispatchNoteImages);
+
+        $stockLedgers = $this->dispatchNoteService->prepareLedgerData($request, $dispatchMasterInsert->id);
+        $this->dispatchNoteService->saveLedger($stockLedgers);
+
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('dispatch-note/create')->with('error', $e->getMessage());
+        // }
         return redirect('dispatch-note/list')->with('message', config('constants.add'));
     }
 
@@ -109,16 +148,40 @@ class DispatchNoteController extends Controller
         $pageTitle = 'Update Dispatch Note';
         $currentid = $id;
         $note = DispatchNoteMaster::find($id);
+
         $dropDownData = $this->dispatchNoteService->DropDownData();
         $dispatchNotes = DispatchNoteDetail::where('dispatch_note_master_id', $id)->get();
+        $parties = CoaDetailAccount::where('id', $note->party_id)->pluck('account_name', 'id');
+
+        // $fetchSaleManId= CoaDetailAccount::where('id', $note->party_id)->first('saleMan_id');
+        $saleMans = SaleMan::where('id', $note->saleman)->pluck('name', 'id');
+        // $saleMans = $getSaleman->pluck('name','id');
+        // dd($dispatchNotes);
+        $images = DispatchNoteImages::where('dispatch_note_id', $id)->get();
+
+        // $fetchSectors  = SaleManSector::where('master_id', $note->saleman)->get();
+        // $sectorsArray = $fetchSectors->pluck('sector_id')->toArray();
+        $sectors = Sector::where('id', $note->sector)->pluck('name', 'id');
+        // $sectors = $fetchSectorId->pluck('name','id')->toArray();
+
+        // $fetchAreas = SaleManArea::where('sector_id', $note->belt)->get();
+        // $areasArray = $fetchAreas->pluck('area_id')->toArray();
+        $areas = Area::where('id', $note->area)->pluck('name', 'id');
+        // $areas = $fetchAreaId->pluck('name','id')->toArray();
+        $deliveredToParties = DeliveredToParties::where('id', $note->delivered_to)->pluck('party_name', 'id');
+
+        $getProducts = DetailAccountProducts::where('detail_account_id', $note->party_id)->get();
+        $productsArray = $getProducts->pluck('product_id')->toArray();
+        $products = CoaInventoryDetailAccount::whereIn('id', $productsArray)->pluck('name', 'id');
+
         if (empty($note)) {
             $message = config('constants.wrong');
         }
 
-        return view('dispatch-note.edit', compact('pageTitle', 'dropDownData', 'currentid', 'note', 'dispatchNotes'));
+        return view('dispatch-note.edit', compact('pageTitle', 'dropDownData', 'products', 'deliveredToParties', 'parties', 'sectors', 'areas', 'images', 'currentid', 'note', 'saleMans', 'dispatchNotes'));
     }
 
-       /**
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -128,6 +191,7 @@ class DispatchNoteController extends Controller
     public function update(Request $request)
     {
         DB::beginTransaction();
+
         try {
             $request = request()->all();
 
@@ -155,7 +219,6 @@ class DispatchNoteController extends Controller
     {
 
         return $this->commonService->deleteResource(DispatchNoteMaster::class);
-
     }
 
     public function getSaleOrderData($name)
@@ -171,16 +234,15 @@ class DispatchNoteController extends Controller
 
     public function getProductMeasurementType($name)
     {
-        $fetchMeasurementType = CoaInventoryDetailAccount::where('name', trim($name))->first('measurement_type_id');
+        $fetchMeasurementType = CoaInventoryDetailAccount::where('id', $name)->first('measurement_type_id');
         $measurement =  MeasurementType::where('id', $fetchMeasurementType->measurement_type_id)->first('name');
-
         return response()->json(['status' => 'success', 'name' => $measurement]);
     }
 
     public function getProductPackingType($name)
     {
-        $fetchPackingType = CoaInventoryDetailAccount::where('name', trim($name))->first('packing_type_id');
-        $packing =  PackingType::where('id', $fetchPackingType->packing_type_id)->first('name');
+        $fetchPackingType = CoaInventoryDetailAccount::where('id', $name)->first('packing_type_id');
+        $packing =  PackingType::where('id', @$fetchPackingType->packing_type_id)->first('name');
 
         return response()->json(['status' => 'success', 'name' => $packing]);
     }

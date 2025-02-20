@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CoaDetailAccount;
 use Illuminate\Http\Request;
 use App\Models\GRNotesDetail;
 use App\Services\CommonService;
 use App\Services\GRNotesService;
 use App\Models\GoodsReceivedNote;
+use App\Models\PurchaseOrderDetail;
+use App\Models\PurchaseOrderMaster;
 use Illuminate\Support\Facades\DB;
 // use App\Http\Requests\Request;
 
@@ -20,6 +23,11 @@ class GRNotesController extends Controller
         $this->commonService = $commonService;
         $this->grNotesService = $grNotesService;
 
+    }
+
+    public function generate()
+    {
+        return view('goods-received-notes.generate');
     }
 
     /*
@@ -38,12 +46,17 @@ class GRNotesController extends Controller
     /*
      * Show page of create GRN.
      * */
-    public function create()
+    public function create(Request $request)
     {
         $pageTitle = 'Create GRN';
+        $maxid = GoodsReceivedNote::max('id') + 1;
+        $purchaseOrder = PurchaseOrderMaster::find($request->id);
+        $purchaseOrderDetails = PurchaseOrderDetail::where('purchase_order_master_id',$purchaseOrder->id)->get();
+        $parties = CoaDetailAccount::where('id', $purchaseOrder->party_id)->pluck('account_name', 'id');
+        // dd($purchaseOrderDetails);
         $dropDownData = $this->grNotesService->DropDownData();
-        $note_details = GRNotesDetail::where('goods_received_note_master_id')->get();
-        return view('goods-received-notes.create', compact('pageTitle','dropDownData','note_details'));
+        // $note_details = GRNotesDetail::where('goods_received_note_master_id')->get();
+        return view('goods-received-notes.create', compact('pageTitle','purchaseOrderDetails','parties','dropDownData','maxid','purchaseOrder'));
     }
 
     /*
@@ -52,9 +65,10 @@ class GRNotesController extends Controller
      * */
     public function store(Request $request)
     {
+        // dd($request);
 
         $request = $request->except('_token', 'id');
-        DB::beginTransaction();
+        // DB::beginTransaction();
         // try {
             //Insert data into GRN tables.
             $grnMasterData = $this->grNotesService->prepareGRNMasterData($request);
@@ -62,7 +76,7 @@ class GRNotesController extends Controller
             $grnDetailData = $this->grNotesService->prepareGRNDetailData($request, $grnMasterInsert->id);
             $this->grNotesService->saveGRN($grnDetailData);
 
-            DB::commit();
+            // DB::commit();
         // } catch (\Exception $e) {
         //     DB::rollback();
         //     return redirect('grn/create')->with('error', $e->getMessage());
@@ -72,21 +86,23 @@ class GRNotesController extends Controller
 
     public function update(Request $request)
     {
-        DB::beginTransaction();
-        try {
+        // DB::beginTransaction();
+        // try {
             $request = request()->all();
+            GRNotesDetail::where('master_id', $request['id'])->delete();
 
-            $dispatchMasterData = $this->grNotesService->prepareGRNMasterData($request);
-            $dispatchMasterInsert = $this->commonService->findUpdateOrCreate(GoodsReceivedNote::class, ['id' => request('id')], $dispatchMasterData);
-            $dispatchDetailData = $this->grNotesService->prepareGRNDetailData($request, $dispatchMasterInsert->id);
-            $this->grNotesService->saveGRN($dispatchDetailData);
+            $grnMasterData = $this->grNotesService->prepareGRNMasterData($request);
+            $grnMasterInsert = $this->commonService->findUpdateOrCreate(GoodsReceivedNote::class, ['id' => request('id')], $grnMasterData);
+            $grnDetailData = $this->grNotesService->prepareGRNDetailData($request, $grnMasterInsert->id);
+            $this->grNotesService->saveGRN($grnDetailData);
 
 
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('grn/create')->with('error', $e->getMessage());
-        }
+
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('grn/create')->with('error', $e->getMessage());
+        // }
 
         return redirect('grn/list')->with('message', config('constants.update'));
     }
@@ -97,14 +113,17 @@ class GRNotesController extends Controller
     public function edit($id)
     {
         $pageTitle = 'Update GRN';
+        $maxid = $id;
         $dropDownData = $this->grNotesService->DropDownData();
         $note = GoodsReceivedNote::find($id);
-        $note_details = GRNotesDetail::where('goods_received_note_master_id', $id)->get();
+        // dd($note);
+        $parties = CoaDetailAccount::where('id', $note->party_id)->pluck('account_name', 'id');
+        $note_details = GRNotesDetail::where('master_id', $id)->get();
         if (empty($note)) {
             $message = config('constants.wrong');
         }
 
-        return view('goods-received-notes.create', compact('pageTitle','note', 'note_details','dropDownData'));
+        return view('goods-received-notes.edit', compact('pageTitle','maxid','note','parties', 'note_details','dropDownData'));
     }
 
 

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\CoaDetailAccount;
 use Carbon\Carbon;
 use App\Models\Transporter;
 use App\Models\GRNotesDetail;
@@ -37,7 +38,7 @@ class GRNotesService
                 'goods_received_note_masters.business_id',
                 'goods_received_note_masters.f_year_id',
                 'goods_received_note_masters.remarks',
-                'transporters.name as transporterName',
+                'transporters.name as transporterName'
             )
             ->where('goods_received_note_masters.id', $id)
             ->first();
@@ -48,6 +49,7 @@ class GRNotesService
         $result = [
             'transporters' => Transporter::pluck('name','id'),
             'products' => CoaInventoryDetailAccount::pluck('name','id'),
+            'parties' => CoaDetailAccount::pluck('account_name','id'),
 
         ];
 
@@ -64,12 +66,12 @@ class GRNotesService
     {
         $q = GoodsReceivedNote::query();
         if (!empty($request['param'])) {
-            $q = GoodsReceivedNote::with('transporter')
-            ->where('supplier_name', 'like', '%' . $request['param'] . '%')
+            $q = GoodsReceivedNote::with('transporter','party')
+            ->where('party_id', 'like', '%' . $request['param'] . '%')
             ->orwhere('date', 'like', '%' . $request['param'] . '%')
             ->orwhere('purchase_order_no', 'like', '%' . $request['param'] . '%');
         }
-        $goodsReceivedNotes = $q->orderBy('supplier_name', 'ASC')->paginate(config('constants.PER_PAGE'));
+        $goodsReceivedNotes = $q->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
 
         return $goodsReceivedNotes;
     }
@@ -85,10 +87,12 @@ class GRNotesService
         return [
             'purchase_order_no' => $request['purchase_order_no'],
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
-            'supplier_name' => $request['supplier_name'],
+            'party_id' => $request['party_id'],
             'fare' => $request['fare'],
             'supplier_bill_no' => $request['supplier_bill_no'],
+            'unloaded_by' => $request['unloaded_by'],
             'transporter_id' => $request['transporter_id'],
+            'total_quantity' => $request['total_quantity'],
             'remarks' => $request['remarks'],
             'business_id' => $session->business_id,
             'f_year_id' => $session->financial_year,
@@ -106,9 +110,14 @@ class GRNotesService
     {
         return [
             'product_id' => $request['product_id'],
-            'quantity' => $request['quantity'],
-            'remarks' => $request['remarks'],
-            'goods_received_note_master_id' => $grnParentId,
+            'packing_type' => $request['packing_type'],
+            'measurement_type' => $request['measurement_type'],
+            'size' => $request['size'],
+            'po_quantity' => $request['po_quantity'],
+            'received_qty' => $request['received_qty'],
+            'balance' => $request['balance'],
+            'detail_remarks' => $request['detail_remarks'],
+            'master_id' => $grnParentId,
         ];
     }
 
@@ -121,9 +130,14 @@ class GRNotesService
         foreach ($data['product_id'] as $key => $value) {
             if (!empty($data['product_id'][$key])) {
                 $rec['product_id'] = $data['product_id'][$key];
-                $rec['quantity'] = $data['quantity'][$key];
-                $rec['remarks'] = $data['remarks'][$key];
-                $rec['goods_received_note_master_id'] = $data['goods_received_note_master_id'];
+                $rec['packing_type'] = $data['packing_type'][$key];
+                $rec['measurement_type'] = $data['measurement_type'][$key];
+                $rec['size'] = $data['size'][$key];
+                $rec['po_quantity'] = $data['po_quantity'][$key];
+                $rec['received_qty'] = $data['received_qty'][$key];
+                $rec['balance'] = $data['balance'][$key];
+                $rec['detail_remarks'] = $data['detail_remarks'][$key];
+                $rec['master_id'] = $data['master_id'];
                 GRNotesDetail::create($rec);
             }
         }

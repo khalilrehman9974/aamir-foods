@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Transporter;
 use Illuminate\Http\Request;
 use App\Models\AccountLedger;
+use App\Models\PurchaseMaster;
 use App\Services\CommonService;
+use App\Models\CoaDetailAccount;
+use App\Models\PurchaseDetail;
 use App\Models\SalePurchaseType;
 use Illuminate\Support\Facades\DB;
 use App\Models\PurchaseReturnDetail;
@@ -46,15 +50,28 @@ class PurchaseReturnController extends Controller
         return view('purchase-return.index', compact('purchaseReturns','param', 'request','pageTitle'));
     }
 
+
+    public function generate()
+    {
+        return view('purchase-return.generate');
+    }
+
+
     /*
      * Show page of create Purchase Return.
      * */
-    public function create()
+    public function create(Request $request)
     {
         $pageTitle = 'Create Purchase Return';
+        $purchaseMaster = PurchaseMaster::find($request->id);
+        // dd($purchaseMaster);
+        $maxId = PurchaseReturnMaster::max('id') + 1;
+        $parties = CoaDetailAccount::where('id', $purchaseMaster->party_id)->pluck('account_name', 'id');
+        $transporters = Transporter::where('id', $purchaseMaster->transporter_id)->pluck('name', 'id');
+        $purchaseDetails = PurchaseDetail::where('purchase_master_id',$purchaseMaster->id)->get();
         $dropDownData = $this->purchaseReturnService->DropDownData();
-        $purchaseReturnDetails = PurchaseReturnDetail::where('purchase_return_master_id')->get();
-        return view('purchase-return.create', compact('pageTitle', 'purchaseReturnDetails','dropDownData'));
+        // $purchaseReturnDetails = PurchaseReturnDetail::where('purchase_return_master_id')->get();
+        return view('purchase-return.create', compact('pageTitle','purchaseDetails','transporters','parties','maxId','purchaseMaster','dropDownData'));
     }
 
     /*
@@ -63,10 +80,11 @@ class PurchaseReturnController extends Controller
      * */
     public function store(Request $request)
     {
+        // dd($request);
 
-        $request = $request->except('_token', 'id');
-        DB::beginTransaction();
-        try {
+        // $request = $request->except('_token', 'id');
+        // DB::beginTransaction();
+        // try {
             //Insert data into purchase tables.
             $purchaseReturnMasterData = $this->purchaseReturnService->preparePurchaseReturnMasterData($request);
             $purchaseReturnMasterInsert = $this->commonService->findUpdateOrCreate(PurchaseReturnMaster::class, ['id' => ''], $purchaseReturnMasterData);
@@ -75,18 +93,18 @@ class PurchaseReturnController extends Controller
 
 
             //Insert data into stock table.
-            $this->stockLedgerService->prepareAndSaveData($request, $purchaseReturnMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'));
-            //Insert data into accounts ledger table.
-            $debitAccountData = $this->purchaseReturnService->prepareAccountCreditData($request, $purchaseReturnMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'), config('contants.PURCHASE_RETURN_DESCRIPTION'));
-            $creditAccountData = $this->purchaseReturnService->prepareAccountDebitData($request, $purchaseReturnMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'), config('contants.PURCHASE_RETURN_DESCRIPTION'));
-            AccountLedger::insert($debitAccountData);
-            AccountLedger::insert($creditAccountData);
+            // $this->stockLedgerService->prepareAndSaveData($request, $purchaseReturnMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'));
+            // //Insert data into accounts ledger table.
+            // $debitAccountData = $this->purchaseReturnService->prepareAccountCreditData($request, $purchaseReturnMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'), config('contants.PURCHASE_RETURN_DESCRIPTION'));
+            // $creditAccountData = $this->purchaseReturnService->prepareAccountDebitData($request, $purchaseReturnMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'), config('contants.PURCHASE_RETURN_DESCRIPTION'));
+            // AccountLedger::insert($debitAccountData);
+            // AccountLedger::insert($creditAccountData);
 
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('purchase-return/create')->with('error', $e->getMessage());
-        }
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('purchase-return/create')->with('error', $e->getMessage());
+        // }
         return redirect('purchase-return/list')->with('message', config('constants.add'));
     }
 

@@ -17,10 +17,11 @@ return new class extends Migration
             $table->increments('id')->unsigned();
             $table->integer('purchase_master_id')->unsigned()->index();
             $table->integer('product_id')->unsigned()->index();
+            $table->string('packing_type');
+            $table->string('measurement_type');
+            $table->string('size')->nullable();
             $table->double('quantity');
-            $table->double('unit');
-            $table->double('total_unit');
-            $table->double('rate');
+            $table->double('price');
             $table->double('amount');
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
@@ -28,9 +29,11 @@ return new class extends Migration
             $table->string('created_by');
             $table->string('updated_by');
 
-            $table->foreign('product_id')
-            ->references('id')->on('product')
+
+            $table->foreign('purchase_master_id')
+            ->references('id')->on('purchase_masters')
             ->onDelete('cascade');
+
 
         });
     }

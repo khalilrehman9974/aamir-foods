@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('party_id');
             $table->integer('transporter_id');
             $table->string('bilty_no', 20);
-            $table->string('delivered_to', 20);
+            $table->integer('delivered_to');
             $table->integer('salesman_id');
             $table->double('freight')->nullable();
             $table->double('scheme')->nullable();

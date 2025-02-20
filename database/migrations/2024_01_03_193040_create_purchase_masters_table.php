@@ -15,14 +15,18 @@ return new class extends Migration
     {
         Schema::create('purchase_masters', function (Blueprint $table) {
             $table->increments('id')->unsigned();
-            $table->string('grn_no', 20)->nullable();
+            $table->integer('grn_no');
+            $table->integer('purchase_order_no');
             $table->date('date');
             $table->integer('party_id')->unsigned()->index();
             $table->integer('transporter_id')->unsigned()->index();
-            $table->string('bill_no', 20);
-            $table->double('fare')->nullable();
-            $table->double('carriage_inward')->nullable();
-            $table->double('total_amount');
+            $table->string('supplier_bill_no', 20);
+            $table->string('unloaded_by');
+            $table->double('carriage')->nullable();
+            $table->double('gross_bill');
+            $table->double('tax')->nullable();
+            $table->double('net_amount');
+            $table->double('total_quantity');
             $table->text('remarks')->nullable();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
@@ -30,7 +34,7 @@ return new class extends Migration
             $table->string('created_by');
             $table->string('updated_by');
 
-          
+
 
         });
     }

@@ -94,6 +94,7 @@ class SaleService
      * */
     public function prepareSaleMasterData($request)
     {
+        $session = $this->commonService->getSession();
         return [
             'dispatch_note_number' => $request['dispatch_note_number'],
             'sale_order_number' => $request['sale_order_number'],
@@ -102,12 +103,13 @@ class SaleService
             'saleman' => $request['saleman'],
             'sector' => $request['sector'],
             'area' => $request['area'],
-            'deliverd_to' => $request['deliverd_to'],
+            'delivered_to' => $request['delivered_to'],
+            'transporter_id' => $request['transporter_id'],
             'vehicle_no' => $request['vehicle_no'],
             'driver_name' => $request['driver_name'],
             'bilty_no' => $request['bilty_no'],
-            'business_id' => $request['business_id'],
-            'f_year_id' => $request['f_year_id'],
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
             'remarks' => $request['remarks'],
             'total_boray' => $request['total_boray'],
             'total_carton' => $request['total_carton'],

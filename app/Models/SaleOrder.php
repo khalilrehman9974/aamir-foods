@@ -26,9 +26,6 @@ class SaleOrder extends Model
         return $this->hasMany(SaleOrderDetail::class, 'sale_order_master_id', 'id');
     }
 
-    // public function parties(){
-    //     return $this->hasMany(CoaDetailAccount::class,'account_code', 'party_id');
-    // }
 
     public function parties(): BelongsTo
     {

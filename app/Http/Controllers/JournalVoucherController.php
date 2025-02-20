@@ -43,7 +43,7 @@ class JournalVoucherController extends Controller
     public function create()
     {
         $pageTitle = 'Create Voucher';
-        $maxid = VoucherMaster::where('vr_type_id', 'JV')->max('id') + 1;
+        $maxid = 1;
         $dropDownData = $this->journalVoucherService->DropDownData();
         return view('vouchers.jv.create', compact('dropDownData','maxid','pageTitle'));
     }

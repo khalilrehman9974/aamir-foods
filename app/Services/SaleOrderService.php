@@ -10,6 +10,8 @@ use App\Models\SaleOrderDetail;
 use App\Models\CoaDetailAccount;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\DeliveredToParties;
+use App\Models\SaleOrderImages;
 
 class SaleOrderService
 {
@@ -42,7 +44,7 @@ class SaleOrderService
             ->leftjoin('sale_order_masters', 'sale_order_masters.party_id', '=', 'detail_accounts.account_code')
             ->select(
 
-                'detail_accounts.account_code',
+                'detail_accounts.account_code'
             )
             ->where('detail_accounts.account_code', $id)
             ->first();
@@ -60,11 +62,13 @@ class SaleOrderService
     public function searchSale($request)
     {
         $q = SaleOrder::query();
+        // dd($q);
         if (!empty($request['date'])) {
             $q->where('date', $request['date']);
         } elseif (!empty($request['party_id'])) {
             $q->where('party_id', $request['party_id']);
-        } 
+        }
+        // $q->where('status', 'Pending');
         // elseif (!empty($request['seller'])) {
         //     $q->where('seller_id', $request['seller']);
         // }
@@ -72,58 +76,78 @@ class SaleOrderService
         $saleOrders = $q->with(['parties'])->orderBy('updated_at', 'DESC')->paginate(config('constants.PER_PAGE'));
         return $saleOrders;
 
-    //     $q = SaleOrder::query();
-    //     if (!empty($request['param'])) {
-    //         $qr = CoaDetailAccount::leftjoin('sale_order_masters', 'sale_order_masters.party_id', '=', 'detail_accounts.account_code')
-    //             ->select(
+        //     $q = SaleOrder::query();
+        //     if (!empty($request['param'])) {
+        //         $qr = CoaDetailAccount::leftjoin('sale_order_masters', 'sale_order_masters.party_id', '=', 'detail_accounts.account_code')
+        //             ->select(
 
-    //                 'detail_accounts.account_code',
-    //             )
-    //             ->where('detail_accounts.account_name', $request['param'])
-    //             ->first();
-    //         dd($qr);
-    //         $q->with('party')->where('date', 'LIKE', '%' . $request['param'] . '%')
-    //         ->orWhere('party_id', 'LIKE', $qr);
-    //     }
+        //                 'detail_accounts.account_code',
+        //             )
+        //             ->where('detail_accounts.account_name', $request['param'])
+        //             ->first();
+        //         dd($qr);
+        //         $q->with('party')->where('date', 'LIKE', '%' . $request['param'] . '%')
+        //         ->orWhere('party_id', 'LIKE', $qr);
+        //     }
 
-    //     $saleOrders = $q->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
-    //     return $saleOrders;
-    // }
-    // // dd($request);
-    // if (!empty($request['param'])) {
-
-
-    //     dd($posts);
-    // }
-
-    // // dd($request);
-    // $q = SaleOrder::query();
-    // $posts = SaleOrder::join('detail_accounts', 'sale_order_masters.party_id', '=', 'detail_accounts.account_code') // Join the posts and users tables
-    //     ->where('detail_accounts.account_name', 'like', '%' . $request['param'] . '%') // Filter users by name (or any other condition)
-    //     ->select('detail_accounts.account_code') // Select the title column from posts table
-    //     ->get();
-    // dd($posts);
-    // $search = $request['param'];
-    // if (!empty($request['param'])) {
-    //     $q = SaleOrder::with('party')->where('date', 'like', '%' . $request['param'] . '%')
-    //     ->orWhere('total_amount', 'like', '%' . $request['param'] . '%')
-    // // ->orWhere('party_id', 'like', '%' . 'account_code' . '%')
-    // ->orWhereHas('parties',function($query) use ($search){
-    //     $query->where('account_name', 'like',"$search")
-    //     ->get();
-    // });
-    
-    // ->join('detail_accounts', 'sale_order_masters.party_id', '=', 'detail_accounts.account_name') // Join the sale Orders and Detail Account tables
-    //     ->where('sale_order_masters.party_id', 'like', $request['param'] ) // Filter Detail Account by name (or any other condition)
-    //     ->select('detail_accounts.account_code'); // Select the title column from posts table
-    //     // ->get(),
-    // }
+        //     $saleOrders = $q->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
+        //     return $saleOrders;
+        // }
+        // // dd($request);
+        // if (!empty($request['param'])) {
 
 
-    // $saleOrders = $q->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
+        //     dd($posts);
+        // }
 
-    // return $saleOrders;
+        // // dd($request);
+        // $q = SaleOrder::query();
+        // $posts = SaleOrder::join('detail_accounts', 'sale_order_masters.party_id', '=', 'detail_accounts.account_code') // Join the posts and users tables
+        //     ->where('detail_accounts.account_name', 'like', '%' . $request['param'] . '%') // Filter users by name (or any other condition)
+        //     ->select('detail_accounts.account_code') // Select the title column from posts table
+        //     ->get();
+        // dd($posts);
+        // $search = $request['param'];
+        // if (!empty($request['param'])) {
+        //     $q = SaleOrder::with('party')->where('date', 'like', '%' . $request['param'] . '%')
+        //     ->orWhere('total_amount', 'like', '%' . $request['param'] . '%')
+        // // ->orWhere('party_id', 'like', '%' . 'account_code' . '%')
+        // ->orWhereHas('parties',function($query) use ($search){
+        //     $query->where('account_name', 'like',"$search")
+        //     ->get();
+        // });
+
+        // ->join('detail_accounts', 'sale_order_masters.party_id', '=', 'detail_accounts.account_name') // Join the sale Orders and Detail Account tables
+        //     ->where('sale_order_masters.party_id', 'like', $request['param'] ) // Filter Detail Account by name (or any other condition)
+        //     ->select('detail_accounts.account_code'); // Select the title column from posts table
+        //     // ->get(),
+        // }
+
+
+        // $saleOrders = $q->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
+
+        // return $saleOrders;
     }
+
+
+
+    public function searchApprovedSaleOrder($request)
+    {
+        $q = SaleOrder::query();
+        // dd($q);
+        if (!empty($request['date'])) {
+            $q->where('date', $request['date']);
+        } elseif (!empty($request['party_id'])) {
+            $q->where('party_id', $request['party_id']);
+        }
+        $q->where('status', 'Approved');
+
+        $saleOrders = $q->with(['parties'])->orderBy('updated_at', 'DESC')->paginate(config('constants.PER_PAGE'));
+        return $saleOrders;
+
+
+    }
+
 
 
     /*
@@ -159,7 +183,7 @@ class SaleOrderService
         $result = [
             'parties' => CoaDetailAccount::pluck('account_name', 'id'),
             'saleMans' => SaleMan::pluck('name', 'id'),
-            'transporters' => Transporter::pluck('name', 'id'),
+            'deliverdToParties' => DeliveredToParties::pluck('party_name', 'id'),
             'products' => CoaInventoryDetailAccount::pluck('name', 'id'),
 
         ];
@@ -211,5 +235,54 @@ class SaleOrderService
                 SaleOrderDetail::create($rec);
             }
         }
+    }
+
+    public function prepareSaleOrderImagesData($request, $saleOrderParentId)
+    {
+
+        $imagePaths = [];
+
+        if (isset($request['images'])) {
+            foreach ($request['images'] as $file) {
+                $destinationPath = public_path('images/saleOrder');
+
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
+                }
+
+                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $file->move($destinationPath, $filename);
+
+                $imagePaths[] = $filename;
+            }
+            return [
+                'images' => $imagePaths,
+                'sale_order_id' => $saleOrderParentId,
+            ];
+        } else {
+
+            return [
+                'sale_order_id' => $saleOrderParentId,
+            ];
+        }
+    }
+
+    public function saveSaleOrderImages($data)
+    {
+        if (empty($data['images'])) {
+            $rec['images'] = null;
+            $rec['sale_order_id'] = $data['sale_order_id'];
+            SaleOrderImages::create($rec);
+
+        } else {
+            foreach ($data['images'] as $key => $value) {
+                if (!empty($value)) {
+                    $rec['images'] = $value;
+                    $rec['sale_order_id'] = $data['sale_order_id'];
+                    SaleOrderImages::create($rec);
+                }
+            }
+        }
+
     }
 }

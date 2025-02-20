@@ -40,7 +40,7 @@
     </div>
     <div class="row layout-top-spacing">
         @if (session()->has('message'))
-            <div class="alert alert-success alert-dismissible fade show mb-4 " role="alert">
+            <div class="alert alert-danger alert-dismissible fade show mb-4 " role="alert">
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                     <svg> ...
                     </svg>
@@ -69,7 +69,7 @@
                                         <div class="widget-content widget-content-area">
                                             <div class="row">
                                                 <div class="col-lg-12 col-12 ">
-                                                    <form class="row g-3" action="{{ route('dispatch-note.create') }}"
+                                                    <form class="row g-3" action="{{ route('dispatch-note.create') }}" autocomplete="off"
                                                         method="GET">
                                                         {{-- @csrf --}}
                                                         <div id="results">
@@ -80,8 +80,11 @@
                                                                     <div class="col-md-6">
                                                                         <label for="inputState" class="form-label">Sale
                                                                             Order#</label>
-                                                                            <input type="text" name="id" id="id" class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                            placeholder="Please Enter The Sale Order Number" required>
+                                                                        <input type="text" name="id"
+                                                                            id="id"
+                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                            placeholder="Please Enter The Sale Order Number"
+                                                                            required>
                                                                         {{-- <input type="text" id="saleOrder"
                                                                             name="id" style="color: black; "
                                                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} saleOrder"

@@ -6,8 +6,7 @@
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <x-slot:headerFiles>
-        <meta name="csrf-token" content="{{ csrf_token() }}" />
-        <script src="{{ asset('js/jquery.min.js') }}"></script>
+
         @vite(['resources/scss/light/assets/elements/search.scss', 'resources/scss/dark/assets/elements/search.scss'])
         <link rel="stylesheet" href="{{ asset('plugins/sweetalerts2/sweetalerts2.css') }}">
     </x-slot>
@@ -39,7 +38,7 @@
                     </div>
                 </div>
                 <div class="col-lg-0 col-6 ">
-                    <a href="{{ route('purchase.create') }}" class="btn btn-primary mt-2 mb-2 me-8"
+                    <a href="{{ route('purchase.generate') }}" class="btn btn-primary mt-2 mb-2 me-8"
                         style="float : right; " style="">Create
                     </a>
 
@@ -90,13 +89,12 @@
                             <thead>
                                 <tr>
                                     <th scope="col"> <b>Id </b> </th>
+                                    <th scope="col" > <b>PO No</b> </th>
                                     <th scope="col" > <b>GRN No</b> </th>
                                     <th scope="col" style="width: 30%"> <b>Party </b> </th>
                                     <th scope="col" style="width: 20%"> <b>Date</b> </th>
-                                    <th scope="col" style="width: 10%"> <b>Bill Number </b> </th>
-                                    <th scope="col" style="width: 10%"> <b>Fare </b> </th>
                                     <th scope="col" style="width: 20%"> <b>Transporter </b> </th>
-                                    <th scope="col" style="width: 20%"> <b>Carriage Inward </b> </th>
+                                    <th scope="col" style="width: 20%"> <b>Carriage </b> </th>
                                     <th scope="col" style="width: 20%"> <b>Total Amount</b> </th>
                                     {{-- <th scope="col" style="width: 80%"> <b>Remarks </b> </th> --}}
                                     <th class="text-center" scope="col"></th>
@@ -109,6 +107,14 @@
                                             <div class="media">
                                                 <div class="media-body align-self-center">
                                                     <h6 class="mb-0">{{ $purchase->id }}</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="media">
+                                                <div class="media-body align-self-center">
+                                                    <h6 class="mb-0">{{ $purchase->purchase_order_no }}</h6>
+
                                                 </div>
                                             </div>
                                         </td>
@@ -139,22 +145,6 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $purchase->bill_no }}</h6>
-
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $purchase->fare }}</h6>
-
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
                                                     <h6 class="mb-0">{{ $purchase->transporter->name }}</h6>
 
                                                 </div>
@@ -163,7 +153,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $purchase->carriage_inward }}</h6>
+                                                    <h6 class="mb-0">{{ $purchase->carriage }}</h6>
 
                                                 </div>
                                             </div>
@@ -171,7 +161,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $purchase->total_amount }}</h6>
+                                                    <h6 class="mb-0">{{ $purchase->net_amount }}</h6>
 
                                                 </div>
                                             </div>
@@ -193,13 +183,20 @@
                                                         </path>
                                                     </svg>
                                                 </a>
+
+                                                <a href="{{ route('purchase-return.create', ['id' => $purchase->id]) }}"
+
+                                                    class="action-btn btn-edit bs-tooltip me-2"
+                                                    data-toggle="tooltip" data-placement="top" title="Enter Purchase Return Invoice">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M288 256H96v64h192v-64zm89-151L279.1 7c-4.5-4.5-10.6-7-17-7H256v128h128v-6.1c0-6.3-2.5-12.4-7-16.9zm-153 31V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H248c-13.2 0-24-10.8-24-24zM64 72c0-4.4 3.6-8 8-8h80c4.4 0 8 3.6 8 8v16c0 4.4-3.6 8-8 8H72c-4.4 0-8-3.6-8-8V72zm0 64c0-4.4 3.6-8 8-8h80c4.4 0 8 3.6 8 8v16c0 4.4-3.6 8-8 8H72c-4.4 0-8-3.6-8-8v-16zm256 304c0 4.4-3.6 8-8 8h-80c-4.4 0-8-3.6-8-8v-16c0-4.4 3.6-8 8-8h80c4.4 0 8 3.6 8 8v16zm0-200v96c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16v-96c0-8.8 7.2-16 16-16h224c8.8 0 16 7.2 16 16z"/></svg>
+                                                </a>
                                                 {{-- @if ((!empty($permission->edit_access) && $permission->edit_access == 1) || Auth::user()->is_admin == 1)
 
                                                 @endif
                                                 @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
 
                                                 @endif --}}
-                                                <a href="javascript:void(0);"
+                                                {{-- <a href="javascript:void(0);"
                                                     class="action-btn btn-delete bs-tooltip delete"
                                                     data-id="{{ $purchase->id }}" data-toggle="tooltip"
                                                     data-placement="top" title="Delete">
@@ -218,7 +215,7 @@
                                                             y2="17">
                                                         </line>
                                                     </svg>
-                                                </a>
+                                                </a> --}}
 
                                             </div>
                                         </td>

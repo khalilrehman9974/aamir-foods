@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('packing_type');
             $table->string('measurement_type');
             $table->double('quantity');
+            $table->double('dzn');
+            $table->double('total_dzn');
             $table->text('remarks')->nullable();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');

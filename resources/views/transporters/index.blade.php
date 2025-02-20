@@ -61,12 +61,10 @@
                         <input type="text" value="{{ @$request['param'] }}" name="param" id="param"
                             class="w-100 form-control product-search br-30" id="input-search"
                             placeholder="Search Transporters...">
-                        <button class="btn btn-primary _effect--ripple waves-effect waves-light"
-                            type="submit">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round"
-                                class="feather feather-search">
+                        <button class="btn btn-primary _effect--ripple waves-effect waves-light" type="submit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="feather feather-search">
                                 <circle cx="11" cy="11" r="8"></circle>
                                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                             </svg>
@@ -176,7 +174,7 @@
                                                         </svg>
                                                     </a>
                                                 @endif
-                                                @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
+                                                {{-- @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
                                                 <a href="javascript:void(0)"
                                                     class="action-btn btn-delete bs-tooltip delete"
                                                     data-id="{{ $transporter->id }}" data-toggle="tooltip"
@@ -198,7 +196,7 @@
                                                         </line>
                                                     </svg>
                                                 </a>
-                                            @endif
+                                            @endif --}}
 
                                             </div>
                                         </td>
@@ -213,7 +211,7 @@
                         </ul>
                     </nav>
                 </div>
-                
+
             </div>
         </div>
     </div>

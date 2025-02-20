@@ -144,8 +144,8 @@ class CoaDetailAccountService
             'account_name' => $request['account_name'],
             'saleMan_id' => $request['saleMan_id'],
             'commision' => $request['commision'],
-            'mode' => $request['mode'],
-            'status' => $request['status'],
+            'mode' => $request['mode'] ?? null,
+            'status' => $request['status'] ?? null,
             'created_by' => Auth::user()->id,
             'updated_by' => Auth::user()->id
         ];
@@ -155,7 +155,7 @@ class CoaDetailAccountService
     {
 
         return [
-            'sector_id' => $request['sector_id'],
+            'sector_id' => $request['sector_id'] ?? null,
             'master_account_id' => $detailAccountMasterInsert,
         ];
     }
@@ -166,19 +166,28 @@ class CoaDetailAccountService
      * */
     public function saveDetailAccountSectors($data)
     {
-        foreach ($data['sector_id'] as $key => $value) {
-            if (!empty($data['sector_id'][$key])) {
-                $rec['sector_id'] = $data['sector_id'][$key];
-                $rec['master_account_id'] = $data['master_account_id'];
-                CoaDetailAccountSectors::create($rec);
+
+        if (empty($data['sector_id'])) {
+            $rec['sector_id'] = null;
+            $rec['master_account_id'] = $data['master_account_id'];
+            CoaDetailAccountSectors::create($rec);
+        } else {
+            foreach ($data['sector_id'] as $key => $value) {
+                if (!empty($data['sector_id'][$key])) {
+                    $rec['sector_id'] = $data['sector_id'][$key];
+                    $rec['master_account_id'] = $data['master_account_id'];
+                    CoaDetailAccountSectors::create($rec);
+                }
             }
         }
+
+
     }
 
     public function prepareDetailAccountAreasData($request, $detailAccountMasterInsert)
     {
         return [
-            'area_id' => $request['area_id'],
+            'area_id' => $request['area_id'] ?? null,
             'master_account_id' => $detailAccountMasterInsert,
         ];
     }
@@ -189,27 +198,31 @@ class CoaDetailAccountService
      * */
     public function saveDetailAccountAreas($data)
     {
-        foreach ($data['area_id'] as $key => $value) {
-            if (!empty($data['area_id'][$key])) {
-                $rec['area_id'] = $data['area_id'][$key];
-                $arrayId = $rec['area_id'];
-                $rec['sector_id'] = Area::where("id", $arrayId)->value("sector_id");
-                $rec['master_account_id'] = $data['master_account_id'];
-                CoaDetailAccountArea::create($rec);
+
+        if (empty($data['area_id'])) {
+            $rec['area_id'] = null;
+            $rec['sector_id'] = null;
+            $rec['master_account_id'] = $data['master_account_id'];
+            CoaDetailAccountArea::create($rec);
+        } else {
+            foreach ($data['area_id'] as $key => $value) {
+                if (!empty($data['area_id'][$key])) {
+                    $rec['area_id'] = $data['area_id'][$key];
+                    $arrayId = $rec['area_id'];
+                    $rec['sector_id'] = Area::where("id", $arrayId)->value("sector_id");
+                    $rec['master_account_id'] = $data['master_account_id'];
+                    CoaDetailAccountArea::create($rec);
+                }
             }
         }
+
     }
-
-
-
 
     public function prepareDetailAccountDetailData($request, $detailAccountMasterInsert)
     {
-
-
         return [
-            'inventory_third_level' => $request['inventory_third_level'],
-            'price_tag_id' => $request['price_tag_id'],
+            'inventory_third_level' => $request['inventory_third_level'] ?? null,
+            'price_tag_id' => $request['price_tag_id'] ?? null,
             'coa_detail_account_code' => $detailAccountMasterInsert,
         ];
     }
@@ -220,12 +233,20 @@ class CoaDetailAccountService
      * */
     public function saveDetailAccount($data)
     {
-        foreach ($data['inventory_third_level'] as $key => $value) {
-            if (!empty($data['inventory_third_level'][$key])) {
-                $rec['inventory_third_level'] = $data['inventory_third_level'][$key];
-                $rec['price_tag_id'] = $data['price_tag_id'][$key];
-                $rec['coa_detail_account_code'] = $data['coa_detail_account_code'];
-                DetailAccountPrices::create($rec);
+
+        if (empty($data['inventory_third_level'])) {
+            $rec['inventory_third_level'] = null;
+            $rec['price_tag_id'] = null;
+            $rec['coa_detail_account_code'] = null;
+            DetailAccountPrices::create($rec);
+        } else {
+            foreach ($data['inventory_third_level'] as $key => $value) {
+                if (!empty($data['inventory_third_level'][$key])) {
+                    $rec['inventory_third_level'] = $data['inventory_third_level'][$key];
+                    $rec['price_tag_id'] = $data['price_tag_id'][$key];
+                    $rec['coa_detail_account_code'] = $data['coa_detail_account_code'];
+                    DetailAccountPrices::create($rec);
+                }
             }
         }
     }
@@ -234,12 +255,12 @@ class CoaDetailAccountService
     {
 
         return [
-            'product_id' => $request['product_id'],
-            'master_price_tag' => $request['master_price_tag'],
-            'master_third_level' => $request['master_third_level'],
-            'price' => $request['price'],
-            'scheme' => $request['scheme'],
-            'discount' => $request['discount'],
+            'product_id' => $request['product_id'] ?? null,
+            'master_price_tag' => $request['master_price_tag'] ?? null,
+            'master_third_level' => $request['master_third_level'] ?? null,
+            'price' => $request['price'] ?? null,
+            'scheme' => $request['scheme'] ?? null,
+            'discount' => $request['discount'] ?? null,
             'detail_account_id' => $detailAccountMasterInsert,
         ];
     }
@@ -252,17 +273,29 @@ class CoaDetailAccountService
     {
         // dd($data);
 
-        foreach ($data['master_price_tag'] as $key => $value) {
-            if (!empty($data['master_price_tag'][$key])) {
-                $rec['product_id'] = $data['product_id'][$key];
-                $rec['master_price_tag'] = $data['master_price_tag'][$key];
-                $rec['master_third_level'] = $data['master_third_level'][$key];
-                $rec['price'] = $data['price'][$key];
-                $rec['scheme'] = $data['scheme'][$key];
-                $rec['discount'] = $data['discount'][$key];
-                $rec['detail_account_id'] = $data['detail_account_id'];
-                DetailAccountProducts::create($rec);
+        if (empty($data['master_price_tag'])) {
+            $rec['product_id'] = null;
+            $rec['master_price_tag'] = null;
+            $rec['master_third_level'] = null;
+            $rec['price'] = null;
+            $rec['scheme'] = null;
+            $rec['discount'] = null;
+            $rec['detail_account_id'] = $data['detail_account_id'];
+            DetailAccountProducts::create($rec);
+        } else {
+            foreach ($data['master_price_tag'] as $key => $value) {
+                if (!empty($data['master_price_tag'][$key])) {
+                    $rec['product_id'] = $data['product_id'][$key];
+                    $rec['master_price_tag'] = $data['master_price_tag'][$key];
+                    $rec['master_third_level'] = $data['master_third_level'][$key];
+                    $rec['price'] = $data['price'][$key];
+                    $rec['scheme'] = $data['scheme'][$key];
+                    $rec['discount'] = $data['discount'][$key];
+                    $rec['detail_account_id'] = $data['detail_account_id'];
+                    DetailAccountProducts::create($rec);
+                }
             }
         }
+
     }
 }

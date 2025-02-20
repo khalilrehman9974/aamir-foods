@@ -12,7 +12,8 @@ class GRNotesDetail extends Model
     protected $guarded = ['id'];
     protected $table = 'goods_received_note_details';
 
-    protected $fillable = ['goods_received_note_master_id','product_id', 'quantity','remarks'];
+    protected $fillable = ['master_id','product_id', 'packing_type','measurement_type',
+    'size','po_quantity','received_qty','balance','detail_remarks'];
 
     public function goods_received_note_master(){
         return $this->belongsTo(GoodsReceivedNote::class);

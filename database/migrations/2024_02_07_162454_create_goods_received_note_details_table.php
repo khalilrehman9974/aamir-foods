@@ -16,9 +16,14 @@ return new class extends Migration
         Schema::create('goods_received_note_details', function (Blueprint $table) {
             $table->Increments('id');
             $table->integer('master_id')->unsigned()->index();
-            $table->integer('product_id');
-            $table->double('quantity');
-            $table->string('remarks');
+            $table->foreignId('product_id')->constrained('coa_inventory_detail_accounts')->onDelete('cascade');
+            $table->string('packing_type');
+            $table->string('measurement_type');
+            $table->string('size')->nullable();
+            $table->double('po_quantity');
+            $table->double('received_qty');
+            $table->double('balance');
+            $table->string('detail_remarks')->nullable();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')->nullable();

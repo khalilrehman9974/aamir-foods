@@ -68,10 +68,9 @@ class CoaDetailAccountController extends Controller
         $controlHeads = $this->chartOfAccountService->getControlHeads();
         $subHeads = $this->chartOfAccountService->getSubHeads();
         $subSubHeads = $this->chartOfAccountService->getSubSubHeads();
-        $detailAccountRecords = DetailAccountPrices::where('coa_detail_account_code')->get();
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '24');
 
-        return view('chart-of-accounts.detail-account.create', compact('permission', 'controlHeads', 'detailAccountRecords', 'dropDownData', 'pageTitle', 'title', 'mainHeads', 'subHeads', 'subSubHeads'));
+        return view('chart-of-accounts.detail-account.create', compact('permission', 'controlHeads',  'dropDownData', 'pageTitle', 'title', 'mainHeads', 'subHeads', 'subSubHeads'));
     }
 
     /**
@@ -82,10 +81,10 @@ class CoaDetailAccountController extends Controller
      */
     public function store(Request $request)
     {
-
+        // dd($request);
         $request = $request->except('_token', 'id');
-        DB::beginTransaction();
-        try {
+        // DB::beginTransaction();
+        // try {
 
             $detailAccountMasterData = $this->coaDetailAccountService->prepareDetailAccountMasterData($request);
             $detailAccountMasterInsert = $this->coaDetailAccountService->findUpdateOrCreate(CoaDetailAccount::class, ['id' => !empty(request('id')) ? request('id') : null], $detailAccountMasterData);
@@ -106,11 +105,11 @@ class CoaDetailAccountController extends Controller
             $this->coaDetailAccountService->saveDetailAccountProducts($detailAccountProductsData);
 
 
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('detail-account/create')->with('error', $e->getMessage());
-        }
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('detail-account/create')->with('error', $e->getMessage());
+        // }
         $message = config('constants.add');
         return redirect('detail-account/list')->with('message', $message);
     }
@@ -138,11 +137,15 @@ class CoaDetailAccountController extends Controller
         $fetchAreas = Area::whereIn('id',$areasArray)->get();
         $areas = $fetchAreas->pluck('name','id')->toArray();
 
-
         $detailAccountRecords = DetailAccountPrices::where('coa_detail_account_code', $id)->get();
         $masterPriceTag = $detailAccountRecords->pluck('price_tag_id')->toArray();
         $invThirdLevel = $detailAccountRecords->pluck('inventory_third_level')->toArray();
         $detailAccountProducts = DetailAccountProducts::where('detail_account_id', $id)->whereIn('master_price_tag', $masterPriceTag)->whereIn('master_third_level',$invThirdLevel)->get();
+
+        $products = CoaInventoryDetailAccount::whereIn("sub_sub_head", $invThirdLevel)->whereIn("priceTag_id", $masterPriceTag)->get();
+
+        dd($products);
+
 
         $detailAccountDetails = CoaDetAccountDetail::find($id);
         if (!$detailAccount) {
@@ -154,18 +157,23 @@ class CoaDetailAccountController extends Controller
         $subSubHeads = $this->chartOfAccountService->getSubSubHeadsBySubHead($detailAccount->sub_head);
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
 
-        return view('chart-of-accounts.detail-account.create', compact('detailAccount','sectors','areas' ,'detailAccountDetails', 'detailAccountAreas', 'detailAccountRecords','detailAccountSectors', 'detailAccountProducts','subSubHeads', 'dropDownData', 'subHeads', 'controlHeads', 'mainHeads', 'permission', 'pageTitle'));
+        return view('chart-of-accounts.detail-account.create', compact('detailAccount','sectors','areas' ,'detailAccountDetails', 'detailAccountAreas', 'detailAccountRecords','detailAccountSectors','detailAccountProducts','subSubHeads', 'dropDownData', 'subHeads', 'controlHeads', 'mainHeads', 'permission', 'pageTitle'));
     }
 
 
     public function update(Request $request)
     {
+        // dd($request);
 
-        DB::beginTransaction();
-        try {
+        // DB::beginTransaction();
+        // try {
 
             $request = request()->all();
             DetailAccountPrices::where('coa_detail_account_code', $request['id'])->delete();
+            DetailAccountProducts::where('detail_account_id', $request['id'])->delete();
+            CoaDetailAccountSectors::where('master_account_id', $request['id'])->delete();
+            CoaDetailAccountArea::where('master_account_id', $request['id'])->delete();
+            CoaDetAccountDetail::where('det_account_code', $request['id'])->delete();
 
             $detailAccountMasterData = $this->coaDetailAccountService->prepareDetailAccountMasterData($request);
             $detailAccountMasterInsert = $this->coaDetailAccountService->findUpdateOrCreate(CoaDetailAccount::class, ['id' => !empty(request('id')) ? request('id') : null], $detailAccountMasterData);
@@ -173,14 +181,23 @@ class CoaDetailAccountController extends Controller
             $detailAccountProductData = $this->coaDetailAccountService->prepareDetailAccountDetailData($request, $detailAccountMasterInsert->id);
             $this->coaDetailAccountService->saveDetailAccount($detailAccountProductData);
 
-            $detailData = $this->coaDetailAccountService->prepareAdditionalInformationData($request, $detailAccountMasterInsert->account_code);
+            $detailData = $this->coaDetailAccountService->prepareAdditionalInformationData($request, $detailAccountMasterInsert->id);
             $this->coaDetailAccountService->findUpdateOrCreate(CoaDetAccountDetail::class, ['id' => !empty(request('id')) ? request('id') : null], $detailData);
 
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('detail-account/create')->with('error', $e->getMessage());
-        }
+            $detailAccountSectorData = $this->coaDetailAccountService->prepareDetailAccountSectorsData($request, $detailAccountMasterInsert->id);
+            $this->coaDetailAccountService->saveDetailAccountSectors($detailAccountSectorData);
+
+            $detailAccountAreasData = $this->coaDetailAccountService->prepareDetailAccountAreasData($request, $detailAccountMasterInsert->id);
+            $this->coaDetailAccountService->saveDetailAccountAreas($detailAccountAreasData);
+
+            $detailAccountProductsData = $this->coaDetailAccountService->prepareDetailAccountProductData($request, $detailAccountMasterInsert->id);
+            $this->coaDetailAccountService->saveDetailAccountProducts($detailAccountProductsData);
+
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('detail-account/create')->with('error', $e->getMessage());
+        // }
         if (request('id')) {
             $message = config('constants.update');
         }

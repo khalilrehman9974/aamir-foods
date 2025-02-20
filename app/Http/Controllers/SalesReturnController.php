@@ -64,13 +64,13 @@ class SalesReturnController extends Controller
         $dropDownData = $this->salereturnService->DropDownData();
         $invoiceNo = SaleReturnMaster::max('id') + 1;
         $saleInvoiceMaster = SaleMaster::find($request->id);
-        
 
-        if (empty($dispatchNote)) {
+
+        if (empty($saleInvoiceMaster)) {
             abort(404);
         }
 
-        return view('sale-return.create', compact( 'pageTitle','dropDownData'));
+        return view('sale-return.create', compact( 'pageTitle','invoiceNo','saleInvoiceMaster','dropDownData'));
     }
 
 

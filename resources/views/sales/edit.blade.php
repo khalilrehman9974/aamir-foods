@@ -72,7 +72,7 @@
                                                         action="{{ !empty($sale) ? route('sale.update') : route('sale.store') }}"
                                                         method="POST" class="row g-3 needs-validation" novalidate>
                                                         @csrf
-                                                        <input type="hidden" name="saleId" id="saleId"
+                                                        <input type="hidden" name="id" id="id"
                                                             value="{{ isset($sale->id) ? $sale->id : '' }}" />
 
                                                         <div class="form-group">
@@ -82,7 +82,7 @@
                                                                         class="form-label">Invoice# </label>
                                                                     <input id="invoice_no" type="text"
                                                                         style="color:black;" name="invoice_no"
-                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
+                                                                        value="{{ $currentInvoice }}"
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
 
@@ -91,7 +91,7 @@
                                                                         Order #</label>
                                                                     <input id="sale_order" type="sale_order"
                                                                         name="sale_order_number" style="color:black;"
-                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
+                                                                        value="{{ $sale->sale_order_number }}"
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
 
@@ -100,10 +100,11 @@
                                                                         class="form-label">Dispatch Note# </label>
                                                                     <input id="dispatch_note" type="dispatch_note"
                                                                         name="dispatch_note_number" style="color:black;"
-                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
+                                                                        value="{{ $sale->dispatch_note_number }}"
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
                                                             </div>
+                                                            <br>
 
                                                             <div class="row">
                                                                 <div class="col-lg-0 col-6" style="float: right">
@@ -111,91 +112,161 @@
                                                                         Date</label>
                                                                     <input type="text"
                                                                         class="form-control form-control-sm"
-                                                                        id="date" style="color:black;" name="date"
-                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
+                                                                        id="date" style="color:black;"
+                                                                        name="date"
+                                                                        value="{{ $sale->date }}"
                                                                         placeholder="Select The Date" readonly>
                                                                 </div>
+
                                                                 <div class="col-lg-0 col-6" style="float: right">
-                                                                    <label for="date">
-                                                                        Party</label>
-                                                                    <input type="text" name="party_id"
-                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
-                                                                        class="form-control form-control-sm"
-                                                                        style="color:black;" id="party"
-                                                                        placeholder="Select The Party" readonly>
+
+                                                                    <label for="inputState"
+                                                                        class="form-label">Party</label>
+                                                                    <select id="party" name="party_id"
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} party"
+                                                                        required>
+                                                                        @foreach ($parties as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                @php
+$isSelected = old('party_id') == $key || $sale->pluck('party_id')->contains($key); @endphp
+                                                                                {{ $isSelected ? 'selected' : '' }}>
+                                                                                {{ $value }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
+
+
                                                                 </div>
 
 
                                                             </div>
+                                                            <br>
                                                             <div class="row">
                                                                 <div class="col-lg-0 col-6">
-                                                                    <label for="sale_man" class="form-label">Sale Man
-                                                                    </label>
-                                                                    <input id="sale_man" type="sale_man"
-                                                                        name="saleman" style="color:black;"
-                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
-                                                                        placeholder="Please Enter the Sale Man"
-                                                                        class="form-control form-control-sm" readonly>
+                                                                    <label for="inputState" class="form-label">Sales
+                                                                        Man</label>
+
+                                                                    <select id="saleMan" name="saleman"
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} saleman"
+                                                                        required>
+                                                                        @foreach ($saleMans as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                @php
+$isSelected = old('saleman') == $key || $sale->pluck('saleman')->contains($key); @endphp
+                                                                                {{ $isSelected ? 'selected' : '' }}>
+                                                                                {{ $value }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
                                                                 </div>
 
                                                                 <div class="col-lg-0 col-6">
-                                                                    <label for="belt"
+                                                                    <label for="inputState"
                                                                         class="form-label">Belt</label>
-                                                                    <input id="belt" type="belt"
-                                                                        name="sector" style="color:black;"
-                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
-                                                                        placeholder="Please Enter the Belt "
-                                                                        class="form-control form-control-sm" readonly>
+
+                                                                    <select id="sector" name="sector"
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sector"
+                                                                        required>
+                                                                        @foreach ($sectors as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                @php
+$isSelected = old('sector') == $key || $sale->pluck('sector')->contains($key); @endphp
+                                                                                {{ $isSelected ? 'selected' : '' }}>
+                                                                                {{ $value }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
                                                                 </div>
 
                                                             </div>
+
+                                                            <br>
                                                             <div class="row">
                                                                 <div class="col-lg-0 col-6">
-                                                                    <label for="area"
-                                                                        class="form-label">Area</label>
-                                                                    <input id="area" type="area"
-                                                                        name="area" style="color:black;"
-                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
-                                                                        placeholder="Please Enter the Area "
-                                                                        class="form-control form-control-sm" readonly>
+                                                                    <label for="inputState" class="form-label">Area
+                                                                    </label>
+
+                                                                    <select id="area" name="area"
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} area"
+                                                                        required>
+                                                                        @foreach ($areas as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                @php
+$isSelected = old('area') == $key || $sale->pluck('area')->contains($key); @endphp
+                                                                                {{ $isSelected ? 'selected' : '' }}>
+                                                                                {{ $value }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
                                                                 </div>
                                                                 <div class="col-lg-0 col-6">
-                                                                    <label for="deliverd_to"
+                                                                    <label for="inputState"
                                                                         class="form-label">Delivered To</label>
-                                                                    <input id="deliverd_to" type="deliverd_to"
-                                                                        name="deliverd_to" style="color:black;"
-                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
-                                                                        placeholder="Please Enter the Delivered To Party "
-                                                                        class="form-control form-control-sm" readonly>
+
+
+                                                                    <select id="delivered_to" name="delivered_to"
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered_to"
+                                                                        required>
+                                                                        @foreach ($deliveredToParties as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                @php
+$isSelected = old('delivered_to') == $key || $sale->pluck('delivered_to')->contains($key); @endphp
+                                                                                {{ $isSelected ? 'selected' : '' }}>
+                                                                                {{ $value }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
                                                                 </div>
                                                             </div>
+                                                            <br>
                                                             <div class="row">
+                                                                <div class="col-lg-0 col-6">
+                                                                    <label for="inputState"
+                                                                        class="form-label">Transporter</label>
+
+
+                                                                    <select id="transporter" name="transporter_id"
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} transporter"
+                                                                        required>
+                                                                        @foreach ($transporters as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                @php
+$isSelected = old('transporter_id') == $key || $sale->pluck('transporter_id')->contains($key); @endphp
+                                                                                {{ $isSelected ? 'selected' : '' }}>
+                                                                                {{ $value }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
                                                                 <div class="col-lg-0 col-6">
                                                                     <label for="vehicle_no" class="form-label">Vehicle
                                                                         No</label>
                                                                     <input id="vehicle_no" type="vehicle_no"
                                                                         name="vehicle_no" style="color:black;"
-                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
+                                                                        value="{{ $sale->vehicle_no }}"
                                                                         placeholder="Please Enter the Vehicle No "
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
+                                                            </div>
+                                                            <br>
+                                                            <div class="row">
                                                                 <div class="col-lg-0 col-6">
                                                                     <label for="driver_name" class="form-label">Driver
                                                                         Name</label>
                                                                     <input id="driver_name" type="driver_name"
                                                                         name="driver_name" style="color:black;"
-                                                                        value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
+                                                                        value="{{ $sale->driver_name }}"
                                                                         placeholder="Please Enter the Driver Name "
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
-                                                            </div>
-                                                            <div class="row">
+
+
                                                                 <div class="col-lg-0 col-6">
                                                                     <label for="bilty_no" class="form-label">Bilty
                                                                         No</label>
                                                                     <input id="bility_no" type="bilty_no"
                                                                         name="bilty_no" style="color:black;"
-                                                                       value="{{ old('total_boray', !empty($sale->total_boray) ? $sale->total_boray : '') }}"
+                                                                        value="{{ $sale->bilty_no }}"
                                                                         placeholder="Please Enter the Area "
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
@@ -219,9 +290,11 @@
                                                                                         style="width: 30%">
                                                                                         Product</th>
                                                                                     <th class="">
+                                                                                        P.T</th>
+                                                                                    <th class="">
+                                                                                        M.T</th>
+                                                                                    <th class="">
                                                                                         Quantity</th>
-                                                                                    {{-- <th class="">
-                                                                                                Packing Type</th> --}}
                                                                                     <th class="">
                                                                                         Dzns
                                                                                     </th>
@@ -232,7 +305,8 @@
                                                                                         Rate
                                                                                     </th>
 
-                                                                                    <th class="text-right">
+                                                                                    <th class="text-right"
+                                                                                        style="width: 10%">
                                                                                         Amount
                                                                                     </th>
 
@@ -246,10 +320,14 @@
                                                                                 @if (!empty($saleDetails))
 
                                                                                     @foreach ($saleDetails as $saleDetail)
+                                                                                        {{-- {{dd($saleDetail);}} --}}
+                                                                                        @php
+                                                                                            $index = $loop->index + 2; // Starts from 2
+                                                                                        @endphp
                                                                                         <tr
-                                                                                            class="tr_clone validator_0">
-                                                                                            <td
-                                                                                                class="delete-item-row">
+                                                                                            class="tr_clone validator_{{ $index }}">
+                                                                                            <td class="delete-item-row"
+                                                                                                style="padding: 0 px 0 px;">
                                                                                                 <ul
                                                                                                     class="table-controls">
                                                                                                     <li>
@@ -295,62 +373,74 @@
                                                                                                 <input type="text"
                                                                                                     name="row_id[]"
                                                                                                     class="row_id"
-                                                                                                    value="2"
+                                                                                                    value="{{ $index }}"
                                                                                                     hidden>
                                                                                             </td>
-                                                                                            <td class="product">
-                                                                                                <select id="product"
-                                                                                                    type="text"
+                                                                                            <td class="product"
+                                                                                                style="padding: 0 px 0 px !important;">
+                                                                                                {{-- <select id="product_id"
                                                                                                     name="product_id[]"
-                                                                                                    placeholder="Please Select the Product"
-                                                                                                    class="{{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} form-control  mb-3 select2 custom-select product_2"
-                                                                                                    required>
+                                                                                                    style="color: black;"
+                                                                                                    class="mb-3 form-control select2 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} product_{{ $index }}"
+                                                                                                    >
                                                                                                     <option
-                                                                                                        value="">
-                                                                                                        Select
+                                                                                                        selected="">
+                                                                                                        Please
+                                                                                                        select
                                                                                                         the
-                                                                                                        Product
+                                                                                                        product
                                                                                                     </option>
-                                                                                                    @foreach ($dropDownData['products'] as $key => $value)
+                                                                                                    @foreach ($products as $key => $value)
                                                                                                         <option
                                                                                                             value="{{ $key }}"
-                                                                                                            {{ (old('product_id') == $key ? 'selected' : '') || (!empty($dispatchNoteDetail->product_id) ? collect($dispatchNoteDetail->product_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                                            {{ (old('product_id') == $key ? 'selected' : '') || (!empty($saleDetail->product_id) ? collect($saleDetail->product_id)->contains($key) : '') ? 'selected' : '' }}>
                                                                                                             {{ $value }}
                                                                                                         </option>
                                                                                                     @endforeach
+                                                                                                </select> --}}
+
+                                                                                                <select
+                                                                                                    class="mb-3 form-control select2 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                                                    disabled>
+                                                                                                    <option selected>
+                                                                                                        {{ $products[$saleDetail->product_id] ?? 'Product Not Found' }}
+                                                                                                        {{-- Show Product Name --}}
+                                                                                                    </option>
                                                                                                 </select>
-                                                                                                {{-- <input type="text"
-                                                                                                    style="color: black;"
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} product_2"
-                                                                                                    id="product_id" value="{{ $saleDetail->product_id }}"
-                                                                                                    {{-- value="{{ old('product_id', !empty($saleDetail->product_id->name) ? $saleDetail->product_id : '') }}"
+
+                                                                                                {{-- Hidden field to store the Product ID --}}
+                                                                                                <input type="hidden"
                                                                                                     name="product_id[]"
-                                                                                                    placeholder="Product"
-                                                                                                    readonly> --}}
+                                                                                                    value="{{ $saleDetail->product_id }}">
+
+                                                                                            </td>
+                                                                                            <td>
                                                                                                 <input type="text"
                                                                                                     style="color: black;"
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_2"
-                                                                                                    id="packing"
-                                                                                                    value="{{ old('packing_type', !empty($saleDetail->packing_type) ? $saleDetail->packing_type : '') }}"
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_{{ $index }}"
+                                                                                                    id="packing" value="{{$saleDetail->packing_type}}"
+                                                                                                    {{-- value="{{ old('packing_type', !empty($saleDetail->packing_type) ? $saleDetail->packing_type : '') }}" --}}
                                                                                                     name="packing_type[]"
                                                                                                     placeholder="P.T"
                                                                                                     readonly>
-
+                                                                                            </td>
+                                                                                            <td>
                                                                                                 <input type="text"
                                                                                                     style="color: black;"
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_2"
-                                                                                                    placeholder="M.T"
-                                                                                                    value="{{ old('measurement_type', !empty($saleDetail->measurement_type) ? $saleDetail->measurement_type : '') }}"
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_{{ $index }}"
+                                                                                                    placeholder="M.T" value="{{$saleDetail->measurement_type}}"
+                                                                                                    {{-- value="{{ old('measurement_type', !empty($saleDetail->measurement_type) ? $saleDetail->measurement_type : '') }}" --}}
                                                                                                     name="measurement_type[]"
                                                                                                     id="measurement"
                                                                                                     readonly>
                                                                                             </td>
-
-                                                                                            <td class="quantity">
+                                                                                            <td class="quantity"
+                                                                                                style="padding: 0 px 0 px !important;">
                                                                                                 <input type="text"
                                                                                                     id="quantity"
-                                                                                                    class="qty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_2"
-                                                                                                    value="{{ old('quantity', !empty($saleDetail->quantity) ? $saleDetail->quantity : '') }}"
+                                                                                                    class="qty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_{{ $index }}"
+                                                                                                    {{-- value="{{ old('quantity', !empty($saleDetail->quantity) ? $saleDetail->quantity : '') }}" --}}
+                                                                                                    value="{{$saleDetail->quantity}}"
                                                                                                     name="quantity[]"
                                                                                                     style="color:black;"
                                                                                                     placeholder="Qty"
@@ -361,28 +451,33 @@
                                                                                                 <input type="text"
                                                                                                     id="dzn"
                                                                                                     name="dzns[]"
-                                                                                                    value="{{ old('dzns', !empty($saleDetail->dzns) ? $saleDetail->dzns : '') }}"
-                                                                                                    class="dozen form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} dozen_2"
+                                                                                                    style="color: black;"
+                                                                                                    value="{{$saleDetail->dzns}}"
+                                                                                                    {{-- value="{{ old('dzns', !empty($saleDetail->dzns) ? $saleDetail->dzns : '') }}" --}}
+                                                                                                    class="dozen form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} dozen_{{ $index }}"
                                                                                                     placeholder="Dzn"
-                                                                                                    required>
+                                                                                                    required readonly>
                                                                                             </td>
                                                                                             <td class="total_dzns">
                                                                                                 <input type="text"
                                                                                                     id="total_dzns"
                                                                                                     style="color: black;"
                                                                                                     name="total_dzns[]"
-                                                                                                    value="{{ old('total_dzns', !empty($saleDetail->total_dzns) ? $saleDetail->total_dzns : '') }}"
-                                                                                                    class="totDzn form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} totDzn_2"
+                                                                                                    value="{{$saleDetail->total_dzns}}"
+                                                                                                    {{-- value="{{ old('total_dzns', !empty($saleDetail->total_dzns) ? $saleDetail->total_dzns : '') }}" --}}
+                                                                                                    class="totDzn form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} totDzn_{{ $index }}"
                                                                                                     placeholder="Tot.Dzns"
                                                                                                     readonly>
                                                                                             </td>
 
                                                                                             <td class="rate">
-                                                                                                <input type="text"
+                                                                                                <input type="number"
                                                                                                     id="rate"
                                                                                                     name="rate[]"
-                                                                                                    value="{{ old('rate', !empty($saleDetail->rate) ? $saleDetail->rate : '') }}"
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} rate rate_2"
+                                                                                                    {{-- value="{{ old('rate', !empty($pricesArray->price) ? $pricesArray->price : '') }}" --}}
+                                                                                                    value="{{$pricesArray[$saleDetail->product_id]}}"
+                                                                                                    {{-- value="{{ old('rate', isset($pricesArray[$saleDetail->product_id]) ? $pricesArray[$saleDetail->product_id] : '') }}" --}}
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} rate rate_{{ $index }}"
                                                                                                     placeholder="Rate"
                                                                                                     required>
                                                                                             </td>
@@ -391,9 +486,10 @@
                                                                                                 <input type="text"
                                                                                                     id="amount"
                                                                                                     style="color: black;"
-                                                                                                    value="{{ old('amount', !empty($saleDetail->amount) ? $saleDetail->amount : '') }}"
+                                                                                                    value="{{$saleDetail->amount}}"
+                                                                                                    {{-- value="{{ old('amount', !empty($saleDetail->amount) ? $saleDetail->amount : '') }}" --}}
                                                                                                     name="amount[]"
-                                                                                                    class="amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} amount_2"
+                                                                                                    class="amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} amount_{{ $index }}"
                                                                                                     placeholder="Amount"
                                                                                                     readonly>
                                                                                             </td>
@@ -508,7 +604,7 @@
                                                                                         style="color: black;"
                                                                                         id="carriage-amount"
                                                                                         name="carriage"
-                                                                                        value="{{ old('carriage', !empty($sale->carriage) ? $sale->carriage : '') }}"
+                                                                                        value=" {{ @$sale->carriage }} "
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} carriage"
                                                                                         placeholder="Carriage.Amount"
                                                                                         readonly>
@@ -529,10 +625,11 @@
                                                                                 </div>
                                                                                 <div class="col-md-4"
                                                                                     style="width: 70%; float: right; margin-left:10%;">
-                                                                                    <input type="text"
+                                                                                    <input type="number"
                                                                                         style="color: black;"
                                                                                         id="discount-amount"
-                                                                                        name="discount" value="{{ old('discount', !empty($sale->discount) ? $sale->discount : '') }}"
+                                                                                        value="{{ old('discount', !empty($sale->discount) ? $sale->discount : '') }}"
+                                                                                        name="discount"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount"
                                                                                         placeholder="Discount.Amount">
                                                                                 </div>
@@ -554,10 +651,11 @@
                                                                                     style="width: 70%; float: right; margin-left:10%;">
                                                                                     {{-- <label for="client-phone">Tot.
                                                                                         Amount</label> --}}
-                                                                                    <input type="text"
+                                                                                    <input type="number"
                                                                                         style="color: black;"
                                                                                         id="commission-amount"
-                                                                                        name="commission" value="{{ old('commission', !empty($sale->commission) ? $sale->commission : '') }}"
+                                                                                        value="{{ old('commission', !empty($sale->commission) ? $sale->commission : '') }}"
+                                                                                        name="commission"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} commission"
                                                                                         placeholder="Commission.Amount">
                                                                                 </div>
@@ -581,7 +679,7 @@
                                                                                         Amount</label> --}}
                                                                                     <input type="text"
                                                                                         style="color: black;"
-                                                                                        id="net-amount" value="{{ old('total_boray', !empty($sale->net_amount) ? $sale->net_amount : '') }}"
+                                                                                        id="net-amount" value=" {{ $sale->net_amount }} "
                                                                                         name="net_amount"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
                                                                                         placeholder="Net.Amount"
@@ -626,226 +724,16 @@
     </div>
     <script src="{{ asset('js/saleInvoice.js') }}"></script>
 
+
+
     <script>
-        document.getElementsByClassName('additem')[0].addEventListener('click', function() {
-
-            let getTableElement = document.querySelector('.item-table');
-            let currentIndex = getTableElement.rows.length;
-            let $html = '<tr>' +
-                '<td class="delete-item-row">' +
-                '<ul class="table-controls">' +
-                '<li><a href="javascript:void(0);" class="delete-item" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></a></li>' +
-                '</ul>' +
-                '</td>' +
-                '<td><input type="checkbox" name="row_id[]" class="row_id" value="' + currentIndex +
-                '" hidden></td>' +
-                // data-id=currentIndex
-                '<td class="product"> <select id="product" type = "text" name = "product_id[]" class ="form-control select2 custom-select form-control-sm  product_' +
-                currentIndex +
-                '" placeholder = "Please Select the Product"   required ><option value = "" >Select the Product </option> @foreach ($dropDownData['products'] as $key => $value)<option value = "{{ $key }}" {{ (old('product_id') == $key ? 'selected' : '') || (!empty($saleOrderDetail->product_id) ? collect($saleOrderDetail->product_id)->contains($key) : '') ? 'selected' : '' }} >{{ $value }} </option> @endforeach </select> <input id="packing" name="packing_type[]" style="color: black; " type="text" class = "packing form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_' +
-                currentIndex +
-                '" placeholder="P.T" readonly><input type="text" style="color: black; " placeholder="M.T" name="measurement_type[]" id="measurement" class = "measurement form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_' +
-                currentIndex + '" readonly> </td> ' +
-                '<td class="qty">' +
-                ' <input type="text" name="quantity[]" style="color:black;" id="quantity" class = "qty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_' +
-                currentIndex +
-                '" placeholder="Qty" required></td>' +
-                // '<td class="total_unit"> </td>' +
-                // '<td class="total"></td>' +
-                '<td class="dozen"> <input type="text" name="dzns[]" id="dzn" class = "dozen form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} dozen_' +
-                currentIndex +
-                ' "  placeholder="Dzns " required></td>' +
-                '<td class="totDzn"><input type="text" style="color: black;" name="total_dzns[]" class="totDzn form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} totDzn_' +
-                currentIndex + ' " placeholder="Tot Dzn" readonly></td>' +
-                '<td class="rate"><input type="text"  id="rate" name="rate[]" class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} rate rate_' +
-                currentIndex + ' " placeholder="Rate" required></td>' +
-                '<td class="amount"><input type="text"  id="amount" style="color: black;" name="amount[]" class="amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} amount_' +
-                currentIndex + ' " placeholder="Amount" readonly></td>' +
-                '</div>' +
-                '</div>' +
-                '</td>' +
-                '</tr>';
-            $(".item-table tbody").append($html);
-
-
-
-            $(document).on('click', 'body *', function() {
-                $('.dozen').on("focusout", function() {
-                    console.log("Maaz Here");
-                    var row_id = $(this).closest("tr").find(".row_id").val();
-                    let quantity = $(this).closest("tr").find(".qty_" + row_id).val();
-                    let dzns = $(this).closest("tr").find(".dozen_" + row_id).val();
-                    if (parseInt(quantity) > 0) {
-                        $(this).closest("tr").find(".totDzn_" + row_id).val(quantity * dzns);
-                    } else {
-                        $(this).closest("tr").find(".totDzn_" + row_id).val('');
-                    }
-                });
-                $('.rate').on("focusout", function() {
-
-                    var row_id = $(this).closest("tr").find(".row_id").val();
-                    let quantity = $(this).closest("tr").find(".totDzn_" + row_id).val();
-                    let price = $(this).closest("tr").find(".rate_" + row_id).val();
-                    // console.log(row_id + ", " + quantity + ", " + price);
-                    if (parseInt(quantity) > 0) {
-                        $(this).closest("tr").find(".amount_" + row_id).val(quantity * price);
-                    } else {
-                        $(this).closest("tr").find(".amount_" + row_id).val('');
-                    }
-                    doAmountTotal();
-                });
-
-
-
-                $('.delete-item').on("click", function() {
-                    doAmountTotal();
-                });
-
-                function doAmountTotal() {
-                    $('#total-amount').text("");
-                    var totalAmount = 0;
-                    $(".amount").each(function() {
-                        if (!isNaN(this.value) && this.value.length != 0) {
-                            totalAmount += parseFloat(this.value);
-                        }
-                    });
-                    $('#gross-amount').val(totalAmount.toFixed(2));
-                    $('#net-amount').val(totalAmount.toFixed(2));
-                }
-
-                $(".carriage, .discount, .commission").on("focusout", function() {
-                    var totalAmount = 0;
-                    $(".amount").each(function() {
-                        if (!isNaN(this.value) && this.value.length != 0) {
-                            totalAmount += parseFloat(this.value);
-                        }
-                    });
-                    let carriage = $(".carriage").val() ? $(".carriage").val() : 0;
-                    let discount = $(".discount").val() ? $(".discount").val() : 0;
-                    let commission = $(".commission").val() ? $(".commission").val() : 0;
-
-                    var totalLessAmount = parseInt(carriage) + parseInt(discount) + parseInt(
-                        commission);
-                    $('#net-amount').val(totalLessAmount ? totalAmount.toFixed(2) -
-                        totalLessAmount : totalAmount.toFixed(2));
-                })
-
-            });
-
-            $(document).on('click', 'body *', function() {
-                $('.amount').on("focusout", function() {
-                    doAmountTotal();
-                });
-
-                $('.delete-item').on("click", function() {
-                    doAmountTotal();
-                });
-
-                function doAmountTotal() {
-                    $('#total-amount').text("");
-                    var totalAmount = 0;
-                    $(".amount").each(function() {
-                        if (!isNaN(this.value) && this.value.length != 0) {
-                            totalAmount += parseFloat(this.value);
-                        }
-                    });
-                    $('#gross-amount').val(totalAmount.toFixed(2));
-                }
-            });
-
-
-            $(document).on('click', 'body *', function() {
-                $('.amount').on("focusout", function() {
-                    doAmountTotal();
-                });
-
-                $('.delete-item').on("click", function() {
-                    doAmountTotal();
-                });
-
-                function doAmountTotal() {
-                    $('#total-amount').text("");
-                    var totalAmount = 0;
-                    $(".amount").each(function() {
-                        if (!isNaN(this.value) && this.value.length != 0) {
-                            totalAmount += parseFloat(this.value);
-                        }
-                    });
-                    $('#gross-amount').val(totalAmount.toFixed(2));
-                }
-            });
-
-            $(document).on('click', 'body *', function() {
-                $('.qty').on("focusout", function() {
-                    doAmountTotal2();
-                });
-
-                $('.delete-item').on("click", function() {
-                    doAmountTotal2();
-                });
-
-                function doAmountTotal2() {
-                    $('#boray-amount').val("");
-                    $('#carton-amount').val("");
-                    var totalBorayAmount = 0;
-                    console.log(totalBorayAmount);
-                    var totalCartonAmount = 0;
-                    console.log(totalCartonAmount);
-                    var packingIndex = '.packing_' + currentIndex;
-
-                    $(".qty").each(function() {
-                        if (!isNaN(this.value) && this.value.length != 0) {
-                            var totalAmount = parseFloat(this.value);
-
-                            if (packingIndex.value === "Boray") {
-                                // console.log(packingType.value== Boray);
-                                totalBorayAmount += totalAmount;
-                            } else if (packingIndex.value === "Carton") {
-                                // console.log(packingType.value== Carton);
-                                totalCartonAmount += totalAmount;
-                            }
-
-                        }
-                    });
-
-                    // if (document.getElementById('packing').value == "Carton") {
-                    //     $('#carton-amount').val(totalAmount.toFixed(2));
-                    // }
-                    // if (document.getElementsByClassName('packing').value == "Boray") {
-                    //     $('#boray-amount').val(totalAmount.toFixed(2));
-                    // }
-
-                    // Assign calculated total amounts to their respective fields
-                    if (packingIndex.value === "Carton") {
-                        $('#carton-amount').val(totalCartonAmount.toFixed(2));
-                    }
-
-                    if (packingIndex.value === "Boray") {
-                        $('#boray-amount').val(totalBorayAmount.toFixed(2));
-                    }
-                }
-            });
-
-        })
-
-        // deleteItemRow();
-        selectableDropdown(document.querySelectorAll('.invoice-select .dropdown-item'));
-        selectableDropdown(document.querySelectorAll('.invoice-tax-select .dropdown-item'), getTaxValue);
-        selectableDropdown(document.querySelectorAll('.invoice-discount-select .dropdown-item'), getDiscountValue);
-
-        var f2 = flatpickr(document.getElementById('due'), {
-            defaultDate: currentDate.setDate(currentDate.getDate() + 5),
-        });
-
-        function deleteItemRow() {
-            let deleteItem = document.querySelectorAll('.delete-item');
-            for (var i = 0; i < deleteItem.length; i++) {
-                deleteItem[i].addEventListener('click', function() {
-                    this.parentElement.parentNode.parentNode.parentNode.remove();
-                })
-            }
+        var config = {
+            routes: {
+                getPartyCode: "{{ url('sale/get-product-rate') }}",
+            },
         }
     </script>
+
     <x-slot:footerFiles>
         <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
         <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>

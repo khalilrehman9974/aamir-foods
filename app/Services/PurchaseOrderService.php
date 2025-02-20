@@ -86,7 +86,7 @@ class PurchaseOrderService
      {
          $q = PurchaseOrderMaster::query();
          if (!empty($request['param'])) {
-             $q = PurchaseOrderMaster::where('contact_person', 'like', '%' . $request['param'] . '%');
+             $q = PurchaseOrderMaster::with('party')->where('contact_person', 'like', '%' . $request['param'] . '%');
          }
          $porders = $q->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
 

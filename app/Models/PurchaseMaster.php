@@ -9,8 +9,8 @@ class PurchaseMaster extends Model
     protected $guarded = ['id'];
     protected $table = 'purchase_masters';
 
-    protected $fillable = ['grn_no','date', 'type','party_id','bill_no','transporter_id','business_id','f_year_id',
-    'remarks','total_amount','fair','carriage_inward'];
+    protected $fillable = ['grn_no','date','party_id','supplier_bill_no','transporter_id','business_id','f_year_id',
+    'remarks','total_quantity','unloaded_by','carriage','gross_bill','tax','net_amount'];
 
     public function type(){
         return $this->hasOne(SalePurchaseType::class);

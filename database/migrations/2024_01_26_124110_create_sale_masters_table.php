@@ -18,14 +18,15 @@ return new class extends Migration
             $table->string('dispatch_note_number');
             $table->string('sale_order_number');
             $table->date('date');
-            $table->string('party_id');
-            $table->string('saleman');
-            $table->string('sector');
-            $table->string('area');
-            $table->string('deliverd_to');
+            $table->integer('party_id');
+            $table->integer('saleman');
+            $table->integer('sector');
+            $table->integer('area');
+            $table->integer('delivered_to');
             $table->string('vehicle_no');
             $table->string('driver_name');
             $table->string('bilty_no');
+            $table->integer('transporter_id')->unsigned()->index();
             $table->integer('business_id');
             $table->integer('f_year_id')->unsigned()->index();
             $table->text('remarks')->nullable();
@@ -45,6 +46,10 @@ return new class extends Migration
 
             $table->foreign('f_year_id')
             ->references('id')->on('financial_years')
+            ->onDelete('cascade');
+
+            $table->foreign('transporter_id')
+            ->references('id')->on('transporters')
             ->onDelete('cascade');
 
         });

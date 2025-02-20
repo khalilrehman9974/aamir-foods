@@ -39,7 +39,7 @@
                     </div>
                 </div>
                 <div class="col-lg-0 col-6 ">
-                    <a href="{{ route('purchase-return.create') }}" class="btn btn-primary mt-2 mb-2 me-8"
+                    <a href="{{ route('purchase-return.generate') }}" class="btn btn-primary mt-2 mb-2 me-8"
                         style="float : right; " style="">Create
                     </a>
 
@@ -125,13 +125,12 @@
                             <thead>
                                 <tr>
                                     <th scope="col"> <b>Id </b> </th>
-                                    <th scope="col"> <b>GRN No</b> </th>
+                                    <th scope="col"> <b>PI No</b> </th>
                                     <th scope="col" style="width: 30%"> <b>Party </b> </th>
                                     <th scope="col" style="width: 20%"> <b>Date</b> </th>
-                                    <th scope="col" style="width: 10%"> <b>Bill Number </b> </th>
-                                    <th scope="col" style="width: 10%"> <b>Fare </b> </th>
+                                    <th scope="col" style="width: 10%"> <b>Supplier Bill Number </b> </th>
                                     <th scope="col" style="width: 20%"> <b>Transporter </b> </th>
-                                    <th scope="col" style="width: 20%"> <b>Carriage Inward </b> </th>
+                                    <th scope="col" style="width: 20%"> <b>Carriage </b> </th>
                                     <th scope="col" style="width: 20%"> <b>Total Amount</b> </th>
                                     {{-- <th scope="col" style="width: 80%"> <b>Remarks </b> </th> --}}
                                     <th class="text-center" scope="col"></th>
@@ -150,7 +149,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $purchaseReturn->grn_no }}</h6>
+                                                    <h6 class="mb-0">{{ $purchaseReturn->purchase_invoice_no }}</h6>
 
                                                 </div>
                                             </div>
@@ -158,7 +157,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $purchaseReturn->party_id }}</h6>
+                                                    <h6 class="mb-0">{{ $purchaseReturn->party->account_name}}</h6>
 
                                                 </div>
                                             </div>
@@ -174,7 +173,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $purchaseReturn->bill_no }}</h6>
+                                                    <h6 class="mb-0">{{ $purchaseReturn->supplier_bill_no }}</h6>
 
                                                 </div>
                                             </div>
@@ -182,7 +181,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $purchaseReturn->fare }}</h6>
+                                                    <h6 class="mb-0">{{ $purchaseReturn->transporter->name }}</h6>
 
                                                 </div>
                                             </div>
@@ -190,23 +189,17 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $purchaseReturn->Transporter_id }}</h6>
+                                                    <h6 class="mb-0">{{ $purchaseReturn->carriage }}</h6>
 
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $purchaseReturn->carriage_inward }}</h6>
 
-                                                </div>
-                                            </div>
-                                        </td>
+
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $purchaseReturn->total_amount }}</h6>
+                                                    <h6 class="mb-0">{{ $purchaseReturn->net_amount }}</h6>
 
                                                 </div>
                                             </div>
@@ -233,7 +226,7 @@
                                                 @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
                                                 @endif
 
-                                                <a href="javascript:void(0)"
+                                                {{-- <a href="javascript:void(0)"
                                                     class="action-btn btn-delete bs-tooltip delete"
                                                     data-id="{{ $purchaseReturn->id }}" data-toggle="tooltip"
                                                     data-placement="top" title="Delete">
@@ -252,7 +245,7 @@
                                                             y2="17">
                                                         </line>
                                                     </svg>
-                                                </a>
+                                                </a> --}}
 
                                             </div>
                                         </td>

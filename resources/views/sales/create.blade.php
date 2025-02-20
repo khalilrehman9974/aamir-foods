@@ -72,7 +72,7 @@
                                                         action="{{ !empty($sale) ? route('sale.update') : route('sale.store') }}"
                                                         method="POST" class="row g-3 needs-validation" novalidate>
                                                         @csrf
-                                                        <input type="hidden" name="saleId" id="saleId"
+                                                        <input type="hidden" name="id" id="id"
                                                             value="{{ isset($sale->id) ? $sale->id : '' }}" />
 
                                                         <div class="form-group">
@@ -104,6 +104,7 @@
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
                                                             </div>
+                                                            <br>
 
                                                             <div class="row">
                                                                 <div class="col-lg-0 col-6" style="float: right">
@@ -116,61 +117,127 @@
                                                                         value="{{ $dispatchNote->date }}"
                                                                         placeholder="Select The Date" readonly>
                                                                 </div>
+
                                                                 <div class="col-lg-0 col-6" style="float: right">
-                                                                    <label for="date">
-                                                                        Party</label>
-                                                                    <input type="text" name="party_id"
-                                                                        value="{{ $dispatchNote->party_id }}"
-                                                                        class="form-control form-control-sm"
-                                                                        style="color:black;" id="party"
-                                                                        placeholder="Select The Party" readonly>
+
+                                                                    <label for="inputState"
+                                                                        class="form-label">Party</label>
+                                                                    <select id="party" name="party_id"
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} party"
+                                                                        required>
+                                                                        @foreach ($parties as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                @php
+$isSelected = old('party_id') == $key || $dispatchNote->pluck('party_id')->contains($key); @endphp
+                                                                                {{ $isSelected ? 'selected' : '' }}>
+                                                                                {{ $value }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
+
+
                                                                 </div>
 
 
                                                             </div>
+                                                            <br>
                                                             <div class="row">
                                                                 <div class="col-lg-0 col-6">
-                                                                    <label for="sale_man" class="form-label">Sale Man
-                                                                    </label>
-                                                                    <input id="sale_man" type="sale_man"
-                                                                        name="saleman" style="color:black;"
-                                                                        value="{{ $dispatchNote->saleman }}"
-                                                                        placeholder="Please Enter the Sale Man"
-                                                                        class="form-control form-control-sm" readonly>
+                                                                    <label for="inputState" class="form-label">Sales
+                                                                        Man</label>
+
+                                                                    <select id="saleMan" name="saleman"
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} saleman"
+                                                                        required>
+                                                                        @foreach ($saleMans as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                @php
+$isSelected = old('saleman') == $key || $dispatchNote->pluck('saleman')->contains($key); @endphp
+                                                                                {{ $isSelected ? 'selected' : '' }}>
+                                                                                {{ $value }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
                                                                 </div>
 
                                                                 <div class="col-lg-0 col-6">
-                                                                    <label for="belt"
+                                                                    <label for="inputState"
                                                                         class="form-label">Belt</label>
-                                                                    <input id="belt" type="belt"
-                                                                        name="sector" style="color:black;"
-                                                                        value="{{ $dispatchNote->sector }}"
-                                                                        placeholder="Please Enter the Belt "
-                                                                        class="form-control form-control-sm" readonly>
+
+                                                                    <select id="sector" name="sector"
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sector"
+                                                                        required>
+                                                                        @foreach ($sectors as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                @php
+$isSelected = old('sector') == $key || $dispatchNote->pluck('sector')->contains($key); @endphp
+                                                                                {{ $isSelected ? 'selected' : '' }}>
+                                                                                {{ $value }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
                                                                 </div>
 
                                                             </div>
+
+                                                            <br>
                                                             <div class="row">
                                                                 <div class="col-lg-0 col-6">
-                                                                    <label for="area"
-                                                                        class="form-label">Area</label>
-                                                                    <input id="area" type="area"
-                                                                        name="area" style="color:black;"
-                                                                        value="{{ $dispatchNote->area }}"
-                                                                        placeholder="Please Enter the Area "
-                                                                        class="form-control form-control-sm" readonly>
+                                                                    <label for="inputState" class="form-label">Area
+                                                                    </label>
+
+                                                                    <select id="area" name="area"
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} area"
+                                                                        required>
+                                                                        @foreach ($areas as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                @php
+$isSelected = old('area') == $key || $dispatchNote->pluck('area')->contains($key); @endphp
+                                                                                {{ $isSelected ? 'selected' : '' }}>
+                                                                                {{ $value }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
                                                                 </div>
                                                                 <div class="col-lg-0 col-6">
-                                                                    <label for="deliverd_to"
+                                                                    <label for="inputState"
                                                                         class="form-label">Delivered To</label>
-                                                                    <input id="deliverd_to" type="deliverd_to"
-                                                                        name="deliverd_to" style="color:black;"
-                                                                        value="{{ $dispatchNote->delivered_to }}"
-                                                                        placeholder="Please Enter the Delivered To Party "
-                                                                        class="form-control form-control-sm" readonly>
+
+
+                                                                    <select id="delivered_to" name="delivered_to"
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered_to"
+                                                                        required>
+                                                                        @foreach ($deliveredToParties as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                @php
+$isSelected = old('delivered_to') == $key || $dispatchNote->pluck('delivered_to')->contains($key); @endphp
+                                                                                {{ $isSelected ? 'selected' : '' }}>
+                                                                                {{ $value }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
                                                                 </div>
                                                             </div>
+                                                            <br>
                                                             <div class="row">
+                                                                <div class="col-lg-0 col-6">
+                                                                    <label for="inputState"
+                                                                        class="form-label">Transporter</label>
+
+
+                                                                    <select id="transporter" name="transporter_id"
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} transporter"
+                                                                        required>
+                                                                        @foreach ($transporters as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                @php
+$isSelected = old('transporter_id') == $key || $dispatchNote->pluck('transporter_id')->contains($key); @endphp
+                                                                                {{ $isSelected ? 'selected' : '' }}>
+                                                                                {{ $value }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
                                                                 <div class="col-lg-0 col-6">
                                                                     <label for="vehicle_no" class="form-label">Vehicle
                                                                         No</label>
@@ -180,6 +247,9 @@
                                                                         placeholder="Please Enter the Vehicle No "
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
+                                                            </div>
+                                                            <br>
+                                                            <div class="row">
                                                                 <div class="col-lg-0 col-6">
                                                                     <label for="driver_name" class="form-label">Driver
                                                                         Name</label>
@@ -189,8 +259,8 @@
                                                                         placeholder="Please Enter the Driver Name "
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
-                                                            </div>
-                                                            <div class="row">
+
+
                                                                 <div class="col-lg-0 col-6">
                                                                     <label for="bilty_no" class="form-label">Bilty
                                                                         No</label>
@@ -220,9 +290,11 @@
                                                                                         style="width: 30%">
                                                                                         Product</th>
                                                                                     <th class="">
+                                                                                        P.T</th>
+                                                                                    <th class="">
+                                                                                        M.T</th>
+                                                                                    <th class="">
                                                                                         Quantity</th>
-                                                                                    {{-- <th class="">
-                                                                                                Packing Type</th> --}}
                                                                                     <th class="">
                                                                                         Dzns
                                                                                     </th>
@@ -233,7 +305,8 @@
                                                                                         Rate
                                                                                     </th>
 
-                                                                                    <th class="text-right">
+                                                                                    <th class="text-right"
+                                                                                        style="width: 10%">
                                                                                         Amount
                                                                                     </th>
 
@@ -248,8 +321,11 @@
 
                                                                                     @foreach ($dispatchNoteDetails as $dispatchNoteDetail)
                                                                                         {{-- {{dd($dispatchNoteDetail);}} --}}
+                                                                                        @php
+                                                                                            $index = $loop->index + 2; // Starts from 2
+                                                                                        @endphp
                                                                                         <tr
-                                                                                            class="tr_clone validator_0">
+                                                                                            class="tr_clone validator_{{ $index }}">
                                                                                             <td class="delete-item-row"
                                                                                                 style="padding: 0 px 0 px;">
                                                                                                 <ul
@@ -297,14 +373,16 @@
                                                                                                 <input type="text"
                                                                                                     name="row_id[]"
                                                                                                     class="row_id"
-                                                                                                    value="2"
+                                                                                                    value="{{ $index }}"
                                                                                                     hidden>
                                                                                             </td>
                                                                                             <td class="product"
                                                                                                 style="padding: 0 px 0 px !important;">
                                                                                                 {{-- <select id="product_id"
                                                                                                     name="product_id[]"
-                                                                                                    class="mb-3 form-control select2 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} product_2">
+                                                                                                    style="color: black;"
+                                                                                                    class="mb-3 form-control select2 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} product_{{ $index }}"
+                                                                                                    >
                                                                                                     <option
                                                                                                         selected="">
                                                                                                         Please
@@ -312,7 +390,7 @@
                                                                                                         the
                                                                                                         product
                                                                                                     </option>
-                                                                                                    @foreach ($dropDownData['products'][$dispatchNoteDetail->product_id] as $key => $value)
+                                                                                                    @foreach ($products as $key => $value)
                                                                                                         <option
                                                                                                             value="{{ $key }}"
                                                                                                             {{ (old('product_id') == $key ? 'selected' : '') || (!empty($dispatchNoteDetail->product_id) ? collect($dispatchNoteDetail->product_id)->contains($key) : '') ? 'selected' : '' }}>
@@ -320,39 +398,47 @@
                                                                                                         </option>
                                                                                                     @endforeach
                                                                                                 </select> --}}
-                                                                                                <input type="text"
-                                                                                                    style="color: black;"
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} product_2"
-                                                                                                    id="product_id"
-                                                                                                  value=" {{ (old('product_id') 'selected' : '') || (!empty($dispatchNoteDetail->product_id) ? collect($dispatchNoteDetail->product_id)->contains($key) : '') ? 'selected' : '' }}"
-                                                                                                    {{-- value="{{ ($dispatchNoteDetail->product_id ) ? 'selected' : '' }}" --}}
+
+                                                                                                <select
+                                                                                                    class="mb-3 form-control select2 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                                                    disabled>
+                                                                                                    <option selected>
+                                                                                                        {{ $products[$dispatchNoteDetail->product_id] ?? 'Product Not Found' }}
+                                                                                                        {{-- Show Product Name --}}
+                                                                                                    </option>
+                                                                                                </select>
+
+                                                                                                {{-- Hidden field to store the Product ID --}}
+                                                                                                <input type="hidden"
                                                                                                     name="product_id[]"
-                                                                                                    placeholder="Product"
-                                                                                                    readonly>
+                                                                                                    value="{{ $dispatchNoteDetail->product_id }}">
+
+                                                                                            </td>
+                                                                                            <td>
                                                                                                 <input type="text"
                                                                                                     style="color: black;"
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_2"
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_{{ $index }}"
                                                                                                     id="packing"
                                                                                                     value="{{ old('packing_type', !empty($dispatchNoteDetail->packing_type) ? $dispatchNoteDetail->packing_type : '') }}"
                                                                                                     name="packing_type[]"
                                                                                                     placeholder="P.T"
                                                                                                     readonly>
-
+                                                                                            </td>
+                                                                                            <td>
                                                                                                 <input type="text"
                                                                                                     style="color: black;"
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_2"
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_{{ $index }}"
                                                                                                     placeholder="M.T"
                                                                                                     value="{{ old('measurement_type', !empty($dispatchNoteDetail->measurement_type) ? $dispatchNoteDetail->measurement_type : '') }}"
                                                                                                     name="measurement_type[]"
                                                                                                     id="measurement"
                                                                                                     readonly>
                                                                                             </td>
-
                                                                                             <td class="quantity"
                                                                                                 style="padding: 0 px 0 px !important;">
                                                                                                 <input type="text"
                                                                                                     id="quantity"
-                                                                                                    class="qty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_2"
+                                                                                                    class="qty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_{{ $index }}"
                                                                                                     value="{{ old('quantity', !empty($dispatchNoteDetail->quantity) ? $dispatchNoteDetail->quantity : '') }}"
                                                                                                     name="quantity[]"
                                                                                                     style="color:black;"
@@ -364,10 +450,11 @@
                                                                                                 <input type="text"
                                                                                                     id="dzn"
                                                                                                     name="dzns[]"
+                                                                                                    style="color: black;"
                                                                                                     value="{{ old('dzn', !empty($dispatchNoteDetail->dzn) ? $dispatchNoteDetail->dzn : '') }}"
-                                                                                                    class="dozen form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} dozen_2"
+                                                                                                    class="dozen form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} dozen_{{ $index }}"
                                                                                                     placeholder="Dzn"
-                                                                                                    required>
+                                                                                                    required readonly>
                                                                                             </td>
                                                                                             <td class="total_dzns">
                                                                                                 <input type="text"
@@ -375,17 +462,18 @@
                                                                                                     style="color: black;"
                                                                                                     name="total_dzns[]"
                                                                                                     value="{{ old('total_dzn', !empty($dispatchNoteDetail->total_dzn) ? $dispatchNoteDetail->total_dzn : '') }}"
-                                                                                                    class="totDzn form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} totDzn_2"
+                                                                                                    class="totDzn form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} totDzn_{{ $index }}"
                                                                                                     placeholder="Tot.Dzns"
                                                                                                     readonly>
                                                                                             </td>
 
                                                                                             <td class="rate">
-                                                                                                <input type="text"
+                                                                                                <input type="number"
                                                                                                     id="rate"
                                                                                                     name="rate[]"
-                                                                                                    value="{{ old('rate', !empty($dispatchNoteDetail->rate) ? $dispatchNoteDetail->rate : '') }}"
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} rate rate_2"
+                                                                                                    {{-- value="{{ old('rate', !empty($pricesArray->price) ? $pricesArray->price : '') }}" --}}
+                                                                                                    value="{{ old('rate', isset($pricesArray[$dispatchNoteDetail->product_id]) ? $pricesArray[$dispatchNoteDetail->product_id] : '') }}"
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} rate rate_{{ $index }}"
                                                                                                     placeholder="Rate"
                                                                                                     required>
                                                                                             </td>
@@ -396,7 +484,7 @@
                                                                                                     style="color: black;"
                                                                                                     value="{{ old('amount', !empty($dispatchNoteDetail->amount) ? $dispatchNoteDetail->amount : '') }}"
                                                                                                     name="amount[]"
-                                                                                                    class="amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} amount_2"
+                                                                                                    class="amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} amount_{{ $index }}"
                                                                                                     placeholder="Amount"
                                                                                                     readonly>
                                                                                             </td>
@@ -532,7 +620,7 @@
                                                                                 </div>
                                                                                 <div class="col-md-4"
                                                                                     style="width: 70%; float: right; margin-left:10%;">
-                                                                                    <input type="text"
+                                                                                    <input type="number"
                                                                                         style="color: black;"
                                                                                         id="discount-amount"
                                                                                         name="discount"
@@ -557,7 +645,7 @@
                                                                                     style="width: 70%; float: right; margin-left:10%;">
                                                                                     {{-- <label for="client-phone">Tot.
                                                                                         Amount</label> --}}
-                                                                                    <input type="text"
+                                                                                    <input type="number"
                                                                                         style="color: black;"
                                                                                         id="commission-amount"
                                                                                         name="commission"
@@ -629,224 +717,16 @@
     </div>
     <script src="{{ asset('js/saleInvoice.js') }}"></script>
 
+
+
     <script>
-        document.getElementsByClassName('additem')[0].addEventListener('click', function() {
-
-            let getTableElement = document.querySelector('.item-table');
-            let currentIndex = getTableElement.rows.length;
-            let $html = '<tr>' +
-                '<td class="delete-item-row">' +
-                '<ul class="table-controls">' +
-                '<li><a href="javascript:void(0);" class="delete-item" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></a></li>' +
-                '</ul>' +
-                '</td>' +
-                '<td><input type="checkbox" name="row_id[]" class="row_id" value="' + currentIndex +
-                '" hidden></td>' +
-                // data-id=currentIndex
-                '<td class="product"> <select id="product" type = "text" name = "product_id[]" class ="form-control select2 custom-select form-control-sm  product_' +
-                currentIndex +
-                '" placeholder = "Please Select the Product"   required ><option value = "" >Select the Product </option> @foreach ($dropDownData['products'] as $key => $value)<option value = "{{ $key }}" {{ (old('product_id') == $key ? 'selected' : '') || (!empty($dispatchNoteDetail->product_id) ? collect($dispatchNoteDetail->product_id)->contains($key) : '') ? 'selected' : '' }} >{{ $value }} </option> @endforeach </select> <input id="packing" name="packing_type[]" style="color: black; " type="text" class = "packing form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_' +
-                currentIndex +
-                '" placeholder="P.T" readonly><input type="text" style="color: black; " placeholder="M.T" name="measurement_type[]" id="measurement" class = "measurement form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_' +
-                currentIndex + '" readonly> </td> ' +
-                '<td class="qty">' +
-                ' <input type="text" name="quantity[]" style="color:black;" id="quantity" class = "qty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_' +
-                currentIndex +
-                '" placeholder="Qty" required></td>' +
-                // '<td class="total_unit"> </td>' +
-                // '<td class="total"></td>' +
-                '<td class="dozen"> <input type="text" name="dzns[]" id="dzn" class = "dozen form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} dozen_' +
-                currentIndex +
-                ' "  placeholder="Dzns " required></td>' +
-                '<td class="totDzn"><input type="text" style="color: black;" name="total_dzns[]" class="totDzn form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} totDzn_' +
-                currentIndex + ' " placeholder="Tot Dzn" readonly></td>' +
-                '<td class="rate"><input type="text"  id="rate" name="rate[]" class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} rate rate_' +
-                currentIndex + ' " placeholder="Rate" required></td>' +
-                '<td class="amount"><input type="text"  id="amount" style="color: black;" name="amount[]" class="amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} amount_' +
-                currentIndex + ' " placeholder="Amount" readonly></td>' +
-                '</div>' +
-                '</div>' +
-                '</td>' +
-                '</tr>';
-            $(".item-table tbody").append($html);
-
-
-
-            $(document).on('click', 'body *', function() {
-                $('.dozen').on("focusout", function() {
-                    var row_id = $(this).closest("tr").find(".row_id").val();
-                    let quantity = $(this).closest("tr").find(".qty_" + row_id).val();
-                    let dzns = $(this).closest("tr").find(".dozen_" + row_id).val();
-                    if (parseInt(quantity) > 0) {
-                        $(this).closest("tr").find(".totDzn_" + row_id).val(quantity * dzns);
-                    } else {
-                        $(this).closest("tr").find(".totDzn_" + row_id).val('');
-                    }
-                });
-                $('.rate').on("focusout", function() {
-
-                    var row_id = $(this).closest("tr").find(".row_id").val();
-                    let quantity = $(this).closest("tr").find(".totDzn_" + row_id).val();
-                    let price = $(this).closest("tr").find(".rate_" + row_id).val();
-                    // console.log(row_id + ", " + quantity + ", " + price);
-                    if (parseInt(quantity) > 0) {
-                        $(this).closest("tr").find(".amount_" + row_id).val(quantity * price);
-                    } else {
-                        $(this).closest("tr").find(".amount_" + row_id).val('');
-                    }
-                    doAmountTotal();
-                });
-
-
-                $('.delete-item').on("click", function() {
-                    doAmountTotal();
-                });
-
-                function doAmountTotal() {
-                    $('#total-amount').text("");
-                    var totalAmount = 0;
-                    $(".amount").each(function() {
-                        if (!isNaN(this.value) && this.value.length != 0) {
-                            totalAmount += parseFloat(this.value);
-                        }
-                    });
-                    $('#gross-amount').val(totalAmount.toFixed(2));
-                    $('#net-amount').val(totalAmount.toFixed(2));
-                }
-
-                $(".carriage, .discount, .commission").on("focusout", function() {
-                    var totalAmount = 0;
-                    $(".amount").each(function() {
-                        if (!isNaN(this.value) && this.value.length != 0) {
-                            totalAmount += parseFloat(this.value);
-                        }
-                    });
-                    let carriage = $(".carriage").val() ? $(".carriage").val() : 0;
-                    let discount = $(".discount").val() ? $(".discount").val() : 0;
-                    let commission = $(".commission").val() ? $(".commission").val() : 0;
-
-                    var totalLessAmount = parseInt(carriage) + parseInt(discount) + parseInt(
-                        commission);
-                    $('#net-amount').val(totalLessAmount ? totalAmount.toFixed(2) -
-                        totalLessAmount : totalAmount.toFixed(2));
-                })
-
-            });
-
-            $(document).on('click', 'body *', function() {
-                $('.amount').on("focusout", function() {
-                    doAmountTotal();
-                });
-
-                $('.delete-item').on("click", function() {
-                    doAmountTotal();
-                });
-
-                function doAmountTotal() {
-                    $('#total-amount').text("");
-                    var totalAmount = 0;
-                    $(".amount").each(function() {
-                        if (!isNaN(this.value) && this.value.length != 0) {
-                            totalAmount += parseFloat(this.value);
-                        }
-                    });
-                    $('#gross-amount').val(totalAmount.toFixed(2));
-                }
-            });
-
-
-            $(document).on('click', 'body *', function() {
-                $('.amount').on("focusout", function() {
-                    doAmountTotal();
-                });
-
-                $('.delete-item').on("click", function() {
-                    doAmountTotal();
-                });
-
-                function doAmountTotal() {
-                    $('#total-amount').text("");
-                    var totalAmount = 0;
-                    $(".amount").each(function() {
-                        if (!isNaN(this.value) && this.value.length != 0) {
-                            totalAmount += parseFloat(this.value);
-                        }
-                    });
-                    $('#gross-amount').val(totalAmount.toFixed(2));
-                }
-            });
-
-            $(document).on('click', 'body *', function() {
-                $('.qty').on("focusout", function() {
-                    doAmountTotal2();
-                });
-
-                $('.delete-item').on("click", function() {
-                    doAmountTotal2();
-                });
-
-                function doAmountTotal2() {
-                    $('#boray-amount').val("");
-                    $('#carton-amount').val("");
-                    var totalBorayAmount = 0;
-                    console.log(totalBorayAmount);
-                    var totalCartonAmount = 0;
-                    console.log(totalCartonAmount);
-                    var packingIndex = '.packing_' + currentIndex;
-
-                    $(".qty").each(function() {
-                        if (!isNaN(this.value) && this.value.length != 0) {
-                            var totalAmount = parseFloat(this.value);
-
-                            if (packingIndex.value === "Boray") {
-                                // console.log(packingType.value== Boray);
-                                totalBorayAmount += totalAmount;
-                            } else if (packingIndex.value === "Carton") {
-                                // console.log(packingType.value== Carton);
-                                totalCartonAmount += totalAmount;
-                            }
-
-                        }
-                    });
-
-                    // if (document.getElementById('packing').value == "Carton") {
-                    //     $('#carton-amount').val(totalAmount.toFixed(2));
-                    // }
-                    // if (document.getElementsByClassName('packing').value == "Boray") {
-                    //     $('#boray-amount').val(totalAmount.toFixed(2));
-                    // }
-
-                    // Assign calculated total amounts to their respective fields
-                    if (packingIndex.value === "Carton") {
-                        $('#carton-amount').val(totalCartonAmount.toFixed(2));
-                    }
-
-                    if (packingIndex.value === "Boray") {
-                        $('#boray-amount').val(totalBorayAmount.toFixed(2));
-                    }
-                }
-            });
-
-        })
-
-        // deleteItemRow();
-        selectableDropdown(document.querySelectorAll('.invoice-select .dropdown-item'));
-        selectableDropdown(document.querySelectorAll('.invoice-tax-select .dropdown-item'), getTaxValue);
-        selectableDropdown(document.querySelectorAll('.invoice-discount-select .dropdown-item'), getDiscountValue);
-
-        var f2 = flatpickr(document.getElementById('due'), {
-            defaultDate: currentDate.setDate(currentDate.getDate() + 5),
-        });
-
-        function deleteItemRow() {
-            let deleteItem = document.querySelectorAll('.delete-item');
-            for (var i = 0; i < deleteItem.length; i++) {
-                deleteItem[i].addEventListener('click', function() {
-                    this.parentElement.parentNode.parentNode.parentNode.remove();
-                })
-            }
+        var config = {
+            routes: {
+                getPartyCode: "{{ url('sale/get-product-rate') }}",
+            },
         }
     </script>
+
     <x-slot:footerFiles>
         <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
         <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>

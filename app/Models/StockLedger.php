@@ -9,5 +9,5 @@ class StockLedger extends Model
 {
     protected $guarded = ['id'];
 
-    protected $fillable = ['invoice_id', 'product_id', 'debit', 'credit', 'transaction_type'];
+    protected $fillable = ['product_id', 'debit', 'credit', 'transaction_type','naration','remarks'];
 }

@@ -6,10 +6,25 @@
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <x-slot:headerFiles>
-        <meta name="csrf-token" content="{{ csrf_token() }}" />
-        <script src="{{ asset('js/jquery.min.js') }}"></script>
-        @vite(['resources/scss/light/assets/elements/search.scss', 'resources/scss/dark/assets/elements/search.scss'])
-        <link rel="stylesheet" href="{{ asset('plugins/sweetalerts2/sweetalerts2.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
+        <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
+        @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
+        @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+            integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+        <!--  BEGIN CUSTOM STYLE FILE  -->
+        <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
+        {{-- <link rel="stylesheet" href="../src/plugins/src/filepond/filepond.min.css">
+        <link rel="stylesheet" href="../src/plugins/src/filepond/FilePondPluginImagePreview.min.css"> --}}
+
+        {{-- <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" /> --}}
+        <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
+        <!--  END CUSTOM STYLE FILE  -->
     </x-slot>
     <!-- END GLOBAL MANDATORY STYLES -->
 
@@ -86,7 +101,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <div class="input-group">
-                                        <select class="select2 custom-select form-control-sm mb-3 " name="party_id"
+                                        <select class="form-control-sm mb-3 select2 custom-select" name="party_id"
                                             id="party_id" style="width: 100%;">
                                             <option value="">Select</option>
                                             @foreach ($dropDownData['parties'] as $key => $value)
@@ -163,8 +178,8 @@
                                     <th scope="col"> <b>Id </b> </th>
                                     <th scope="col" style="width: 20%"> <b>Date</b> </th>
                                     <th scope="col" style="width: 30%"> <b>Party</b> </th>
-                                    <th scope="col" style="width: 30%"> <b>Total Amount</b> </th>
-                                    <th scope="col" style="width: 20%"> <b>Remarks</b> </th>
+                                    <th scope="col" style="width: 10%"> <b>Status</b> </th>
+                                    <th scope="col" style="width: 20%"> <b>Total Amount</b> </th>
                                     <th class="text-center" scope="col"></th>
                                 </tr>
                             </thead>
@@ -198,7 +213,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $saleOrder->total_amount }}</h6>
+                                                    <h6 class="mb-0">{{ $saleOrder->status }}</h6>
 
                                                 </div>
                                             </div>
@@ -207,7 +222,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $saleOrder->remarks}}</h6>
+                                                    <h6 class="mb-0">{{ $saleOrder->total_amount }}</h6>
 
                                                 </div>
                                             </div>
@@ -278,9 +293,28 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
+    </script>
     <x-slot:footerFiles>
-        <script src="{{ asset('js/common.js') }}"></script>
-        <script src="{{ asset('plugins/sweetalerts2/sweetalerts2.min.js') }}"></script>
+        <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
+
+        {{-- <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
+        <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script> --}}
+
+        <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
+        <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
+        {{-- <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script> --}}
+        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
+            integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        {{-- <script src="{{ asset('js/common.js') }}"></script> --}}
+
+        <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])
         <script>
             var config = {

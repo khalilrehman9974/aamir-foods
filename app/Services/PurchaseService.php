@@ -15,7 +15,7 @@ class PurchaseService
     const PER_PAGE = 10;
     const PURCHASE_TRANSACTION_TYPE = 'purchase';
     const PURCHASE_DESCRIPTION = 'Purchased products';
-    
+
     protected $commonService;
 
     public function __construct(CommonService $commonService)
@@ -41,7 +41,7 @@ class PurchaseService
                 'purchase_masters.fare',
                 'purchase_masters.carriage_inward',
                 'purchase_masters.remarks',
-                'parties.name as partyName',
+                'parties.name as partyName'
             )
             ->where('purchase_masters.id', $id)
             ->first();
@@ -91,17 +91,20 @@ class PurchaseService
         $session = $this->commonService->getSession();
         return [
             'grn_no' => $request['grn_no'],
+            'purchase_order_no' => $request['purchase_order_no'],
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
-            'type' => config('constants.transaction.Purchase'),
             'party_id' => $request['party_id'],
             'transporter_id' => $request['transporter_id'],
-            'bill_no' => $request['bill_no'],
+            'supplier_bill_no' => $request['supplier_bill_no'],
+            'unloaded_by' => $request['unloaded_by'],
             'business_id' => $session->business_id,
             'f_year_id' => $session->financial_year,
             'remarks' => $request['remarks'],
-            'total_amount' =>config('constants.ZERO'),
-            'fare' => $request['fare'],
-            'carriage_inward' => $request['carriage_inward'],
+            'gross_bill' => $request['gross_bill'],
+            'carriage' => $request['carriage'],
+            'total_quantity' => $request['total_quantity'],
+            'tax' => $request['tax'],
+            'net_amount' => $request['net_amount'],
             'created_by' => Auth::user()->id,
             'updated_by' => Auth::user()->id
         ];
@@ -116,12 +119,14 @@ class PurchaseService
     {
         return [
             'product_id' => $request['product_id'],
+            'packing_type' => $request['packing_type'],
+            'measurement_type' => $request['measurement_type'],
+            'size' => $request['size'],
             'quantity' => $request['quantity'],
-            'unit' => $request['unit'],
-            'total_unit' => config('constants.ZERO'),
-            'rate' => $request['rate'],
-            'amount' => config('constants.ZERO'),
+            'price' => $request['price'],
+            'amount' => $request['amount'],
             'purchase_master_id' => $purchaseParentId,
+
         ];
     }
 
@@ -134,11 +139,12 @@ class PurchaseService
         foreach ($data['product_id'] as $key => $value) {
             if (!empty($data['product_id'][$key])) {
                 $rec['product_id'] = $data['product_id'][$key];
-                $rec['unit'] = $data['unit'][$key];
+                $rec['packing_type'] = $data['packing_type'][$key];
+                $rec['measurement_type'] = $data['measurement_type'][$key];
+                $rec['size'] = $data['size'][$key];
                 $rec['quantity'] = $data['quantity'][$key];
-                $rec['rate'] = $data['rate'][$key];
-                $rec['amount'] = config('constants.ZERO');
-                $rec['total_unit'] = config('constants.ZERO');
+                $rec['price'] = $data['price'][$key];
+                $rec['amount'] = $data['amount'][$key];
                 $rec['purchase_master_id'] = $data['purchase_master_id'];
                 PurchaseDetail::create($rec);
             }

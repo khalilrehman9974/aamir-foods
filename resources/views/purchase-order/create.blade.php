@@ -66,7 +66,7 @@
                                     <div class="col-md-6">
                                         <label for="dispatch_note" class="form-label">PO # </label>
                                         <input id="invoice_no" type="text" style="color:black;"
-                                            value="{{ $invoiceNo }}" class="form-control form-control-sm" readonly>
+                                            value="{{ $poNo }}" class="form-control form-control-sm" readonly>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="date">
@@ -85,7 +85,7 @@
                                         <select id="party" type="text" name="party_id"
                                             placeholder="Please Select the Party Name"
                                             class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} "
-                                            required multiple>
+                                            required>
                                             <option value="">Select
                                             </option>
                                             @foreach ($dropDownData['parties'] as $key => $value)
@@ -106,7 +106,7 @@
                                             Person
                                         </label>
                                         <input id="contact_person" type="contact_person" name="contact_person"
-                                            value="{{ old('contact_person', !empty($purchaseOrder->contact_person) ? $purchaseOrder->company_name : '') }}"
+                                            value="{{ old('contact_person', !empty($purchaseOrder->contact_person) ? $purchaseOrder->contact_person : '') }}"
                                             placeholder="Contact Person Name... "
                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
                                             required>
@@ -117,7 +117,34 @@
                                     <div class="col-md-6 ">
                                         <label for="status">
                                             Status</label>
-                                        <select id="status" type="text" name="status"
+
+                                        <select id="status" name="status"
+                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mb-3 select2 custom-select"
+                                            required>
+                                            {{-- <option value="Pending">Pending
+                                                </option>
+                                                <option value="Delivered">
+                                                    Delivered
+                                                </option>
+                                                <option value="Cancelled">Cancelled
+                                                </option> --}}
+
+                                            <option value="Pending"
+                                                {{ old('status', $purchaseOrder->status ?? '') == 'Pending' ? 'selected' : '' }}>
+                                                Pending
+                                            </option>
+                                            <option value="Delivered"
+                                                {{ old('status', $purchaseOrder->status ?? '') == 'Delivered' ? 'selected' : '' }}>
+                                                Delivered
+                                            </option>
+                                            <option value="Cancelled"
+                                                {{ old('status', $purchaseOrder->status ?? '') == 'Cancelled' ? 'selected' : '' }}>
+                                                Cancelled
+                                            </option>
+
+                                        </select>
+
+                                        {{-- <select id="status" type="text" name="status"
                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mb-3 select2 custom-select"
                                             required>
                                             <option value="Pending">Pending
@@ -133,8 +160,8 @@
                                                         {{ (old('party_id') == $key ? 'selected' : '') || (!empty($saleOrder->party_id) ? collect($saleOrder->party_id)->contains($key) : '') ? 'selected' : '' }}>
                                                         {{ $value }}
                                                     </option>
-                                                @endforeach --}}
-                                        </select>
+                                                @endforeach
+                                        </select> --}}
                                     </div>
                                 </div>
 
@@ -150,15 +177,15 @@
                                                     <th class="">
                                                     </th>
                                                     <th></th>
-                                                    <th style="width: 20%;">Product</th>
-                                                    <th class="" style="width: auto;">Measurement Type</th>
-                                                    <th class="" style="width: auto;">Packing Type
+                                                    <th style="width: 15%;">Product</th>
+                                                    <th class="">M.T</th>
+                                                    <th class="">P.T
                                                     </th>
                                                     <th class="" style="width: 10%;">Size</th>
-                                                    <th class="" style="width: auto;">Quantity</th>
-                                                    <th class="">Price
+                                                    <th class="" style="width: 10;">Quantity</th>
+                                                    <th class="" style="width: 15%;">Price
                                                     </th>
-                                                    <th class="text-right" style="width: auto;">
+                                                    <th class="text-right" style="width: 10%;">
                                                         Amount
                                                     </th>
                                                     <th class="text-right" style="width: 20%;">
@@ -170,8 +197,8 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @if (empty($purchaseOrderDetails))
-                                                    <tr class="tr_clone validator_0">
+
+                                                {{-- <tr class="tr_clone validator_0">
                                                         <td class="delete-item-row">
                                                             <ul class="table-controls">
                                                                 <li>
@@ -201,7 +228,7 @@
                                                         </td>
                                                         <td>
                                                             <input type="text" name="row_id[]" class="row_id"
-                                                                value="0" hidden>
+                                                                value="2" hidden>
                                                         </td>
 
                                                         <td class="product">
@@ -268,9 +295,13 @@
                                                                 id="detail_remarks" cols="30" placeholder="Remarks">{{ @$purchaseOrderDetail->remarks }}</textarea>
                                                         </td>
                                                     </tr>
-                                                @else
+                                                @else --}}
+                                                @if (!empty($purchaseOrderDetails))
                                                     @foreach ($purchaseOrderDetails as $purchaseOrderDetail)
-                                                        <tr class="tr_clone validator_0">
+                                                        @php
+                                                            $index = $loop->index + 2; // Starts from 2
+                                                        @endphp
+                                                        <tr class="tr_clone validator_{{ $index }}">
                                                             <td class="delete-item-row">
                                                                 <ul class="table-controls">
                                                                     <li>
@@ -301,12 +332,12 @@
                                                             </td>
                                                             <td>
                                                                 <input type="text" name="row_id[]" class="row_id"
-                                                                    value="0" hidden>
+                                                                    value="{{ $index }}" hidden>
                                                             </td>
 
                                                             <td class="product">
                                                                 <select id="product_id" name="product_id[]"
-                                                                    class="form-control select2 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} product_2">
+                                                                    class="form-control select2 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} product product_{{ $index }}">
                                                                     <option selected="">Please
                                                                         select the
                                                                         Items</option>
@@ -321,14 +352,14 @@
                                                             <br>
                                                             <td class="quantity">
                                                                 <input type="text" style="color: black; "
-                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_2"
+                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_{{ $index }}"
                                                                     placeholder="M.T" name="measurement_type[]"
                                                                     value="{{ old('measurement_type', !empty($purchaseOrderDetail->measurement_type) ? $purchaseOrderDetail->measurement_type : '') }}"
                                                                     id="measurement" readonly>
                                                             </td>
                                                             <td class="quantity">
                                                                 <input type="text" style="color: black;"
-                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_2"
+                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_{{ $index }}"
                                                                     id="packing" name="packing_type[]"
                                                                     placeholder="P.T"
                                                                     value="{{ old('packing_type', !empty($purchaseOrderDetail->packing_type) ? $purchaseOrderDetail->packing_type : '') }}"
@@ -336,7 +367,7 @@
                                                             </td>
                                                             <td class="quantity">
                                                                 <input type="text" style="color: black;"
-                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} size_2"
+                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} size_{{ $index }}"
                                                                     id="size" name="size[]" placeholder="Size"
                                                                     value="{{ old('size', !empty(@$purchaseOrderDetail->size) ? @$purchaseOrderDetail->size : '') }}"
                                                                     readonly>
@@ -345,13 +376,13 @@
                                                             <td class="quantity">
                                                                 <input type="text"
                                                                     value="{{ old('quantity', !empty($purchaseOrderDetail->quantity) ? $purchaseOrderDetail->quantity : '') }}"
-                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_0"
+                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_{{ $index }}"
                                                                     name="quantity[]" placeholder="Qty">
                                                             </td>
                                                             <td class="quantity">
                                                                 <input type="text" id="rate" name="price[]"
                                                                     value="{{ old('price', !empty($purchaseOrderDetail->price) ? $purchaseOrderDetail->price : '') }}"
-                                                                    class="rate form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} rate rate_2"
+                                                                    class="rate form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} rate rate_{{ $index }}"
                                                                     placeholder="Price" required>
                                                             </td>
 
@@ -359,13 +390,13 @@
                                                                 <input type="text" style="color: black;"
                                                                     id="amount" name="amount[]"
                                                                     value="{{ old('amount', !empty($purchaseOrderDetail->amount) ? $purchaseOrderDetail->amount : '') }}"
-                                                                    class="amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} amount_2"
+                                                                    class="amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} amount_{{ $index }}"
                                                                     placeholder="Amount" readonly>
                                                             </td>
                                                             <td class="remarks">
                                                                 <textarea style="margin-top: 0px;" name="detail_remarks[]"
-                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} detail_remarks_2"
-                                                                    id="detail_remarks" cols="30" placeholder="Remarks">{{ @$purchaseOrderDetail->remarks }}</textarea>
+                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} detail_remarks_{{ $index }}"
+                                                                    id="detail_remarks" cols="30" placeholder="Remarks">{{ @$purchaseOrderDetail->detail_remarks }}</textarea>
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -408,9 +439,10 @@
                                                 class="col-md-3 col-form-label col-form-label-sm ">Gross
                                                 Amount</label>
                                             <div class="col-md-9">
-                                                <input type="text" id="gross-amount" style="color: black;"
+                                                <input type="number" id="gross-amount" style="color: black;"
                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} gross-amount"
                                                     name="gross_total" id="gross-amount" placeholder="Gross Amount"
+                                                    value="{{ old('gross_total', !empty($purchaseOrder->gross_total) ? $purchaseOrder->gross_total : '') }}"
                                                     readonly>
                                             </div>
                                         </div>
@@ -426,10 +458,10 @@
                                                 class="col-md-3 col-form-label col-form-label-sm ">Tax
                                                 Amount</label>
                                             <div class="col-md-9">
-                                                <input type="text" id="tax" style="color: black;"
+                                                <input type="number" id="tax" style="color: black;"
                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} tax"
-                                                    name="tax_amount"  placeholder="Tax Amount"
-                                                    >
+                                                    name="tax_amount" placeholder="Tax Amount"
+                                                    value="{{ old('tax_amount', !empty($purchaseOrder->tax_amount) ? $purchaseOrder->tax_amount : '') }}">
                                             </div>
                                         </div>
 
@@ -444,10 +476,10 @@
                                                 class="col-md-3 col-form-label col-form-label-sm ">Shipping
                                                 Amount</label>
                                             <div class="col-md-9">
-                                                <input type="text" id="shipping" style="color: black;"
+                                                <input type="number" id="shipping" style="color: black;"
                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} shipping"
-                                                    name="shipping_amount"  placeholder="Shipping Amount"
-                                                    >
+                                                    name="shipping_amount" placeholder="Shipping Amount"
+                                                    value="{{ old('shipping_amount', !empty($purchaseOrder->shipping_amount) ? $purchaseOrder->shipping_amount : '') }}">
                                             </div>
                                         </div>
 
@@ -462,10 +494,10 @@
                                                 class="col-md-3 col-form-label col-form-label-sm ">Other
                                                 Amount</label>
                                             <div class="col-md-9">
-                                                <input type="text" style="color: black;"
+                                                <input type="number" style="color: black;"
                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} other"
                                                     name="other_amount" id="otherAmount" placeholder="Other Amount"
-                                                    >
+                                                    value="{{ old('other_amount', !empty($purchaseOrder->other_amount) ? $purchaseOrder->other_amount : '') }}">
                                             </div>
                                         </div>
                                     </div>
@@ -482,7 +514,8 @@
                                             <div class="col-md-9">
                                                 <input type="text" id="net-amount" style="color: black;"
                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} net-amount"
-                                                    name="total_amount"  placeholder="Net Amount"
+                                                    name="total_amount" placeholder="Net Amount"
+                                                    value="{{ old('total_amount', !empty($purchaseOrder->total_amount) ? $purchaseOrder->total_amount : '') }}"
                                                     readonly>
                                             </div>
                                         </div>
@@ -521,6 +554,66 @@
     </div>
 
     <script>
+        $(document).on('click', 'body *', function() {
+            $('.rate').on("input", function() {
+                var row_id = $(this).closest("tr").find(".row_id").val();
+                let quantity = $(this).closest("tr").find(".qty_" + row_id).val();
+                let price = $(this).closest("tr").find(".rate_" + row_id).val();
+                // console.log(row_id + ", " + quantity + ", " + price);
+                if (parseInt(quantity) > 0) {
+                    $(this).closest("tr").find(".amount_" + row_id).val(quantity * price);
+                } else {
+                    $(this).closest("tr").find(".amount_" + row_id).val('');
+                }
+                doAmountTotal();
+            });
+
+
+
+            $('.delete-item').on("click", function() {
+                doAmountTotal();
+            });
+
+            function doAmountTotal() {
+                $('#total-amount').text("");
+                var totalAmount = 0;
+                $(".amount").each(function() {
+                    if (!isNaN(this.value) && this.value.length != 0) {
+                        totalAmount += parseFloat(this.value);
+                    }
+                });
+                $('#gross-amount').val(totalAmount.toFixed(2));
+                // $('#net-amount').val(totalAmount.toFixed(2));
+            }
+
+            $(".rate, #gross-amount, #tax, #shipping, #otherAmount").on("input", function() {
+                var totalAmount = 0;
+                $(".amount").each(function() {
+                    if (!isNaN(this.value) && this.value.length != 0) {
+                        totalAmount += parseFloat(this.value);
+                    }
+                });
+                let tax = $("#tax").val() ? $("#tax").val() : 0;
+                let shipping = $("#shipping").val() ? $("#shipping").val() : 0;
+                let otherAmount = $("#otherAmount").val() ? $("#otherAmount").val() : 0;
+
+                var totalLessAmount = parseInt(tax) + parseInt(shipping) + parseInt(
+                    otherAmount);
+
+                $('#net-amount').val((totalAmount + (totalLessAmount || 0)).toFixed(2));
+            })
+
+
+
+        });
+    </script>
+
+    <script src="{{ asset('js/purchaseOrder.js') }}"></script>
+
+
+
+
+    <script>
         document.getElementsByClassName('additem')[0].addEventListener('click', function() {
 
             let getTableElement = document.querySelector('.item-table');
@@ -537,27 +630,27 @@
                 currentIndex +
                 '"> <option selected="">Please select the Items</option>@foreach ($dropDownData['products'] as $key => $value) <option value="{{ $key }}"{{ (old('product_id') == $key ? 'selected' : '') || (!empty($purchaseOrder->product_id) ? collect($purchaseOrder->product_id)->contains($key) : '') ? 'selected' : '' }}>{{ $value }}</option>@endforeach</select> ' +
                 '<td class="quantity">' +
-                ' <input type="text" style="color: black; " value="{{ old('measurement_type', !empty($purchaseOrderDetail->measurement_type) ? $purchaseOrderDetail->measurement_type : '') }}" class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_' +
+                ' <input type="text" style="color: black; "  class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_' +
                 currentIndex +
                 '" placeholder="M.T" name="measurement_type[]" id="measurement" readonly></td>' +
                 '<td class="quantity"><input type="text" style="color: black;" class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_' +
                 currentIndex +
-                '"id="packing" value="{{ old('packing_type', !empty($purchaseOrderDetail->packing_type) ? $purchaseOrderDetail->packing_type : '') }}" name="packing_type[]" placeholder="P.T" readonly></td>' +
+                '"id="packing"  name="packing_type[]" placeholder="P.T" readonly></td>' +
                 '<td class="quantity"><input type="text" style="color: black;" class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} size_' +
                 currentIndex +
-                '"id="size" value="{{ old('size', !empty($purchaseOrderDetail->size) ? $purchaseOrderDetail->size : '') }}" name="size[]" placeholder="Size" readonly></td>' +
-                '<td class="quantity"> <input type="text" value="{{ old('quantity', !empty($purchaseOrderDetail->quantity) ? $purchaseOrderDetail->quantity : '') }}" class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_' +
+                '"id="size" name="size[]" placeholder="Size" readonly></td>' +
+                '<td class="quantity"> <input type="text"  class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_' +
                 currentIndex +
                 '"name="quantity[]" placeholder="Qty"></td>' +
-                '<td class="quantity"><input type="text" id="rate" name="price[]" value="{{ old('price', !empty($purchaseOrderDetail->price) ? $purchaseOrderDetail->price : '') }}" class="rate form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} rate_' +
+                '<td class="quantity"><input type="text" id="rate" name="price[]"  class="rate form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} rate_' +
                 currentIndex +
                 '"placeholder="Price" required></td>' +
-                '<td class="quantity"><input type="text" style="color: black;" id="amount" name="amount[]" value="{{ old('amount', !empty($purchaseOrderDetail->amount) ? $purchaseOrderDetail->amount : '') }}" class="amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} amount_' +
+                '<td class="quantity"><input type="text" style="color: black;" id="amount" name="amount[]"  class="amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} amount_' +
                 currentIndex +
                 '"placeholder="Amount" readonly></td>' +
                 '<td class="remarks"><textarea style="margin-top: 0px;" name="detail_remarks[]" class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} detail_remarks_' +
                 currentIndex +
-                '"id="detail_remarks" cols="30" placeholder="Remarks">{{ @$purchaseOrderDetail->remarks }}</textarea></td>' +
+                '"id="detail_remarks" cols="30" placeholder="Remarks"></textarea></td>' +
                 '</div>' +
                 '</div>' +
                 '</td>' +
@@ -569,13 +662,9 @@
 
             $(document).ready(function() {
                 $(".product_" + currentIndex).on('change', function() {
-                    console.log("Maaz Here");
                     var row_id = $(this).closest("tr").find(".row_id").val();
-                    var productSelected = '.product_' + row_id;
-                    console.log(productSelected);
-
-                    var name = $(productSelected + ' :selected').text();
-                    let url = config.routes.getProductMeasurementTypeDetail + '/' + name;
+                    var name = this.value;
+                    let url = config.routes.getProductSizeDetail + '/' + name;
                     $.ajax({
                         url: url,
                         type: 'GET',
@@ -583,7 +672,7 @@
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function(response) {
-                            $(".measurement_" + row_id).val(response.name.name);
+                            $(".size_" + row_id).val(response.size);
                         },
                         complete: function() {
                             $('#loading').css('display', 'none');
@@ -602,8 +691,7 @@
             $(document).ready(function() {
                 $(".product_" + currentIndex).on('change', function() {
                     var row_id = $(this).closest("tr").find(".row_id").val();
-                    var productSelected = '.product_' + row_id;
-                    var name = $(productSelected + ' :selected').text();
+                    var name = this.value;
                     let url = config.routes.getProductPackingTypeDetail + '/' + name;
                     $.ajax({
                         url: url,
@@ -632,9 +720,8 @@
             $(document).ready(function() {
                 $(".product_" + currentIndex).on('change', function() {
                     var row_id = $(this).closest("tr").find(".row_id").val();
-                    var productSelected = '.product_' + row_id;
-                    var name = $(productSelected + ' :selected').text();
-                    let url = config.routes.getProductSizeDetail + '/' + name;
+                    var name = this.value;
+                    let url = config.routes.getProductMeasurementTypeDetail + '/' + name;
                     $.ajax({
                         url: url,
                         type: 'GET',
@@ -642,7 +729,7 @@
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function(response) {
-                            $(".size_" + row_id).val(response.size);
+                            $(".measurement_" + currentIndex).val(response.name.name);
                         },
                         complete: function() {
                             $('#loading').css('display', 'none');
@@ -688,10 +775,10 @@
                         }
                     });
                     $('#gross-amount').val(totalAmount.toFixed(2));
-                    $('#net-amount').val(totalAmount.toFixed(2));
+                    // $('#net-amount').val(totalAmount.toFixed(2));
                 }
 
-                $("#tax, #shipping, #otherAmount").on("focusout", function() {
+                $(".rate, #gross-amount, #tax, #shipping, #otherAmount").on("input", function() {
                     var totalAmount = 0;
                     $(".amount").each(function() {
                         if (!isNaN(this.value) && this.value.length != 0) {
@@ -704,8 +791,8 @@
 
                     var totalLessAmount = parseInt(tax) + parseInt(shipping) + parseInt(
                         otherAmount);
-                    $('#net-amount').val(totalLessAmount ? totalAmount.toFixed(2) -
-                        totalLessAmount : totalAmount.toFixed(2));
+
+                    $('#net-amount').val((totalAmount + (totalLessAmount || 0)).toFixed(2));
                 })
 
 
@@ -773,13 +860,13 @@
 
         <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
         <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
-        <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script>
+        {{-- <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script> --}}
         <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
             integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="{{ asset('js/common.js') }}"></script>
+        {{-- <script src="{{ asset('js/common.js') }}"></script> --}}
 
         <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])

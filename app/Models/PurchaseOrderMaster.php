@@ -16,4 +16,8 @@ class PurchaseOrderMaster extends Model
     'other_amount','total_amount','business_id','f_year_id','created_by','updated_by'];
 
 
+    public function party(){
+        return $this->hasOne(CoaDetailAccount::class, 'account_code', 'party_id');
+    }
+
 }
