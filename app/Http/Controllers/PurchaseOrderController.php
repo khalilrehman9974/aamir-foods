@@ -64,7 +64,6 @@ class PurchaseOrderController extends Controller
         // try {
         //     DB::beginTransaction();
             //Insert data into POrder tables.
-            PurchaseOrderDetail::where('purchase_order_master_id', $request['id'])->delete();
             $pOrderMasterData = $this->purchaseOrderService->preparePOrderMasterData($request);
             $pOrderMasterInsert = $this->purchaseOrderService->findUpdateOrCreate(PurchaseOrderMaster::class, ['id' => ''], $pOrderMasterData);
             $pOrderDetailData = $this->purchaseOrderService->preparePOrderDetailData($request, $pOrderMasterInsert->id);
