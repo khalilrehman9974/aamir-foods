@@ -21,5 +21,24 @@ class DispatchNoteMaster extends Model
         return $this->hasOne(CoaDetailAccount::class, 'account_code', 'party_id');
     }
 
+    public function saleMan()
+    {
+        return $this->hasOne(SaleMan::class, 'id', 'saleman');
+    }
+
+    public function Belt()
+    {
+        return $this->hasOne(Sector::class, 'id', 'sector');
+    }
+
+    public function Area()
+    {
+        return $this->hasOne(Area::class, 'id', 'area');
+    }
+
+    public function DeliveredToParty()
+    {
+        return $this->hasOne(DeliveredToParties::class, 'id', 'delivered_to');
+    }
 
 }

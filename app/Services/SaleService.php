@@ -69,7 +69,7 @@ class SaleService
     {
         $q = SaleMaster::query();
         if (!empty($request['param'])) {
-            $q = SaleMaster::where('date', 'like', '%' . $request['param'] . '%')
+            $q = SaleMaster::with('party','SaleMan')->where('date', 'like', '%' . $request['param'] . '%')
             ->orWhere('sale_order_number', 'like', '%' . $request['param'] . '%')
             ->orWhere('party_id', 'like', '%' . $request['param'] . '%')
             ->orWhere('saleman', 'like', '%' . $request['param'] . '%')
@@ -86,6 +86,26 @@ class SaleService
         return $saleInvoices;
     }
 
+     /*
+    * Store dispatch note data.
+    * @param $model
+    * @param $where
+    * @param $data
+    *
+    * @return object $object.
+    * */
+    public function findUpdateOrCreate($model, array $where, array $data)
+    {
+        $object = $model::firstOrNew($where);
+
+        foreach ($data as $property => $value){
+            $object->{$property} = $value;
+        }
+        $object->save();
+
+        return $object;
+    }
+
 
     /*
      * Prepare sale master data.
@@ -94,16 +114,18 @@ class SaleService
      * */
     public function prepareSaleMasterData($request)
     {
+
         $session = $this->commonService->getSession();
         return [
             'dispatch_note_number' => $request['dispatch_note_number'],
             'sale_order_number' => $request['sale_order_number'],
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+
             'party_id' => $request['party_id'],
             'saleman' => $request['saleman'],
             'sector' => $request['sector'],
             'area' => $request['area'],
-            'delivered_to' => $request['delivered_to'],
+            'delivered_to' => $request['delivered_to'] ?? null,
             'transporter_id' => $request['transporter_id'],
             'vehicle_no' => $request['vehicle_no'],
             'driver_name' => $request['driver_name'],
@@ -115,11 +137,10 @@ class SaleService
             'total_carton' => $request['total_carton'],
             'gross_bill' => $request['gross_bill'],
             'carriage' => $request['carriage'],
-            'discount' => $request['discount'],
+            'totaldiscount' => $request['totaldiscount'],
             'commission' => $request['commission'],
             'net_amount' => $request['net_amount'],
-            'created_by' => Auth::user()->id,
-            'updated_by' => Auth::user()->id
+
         ];
     }
 
@@ -130,6 +151,7 @@ class SaleService
      * */
     public function prepareSaleDetailData($request, $saleParentId)
     {
+
         return [
             'product_id' => $request['product_id'],
             'packing_type' => $request['packing_type'],
@@ -138,6 +160,7 @@ class SaleService
             'dzns' => $request['dzns'],
             'total_dzns' => $request['total_dzns'],
             'rate' => $request['rate'],
+            'discount' => $request['discount'],
             'amount' => $request['amount'],
             'sale_master_id' => $saleParentId,
         ];
@@ -158,6 +181,7 @@ class SaleService
                 $rec['dzns'] = $data['dzns'][$key];
                 $rec['total_dzns'] = $data['total_dzns'][$key];
                 $rec['rate'] = $data['rate'][$key];
+                $rec['discount'] = $data['discount'][$key];
                 $rec['amount'] = $data['amount'][$key];
                 $rec['sale_master_id'] = $data['sale_master_id'];
                 SaleDetail::create($rec);

@@ -254,6 +254,7 @@ class CoaDetailAccountService
     public function prepareDetailAccountProductData($request, $detailAccountMasterInsert)
     {
 
+
         return [
             'product_id' => $request['product_id'] ?? null,
             'master_price_tag' => $request['master_price_tag'] ?? null,

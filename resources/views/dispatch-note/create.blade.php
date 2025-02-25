@@ -198,7 +198,8 @@ $isSelected = old('area') == $key || $sale_Order->pluck('area')->contains($key);
 
                                                                         <select id="delivered_to" name="delivered_to"
                                                                             class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered_to"
-                                                                            required>
+                                                                            >
+                                                                            <option value="">Same As Party</option>
                                                                             @foreach ($deliveredToParties as $key => $value)
                                                                                 <option value="{{ $key }}"
                                                                                     @php
@@ -247,7 +248,7 @@ $isSelected = old('delivered_to') == $key || $sale_Order->pluck('delivered_to')-
 
                                                                     <div class="col-md-6">
                                                                         <label for="inputState"
-                                                                            class="form-label">Builty No</label>
+                                                                            class="form-label">Bilty No</label>
                                                                         <input type="text" style="color: black; "
                                                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
                                                                             placeholder="bility No:" id="bility_no"
@@ -687,7 +688,7 @@ $isSelected = old('delivered_to') == $key || $sale_Order->pluck('delivered_to')-
             $(document).on('click', 'body *', function() {
                 $('.dzn').on("focusout", function() {
                     var row_id = $(this).closest("tr").find(".row_id").val();
-                   
+
                     let quantity = $(this).closest("tr").find(".qty_" + row_id).val();
                     let dzns = $(this).closest("tr").find(".dzn_" + row_id).val();
                     if (parseInt(quantity) > 0) {

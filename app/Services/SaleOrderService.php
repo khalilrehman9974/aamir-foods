@@ -168,7 +168,7 @@ class SaleOrderService
             'saleman' => $request['saleman'],
             'belt' => $request['belt'],
             'area' => $request['area'],
-            'delivered_to' => $request['delivered_to'],
+            'delivered_to' => $request['delivered_to'] ?? null,
             'status' => $request['status'],
             'total_boray' => $request['total_boray'],
             'total_carton' => $request['total_carton'],

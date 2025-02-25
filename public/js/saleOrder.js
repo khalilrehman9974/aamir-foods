@@ -204,9 +204,7 @@ $(document).ready(function() {
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            beforeSend: function() {
-                $(".measurement_" + row_id).html('<option>Loading...</option>').prop('disabled', true);
-            },
+
             success: function(response) {
                 $(".measurement_" + row_id).val(response.name.name);
             },
@@ -235,9 +233,6 @@ $(document).ready(function() {
             type: 'GET',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            beforeSend: function() {
-                $(".packing_" + row_id).html('<option>Loading...</option>').prop('disabled', true);
             },
             success: function(response) {
                 $(".packing_" + row_id).val(response.name.name);

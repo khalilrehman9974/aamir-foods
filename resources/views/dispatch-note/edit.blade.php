@@ -201,7 +201,8 @@ $isSelected = old('area') == $key || $note->pluck('area')->contains($key); @endp
 
                                                                         <select id="delivered_to" name="delivered_to"
                                                                             class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered_to"
-                                                                            required>
+                                                                            >
+                                                                            <option value="">Same As Party</option>
                                                                             @foreach ($deliveredToParties as $key => $value)
                                                                                 <option value="{{ $key }}"
                                                                                     @php

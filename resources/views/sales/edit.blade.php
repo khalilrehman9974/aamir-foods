@@ -113,8 +113,7 @@
                                                                     <input type="text"
                                                                         class="form-control form-control-sm"
                                                                         id="date" style="color:black;"
-                                                                        name="date"
-                                                                        value="{{ $sale->date }}"
+                                                                        name="date" value="{{ $sale->date }}"
                                                                         placeholder="Select The Date" readonly>
                                                                 </div>
 
@@ -205,8 +204,7 @@ $isSelected = old('area') == $key || $sale->pluck('area')->contains($key); @endp
 
 
                                                                     <select id="delivered_to" name="delivered_to"
-                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered_to"
-                                                                        required>
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered_to">
                                                                         @foreach ($deliveredToParties as $key => $value)
                                                                             <option value="{{ $key }}"
                                                                                 @php
@@ -273,6 +271,7 @@ $isSelected = old('transporter_id') == $key || $sale->pluck('transporter_id')->c
                                                             </div>
                                                         </div>
 
+
                                                         <div class="invoice-detail-terms"
                                                             style="padding: 0px 0px 0px 0px !important;">
                                                             <div class="tab-content mt-5" id="pills-tabContent">
@@ -303,6 +302,9 @@ $isSelected = old('transporter_id') == $key || $sale->pluck('transporter_id')->c
                                                                                         Dzns</th>
                                                                                     <th class="text-right">
                                                                                         Rate
+                                                                                    </th>
+                                                                                    <th class="text-right">
+                                                                                        Discount
                                                                                     </th>
 
                                                                                     <th class="text-right"
@@ -418,7 +420,8 @@ $isSelected = old('transporter_id') == $key || $sale->pluck('transporter_id')->c
                                                                                                 <input type="text"
                                                                                                     style="color: black;"
                                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_{{ $index }}"
-                                                                                                    id="packing" value="{{$saleDetail->packing_type}}"
+                                                                                                    id="packing"
+                                                                                                    value="{{ $saleDetail->packing_type }}"
                                                                                                     {{-- value="{{ old('packing_type', !empty($saleDetail->packing_type) ? $saleDetail->packing_type : '') }}" --}}
                                                                                                     name="packing_type[]"
                                                                                                     placeholder="P.T"
@@ -428,7 +431,8 @@ $isSelected = old('transporter_id') == $key || $sale->pluck('transporter_id')->c
                                                                                                 <input type="text"
                                                                                                     style="color: black;"
                                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_{{ $index }}"
-                                                                                                    placeholder="M.T" value="{{$saleDetail->measurement_type}}"
+                                                                                                    placeholder="M.T"
+                                                                                                    value="{{ $saleDetail->measurement_type }}"
                                                                                                     {{-- value="{{ old('measurement_type', !empty($saleDetail->measurement_type) ? $saleDetail->measurement_type : '') }}" --}}
                                                                                                     name="measurement_type[]"
                                                                                                     id="measurement"
@@ -440,7 +444,7 @@ $isSelected = old('transporter_id') == $key || $sale->pluck('transporter_id')->c
                                                                                                     id="quantity"
                                                                                                     class="qty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_{{ $index }}"
                                                                                                     {{-- value="{{ old('quantity', !empty($saleDetail->quantity) ? $saleDetail->quantity : '') }}" --}}
-                                                                                                    value="{{$saleDetail->quantity}}"
+                                                                                                    value="{{ $saleDetail->quantity }}"
                                                                                                     name="quantity[]"
                                                                                                     style="color:black;"
                                                                                                     placeholder="Qty"
@@ -452,7 +456,7 @@ $isSelected = old('transporter_id') == $key || $sale->pluck('transporter_id')->c
                                                                                                     id="dzn"
                                                                                                     name="dzns[]"
                                                                                                     style="color: black;"
-                                                                                                    value="{{$saleDetail->dzns}}"
+                                                                                                    value="{{ $saleDetail->dzns }}"
                                                                                                     {{-- value="{{ old('dzns', !empty($saleDetail->dzns) ? $saleDetail->dzns : '') }}" --}}
                                                                                                     class="dozen form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} dozen_{{ $index }}"
                                                                                                     placeholder="Dzn"
@@ -463,7 +467,7 @@ $isSelected = old('transporter_id') == $key || $sale->pluck('transporter_id')->c
                                                                                                     id="total_dzns"
                                                                                                     style="color: black;"
                                                                                                     name="total_dzns[]"
-                                                                                                    value="{{$saleDetail->total_dzns}}"
+                                                                                                    value="{{ $saleDetail->total_dzns }}"
                                                                                                     {{-- value="{{ old('total_dzns', !empty($saleDetail->total_dzns) ? $saleDetail->total_dzns : '') }}" --}}
                                                                                                     class="totDzn form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} totDzn_{{ $index }}"
                                                                                                     placeholder="Tot.Dzns"
@@ -475,10 +479,21 @@ $isSelected = old('transporter_id') == $key || $sale->pluck('transporter_id')->c
                                                                                                     id="rate"
                                                                                                     name="rate[]"
                                                                                                     {{-- value="{{ old('rate', !empty($pricesArray->price) ? $pricesArray->price : '') }}" --}}
-                                                                                                    value="{{$pricesArray[$saleDetail->product_id]}}"
+                                                                                                    value="{{ $saleDetail->rate }}"
                                                                                                     {{-- value="{{ old('rate', isset($pricesArray[$saleDetail->product_id]) ? $pricesArray[$saleDetail->product_id] : '') }}" --}}
                                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} rate rate_{{ $index }}"
                                                                                                     placeholder="Rate"
+                                                                                                    required>
+                                                                                            </td>
+                                                                                            <td class="discount">
+                                                                                                <input type="number"
+                                                                                                    id="discount"
+                                                                                                    name="discount[]"
+                                                                                                    {{-- value="{{ old('rate', !empty($pricesArray->price) ? $pricesArray->price : '') }}" --}}
+                                                                                                    {{-- value="{{ old('discount', isset($saleDetail[$dispatchNoteDetail->product_id]) ? $discountsArray[$saleDetail->product_id] : '') }}" --}}
+                                                                                                    value="{{ $saleDetail->discount }}"
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount discount_{{ $index }}"
+                                                                                                    placeholder="Discount"
                                                                                                     required>
                                                                                             </td>
 
@@ -486,7 +501,7 @@ $isSelected = old('transporter_id') == $key || $sale->pluck('transporter_id')->c
                                                                                                 <input type="text"
                                                                                                     id="amount"
                                                                                                     style="color: black;"
-                                                                                                    value="{{$saleDetail->amount}}"
+                                                                                                    value="{{ $saleDetail->amount }}"
                                                                                                     {{-- value="{{ old('amount', !empty($saleDetail->amount) ? $saleDetail->amount : '') }}" --}}
                                                                                                     name="amount[]"
                                                                                                     class="amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} amount_{{ $index }}"
@@ -577,7 +592,8 @@ $isSelected = old('transporter_id') == $key || $sale->pluck('transporter_id')->c
                                                                                         Amount</label> --}}
                                                                                     <input type="text"
                                                                                         style="color: black;"
-                                                                                        id="gross-amount" value="{{ old('gross_bill', !empty($sale->gross_bill) ? $sale->gross_bill : '') }}"
+                                                                                        id="gross-amount"
+                                                                                        value="{{ old('gross_bill', !empty($sale->gross_bill) ? $sale->gross_bill : '') }}"
                                                                                         name="gross_bill"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
                                                                                         placeholder="Gross.Amount"
@@ -628,10 +644,10 @@ $isSelected = old('transporter_id') == $key || $sale->pluck('transporter_id')->c
                                                                                     <input type="number"
                                                                                         style="color: black;"
                                                                                         id="discount-amount"
-                                                                                        value="{{ old('discount', !empty($sale->discount) ? $sale->discount : '') }}"
-                                                                                        name="discount"
-                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount"
-                                                                                        placeholder="Discount.Amount">
+                                                                                        {{-- value="{{ old('discount', !empty($sale->totaldiscount) ? $sale->totaldiscount : '') }}" --}}
+                                                                                        name="totaldiscount"
+                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount_amount"
+                                                                                        placeholder="Discount.Amount" readonly>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -679,7 +695,8 @@ $isSelected = old('transporter_id') == $key || $sale->pluck('transporter_id')->c
                                                                                         Amount</label> --}}
                                                                                     <input type="text"
                                                                                         style="color: black;"
-                                                                                        id="net-amount" value=" {{ $sale->net_amount }} "
+                                                                                        id="net-amount"
+                                                                                        value=" {{ $sale->net_amount }} "
                                                                                         name="net_amount"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
                                                                                         placeholder="Net.Amount"
@@ -722,9 +739,282 @@ $isSelected = old('transporter_id') == $key || $sale->pluck('transporter_id')->c
             </div>
         </div>
     </div>
-    <script src="{{ asset('js/saleInvoice.js') }}"></script>
+    {{-- <script src="{{ asset('js/saleInvoice.js') }}"></script> --}}
 
 
+    <script>
+        //Runtime calculation
+
+
+        $(document).ready(function() {
+            // Function to update the amount
+            let getTableElement = document.querySelector('.item-table');
+            let currentIndex = getTableElement.rows.length;
+
+            function updateAmount(row_id) {
+                let quantity = $(".totDzn_" + row_id).val();
+                let price = $(".rate_" + row_id).val();
+
+                if (parseFloat(quantity) > 0 && parseFloat(price) > 0) {
+                    $(".amount_" + row_id).val((quantity * price).toFixed(2)); // Format to 2 decimal places
+                } else {
+                    $(".amount_" + row_id).val('');
+                }
+                doAmountTotal();
+                discountTotal();
+                NetAmountTotal();
+            }
+
+            // Event listener for dozen input (Calculate totDzn)
+            // $(document).on("focusout", ".dozen", function () {
+            //     var row_id = $(this).closest("tr").find(".row_id").val();
+            //     let quantity = $(this).closest("tr").find(".qty_" + row_id).val();
+            //     let dzns = $(this).closest("tr").find(".dozen_" + row_id).val();
+
+            //     if (parseInt(quantity) > 0) {
+            //         $(this).closest("tr").find(".totDzn_" + row_id).val(quantity * dzns);
+            //     } else {
+            //         $(this).closest("tr").find(".totDzn_" + row_id).val('');
+            //     }
+            //     updateAmount(row_id); // Update amount when dozen changes
+            // });
+
+            // Event listener for rate input (when manually changed)
+            $(document).on("input", ".rate, .discount, .commission_amount", function() {
+                var row_id = $(this).closest("tr").find(".row_id").val();
+                updateAmount(row_id);
+            });
+
+            // Run on page load to handle controller-filled rate values
+            $(".rate").each(function() {
+                var row_id = $(this).closest("tr").find(".row_id").val();
+                updateAmount(row_id); // Ensure amount is calculated on page load
+            });
+
+            // Observer to detect when the rate is set automatically by the controller
+            $(".rate").each(function() {
+                var targetNode = this;
+                var observer = new MutationObserver(function(mutationsList) {
+                    mutationsList.forEach(function(mutation) {
+                        if (mutation.type === "attributes" && mutation.attributeName ===
+                            "value") {
+                            var row_id = $(targetNode).closest("tr").find(".row_id").val();
+                            updateAmount(row_id);
+                        }
+                    });
+                });
+
+                observer.observe(targetNode, {
+                    attributes: true,
+                    attributeFilter: ["value"]
+                });
+            });
+
+            // $('.rate').on("focusout", function () {
+
+            //     var row_id = $(this).closest("tr").find(".row_id").val();
+            //     let totalDzns = $(this).closest("tr").find(".totDzn_" + row_id).val();
+            //     let rate = $(this).closest("tr").find(".rate_" + row_id).val();
+            //     if (parseInt(totalDzns) > 0) {
+            //         $(this).closest("tr").find(".amount_" + row_id).val(totalDzns * rate);
+            //     } else {
+            //         $(this).closest("tr").find(".amount_" + row_id).val('');
+            //     }
+            //     doAmountTotal();
+            // });
+
+
+
+
+            $('.delete-item').on("click", function() {
+                doAmountTotal();
+                discountTotal();
+                NetAmountTotal();
+            });
+
+            function doAmountTotal() {
+                $('#total-amount').text("");
+                var totalAmount = 0;
+                $(".amount").each(function() {
+                    if (!isNaN(this.value) && this.value.length != 0) {
+                        totalAmount += parseFloat(this.value);
+                    }
+                });
+                $('#gross-amount').val(totalAmount.toFixed(2));
+                // $('#net-amount').val(totalAmount.toFixed(2));
+            }
+
+            function discountTotal() {
+                $('#discount-amount').text("");
+                var totalDiscount = 0;
+                $(".discount").each(function() {
+                    if (!isNaN(this.value) && this.value.length != 0) {
+                        totalDiscount += parseFloat(this.value);
+                    }
+                });
+                $('#discount-amount').val(totalDiscount.toFixed(2));
+            }
+
+            function NetAmountTotal() {
+                var totalAmount = 0;
+                let carriage = $(".carriage").val() ? $(".carriage").val() : 0;
+                let discount = $(".discount_amount").val() ? $(".discount_amount").val() : 0;
+                let grossAmount = $("#gross-amount").val() ? $("#gross-amount").val() : 0;
+                let commission = $(".commission").val() ? $(".commission").val() : 0;
+
+
+
+                var totalLessAmount = parseInt(carriage) + parseInt(discount);
+
+                // $('#net-amount').val(totalLessAmount ? totalAmount.toFixed(2) - totalLessAmount : totalAmount.toFixed(2));
+                var netAmount = parseFloat(grossAmount) - totalLessAmount - commission;
+
+                // Update the #net-amount field with the calculated net amount
+                $('#net-amount').val(netAmount.toFixed(2));
+
+            }
+
+
+
+        });
+
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
+
+        $("#dispatch_note").on("keypress", function(event) {
+            if ($("#dispatch_note").val() !== "") {
+                if (event.which == 13) {
+                    alert(event.which);
+                    event.preventDefault()
+                }
+            }
+        });
+
+        $(document).on('click', 'body *', function() {
+            $('.amount').on("focusout", function() {
+                doAmountTotal();
+            });
+
+            $('.delete-item').on("click", function() {
+                doAmountTotal();
+            });
+
+            function doAmountTotal() {
+                $('#total-amount').text("");
+                var totalAmount = 0;
+                $(".amount").each(function() {
+                    if (!isNaN(this.value) && this.value.length != 0) {
+                        totalAmount += parseFloat(this.value);
+                    }
+                });
+                $('#gross-amount').val(totalAmount.toFixed(2));
+            }
+        });
+
+
+
+
+
+        $('#code').on('keypress', function(event) {
+            if (event.key === "Enter") {
+                var code = $('#code :selected').val();
+                let url = config.routes.getParty + '/' + code;
+                // let url = "{{ url('co-inv-party/get-party-account') }}" + '/' + subCode;
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        $("#party").val(response.account_name);
+                    },
+                    complete: function() {
+                        $('#loading').css('display', 'none');
+                    },
+                    error: function(errorThrown) {
+                        $('#party').val('');
+                        var errors = errorThrown.responseJSON.errors;
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Something went wrong',
+                        })
+                    }
+                })
+            }
+        })
+
+
+
+        $('#party').on('change', function() {
+            var name = $('#party :selected').text();
+            let url = config.routes.getPartyCode + '/' + name;
+            // let url = "{{ url('co-inv-party/get-party-account') }}" + '/' + subCode;
+            $.ajax({
+                url: url,
+                type: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    $("#code").val(response.account_code);
+                },
+                complete: function() {
+                    $('#loading').css('display', 'none');
+                },
+                error: function(errorThrown) {
+                    $('#code').val('');
+                    var errors = errorThrown.responseJSON.errors;
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Something went wrong',
+                    })
+                }
+            })
+        })
+
+
+        $(document).on('click', 'body *', function() {
+            $('.amount').on("focusout", function() {
+                doAmountTotal();
+                discountTotal();
+            });
+
+            $('.delete-item').on("click", function() {
+                doAmountTotal();
+            });
+
+            function doAmountTotal() {
+                $('#total-amount').text("");
+                var totalAmount = 0;
+                $(".amount").each(function() {
+                    if (!isNaN(this.value) && this.value.length != 0) {
+                        totalAmount += parseFloat(this.value);
+                    }
+                });
+                $('#gross-amount').val(totalAmount.toFixed(2));
+            }
+        });
+
+        $(document).on('click', 'body *', function() {
+            $('.discount').on("input", function() {
+                discountTotal();
+            });
+
+
+            function discountTotal() {
+                $('#discount-amount').text("");
+                var totalDiscount = 0;
+                $(".discount").each(function() {
+                    if (!isNaN(this.value) && this.value.length != 0) {
+                        totalDiscount += parseFloat(this.value);
+                    }
+                });
+                $('#discount-amount').val(totalDiscount.toFixed(2));
+            }
+        });
+    </script>
 
     <script>
         var config = {

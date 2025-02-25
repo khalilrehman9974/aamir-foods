@@ -68,8 +68,8 @@ class SaleOrderController extends Controller
         $pageTitle = 'Create Sale Orders';
         $maxid = SaleOrder::max('id') + 1;
         $dropDownData = $this->saleOrderService->DropDownData();
-        $saleOrderDetails = SaleOrderDetail::where('sale_order_master_id')->get();
-        return view('sale-orders.create', compact('pageTitle', 'dropDownData', 'saleOrderDetails', 'maxid'));
+
+        return view('sale-orders.create', compact('pageTitle', 'dropDownData', 'maxid'));
     }
 
     /*
@@ -79,9 +79,9 @@ class SaleOrderController extends Controller
     public function store(Request $request)
     {
 
-        // dd($request);
 
-       
+
+
 
         // if ($request->hasFile('images')) {
         //     foreach ($request->file('images') as $file) {  // This should be an UploadedFile object

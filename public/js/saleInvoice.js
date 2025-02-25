@@ -18,6 +18,8 @@ $(document).ready(function () {
             $(".amount_" + row_id).val('');
         }
         doAmountTotal();
+        discountTotal();
+        NetAmountTotal();
     }
 
     // Event listener for dozen input (Calculate totDzn)
@@ -35,9 +37,8 @@ $(document).ready(function () {
     // });
 
     // Event listener for rate input (when manually changed)
-    $(document).on("input", ".rate", function () {
+    $(document).on("input", ".rate, .discount, .commission_amount", function () {
         var row_id = $(this).closest("tr").find(".row_id").val();
-        console.log(row_id);
         updateAmount(row_id);
     });
 
@@ -80,6 +81,8 @@ $(document).ready(function () {
 
     $('.delete-item').on("click", function () {
         doAmountTotal();
+        discountTotal();
+        NetAmountTotal();
     });
 
     function doAmountTotal() {
@@ -94,20 +97,38 @@ $(document).ready(function () {
         // $('#net-amount').val(totalAmount.toFixed(2));
     }
 
-    $(".carriage, .discount, .commission").on("input", function () {
-        var totalAmount = 0;
-        $(".amount").each(function () {
+    function discountTotal() {
+        $('#discount-amount').text("");
+        var totalDiscount = 0;
+        $(".discount").each(function () {
             if (!isNaN(this.value) && this.value.length != 0) {
-                totalAmount += parseFloat(this.value);
+                totalDiscount += parseFloat(this.value);
             }
         });
-        let carriage = $(".carriage").val() ? $(".carriage").val() : 0;
-        let discount = $(".discount").val() ? $(".discount").val() : 0;
-        let commission = $(".commission").val() ? $(".commission").val() : 0;
+        $('#discount-amount').val(totalDiscount.toFixed(2));
+    }
 
-        var totalLessAmount = parseInt(carriage) + parseInt(discount) + parseInt(commission);
-        $('#net-amount').val(totalLessAmount ? totalAmount.toFixed(2) - totalLessAmount : totalAmount.toFixed(2));
-    })
+    function NetAmountTotal() {
+        var totalAmount = 0;
+        let carriage = $(".carriage").val() ? $(".carriage").val() : 0;
+        let discount = $(".discount_amount").val() ? $(".discount_amount").val() : 0;
+        let grossAmount = $("#gross-amount").val() ? $("#gross-amount").val() : 0;
+        let commission = $(".commission").val() ? $(".commission").val() : 0;
+        let commissionAmount = (commission / 100) * grossAmount;
+        $('#commission-amount').val(parseFloat(commissionAmount).toFixed(2));
+
+        let totalCommission = parseFloat($("#commission-amount").val()) || commissionAmount;
+
+
+        var totalLessAmount = parseInt(carriage) + parseInt(discount);
+
+        // $('#net-amount').val(totalLessAmount ? totalAmount.toFixed(2) - totalLessAmount : totalAmount.toFixed(2));
+        var netAmount = parseFloat(grossAmount) - totalLessAmount - totalCommission;
+
+        // Update the #net-amount field with the calculated net amount
+        $('#net-amount').val(netAmount.toFixed(2));
+
+    }
 
 
 
@@ -213,6 +234,7 @@ $('#party').on('change', function () {
 $(document).on('click', 'body *', function () {
     $('.amount').on("focusout", function () {
         doAmountTotal();
+        discountTotal();
     });
 
     $('.delete-item').on("click", function () {
@@ -228,5 +250,23 @@ $(document).on('click', 'body *', function () {
             }
         });
         $('#gross-amount').val(totalAmount.toFixed(2));
+    }
+});
+
+$(document).on('click', 'body *', function () {
+    $('.discount').on("input", function () {
+        discountTotal();
+    });
+
+
+    function discountTotal() {
+        $('#discount-amount').text("");
+        var totalDiscount = 0;
+        $(".discount").each(function () {
+            if (!isNaN(this.value) && this.value.length != 0) {
+                totalDiscount += parseFloat(this.value);
+            }
+        });
+        $('#discount-amount').val(totalDiscount.toFixed(2));
     }
 });

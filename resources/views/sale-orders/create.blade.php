@@ -64,8 +64,7 @@
                                                 <div class="col-lg-12 col-12 ">
                                                     <form
                                                         action="{{ !empty($saleOrder) ? route('sale-order.update') : route('sale-order.save') }}"
-                                                        method="POST" autocomplete="off" enctype="multipart/form-data"
-                                                        class="row g-3 needs-validation" novalidate>
+                                                        method="POST" autocomplete="off" enctype="multipart/form-data">
                                                         @csrf
                                                         <input type="hidden" name="id" id="id"
                                                             value="{{ isset($saleOrder->id) ? $saleOrder->id : '' }}" />
@@ -330,8 +329,7 @@ $isSelected = old('area') == $key || $saleOrder->pluck('area')->contains($key); 
                                                                             @if (empty($saleOrder))
                                                                                 <select id="delivered-to-dropdown"
                                                                                     name="delivered_to"
-                                                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered-to-dropdown"
-                                                                                    required>
+                                                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered-to-dropdown">
                                                                                     {{-- <option value="select-all"
                                                                                         class="select-all-option">Select All
                                                                                     </option> --}}
@@ -357,8 +355,7 @@ $isSelected = old('area') == $key || $saleOrder->pluck('area')->contains($key); 
                                                                                 </select> --}}
                                                                                 <select id="delivered-to-dropdown"
                                                                                     name="delivered_to"
-                                                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered-to-dropdown"
-                                                                                    required>
+                                                                                    class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered-to-dropdown">
                                                                                     @foreach ($dropDownData['deliverdToParties'] as $key => $value)
                                                                                         <option
                                                                                             value="{{ $key }}"
@@ -459,7 +456,8 @@ $isSelected = old('area') == $key || $saleOrder->pluck('area')->contains($key); 
                                                                                             <th class="">
                                                                                                 Dzns
                                                                                             </th>
-                                                                                            <th class="text-right" style="width: 10%">
+                                                                                            <th class="text-right"
+                                                                                                style="width: 10%">
                                                                                                 Total
                                                                                                 Dzns</th>
                                                                                             <th class="text-right">
@@ -478,9 +476,9 @@ $isSelected = old('area') == $key || $saleOrder->pluck('area')->contains($key); 
                                                                                     </thead>
                                                                                     <tbody>
 
-                                                                                        @if (empty($saleOrderDetails))
 
-                                                                                            <tr
+
+                                                                                            {{-- <tr
                                                                                                 class="tr_clone validator_0">
                                                                                                 <td
                                                                                                     class="delete-item-row">
@@ -628,7 +626,8 @@ $isSelected = old('area') == $key || $saleOrder->pluck('area')->contains($key); 
                                                                                                         readonly>
                                                                                                 </td>
                                                                                             </tr>
-                                                                                        @else
+                                                                                        @else --}}
+                                                                                        @if (!empty($saleOrderDetails))
                                                                                             @foreach ($saleOrderDetails as $saleOrderDetail)
                                                                                                 @php
                                                                                                     $index =
@@ -986,9 +985,6 @@ $isSelected = old('area') == $key || $saleOrder->pluck('area')->contains($key); 
                 updatePackingTotals();
             });
         });
-
-
-
     </script>
 
     <script>
@@ -1006,18 +1002,18 @@ $isSelected = old('area') == $key || $saleOrder->pluck('area')->contains($key); 
                 '" hidden></td>' +
                 '<td class="product"> <select id="product" type = "text" name = "product_id[]" class ="form-control select2 custom-select form-control-sm product product_' +
                 currentIndex +
-                '" placeholder = "Please Select the Product" required ><option value = "" >Select the Product </option>  </select> </td> ' +
-                '<td><input id="packing" name="packing_type[]" style="color: black; " type="text" class = "packing form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_' +
+                '" placeholder = "Please Select the Product" required ><option value = "" >Select the Product </option>  </select> ' +
+                ' </td> ' +
+                '<td class="packingType" ><input type="text" id="packing" name="packing_type[]" style="color: black; "  class = "packing form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_' +
                 currentIndex +
                 '" placeholder="P.T" readonly></td>' +
-                '<td><input type="text" style="color: black; " placeholder="M.T" name="measurement_type[]" id="measurement" class = "measurement form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_' +
+                '<td class="measurementType" ><input type="text" style="color: black; " placeholder="M.T" name="measurement_type[]" id="measurement" class = "measurement form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_' +
                 currentIndex + '" readonly> </td> ' +
                 '<td class="qty2">' +
                 ' <input type="number" name="quantity[]" id="quantity" class = "qty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_' +
                 currentIndex +
                 '" placeholder="Qty" required></td>' +
-                // '<td class="total_unit"> </td>' +
-                // '<td class="total"></td>' +
+
                 '<td class="dozen"> <input type="number" name="dzn[]" id="dzn" class = "dozen form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} dozen_' +
                 currentIndex +
                 ' "  placeholder="Dzns " required></td>' +
@@ -1059,11 +1055,7 @@ $isSelected = old('area') == $key || $saleOrder->pluck('area')->contains($key); 
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        beforeSend: function() {
-                            $(".measurement_" + row_id).html(
-                                    '<option>Loading...</option>')
-                                .prop('disabled', true);
-                        },
+
                         success: function(response) {
                             $(".measurement_" + row_id).val(response.name.name);
                         },
@@ -1097,10 +1089,7 @@ $isSelected = old('area') == $key || $saleOrder->pluck('area')->contains($key); 
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        beforeSend: function() {
-                            $(".packing_" + row_id).html('<option>Loading...</option>')
-                                .prop('disabled', true);
-                        },
+                        
                         success: function(response) {
                             $(".packing_" + row_id).val(response.name.name);
                         },
@@ -1484,6 +1473,5 @@ $isSelected = old('area') == $key || $saleOrder->pluck('area')->contains($key); 
 
         <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])
-
     </x-slot>
 </x-base-layout>

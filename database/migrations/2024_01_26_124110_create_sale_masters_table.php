@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('saleman');
             $table->integer('sector');
             $table->integer('area');
-            $table->integer('delivered_to');
+            $table->integer('delivered_to')->nullable();
             $table->string('vehicle_no');
             $table->string('driver_name');
             $table->string('bilty_no');

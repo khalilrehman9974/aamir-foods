@@ -4,22 +4,6 @@
         {{ $pageTitle }}
     </x-slot>
     <x-slot:headerFiles>
-
-        {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
-            integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
-        @vite(['resources/scss/light/assets/components/timeline.scss'])
-        <meta charset="UTF-8">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-        <link rel="stylesheet" href="{{ asset('plugins/sweetalerts2/sweetalerts2.css') }}">
-        {{-- @vite(['resources/scss/light/plugins/sweetalerts2/custom-sweetalert.scss'])
-        @vite(['resources/scss/dark/plugins/sweetalerts2/custom-sweetalert.scss']) --}}
-        @vite(['resources/scss/light/assets/components/accordions.scss'])
-        @vite(['resources/scss/dark/assets/components/accordions.scss'])
-        @vite(['resources/scss/light/assets/elements/alert.scss'])
-        @vite(['resources/scss/dark/assets/elements/alert.scss'])
-
         <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
         <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
         @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
@@ -38,18 +22,6 @@
 
         <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
         <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
-
-        {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
-            integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
-
-
-        {{-- <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" /> --}}
-
-
-
-        <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
 
 
     </x-slot>
@@ -1688,41 +1660,22 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
 
     <x-slot:footerFiles>
 
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        {{-- <script src="{{ asset('plugins/sweetalerts2/sweetalerts2.min.js') }}"></script>
-        <script src="{{ asset('plugins/sweetalerts2/custom-sweetalert.js') }}"></script> --}}
-        <script src="{{ asset('js/common.js') }}"></script>
+    <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
 
-        <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
-        @vite(['resources/assets/js/elements/custom-search.js'])
+    <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
+    <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>
 
+    <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
+    <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
+    {{-- <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script> --}}
+    <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
+        integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{{ asset('js/common.js') }}"></script>
 
-
-        <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
-
-        <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
-        <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>
-
-        <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
-        <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
-        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
-            integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-
-
-        <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
-
-        {{-- <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script> --}}
-        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
-            integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-        <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
-        @vite(['resources/assets/js/elements/custom-search.js'])
+    <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
+    @vite(['resources/assets/js/elements/custom-search.js'])
     </x-slot>
 </x-base-layout>

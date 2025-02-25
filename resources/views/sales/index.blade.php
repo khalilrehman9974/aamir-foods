@@ -132,7 +132,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $sale->party_id }}</h6>
+                                                    <h6 class="mb-0">{{ $sale->party->account_name }}</h6>
 
                                                 </div>
                                             </div>
@@ -140,7 +140,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $sale->saleman }}</h6>
+                                                    <h6 class="mb-0">{{ $sale->SaleMan->name }}</h6>
 
                                                 </div>
                                             </div>

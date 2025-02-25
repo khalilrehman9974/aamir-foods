@@ -81,7 +81,7 @@ class DispatchNoteService
     {
         $q = DispatchNoteMaster::query();
         if (!empty($request['param'])) {
-            $q = DispatchNoteMaster::where('date', 'like', '%' . $request['param'] . '%')
+            $q = DispatchNoteMaster::with('party','saleMan','Belt','Area','DeliveredToParty')->where('date', 'like', '%' . $request['param'] . '%')
             ->orWhere('sale_order_number', 'like', '%' . $request['param'] . '%')
             ->orWhere('party_id', 'like', '%' . $request['param'] . '%')
             ->orWhere('saleman', 'like', '%' . $request['param'] . '%')
@@ -136,7 +136,7 @@ class DispatchNoteService
             'saleman' => $request['saleman'],
             'sector' => $request['sector'],
             'area' => $request['area'],
-            'delivered_to' => $request['delivered_to'],
+            'delivered_to' => $request['delivered_to'] ?? null,
             'transporter_id' => $request['transporter_id'],
             'vehicle_no' => $request['vehicle_no'],
             'bility_no' => $request['bility_no'],

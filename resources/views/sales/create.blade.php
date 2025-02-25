@@ -81,7 +81,7 @@
                                                                     <label for="dispatch_note"
                                                                         class="form-label">Invoice# </label>
                                                                     <input id="invoice_no" type="text"
-                                                                        style="color:black;" name="invoice_no"
+                                                                        style="color:black;"
                                                                         value="{{ $invoiceNo }}"
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
@@ -206,11 +206,11 @@ $isSelected = old('area') == $key || $dispatchNote->pluck('area')->contains($key
 
                                                                     <select id="delivered_to" name="delivered_to"
                                                                         class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered_to"
-                                                                        required>
+                                                                        >
                                                                         @foreach ($deliveredToParties as $key => $value)
                                                                             <option value="{{ $key }}"
                                                                                 @php
-$isSelected = old('delivered_to') == $key || $dispatchNote->pluck('delivered_to')->contains($key); @endphp
+                                                                                $isSelected = old('delivered_to') == $key || $dispatchNote->pluck('delivered_to')->contains($key); @endphp
                                                                                 {{ $isSelected ? 'selected' : '' }}>
                                                                                 {{ $value }}
                                                                             </option>
@@ -271,6 +271,11 @@ $isSelected = old('transporter_id') == $key || $dispatchNote->pluck('transporter
                                                                         class="form-control form-control-sm" readonly>
                                                                 </div>
                                                             </div>
+                                                            <input id="commission" type="text"
+                                                                         style="color:black;"
+                                                                        value="{{ is_array($commissionArray) ? $commissionArray[0] : $commissionArray }}"
+                                                                        placeholder="Commission"
+                                                                        class="form-control form-control-sm commission" readonly hidden>
                                                         </div>
 
                                                         <div class="invoice-detail-terms"
@@ -287,7 +292,7 @@ $isSelected = old('transporter_id') == $key || $dispatchNote->pluck('transporter
                                                                                     </th>
                                                                                     <th></th>
                                                                                     <th scope="col"
-                                                                                        style="width: 30%">
+                                                                                        style="width: 25%">
                                                                                         Product</th>
                                                                                     <th class="">
                                                                                         P.T</th>
@@ -304,7 +309,9 @@ $isSelected = old('transporter_id') == $key || $dispatchNote->pluck('transporter
                                                                                     <th class="text-right">
                                                                                         Rate
                                                                                     </th>
-
+                                                                                    <th class="text-right">
+                                                                                        Discount
+                                                                                    </th>
                                                                                     <th class="text-right"
                                                                                         style="width: 10%">
                                                                                         Amount
@@ -478,6 +485,17 @@ $isSelected = old('transporter_id') == $key || $dispatchNote->pluck('transporter
                                                                                                     required>
                                                                                             </td>
 
+                                                                                            <td class="discount">
+                                                                                                <input type="number"
+                                                                                                    id="discount"
+                                                                                                    name="discount[]"
+                                                                                                    {{-- value="{{ old('rate', !empty($pricesArray->price) ? $pricesArray->price : '') }}" --}}
+                                                                                                    value="{{ old('discount', isset($discountsArray[$dispatchNoteDetail->product_id]) ? $discountsArray[$dispatchNoteDetail->product_id] : '') }}"
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount discount_{{ $index }}"
+                                                                                                    placeholder="Discount"
+                                                                                                    required>
+                                                                                            </td>
+
                                                                                             <td class="amount">
                                                                                                 <input type="text"
                                                                                                     id="amount"
@@ -623,9 +641,9 @@ $isSelected = old('transporter_id') == $key || $dispatchNote->pluck('transporter
                                                                                     <input type="number"
                                                                                         style="color: black;"
                                                                                         id="discount-amount"
-                                                                                        name="discount"
-                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount"
-                                                                                        placeholder="Discount.Amount">
+                                                                                        name="totaldiscount"
+                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount_amount"
+                                                                                        placeholder="Tot Discount.Amount" readonly>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -645,12 +663,12 @@ $isSelected = old('transporter_id') == $key || $dispatchNote->pluck('transporter
                                                                                     style="width: 70%; float: right; margin-left:10%;">
                                                                                     {{-- <label for="client-phone">Tot.
                                                                                         Amount</label> --}}
-                                                                                    <input type="number"
+                                                                                    <input type="text"
                                                                                         style="color: black;"
                                                                                         id="commission-amount"
                                                                                         name="commission"
-                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} commission"
-                                                                                        placeholder="Commission.Amount">
+                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} commission_amount"
+                                                                                        placeholder="Commission Amount">
                                                                                 </div>
                                                                             </div>
                                                                         </div>

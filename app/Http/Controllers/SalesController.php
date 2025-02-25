@@ -69,9 +69,11 @@ class SalesController extends Controller
         $dropDownData = $this->commonService->DropDownData();
         $invoiceNo = SaleMaster::max('id') + 1;
         $dispatchNote = DispatchNoteMaster::find($request->id);
-        // dd($dispatchNote);
+
         $dispatchNoteDetails = DispatchNoteDetail::where('dispatch_note_master_id', $request->id)->get();
         $parties =CoaDetailAccount::where('id', $dispatchNote->party_id)->pluck('account_name','id');
+        $getCommission =CoaDetailAccount::where('id', $dispatchNote->party_id)->get();
+        $commissionArray = $getCommission->pluck('commision')->toArray();
         $saleMans =SaleMan::where('id', $dispatchNote->saleman)->pluck('name','id');
         $sectors =Sector::where('id', $dispatchNote->sector)->pluck('name','id');
         $areas =Area::where('id', $dispatchNote->area)->pluck('name','id');
@@ -83,6 +85,7 @@ class SalesController extends Controller
 
         $getPrice = DetailAccountProducts::where('detail_account_id',$dispatchNote->party_id)->whereIn('product_id',$productsArray)->get();
         $pricesArray = $getPrice->pluck('price', 'product_id')->toArray();
+        $discountsArray = $getPrice->pluck('discount', 'product_id')->toArray();
 
         $deliveredToParties =DeliveredToParties::where('id', $dispatchNote->delivered_to)->pluck('party_name','id');
 
@@ -90,7 +93,7 @@ class SalesController extends Controller
             abort(404);
         }
 
-        return view('sales.create', compact('pageTitle', 'transporters', 'pricesArray','deliveredToParties', 'products','dispatchNoteDetails', 'areas','sectors','saleMans','parties','dropDownData', 'invoiceNo', 'dispatchNote'));
+        return view('sales.create', compact('pageTitle', 'transporters','commissionArray', 'pricesArray','discountsArray','deliveredToParties', 'products','dispatchNoteDetails', 'areas','sectors','saleMans','parties','dropDownData', 'invoiceNo', 'dispatchNote'));
     }
 
 
@@ -105,15 +108,16 @@ class SalesController extends Controller
      * */
     public function store(Request $request)
     {
-        // dd($request);
-        $request = $request->except('_token', 'saleId');
+
+        $request = $request->except('_token', 'id');
         //     DB::beginTransaction();
         //    try {
 
 
         //Insert data into sale tables.
         $saleMasterData = $this->saleService->prepareSaleMasterData($request);
-        $saleMasterInsert = $this->commonService->findUpdateOrCreate(SaleMaster::class, ['id' => ''], $saleMasterData);
+
+        $saleMasterInsert = $this->saleService->findUpdateOrCreate(SaleMaster::class, ['id' => ''], $saleMasterData);
         $saleDetailData = $this->saleService->prepareSaleDetailData($request, $saleMasterInsert->id);
         $this->saleService->saveSale($saleDetailData);
 
@@ -125,7 +129,7 @@ class SalesController extends Controller
         // $creditAccountData = $this->saleService->prepareAccountCreditData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'), config('contants.SALE_DESCRIPTION'));
         // AccountLedger::insert($debitAccountData);
         // AccountLedger::insert($creditAccountData);
-        DB::commit();
+        // DB::commit();
         // } catch (\Exception $e) {
         //     DB::rollback();
         //     return redirect('sale/create')->with('error', $e->getMessage());
@@ -141,7 +145,7 @@ class SalesController extends Controller
         $pageTitle = 'Update Sales Invoice';
         $currentInvoice = $id;
         $sale = SaleMaster::find($id);
-
+        // dd($sale);
         $parties =CoaDetailAccount::where('id', $sale->party_id)->pluck('account_name','id');
         $saleMans =SaleMan::where('id', $sale->saleman)->pluck('name','id');
         $sectors =Sector::where('id', $sale->sector)->pluck('name','id');
@@ -158,6 +162,7 @@ class SalesController extends Controller
 
         $getPrice = DetailAccountProducts::where('detail_account_id',$sale->party_id)->whereIn('product_id',$productsArray)->get();
         $pricesArray = $getPrice->pluck('price', 'product_id')->toArray();
+        $discountsArray = $getPrice->pluck('discount', 'product_id')->toArray();
 
 
         if (empty($sale)) {
