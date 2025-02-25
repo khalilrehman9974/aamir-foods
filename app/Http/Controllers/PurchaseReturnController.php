@@ -132,7 +132,6 @@ class PurchaseReturnController extends Controller
         DB::beginTransaction();
         try {
             $request = request()->all();
-            PurchaseReturnMaster::where('id', $request['id'])->delete();
             PurchaseReturnDetail::where('purchase_return_master_id', $request['id'])->delete();
 
             //Save data into relevant tables.

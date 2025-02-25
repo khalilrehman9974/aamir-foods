@@ -104,7 +104,7 @@ class PurchaseOrderController extends Controller
             $request = $request->all();
             PurchaseOrderDetail::where('purchase_order_master_id', $request['id'])->delete();
             $pOrderMasterData = $this->purchaseOrderService->preparePOrderMasterData($request);
-            $pOrderMasterInsert = $this->purchaseOrderService->findUpdateOrCreate(PurchaseOrderMaster::class, ['id' => ''], $pOrderMasterData);
+            $pOrderMasterInsert = $this->purchaseOrderService->findUpdateOrCreate(PurchaseOrderMaster::class, ['id' => request('id')], $pOrderMasterData);
             $pOrderDetailData = $this->purchaseOrderService->preparePOrderDetailData($request, $pOrderMasterInsert->id);
             $this->purchaseOrderService->savePOrder($pOrderDetailData);
             DB::commit();
