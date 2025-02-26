@@ -183,7 +183,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ @$note->party->account_name }}</h6>
+                                                    <h6 class="mb-0">{{$note->party->account_name }}</h6>
 
                                                 </div>
                                             </div>

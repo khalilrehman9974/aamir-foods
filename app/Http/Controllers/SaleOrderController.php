@@ -156,14 +156,17 @@ class SaleOrderController extends Controller
         $areasArray = $fetchAreas->pluck('area_id')->toArray();
         $fetchAreaId = Area::whereIn('id',$areasArray)->get();
         $areas = $fetchAreaId->pluck('name','id')->toArray();
-
+        $deliverdToParties = DeliveredToParties::where('detail_account_id', $saleOrder->party_id)->pluck('party_name','id');
+        // dd($deliverdToParties);
         $saleOrderDetails = SaleOrderDetail::where('sale_order_master_id', $id)->get();
         $dropDownData = $this->saleOrderService->DropDownData();
-        if (empty($sale)) {
+        $getProducts = DetailAccountProducts::where('detail_account_id',$saleOrder->party_id)->pluck('product_id');
+        $products = CoaInventoryDetailAccount::whereIn('id',$getProducts)->pluck('name','id');
+        if (empty($saleOrder)) {
             $message = config('constants.wrong');
         }
 
-        return view('sale-orders.create', compact('saleOrder', 'dropDownData', 'areas','sectors','images', 'saleMans', 'currentid', 'saleOrderDetails', 'pageTitle'));
+        return view('sale-orders.create', compact('saleOrder','products', 'dropDownData','deliverdToParties', 'areas','sectors','images', 'saleMans', 'currentid', 'saleOrderDetails', 'pageTitle'));
     }
 
     /*

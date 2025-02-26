@@ -2,16 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
+use App\Models\Sector;
 use App\Models\SaleMan;
 use App\Models\PackingType;
+use App\Models\SaleManArea;
 use Illuminate\Http\Request;
+use App\Models\SaleManSector;
 use App\Models\MeasurementType;
+use App\Models\SaleOrderDetail;
 use App\Services\CommonService;
 use App\Models\CoaDetailAccount;
+use App\Models\DeliveredToParties;
 use Illuminate\Support\Facades\DB;
 use App\Models\ClaimRateAdjustment;
 use App\Models\ClaimRateAdjustmentDetail;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\DetailAccountProducts;
 use App\Services\ClaimRateAdjustmentService;
 
 class ClaimRateAdjustmentController extends Controller
@@ -93,11 +100,30 @@ class ClaimRateAdjustmentController extends Controller
         $claim = ClaimRateAdjustment::find($id);
         $claimDetails = ClaimRateAdjustmentDetail::where('master_id', $id)->get();
         $dropDownData = $this->claimRateService->DropDownData();
+
+        $fetchSaleManId= CoaDetailAccount::where('id', $claim->party_id)->first('saleMan_id');
+        $getSaleman = SaleMan::where('id', $fetchSaleManId->saleMan_id)->get();
+        $saleMans = $getSaleman->pluck('name','id');
+
+        $fetchSectors  = SaleManSector::where('master_id', $claim->saleman)->get();
+        $sectorsArray = $fetchSectors->pluck('sector_id')->toArray();
+        $fetchSectorId = Sector::whereIn('id',$sectorsArray)->get();
+        $sectors = $fetchSectorId->pluck('name','id')->toArray();
+
+        $fetchAreas = SaleManArea::where('sector_id', $claim->sector)->get();
+        $areasArray = $fetchAreas->pluck('area_id')->toArray();
+        $fetchAreaId = Area::whereIn('id',$areasArray)->get();
+        $areas = $fetchAreaId->pluck('name','id')->toArray();
+        $deliverdToParties = DeliveredToParties::where('detail_account_id', $claim->party_id)->pluck('party_name','id');
+        $saleOrderDetails = SaleOrderDetail::where('sale_order_master_id', $id)->get();
+
+        $getProducts = DetailAccountProducts::where('detail_account_id',$claim->party_id)->pluck('product_id');
+        $products = CoaInventoryDetailAccount::whereIn('id',$getProducts)->pluck('name','id');
         if (empty($claim)) {
             $message = config('constants.wrong');
         }
 
-        return view('rate-claim-adjustment.create', compact('claim', 'dropDownData', 'currentid', 'claimDetails', 'pageTitle'));
+        return view('rate-claim-adjustment.create', compact('claim','deliverdToParties','products','areas','sectors','saleMans', 'dropDownData', 'currentid', 'claimDetails', 'pageTitle'));
     }
 
     /*

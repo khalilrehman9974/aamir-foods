@@ -149,7 +149,7 @@
                 <div class="widget-header">
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4>List Of Sale Orders</h4>
+                            <h4>List Of Claims</h4>
                         </div>
                     </div>
                 </div>
@@ -199,7 +199,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $claim->saleman }}</h6>
+                                                    <h6 class="mb-0">{{ $claim->SaleMan->name }}</h6>
 
                                                 </div>
                                             </div>

@@ -17,15 +17,14 @@ return new class extends Migration
             $table->Increments('id');
             $table->string('date');
             $table->foreignId('party_id')->constrained('detail_accounts')->onDelete('cascade');
-            // $table->integer('party_id')->unsigned()->index();
-            $table->string('saleman');
-            $table->string('sector');
+            $table->integer('saleman');
+            $table->integer('sector');
             $table->integer('business_id');
             $table->integer('f_year_id');
-            $table->string('area');
-            $table->string('delivered_to')->nullable();
+            $table->integer('area');
+            $table->integer('delivered_to')->nullable();
             $table->string('driver_name');
-            $table->string('transporter');
+            $table->integer('transporter');
             $table->string('bilty_no');
             $table->string('remarks');
             $table->double('total_boray')->nullable();
@@ -39,9 +38,6 @@ return new class extends Migration
             $table->string('created_by');
             $table->string('updated_by');
 
-            // $table->foreign('party_id')
-            // ->references('code')->on('coa_inventory_detail_accounts')
-            // ->onDelete('cascade');
         });
     }
 

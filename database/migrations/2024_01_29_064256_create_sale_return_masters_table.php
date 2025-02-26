@@ -21,10 +21,10 @@ return new class extends Migration
             $table->string('saleman');
             $table->string('sector');
             $table->string('area');
-            $table->string('deliverd_to');
+            $table->string('deliverd_to')->nullable();
             $table->string('driver_name');
             $table->string('bilty_no');
-            $table->string('transporter');
+            $table->string('transporter_id');
             $table->integer('business_id');
             $table->integer('f_year_id')->unsigned()->index();
             $table->text('remarks')->nullable();
@@ -33,6 +33,7 @@ return new class extends Migration
             $table->double('carton_amount')->nullable();
             $table->double('scheme')->nullable();
             $table->double('commission')->nullable();
+            $table->double('net_amount')->nullable();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')->nullable();

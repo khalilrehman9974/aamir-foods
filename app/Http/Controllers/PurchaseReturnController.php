@@ -113,14 +113,21 @@ class PurchaseReturnController extends Controller
      * */
     public function edit($id)
     {
+        $pageTitle = 'Update Purchase Return';
+        $currentId = $id;
         $purchaseReturn = PurchaseReturnMaster::find($id);
-        $purchaseReturnDetails = PurchaseReturnDetail::where('purchase_return_master_id', $id)->get();
+        $purchaseReturnDetails = PurchaseReturnDetail::where('purchase_return_master_id', $purchaseReturn->id)->get();
+        // dd($purchaseReturnDetails);
         $dropDownData = $this->purchaseReturnService->DropDownData();
+        $parties = CoaDetailAccount::where('id', $purchaseReturn->party_id)->pluck('account_name', 'id');
+        $transporters = Transporter::where('id', $purchaseReturn->transporter_id)->pluck('name', 'id');
+
+
         if (empty($purchaseReturn)) {
             $message = config('constants.wrong');
         }
 
-        return view('purchase-return.create', compact('purchaseReturn','dropDownData', 'purchaseReturnDetails'));
+        return view('purchase-return.edit', compact('purchaseReturn','transporters','parties','currentId','dropDownData', 'pageTitle','purchaseReturnDetails'));
     }
 
     /*

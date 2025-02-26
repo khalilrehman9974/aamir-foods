@@ -14,14 +14,9 @@
 
         <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
         <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
-        <!--  BEGIN CUSTOM STYLE FILE  -->
         <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
-        {{-- <link rel="stylesheet" href="../src/plugins/src/filepond/filepond.min.css">
-        <link rel="stylesheet" href="../src/plugins/src/filepond/FilePondPluginImagePreview.min.css"> --}}
-
-        {{-- <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" /> --}}
         <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
-        <!--  END CUSTOM STYLE FILE  -->
+
     </x-slot>
     <x-slot:scrollspyConfig>
         data-bs-spy="scroll" data-bs-target="#navSection" data-bs-offset="100"
@@ -192,57 +187,24 @@
                                                                                     name="belt"
                                                                                     class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sector-dropdown"
                                                                                     required>
-                                                                                    {{-- <option value="select-all"
-                                                                                        class="select-all-option">Select All
-                                                                                    </option> --}}
                                                                                 </select>
 
-                                                                                {{-- <select id="sector-dropdown" name="zone_id[]">
-                                                                                    <option value="select-all" class="select-all-option">Select All</option>
-                                                                                    @foreach ($zones as $key => $value)
-                                                                                        <option value="{{ $key }}"
-                                                                                            {{ (old('zone_id') && in_array($key, old('zone_id'))) || (!empty($saleManZones->pluck('zone_id')->toArray()) && in_array($key, $saleManZones->pluck('zone_id')->toArray())) ? 'selected' : '' }}>
-                                                                                            {{ $value }}
-                                                                                        </option>
-                                                                                    @endforeach
-                                                                                </select> --}}
                                                                             @else
-                                                                                {{-- <select id="sector-dropdown" name="sector" class="form-select"
-                                                                                    required>
-                                                                                    @foreach ($sectors as $key => $value)
-                                                                                        <option value="{{ $key }}"
-                                                                                            {{ $key == old('sector') ? 'selected' : '' }}>
-                                                                                            {{ $value }}</option>
-                                                                                    @endforeach
-                                                                                </select> --}}
+
                                                                                 <select id="sector-dropdown"
                                                                                     name="belt"
                                                                                     class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sector-dropdown"
                                                                                     required>
 
-                                                                                    {{-- @foreach ($sectors as $key => $value)
-                                                                                        <option
-                                                                                            value="{{ $key }}"
-                                                                                            {{ (old('belt') == $key ? 'selected' : '') || (!empty($saleOrder->belt) ? collect($saleOrder->belt)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                            {{ $value }}
-                                                                                        </option>
-                                                                                    @endforeach --}}
-
                                                                                     @foreach ($sectors as $key => $value)
                                                                                         <option
                                                                                             value="{{ $key }}"
                                                                                             @php
-$isSelected = old('belt') == $key || $saleOrder->pluck('belt')->contains($key); @endphp
+                                                                                            $isSelected = old('belt') == $key || $saleOrder->pluck('belt')->contains($key); @endphp
                                                                                             {{ $isSelected ? 'selected' : '' }}>
                                                                                             {{ $value }}
                                                                                         </option>
                                                                                     @endforeach
-                                                                                    {{-- @foreach ($zones as $key => $value)
-                                                                                        <option value="{{ $key }}"
-                                                                                            {{ !empty($saleManZones) && $saleManZones->zone_id == $key ? 'selected' : '' }}
-                                                                                            {{ $key == old('zone_id') ? 'selected' : '' }}>
-                                                                                            {{ $value }}</option>
-                                                                                    @endforeach --}}
                                                                                 </select>
                                                                             @endif
                                                                         </div>
@@ -283,7 +245,7 @@ $isSelected = old('belt') == $key || $saleOrder->pluck('belt')->contains($key); 
                                                                                         <option
                                                                                             value="{{ $key }}"
                                                                                             @php
-$isSelected = old('area') == $key || $saleOrder->pluck('area')->contains($key); @endphp
+                                                                                            $isSelected = old('area') == $key || $saleOrder->pluck('area')->contains($key); @endphp
                                                                                             {{ $isSelected ? 'selected' : '' }}>
                                                                                             {{ $value }}
                                                                                         </option>
@@ -303,25 +265,6 @@ $isSelected = old('area') == $key || $saleOrder->pluck('area')->contains($key); 
 
                                                                 <div class="col-lg-0 col-12 ">
                                                                     <div class="row">
-                                                                        {{-- <div class="col-md-6 mt-2">
-                                                                            <label for="delivered_to">
-                                                                                Delivered To:</label>
-                                                                            <input type="text"
-                                                                                style="color: black; background-color: white;"
-                                                                                name="delivered_to"
-                                                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                                id="sector"
-                                                                                value="{{ old('delivered_to', !empty($saleOrder->delivered_to) ? $saleOrder->delivered_to : '') }}"
-                                                                                placeholder="Delivered To..." required>
-                                                                            @error('delivered_to')
-                                                                                <span style="color:red"
-                                                                                    class="invalid-feedback">
-                                                                                    <strong>{{ $message }}</strong>
-                                                                                </span>
-                                                                            @enderror
-                                                                        </div> --}}
-
-
                                                                         <div class="col-xl-6 col-lg-6 mt-2">
                                                                             <label class="form-label"
                                                                                 for="product-title-input">Delivered
@@ -334,41 +277,19 @@ $isSelected = old('area') == $key || $saleOrder->pluck('area')->contains($key); 
                                                                                         class="select-all-option">Select All
                                                                                     </option> --}}
                                                                                 </select>
-
-                                                                                {{-- <select id="sector-dropdown" name="zone_id[]">
-                                                                                    <option value="select-all" class="select-all-option">Select All</option>
-                                                                                    @foreach ($zones as $key => $value)
-                                                                                        <option value="{{ $key }}"
-                                                                                            {{ (old('zone_id') && in_array($key, old('zone_id'))) || (!empty($saleManZones->pluck('zone_id')->toArray()) && in_array($key, $saleManZones->pluck('zone_id')->toArray())) ? 'selected' : '' }}>
-                                                                                            {{ $value }}
-                                                                                        </option>
-                                                                                    @endforeach
-                                                                                </select> --}}
                                                                             @else
-                                                                                {{-- <select id="sector-dropdown" name="sector" class="form-select"
-                                                                                    required>
-                                                                                    @foreach ($sectors as $key => $value)
-                                                                                        <option value="{{ $key }}"
-                                                                                            {{ $key == old('sector') ? 'selected' : '' }}>
-                                                                                            {{ $value }}</option>
-                                                                                    @endforeach
-                                                                                </select> --}}
+
                                                                                 <select id="delivered-to-dropdown"
                                                                                     name="delivered_to"
                                                                                     class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered-to-dropdown">
-                                                                                    @foreach ($dropDownData['deliverdToParties'] as $key => $value)
+                                                                                    @foreach ($deliverdToParties as $key => $value)
                                                                                         <option
                                                                                             value="{{ $key }}"
                                                                                             {{ (old('delivered_to') == $key ? 'selected' : '') || (!empty($saleOrder->delivered_to) ? collect($saleOrder->delivered_to)->contains($key) : '') ? 'selected' : '' }}>
                                                                                             {{ $value }}
                                                                                         </option>
                                                                                     @endforeach
-                                                                                    {{-- @foreach ($zones as $key => $value)
-                                                                                        <option value="{{ $key }}"
-                                                                                            {{ !empty($saleManZones) && $saleManZones->zone_id == $key ? 'selected' : '' }}
-                                                                                            {{ $key == old('zone_id') ? 'selected' : '' }}>
-                                                                                            {{ $value }}</option>
-                                                                                    @endforeach --}}
+
                                                                                 </select>
                                                                             @endif
                                                                         </div>
@@ -476,157 +397,6 @@ $isSelected = old('area') == $key || $saleOrder->pluck('area')->contains($key); 
                                                                                     </thead>
                                                                                     <tbody>
 
-
-
-                                                                                            {{-- <tr
-                                                                                                class="tr_clone validator_0">
-                                                                                                <td
-                                                                                                    class="delete-item-row">
-                                                                                                    <ul
-                                                                                                        class="table-controls">
-                                                                                                        <li>
-                                                                                                            <a href="javascript:void(0);"
-                                                                                                                class="delete-item"
-                                                                                                                data-toggle="tooltip"
-                                                                                                                data-placement="top"
-                                                                                                                title=""
-                                                                                                                data-original-title="Delete">
-                                                                                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                                                                                    width="24"
-                                                                                                                    height="24"
-                                                                                                                    viewBox="0 0 24 24"
-                                                                                                                    fill="none"
-                                                                                                                    stroke="currentColor"
-                                                                                                                    stroke-width="2"
-                                                                                                                    stroke-linecap="round"
-                                                                                                                    stroke-linejoin="round"
-                                                                                                                    class="feather feather-x-circle">
-                                                                                                                    <circle
-                                                                                                                        cx="12"
-                                                                                                                        cy="12"
-                                                                                                                        r="10">
-                                                                                                                    </circle>
-                                                                                                                    <line
-                                                                                                                        x1="15"
-                                                                                                                        y1="9"
-                                                                                                                        x2="9"
-                                                                                                                        y2="15">
-                                                                                                                    </line>
-                                                                                                                    <line
-                                                                                                                        x1="9"
-                                                                                                                        y1="9"
-                                                                                                                        x2="15"
-                                                                                                                        y2="15">
-                                                                                                                    </line>
-                                                                                                                </svg>
-                                                                                                            </a>
-                                                                                                        </li>
-                                                                                                    </ul>
-                                                                                                </td>
-                                                                                                <td>
-                                                                                                    <input
-                                                                                                        type="text"
-                                                                                                        name="row_id[]"
-                                                                                                        class="row_id"
-                                                                                                        value="0"
-                                                                                                        hidden>
-                                                                                                </td>
-                                                                                                <td class="product">
-                                                                                                    <select
-                                                                                                        id="product"
-                                                                                                        type="text"
-                                                                                                        name="product_id[]"
-                                                                                                        placeholder="Please Select the Product"
-                                                                                                        class="{{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} form-control mb-3 product product_0 select2 custom-select"
-                                                                                                        required>
-                                                                                                        <option
-                                                                                                            value="">
-                                                                                                            Select
-                                                                                                            the
-                                                                                                            Product
-                                                                                                        </option>
-                                                                                                        @foreach ($dropDownData['products'] as $key => $value)
-                                                                                                            <option
-                                                                                                                value="{{ $key }}"
-                                                                                                                {{ (old('product_id') == $key ? 'selected' : '') || (!empty($saleOrder->product_id) ? collect($saleOrder->product_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                                                {{ $value }}
-                                                                                                            </option>
-                                                                                                        @endforeach
-                                                                                                    </select>
-                                                                                                </td>
-                                                                                                <td>
-                                                                                                    <input
-                                                                                                        type="text"
-                                                                                                        style="color: black; "
-                                                                                                        class="packing form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_0"
-                                                                                                        id="packing"
-                                                                                                        name="packing_type[]"
-                                                                                                        placeholder="P.T"
-                                                                                                        readonly>
-                                                                                                </td>
-                                                                                                <td>
-                                                                                                    <input
-                                                                                                        type="text"
-                                                                                                        style="color: black; "
-                                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_0"
-                                                                                                        placeholder="M.T"
-                                                                                                        name="measurement_type[]"
-                                                                                                        id="measurement"
-                                                                                                        readonly>
-                                                                                                </td>
-
-                                                                                                <td class="quantity">
-                                                                                                    <input
-                                                                                                        type="number"
-                                                                                                        id="quantity"
-                                                                                                        class="qty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_0"
-                                                                                                        name="quantity[]"
-                                                                                                        placeholder="Qty"
-                                                                                                        required>
-                                                                                                </td>
-
-                                                                                                <td class="total_unit">
-                                                                                                    <input
-                                                                                                        type="number"
-                                                                                                        id="dzn"
-                                                                                                        name="dzn[]"
-                                                                                                        class="dozen form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} dozen_0"
-                                                                                                        placeholder="Dzn"
-                                                                                                        required>
-                                                                                                </td>
-                                                                                                <td class="total_dzn">
-                                                                                                    <input
-                                                                                                        type="number"
-                                                                                                        id="total_dzns"
-                                                                                                        style="color: black;"
-                                                                                                        name="total_dzn[]"
-                                                                                                        class="totDzn form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} totDzn_0"
-                                                                                                        placeholder="Tot.Dzns"
-                                                                                                        readonly>
-                                                                                                </td>
-
-                                                                                                <td class="rate">
-                                                                                                    <input
-                                                                                                        type="number"
-                                                                                                        id="rate"
-                                                                                                        name="rate[]"
-                                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} rate rate_0"
-                                                                                                        placeholder="Rate"
-                                                                                                        required>
-                                                                                                </td>
-
-                                                                                                <td class="amount">
-                                                                                                    <input
-                                                                                                        type="number"
-                                                                                                        style="color: black;"
-                                                                                                        id="amount"
-                                                                                                        name="amount[]"
-                                                                                                        class="amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} amount_0"
-                                                                                                        placeholder="Amount"
-                                                                                                        readonly>
-                                                                                                </td>
-                                                                                            </tr>
-                                                                                        @else --}}
                                                                                         @if (!empty($saleOrderDetails))
                                                                                             @foreach ($saleOrderDetails as $saleOrderDetail)
                                                                                                 @php
@@ -702,7 +472,7 @@ $isSelected = old('area') == $key || $saleOrder->pluck('area')->contains($key); 
                                                                                                                 the
                                                                                                                 Product
                                                                                                             </option>
-                                                                                                            @foreach ($dropDownData['products'] as $key => $value)
+                                                                                                            @foreach ($products as $key => $value)
                                                                                                                 <option
                                                                                                                     value="{{ $key }}"
                                                                                                                     {{ (old('product_id') == $key ? 'selected' : '') || (!empty($saleOrderDetail->product_id) ? collect($saleOrderDetail->product_id)->contains($key) : '') ? 'selected' : '' }}>
@@ -1089,7 +859,7 @@ $isSelected = old('area') == $key || $saleOrder->pluck('area')->contains($key); 
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        
+
                         success: function(response) {
                             $(".packing_" + row_id).val(response.name.name);
                         },
@@ -1458,19 +1228,13 @@ $isSelected = old('area') == $key || $saleOrder->pluck('area')->contains($key); 
     <x-slot:footerFiles>
         <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
 
-        {{-- <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
-        <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script> --}}
-
         <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
         <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
-        {{-- <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script> --}}
         <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
             integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        {{-- <script src="{{ asset('js/common.js') }}"></script> --}}
-
         <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])
     </x-slot>

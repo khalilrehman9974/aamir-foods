@@ -91,7 +91,6 @@
                             <thead>
                                 <tr>
                                     <th scope="col"> <b>Id </b> </th>
-                                    <th scope="col" > <b>Sale Order# </b> </th>
                                     <th scope="col"> <b>Date </b> </th>
                                     <th scope="col" style="width: 20%"> <b>Party</b> </th>
                                     <th scope="col" style="width: 20%"> <b>Sale Man </b> </th>
@@ -115,14 +114,6 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $sale->sale_order_number }}</h6>
-
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
                                                     <h6 class="mb-0">{{ $sale->date }}</h6>
 
                                                 </div>
@@ -131,7 +122,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $sale->party_id }}</h6>
+                                                    <h6 class="mb-0">{{ $sale->party->account_name }}</h6>
 
                                                 </div>
                                             </div>
@@ -139,7 +130,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $sale->saleman}}</h6>
+                                                    <h6 class="mb-0">{{ $sale->SaleMan->name}}</h6>
 
                                                 </div>
                                             </div>

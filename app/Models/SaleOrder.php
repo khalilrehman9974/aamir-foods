@@ -18,7 +18,7 @@ class SaleOrder extends Model
 
 
     public function party(){
-        return $this->hasOne(CoaDetailAccount::class, 'account_code', 'party_id');
+        return $this->hasOne(CoaDetailAccount::class, 'id', 'party_id');
     }
 
     public function details()

@@ -3,11 +3,13 @@
 namespace App\Services;
 
 
+use Carbon\Carbon;
 use App\Models\SaleMan;
 use App\Models\Transporter;
 use App\Models\CoaDetailAccount;
 use App\Models\SaleReturnDetail;
 use App\Models\SaleReturnMaster;
+use App\Models\DeliveredToParties;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CoaInventoryDetailAccount;
 use Symfony\Component\Mailer\Transport\Transports;
@@ -59,7 +61,8 @@ class SaleReturnService
         $result = [
             'saleMans' => SaleMan::pluck('name','id'),
             'parties' => CoaDetailAccount::pluck('account_name','id'),
-            'transporters' => Transporter::pluck('name','id'),
+            'DeliveredToParties' => DeliveredToParties::pluck('party_name','id'),
+            'Transporters' => Transporter::pluck('name','id'),
             'products' => CoaInventoryDetailAccount::pluck('name','id'),
         ];
 
@@ -87,7 +90,7 @@ class SaleReturnService
     {
         $q = SaleReturnMaster::query();
         if (!empty($request['param'])) {
-            $q = SaleReturnMaster::with('party_id')->where('date', 'like', '%' . $request['param'] . '%')
+            $q = SaleReturnMaster::with('party','SaleMan')->where('date', 'like', '%' . $request['param'] . '%')
             ->orWhere('sale_order_number', 'like', '%' . $request['param'] . '%')
             ->orWhere('party_id', 'like', '%' . $request['param'] . '%')
             ->orWhere('saleman', 'like', '%' . $request['param'] . '%')
@@ -156,24 +159,30 @@ class SaleReturnService
      * */
     public function prepareSaleReturnMasterData($request)
     {
+        $session = $this->commonService->getSession();
         return [
-            'dispatch_note' => $request['dispatch_note'],
-            'date' => $request['dispatch_note'],
-            'type_id' => $request['type_id'],
+
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'party_id' => $request['party_id'],
+            'sale_return_number' => $request['party_id'],
             'bilty_no' => $request['bilty_no'],
-            'deliverd_to' => $request['deliverd_to'],
-            'saleman_id' => $request['saleman_id'],
+            'deliverd_to' => $request['deliverd_to'] ?? null,
+            'saleman' => $request['saleman'],
+            'sector' => $request['sector'],
+            'area' => $request['area'],
             'transporter_id' => $request['transporter_id'],
-            'business_id' => $request['business_id'],
-            'f_year_id' => $request['f_year_id'],
+            'driver_name' => $request['driver_name'],
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
             'remarks' => $request['remarks'],
-            'total_amount' => array_sum($request['total_amount']),
-            'freight' => $request['freight'],
+            'gross_amount' => $request['gross_amount'],
+            'boray_amount' => $request['boray_amount'],
+            'carton_amount' => $request['carton_amount'],
             'scheme' => $request['scheme'],
             'commission' => $request['commission'],
-            $data['created_by'] = Auth::user()->id,
-            $data['updated_by'] = Auth::user()->id
+            'net_amount' => $request['net_amount'],
+            'created_by'=> Auth::user()->id,
+            'updated_by' => Auth::user()->id
         ];
     }
 
@@ -186,12 +195,14 @@ class SaleReturnService
     {
         return [
             'product_id' => $request['product_id'],
+            'packing_type' => $request['packing_type'],
+            'measurement_type' => $request['measurement_type'],
             'quantity' => $request['quantity'],
-            'unit' => $request['unit'],
-            'total_unit' => $request['total_unit'],
+            'dzns' => $request['dzns'],
+            'total_dzns' => $request['total_dzns'],
             'rate' => $request['rate'],
             'amount' => $request['amount'],
-            'sale_master_id' => $saleParentId,
+            'sale_return_master_id' => $saleParentId,
         ];
     }
 
@@ -204,12 +215,14 @@ class SaleReturnService
         foreach ($data['product_id'] as $key => $value) {
             if (!empty($data['product_id'][$key])) {
                 $rec['product_id'] = $data['product_id'][$key];
-                $rec['unit'] = $data['unit'][$key];
+                $rec['packing_type'] = $data['packing_type'][$key];
+                $rec['measurement_type'] = $data['measurement_type'][$key];
+                $rec['dzns'] = $data['dzns'][$key];
                 $rec['quantity'] = $data['quantity'][$key];
                 $rec['rate'] = $data['rate'][$key];
                 $rec['amount'] = $data['amount'][$key];
-                $rec['total_unit'] = $data['total_unit'][$key];
-                $rec['sale_master_id'] = $data['sale_master_id'];
+                $rec['total_dzns'] = $data['total_dzns'][$key];
+                $rec['sale_return_master_id'] = $data['sale_return_master_id'];
                 SaleReturnDetail::create($rec);
             }
         }

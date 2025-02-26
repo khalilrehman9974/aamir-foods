@@ -15,10 +15,8 @@ return new class extends Migration
     {
         Schema::create('claim_and_rate_adjustment_detail', function (Blueprint $table) {
             $table->Increments('id');
-            // $table->foreignId('master_id')->constrained('claim_and_rate_adjustment_master')->onDelete('cascade');
             $table->integer('master_id')->unsigned()->index();
             $table->foreignId('product_id')->constrained('coa_inventory_detail_accounts')->onDelete('cascade');
-            // $table->integer('product_id');
             $table->string('packing_type');
             $table->string('measurement_type');
             $table->double('quantity');

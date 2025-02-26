@@ -8,6 +8,7 @@ use App\Models\ClaimRateAdjustment;
 use App\Models\ClaimRateAdjustmentDetail;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\Transporter;
 
 class ClaimRateAdjustmentService
 {
@@ -47,7 +48,7 @@ class ClaimRateAdjustmentService
             $q->where('party_id', $request['party_id']);
         }
 
-        $saleOrders = $q->with(['party'])->orderBy('updated_at', 'DESC')->paginate(config('constants.PER_PAGE'));
+        $saleOrders = $q->with(['party','SaleMan'])->orderBy('updated_at', 'DESC')->paginate(config('constants.PER_PAGE'));
         return $saleOrders;
     }
 
@@ -69,7 +70,7 @@ class ClaimRateAdjustmentService
             'saleman' => $request['saleman'],
             'sector' => $request['sector'],
             'area' => $request['area'],
-            'delivered_to' => $request['delivered_to'],
+            'delivered_to' => $request['delivered_to'] ?? null,
             'driver_name' => $request['driver_name'],
             'transporter' => $request['transporter'],
             'bilty_no' => $request['bilty_no'],
@@ -88,6 +89,7 @@ class ClaimRateAdjustmentService
         $result = [
             'parties' => CoaDetailAccount::pluck('account_name', 'id'),
             'products' => CoaInventoryDetailAccount::pluck('name', 'id'),
+            'transporters' => Transporter::pluck('name', 'id')
 
         ];
 

@@ -18,4 +18,9 @@ class ClaimRateAdjustment extends Model
     public function party(){
         return $this->hasOne(CoaDetailAccount::class, 'account_code', 'party_id');
     }
+
+
+    public function SaleMan(){
+        return $this->hasOne(SaleMan::class, 'id', 'saleman');
+    }
 }

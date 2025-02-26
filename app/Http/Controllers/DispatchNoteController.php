@@ -114,8 +114,8 @@ class DispatchNoteController extends Controller
         $dispatchNoteImages = $this->dispatchNoteService->prepareDispatchNoteImagesData($request, $dispatchMasterInsert->id);
         $this->dispatchNoteService->saveDispatchNoteImages($dispatchNoteImages);
 
-        $stockLedgers = $this->dispatchNoteService->prepareLedgerData($request, $dispatchMasterInsert->id);
-        $this->dispatchNoteService->saveLedger($stockLedgers);
+        // $stockLedgers = $this->dispatchNoteService->prepareLedgerData($request, $dispatchMasterInsert->id);
+        // $this->dispatchNoteService->saveLedger($stockLedgers);
 
         //     DB::commit();
         // } catch (\Exception $e) {
