@@ -7,14 +7,10 @@
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <x-slot:headerFiles>
         <!--  BEGIN CUSTOM STYLE FILE  -->
-        <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
-        <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
-        @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
-        @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
 
+        <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
 
         <!--  BEGIN CUSTOM STYLE FILE  -->
-        <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
             integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -22,7 +18,6 @@
         <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
         <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
         <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
-        <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
         <!--  END CUSTOM STYLE FILE  -->
     </x-slot>
     <!-- END GLOBAL MANDATORY STYLES -->
@@ -65,7 +60,8 @@
                                     <div class="col-md-6">
 
                                         <label for="purchase_order_no">PO Number</label>
-                                        <input type="text" value="{{ $note->purchase_order_no }}" name="purchase_order_no"
+                                        <input type="text" value="{{ $note->purchase_order_no }}"
+                                            name="purchase_order_no"
                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
                                             style="color: black;" id="purchase_order_no" placeholder="PO Number..."
                                             required readonly>
@@ -98,7 +94,7 @@
                                     <div class="col-md-6 ">
                                         <label for="date">
                                             Date</label>
-                                        <input type="text"
+                                        <input type="text" value="{{$date}}"
                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} "
                                             id="date" name="date" placeholder="Select The Date">
                                     </div>
@@ -190,7 +186,8 @@
 
                                     <div class="form-group col-md-6 ">
                                         <label for="unloaded_by">Unloaded By:</label>
-                                        <input type="text" name="unloaded_by" value="{{ old('unloaded_by', @$note->unloaded_by) }}"
+                                        <input type="text" name="unloaded_by"
+                                            value="{{ old('unloaded_by', @$note->unloaded_by) }}"
                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} unloaded_by"
                                             id="unloaded_by" placeholder="Unloaded By">
                                         @error('unloaded_by')
@@ -213,17 +210,23 @@
                                                         </th>
                                                         <th>
                                                         </th>
-                                                        <th style="width: 20%;">Product</th>
-                                                        <th style="width: 8%;">P.T</th>
-                                                        <th style="width: 8%;">M.T</th>
+                                                        <th style="width: 15%;">Product</th>
+                                                        <th style="width: 7%;">P.T</th>
+                                                        <th style="width: 7%;">M.T</th>
                                                         <th>Size</th>
                                                         <th class="">
-                                                            PO Qty</th>
+                                                            Bags/
+                                                            Units</th>
+                                                        <th class="">
+                                                            Measurement Type</th>
+
                                                         <th class="">
                                                             Received Qty</th>
                                                         <th class="">
+                                                            PO Qty</th>
+                                                        <th class="">
                                                             Balance</th>
-                                                        <th class="" style="width: 20%;">
+                                                        <th class="" style="width: 13%;">
                                                             Remarks</th>
 
                                                     </tr>
@@ -314,32 +317,46 @@
                                                                         readonly>
                                                                 </td>
 
-                                                                <td class="quantity">
-                                                                    <input type="text" style="color: black;"
-                                                                        value="{{ old('po_quantity', !empty($note_detail->po_quantity) ? $note_detail->po_quantity : '') }}"
-                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} po_quantity_{{ $index }}"
-                                                                        name="po_quantity[]" placeholder="PO.Qty"
-                                                                        readonly>
+                                                                <td class="bagsQuantity">
+                                                                    <input type="number" id="bags"
+                                                                        name="bags[]"
+                                                                        class="bags form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} bags bags_{{ $index }}"
+                                                                        placeholder="Bags" >
                                                                 </td>
-                                                                <td class="quantity">
+                                                                <td class="measurementQuantity">
+                                                                    <input type="number" id="measurementType"
+                                                                        name="measurementType[]"
+                                                                        class="measurementType form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurementType measurementType_{{ $index }}"
+                                                                        placeholder="M.T" >
+                                                                </td>
+
+
+                                                                <td class="receivedQuantity">
                                                                     <input type="number" id="received_qty"
                                                                         name="received_qty[]"
                                                                         value="{{ old('received_qty', !empty($note_detail->received_qty) ? $note_detail->received_qty : '') }}"
                                                                         class="received_qty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} received_qty received_qty_{{ $index }}"
                                                                         placeholder="R.Qty" required>
                                                                 </td>
+                                                                <td class="po_quantity">
+                                                                    <input type="text" style="color: black;" id="po_quantity"
+                                                                        value="{{ old('po_quantity', !empty($note_detail->po_quantity) ? $note_detail->po_quantity : '') }}"
+                                                                        class="po_quantity form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} po_quantity_{{ $index }}"
+                                                                        name="po_quantity[]" placeholder="PO.Qty"
+                                                                        readonly>
+                                                                </td>
 
                                                                 <td class="quantity">
                                                                     <input type="text" style="color: black;"
                                                                         id="balance" name="balance[]"
-                                                                        value="{{ old('balance', !empty($note_detail->balance) ? $note_detail->balance : '') }}"
+                                                                        value="{{ old('balance', !empty($note_detail->balance) ? $note_detail->balance : 0) }}"
                                                                         class="balance form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} balance_{{ $index }}"
                                                                         placeholder="balance" readonly>
                                                                 </td>
                                                                 <td class="remarks">
                                                                     <textarea style="margin-top: 0px;" name="detail_remarks[]"
                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} detail_remarks_{{ $index }}"
-                                                                        id="detail_remarks" cols="30" placeholder="Remarks">{{@$note_detail->detail_remarks}}</textarea>
+                                                                        id="detail_remarks" cols="30" placeholder="Remarks">{{ @$note_detail->detail_remarks }}</textarea>
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -407,14 +424,38 @@
     </div>
     <script>
         $(document).on('click', 'body *', function() {
-            $('.received_qty').on("input", function() {
+
+            $('.bags, .measurementType').on("input", function() {
+                var row_id = $(this).closest("tr").find(".row_id").val();
+                let bagsQuantity = parseInt($(this).closest("tr").find(".bags_" + row_id).val(), 10) || 0;
+                let measurementQty = parseInt($(this).closest("tr").find(".measurementType_" + row_id)
+                    .val(), 10) || 0;
+                // console.log(row_id + ", " + quantity + ", " + price);
+                if (parseInt(measurementQty) > 0) {
+                    $(this).closest("tr").find(".received_qty_" + row_id).val(bagsQuantity *
+                        measurementQty);
+                } else {
+                    $(this).closest("tr").find(".received_qty_" + row_id).val('');
+                }
+
+                let poQuantity = $(this).closest("tr").find(".po_quantity_" + row_id).val();
+                let receivedQty = $(this).closest("tr").find(".received_qty_" + row_id).val() || 0;
+                // console.log(row_id + ", " + quantity + ", " + price);
+                if (parseInt(poQuantity) > 0) {
+                    $(this).closest("tr").find(".balance_" + row_id).val(receivedQty - poQuantity);
+                } else {
+                    $(this).closest("tr").find(".balance_" + row_id).val('');
+                }
+                doAmountTotal();
+            });
+
+            $('.received_qty, .po_quantity').on("input", function() {
                 var row_id = $(this).closest("tr").find(".row_id").val();
                 let poQuantity = $(this).closest("tr").find(".po_quantity_" + row_id).val();
                 let receivedQty = $(this).closest("tr").find(".received_qty_" + row_id).val();
                 // console.log(row_id + ", " + quantity + ", " + price);
                 if (parseInt(poQuantity) > 0) {
-                    $(this).closest("tr").find(".balance_" + row_id).val(poQuantity -
-                        receivedQty);
+                    $(this).closest("tr").find(".balance_" + row_id).val(receivedQty - poQuantity);
                 } else {
                     $(this).closest("tr").find(".balance_" + row_id).val('');
                 }
@@ -493,12 +534,24 @@
                 '<td class="quantity"><input type="text" style="color: black;" class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} size_' +
                 currentIndex +
                 '"id="size" name="size[]" placeholder="Size" readonly></td>' +
-                '<td class="quantity"> <input type="text" id="po_quantity" class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} po_quantity_' +
+
+                '<td class="bagsQuantity">' +
+                '<input type="number" id="bags" name="bags[]" class="bags form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} bags bags_' +
                 currentIndex +
-                '"name="po_quantity[]" placeholder="PO.Qty"></td>' +
-                '<td class="quantity"><input type="number" id="received_qty" name="received_qty[]"  class="received_qty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} received_qty_' +
+                ' " placeholder="Bags" ></td>' +
+                '<td class="measurementQuantity">' +
+                '<input type="number" id="measurementType" name="measurementType[]" class="measurementType form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurementType measurementType_' +
+                currentIndex +
+                '"placeholder="M.T" ></td>' +
+
+                '<td class="received_qty"><input type="number" id="received_qty" name="received_qty[]"  class="received_qty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} received_qty_' +
                 currentIndex +
                 '"placeholder="R.Qty" required></td>' +
+
+                '<td class="po_quantity"> <input type="text" id="po_quantity" class="po_quantity form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} po_quantity_' +
+                currentIndex +
+                '"name="po_quantity[]" placeholder="PO.Qty"></td>' +
+
                 '<td class="quantity"><input type="text" style="color: black;" id="balance" name="balance[]"  class="balance form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} balance_' +
                 currentIndex +
                 '"placeholder="Balance" readonly></td>' +
@@ -605,14 +658,43 @@
             });
 
             $(document).on('click', 'body *', function() {
-                $('.received_qty').on("input", function() {
+
+                $('.bags, .measurementType').on("input", function() {
+                    var row_id = $(this).closest("tr").find(".row_id").val();
+                    let bagsQuantity = parseInt($(this).closest("tr").find(".bags_" + row_id).val(),
+                        10) || 0;
+                    let measurementQty = parseInt($(this).closest("tr").find(".measurementType_" +
+                            row_id)
+                        .val(), 10) || 0;
+                    // console.log(row_id + ", " + quantity + ", " + price);
+                    if (parseInt(measurementQty) > 0) {
+                        $(this).closest("tr").find(".received_qty_" + row_id).val(bagsQuantity *
+                            measurementQty);
+                    } else {
+                        $(this).closest("tr").find(".received_qty_" + row_id).val('');
+                    }
+
+                    let poQuantity = $(this).closest("tr").find(".po_quantity_" + row_id).val();
+                    let receivedQty = $(this).closest("tr").find(".received_qty_" + row_id).val() ||
+                        0;
+                    // console.log(row_id + ", " + quantity + ", " + price);
+                    if (parseInt(poQuantity) > 0) {
+                        $(this).closest("tr").find(".balance_" + row_id).val(receivedQty -
+                            poQuantity);
+                    } else {
+                        $(this).closest("tr").find(".balance_" + row_id).val('');
+                    }
+                    doAmountTotal();
+                });
+
+                $('.received_qty, .po_quantity').on("input", function() {
                     var row_id = $(this).closest("tr").find(".row_id").val();
                     let poQuantity = $(this).closest("tr").find(".po_quantity_" + row_id).val();
                     let receivedQty = $(this).closest("tr").find(".received_qty_" + row_id).val();
                     // console.log(row_id + ", " + quantity + ", " + price);
                     if (parseInt(poQuantity) > 0) {
-                        $(this).closest("tr").find(".balance_" + row_id).val(poQuantity -
-                            receivedQty);
+                        $(this).closest("tr").find(".balance_" + row_id).val(receivedQty -
+                            poQuantity);
                     } else {
                         $(this).closest("tr").find(".balance_" + row_id).val('');
                     }
@@ -626,9 +708,9 @@
                 });
 
                 function doAmountTotal() {
-                    $('#balance').text("");
+                    $('#received_qty').text("");
                     var totalQuantity = 0;
-                    $(".balance").each(function() {
+                    $(".received_qty").each(function() {
                         if (!isNaN(this.value) && this.value.length != 0) {
                             totalQuantity += parseFloat(this.value);
                         }
@@ -653,9 +735,9 @@
                 });
 
                 function doAmountTotal() {
-                    $('#balance').text("");
+                    $('#received_qty').text("");
                     var totalQuantity = 0;
-                    $(".balance").each(function() {
+                    $(".received_qty").each(function() {
                         if (!isNaN(this.value) && this.value.length != 0) {
                             totalQuantity += parseFloat(this.value);
                         }
@@ -699,8 +781,6 @@
     <x-slot:footerFiles>
         <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
 
-        <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
-        <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
         <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script>
         <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>

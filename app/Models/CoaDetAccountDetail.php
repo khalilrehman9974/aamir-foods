@@ -11,5 +11,5 @@ class CoaDetAccountDetail extends Model
     use SoftDeletes;
     protected $guarded = ['id'];
 
-    protected $fillable = ['det_account_code','address','email','cnic','contact_no_1','contact_no_2','opening_balance','credit_limit'];
+    protected $fillable = ['det_account_code','address','email','cnic','contact_no_1','remarks','credit_days','contact_no_2','opening_balance','credit_limit'];
 }

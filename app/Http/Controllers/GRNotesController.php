@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CoaDetailAccount;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\GRNotesDetail;
 use App\Services\CommonService;
+use App\Models\CoaDetailAccount;
 use App\Services\GRNotesService;
 use App\Models\GoodsReceivedNote;
+use Illuminate\Support\Facades\DB;
 use App\Models\PurchaseOrderDetail;
 use App\Models\PurchaseOrderMaster;
-use Illuminate\Support\Facades\DB;
 // use App\Http\Requests\Request;
 
 class GRNotesController extends Controller
@@ -86,6 +87,7 @@ class GRNotesController extends Controller
 
     public function update(Request $request)
     {
+        // dd($request);
         // DB::beginTransaction();
         // try {
             $request = request()->all();
@@ -116,14 +118,15 @@ class GRNotesController extends Controller
         $maxid = $id;
         $dropDownData = $this->grNotesService->DropDownData();
         $note = GoodsReceivedNote::find($id);
-        // dd($note);
+        $date = Carbon::parse($note->date)->format('d-m-Y');
+
         $parties = CoaDetailAccount::where('id', $note->party_id)->pluck('account_name', 'id');
         $note_details = GRNotesDetail::where('master_id', $id)->get();
         if (empty($note)) {
             $message = config('constants.wrong');
         }
 
-        return view('goods-received-notes.edit', compact('pageTitle','maxid','note','parties', 'note_details','dropDownData'));
+        return view('goods-received-notes.edit', compact('pageTitle' ,'date','maxid','note','parties', 'note_details','dropDownData'));
     }
 
 

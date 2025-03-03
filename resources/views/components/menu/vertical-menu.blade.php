@@ -367,10 +367,10 @@
 
                         </li>
 
-                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                        {{-- <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('transporter.list') }}">Transporters</a>
 
-                        </li>
+                        </li> --}}
 
                         <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('distributer.list') }}">Distributer</a>

@@ -112,7 +112,9 @@ class GRNotesService
             'product_id' => $request['product_id'],
             'packing_type' => $request['packing_type'],
             'measurement_type' => $request['measurement_type'],
-            'size' => $request['size'],
+            'size' => $request['size'] ,
+            'bags' => $request['bags'] ,
+            'measurementType' => $request['measurementType'] ,
             'po_quantity' => $request['po_quantity'],
             'received_qty' => $request['received_qty'],
             'balance' => $request['balance'],
@@ -133,6 +135,8 @@ class GRNotesService
                 $rec['packing_type'] = $data['packing_type'][$key];
                 $rec['measurement_type'] = $data['measurement_type'][$key];
                 $rec['size'] = $data['size'][$key];
+                $rec['bags'] = $data['bags'][$key];
+                $rec['measurementType'] = $data['measurementType'][$key];
                 $rec['po_quantity'] = $data['po_quantity'][$key];
                 $rec['received_qty'] = $data['received_qty'][$key];
                 $rec['balance'] = $data['balance'][$key];

@@ -13,19 +13,14 @@
         <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
 
         <!--  BEGIN CUSTOM STYLE FILE  -->
-        <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
         <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
-        @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
-        @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
 
 
         <!--  BEGIN CUSTOM STYLE FILE  -->
-        <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
         <link rel="stylesheet" href="../src/plugins/src/filepond/filepond.min.css">
         <link rel="stylesheet" href="../src/plugins/src/filepond/FilePondPluginImagePreview.min.css">
 
         <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
-        <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
 
     </x-slot>
 
@@ -39,7 +34,8 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Sale Return</li>
-                <li class="breadcrumb-item"><a href="{{ route('sale-return.sales-return') }}">List of Sale Retrnsu</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('sale-return.sales-return') }}">List of Sale Retrnsu</a>
+                </li>
                 <li class="breadcrumb-item"><a href="{{ route('sale-return.create') }}">Create</a></li>
 
             </ol>
@@ -74,17 +70,23 @@
                                                         @csrf
                                                         <input type="hidden" name="id" id="id"
                                                             value="{{ isset($saleReturn->id) ? $saleReturn->id : '' }}" />
+                                                        <div class="col-lg-0 col-6">
+                                                            <label for="grn_no" class="form-label">GRN NO: </label>
+                                                            <input id="grn_no" type="text" style="color:black;"
+                                                                name="grn_no" value="{{ $saleReturn->grn_no }}"
+                                                                class="form-control form-control-sm" readonly>
+                                                        </div>
+
+                                                        <div class="col-lg-0 col-6">
+                                                            <label for="dispatch_note" class="form-label">Sale
+                                                                Return Invoice# </label>
+                                                            <input id="invoice_no" type="text" style="color:black;"
+                                                                name="sale_return_number" value="{{ $currentInvoice }}"
+                                                                class="form-control form-control-sm" readonly>
+                                                        </div>
 
                                                         <div class="form-group">
                                                             <div class="row  invoice-content">
-                                                                <div class="col-lg-0 col-6">
-                                                                    <label for="dispatch_note"
-                                                                        class="form-label">Sale Return Invoice# </label>
-                                                                    <input id="invoice_no" type="text"
-                                                                        style="color:black;" name="sale_return_number"
-                                                                        value="{{ $currentInvoice }}"
-                                                                        class="form-control form-control-sm" readonly>
-                                                                </div>
 
                                                                 <div class="col-lg-0 col-6" style="float: right">
                                                                     <label for="date">
@@ -92,9 +94,17 @@
                                                                     <input type="text"
                                                                         class="form-control form-control-sm"
                                                                         id="date" style="color:black;"
-                                                                        name="date"
-                                                                        value="{{ $saleReturn->date }}"
-                                                                        placeholder="Select The Date" readonly>
+                                                                        name="date" value="{{ $date }}"
+                                                                        placeholder="Select The Date" required>
+                                                                </div>
+                                                                <div class="col-lg-0 col-6">
+                                                                    <label for="sale_invoice_number"
+                                                                        class="form-label">Sale Invoice# </label>
+                                                                    <input id="sale_invoice_number" type="text"
+                                                                        value="{{ $saleReturn->sale_invoice_number }}"
+                                                                        style="color:black;" name="sale_invoice_number"
+                                                                        placeholder="Enter Sale Invoice Number."
+                                                                        class="form-control form-control-sm" required>
                                                                 </div>
 
                                                             </div>
@@ -150,8 +160,8 @@ $isSelected = old('saleman') == $key || $saleReturn->pluck('saleman')->contains(
                                                                     <label for="inputState"
                                                                         class="form-label">Belt</label>
 
-                                                                    <select id="sector" name="sector"
-                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sector"
+                                                                    <select id="sector-dropdown" name="sector"
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sector-dropdown"
                                                                         required>
                                                                         @foreach ($sectors as $key => $value)
                                                                             <option value="{{ $key }}"
@@ -168,8 +178,8 @@ $isSelected = old('sector') == $key || $saleReturn->pluck('sector')->contains($k
                                                                     <label for="inputState" class="form-label">Area
                                                                     </label>
 
-                                                                    <select id="area" name="area"
-                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} area"
+                                                                    <select id="area-dropdown" name="area"
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} area-dropdown"
                                                                         required>
                                                                         @foreach ($areas as $key => $value)
                                                                             <option value="{{ $key }}"
@@ -193,16 +203,15 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
 
 
                                                                     <select id="delivered_to" name="delivered_to"
-                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered_to"
-                                                                        >
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered_to">
                                                                         <option value="">Same To Party</option>
                                                                         @foreach ($deliveredToParties as $key => $value)
-                                                                        <option value="{{ $key }}"
-                                                                            {{ (old('delivered_to') == $key ? 'selected' : '') || (!empty($saleReturn->delivered_to) ? collect($saleReturn->delivered_to)->contains($key) : '') ? 'selected' : '' }}>
-                                                                            {{ $value }}
-                                                                        </option>
-                                                                    @endforeach
-                                                                    {{-- @foreach ($deliveredToParties as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                {{ (old('delivered_to') == $key ? 'selected' : '') || (!empty($saleReturn->delivered_to) ? collect($saleReturn->delivered_to)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                {{ $value }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                        {{-- @foreach ($deliveredToParties as $key => $value)
                                                                             <option value="{{ $key }}"
                                                                                 @php
                                                                                 $isSelected = old('delivered_to') == $key || $dispatchNote->pluck('delivered_to')->contains($key); @endphp
@@ -220,13 +229,14 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
                                                                     <select id="transporter" name="transporter_id"
                                                                         class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} transporter"
                                                                         required>
-                                                                        <option value="">Select Transporter</option>
-                                                                        @foreach ($dropDownData['Transporters'] as $key => $value)
-                                                                        <option value="{{ $key }}"
-                                                                            {{ (old('transporter_id') == $key ? 'selected' : '') || (!empty($saleReturn->transporter_id) ? collect($saleReturn->transporter_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                            {{ $value }}
+                                                                        <option value="">Select Transporter
                                                                         </option>
-                                                                    @endforeach
+                                                                        @foreach ($dropDownData['Transporters'] as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                {{ (old('transporter_id') == $key ? 'selected' : '') || (!empty($saleReturn->transporter_id) ? collect($saleReturn->transporter_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                {{ $value }}
+                                                                            </option>
+                                                                        @endforeach
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -238,7 +248,7 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
                                                                         Name</label>
                                                                     <input id="driver_name" type="driver_name"
                                                                         name="driver_name" style="color:black;"
-                                                                        value="{{$saleReturn->driver_name}}"
+                                                                        value="{{ $saleReturn->driver_name }}"
                                                                         placeholder="Please Enter the Driver Name "
                                                                         class="form-control form-control-sm" required>
                                                                 </div>
@@ -248,9 +258,9 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
                                                                         No</label>
                                                                     <input id="bility_no" type="bilty_no"
                                                                         name="bilty_no" style="color:black;"
-                                                                        value="{{$saleReturn->bilty_no}}"
+                                                                        value="{{ $saleReturn->bilty_no }}"
                                                                         placeholder="Please Enter the Area "
-                                                                        class="form-control form-control-sm" >
+                                                                        class="form-control form-control-sm">
                                                                 </div>
 
                                                             </div>
@@ -384,7 +394,8 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
                                                                                                     @endforeach
                                                                                                 </select> --}}
 
-                                                                                                <select style="color:black;"
+                                                                                                <select
+                                                                                                    style="color:black;"
                                                                                                     class="mb-3 form-control select2 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
                                                                                                     disabled>
                                                                                                     <option selected>
@@ -394,7 +405,8 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
                                                                                                 </select>
 
                                                                                                 {{-- Hidden field to store the Product ID --}}
-                                                                                                <input type="hidden" style="color:black;"
+                                                                                                <input type="hidden"
+                                                                                                    style="color:black;"
                                                                                                     name="product_id[]"
                                                                                                     value="{{ $saleReturnDetail->product_id }}">
 
@@ -404,7 +416,7 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
                                                                                                     style="color: black;"
                                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_{{ $index }}"
                                                                                                     id="packing"
-                                                                                                    value = {{$saleReturnDetail->packing_type}}
+                                                                                                    value={{ $saleReturnDetail->packing_type }}
                                                                                                     {{-- value="{{ old('packing_type', !empty($saleReturnDetail->packing_type) ? $saleReturnDetail->packing_type : '') }}" --}}
                                                                                                     name="packing_type[]"
                                                                                                     placeholder="P.T"
@@ -415,7 +427,7 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
                                                                                                     style="color: black;"
                                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_{{ $index }}"
                                                                                                     placeholder="M.T"
-                                                                                                    value = {{$saleReturnDetail->measurement_type}}
+                                                                                                    value={{ $saleReturnDetail->measurement_type }}
                                                                                                     {{-- value="{{ old('measurement_type', !empty($saleReturnDetail->measurement_type) ? $saleReturnDetail->measurement_type : '') }}" --}}
                                                                                                     name="measurement_type[]"
                                                                                                     id="measurement"
@@ -426,12 +438,11 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
                                                                                                 <input type="text"
                                                                                                     id="quantity"
                                                                                                     class="qty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_{{ $index }}"
-                                                                                                    value = {{$saleReturnDetail->quantity}}
+                                                                                                    value={{ $saleReturnDetail->quantity }}
                                                                                                     {{-- value="{{ old('quantity', !empty($saleReturnDetail->quantity) ? $saleReturnDetail->quantity : '') }}" --}}
                                                                                                     name="quantity[]"
                                                                                                     style="color:black;"
-                                                                                                    placeholder="Qty"
-                                                                                                    >
+                                                                                                    placeholder="Qty">
                                                                                             </td>
 
                                                                                             <td class="total_unit">
@@ -439,7 +450,7 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
                                                                                                     id="dzn"
                                                                                                     name="dzns[]"
                                                                                                     style="color: black;"
-                                                                                                    value = {{$saleReturnDetail->dzns}}
+                                                                                                    value={{ $saleReturnDetail->dzns }}
                                                                                                     {{-- value="{{ old('dzns', !empty($saleReturnDetail->dzns) ? $saleReturnDetail->dzns : '') }}" --}}
                                                                                                     class="dozen form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} dozen_{{ $index }}"
                                                                                                     placeholder="Dzn"
@@ -450,7 +461,7 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
                                                                                                     id="total_dzns"
                                                                                                     style="color: black;"
                                                                                                     name="total_dzns[]"
-                                                                                                    value = {{$saleReturnDetail->total_dzns}}
+                                                                                                    value={{ $saleReturnDetail->total_dzns }}
                                                                                                     {{-- value="{{ old('total_dzns', !empty($saleReturnDetail->total_dzns) ? $saleReturnDetail->total_dzns : '') }}" --}}
                                                                                                     class="totDzn form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} totDzn_{{ $index }}"
                                                                                                     placeholder="Tot.Dzns"
@@ -461,7 +472,8 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
                                                                                                 <input type="number"
                                                                                                     id="rate"
                                                                                                     name="rate[]"
-                                                                                                    value="{{isset($pricesArray[$saleReturnDetail->product_id]) ? (is_array($pricesArray[$saleReturnDetail->product_id]) ? implode(',', $pricesArray[$saleReturnDetail->product_id]) : $pricesArray[$saleReturnDetail->product_id]) : '' }}"
+                                                                                                    value={{ $saleReturnDetail->rate }}
+                                                                                                    {{-- value="{{ isset($pricesArray[$saleReturnDetail->product_id]) ? (is_array($pricesArray[$saleReturnDetail->product_id]) ? implode(',', $pricesArray[$saleReturnDetail->product_id]) : $pricesArray[$saleReturnDetail->product_id]) : '' }}" --}}
                                                                                                     {{-- value="{{ old('rate', isset($pricesArray[$saleReturnDetail->product_id]) ? $pricesArray[$saleReturnDetail->product_id] : '') }}" --}}
                                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} rate rate_{{ $index }}"
                                                                                                     placeholder="Rate"
@@ -474,7 +486,7 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
                                                                                                 <input type="text"
                                                                                                     id="amount"
                                                                                                     style="color: black;"
-                                                                                                    value = {{$saleReturnDetail->amount}}
+                                                                                                    value={{ $saleReturnDetail->amount }}
                                                                                                     {{-- value="{{ old('amount', !empty($saleReturnDetail->amount) ? $saleReturnDetail->amount : '') }}" --}}
                                                                                                     name="amount[]"
                                                                                                     class="amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} amount_{{ $index }}"
@@ -556,8 +568,7 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
                                                                                     style="color: black;">
                                                                                     {{-- Tot. Amount --}}
                                                                                     <label for=""><b>Gross.
-                                                                                            Amount
-                                                                                            :</b></label>
+                                                                                            Amount:</b></label>
                                                                                 </div>
                                                                                 <div class="col-md-4"
                                                                                     style="width: 70%; float: right; margin-left:10%;">
@@ -567,6 +578,7 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
                                                                                         style="color: black;"
                                                                                         id="gross-amount"
                                                                                         name="gross_amount"
+                                                                                        value="{{ $saleReturn->gross_amount }}"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
                                                                                         placeholder="Gross.Amount"
                                                                                         readonly>
@@ -591,7 +603,8 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
                                                                                     <input type="number"
                                                                                         style="color: black;"
                                                                                         id="discount-amount"
-                                                                                        name="scheme" value="{{$saleReturn->scheme}}"
+                                                                                        name="scheme"
+                                                                                        value="{{ $saleReturn->scheme }}"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount_amount"
                                                                                         placeholder="Tot Discount.Amount">
                                                                                 </div>
@@ -616,7 +629,8 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
                                                                                     <input type="number"
                                                                                         style="color: black;"
                                                                                         id="commission-amount"
-                                                                                        name="commission" value="{{ $saleReturn->commission }}"
+                                                                                        name="commission"
+                                                                                        value="{{ $saleReturn->commission }}"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} commission_amount"
                                                                                         placeholder="Commission Amount">
                                                                                 </div>
@@ -631,8 +645,8 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
                                                                                 <div class="col-md-2 class-label"
                                                                                     style="color: black;">
                                                                                     {{-- Tot. Amount --}}
-                                                                                    <label for=""><b>Net Amount
-                                                                                            :</b></label>
+                                                                                    <label for=""><b>Net
+                                                                                            Amount:</b></label>
                                                                                 </div>
                                                                                 <div class="col-md-4"
                                                                                     style="width: 70%; float: right; margin-left:10%;">
@@ -641,6 +655,7 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
                                                                                     <input type="text"
                                                                                         style="color: black;"
                                                                                         id="net-amount"
+                                                                                        value="{{ $saleReturn->net_amount }}"
                                                                                         name="net_amount"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
                                                                                         placeholder="Net.Amount"
@@ -653,7 +668,8 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <a href="{{ route('sale-return.sales-return') }}" style="float: right;"
+                                                            <a href="{{ route('sale-return.sales-return') }}"
+                                                                style="float: right;"
                                                                 class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
                                                             {{-- @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
                                                             @endif --}}
@@ -685,20 +701,49 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
     </div>
     <script src="{{ asset('js/saleReturn.js') }}"></script>
 
+    <script>
+        $('.sector-dropdown').on('change', function() {
+            var idSector = this.value;
+            var partyId = $('.party').val();
+
+            let url = config.routes.getPartyAreaDetail
+            $("#area-dropdown").html(
+                '<option value="select-all">Select Area</option>'); // Add Select All option
+            $.ajax({
+                url: url,
+                type: "GET",
+                data: {
+                    sector_id: idSector,
+                    party_id: partyId,
+                    _token: '{{ csrf_token() }}'
+                },
+                dataType: 'json',
+                success: function(result) {
+                    $.each(result.areas, function(key, data) {
+                        $("#area-dropdown").append('<option value="' + data.id +
+                            '">' + data.name + '</option>');
+                    });
+                }
+            });
+        });
+    </script>
 
 
     <script>
         var config = {
             routes: {
                 getPartyCode: "{{ url('sale/get-product-rate') }}",
+                getProducts: "{{ url('sale-order/get-products') }}",
+                getPartyAreaDetail: "{{ url('sale-return/get-party-sale-man-area') }}",
+                getProductPackingTypeDetail: "{{ url('sale-order/get-product-packing-type') }}",
+                getProductMeasurementTypeDetail: "{{ url('sale-order/get-product-measurement-type') }}",
+                getDeliveredToParty: "{{ url('sale-order/get-delivered-to-party') }}",
             },
         }
     </script>
 
     <x-slot:footerFiles>
         <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
-        <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
-        <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
         <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"

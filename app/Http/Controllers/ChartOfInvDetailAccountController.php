@@ -77,9 +77,12 @@ class ChartOfInvDetailAccountController extends Controller
      */
     public function store(CoInvDetailAccountRequest $request)
     {
+        $session = $this->commonService->getSession();
         $data = $request->except('_token', 'id');
         $data['created_by'] = Auth::user()->id;
         $data['updated_by'] = Auth::user()->id;
+        $data['business_id'] = $session->business_id;
+        $data['f_year_id'] = $session->financial_year;
         if ($request->image) {
             $fileName = $request->image->getClientOriginalName();
             $data['image'] = $fileName;

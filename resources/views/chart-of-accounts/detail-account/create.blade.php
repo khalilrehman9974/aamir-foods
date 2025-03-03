@@ -215,7 +215,8 @@
                                                     </div>
                                                     <br>
                                                     <div class="col-lg-0 col-12 form-group mb-4">
-                                                        <label for="inputState" class="form-label">Sub-Sub Head</label>
+                                                        <label for="inputState" class="form-label">Sub-Sub
+                                                            Head</label>
                                                         @if (!empty($detailAccount))
                                                             <select id="sub-sub-head" name="sub_sub_head"
                                                                 class="form-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
@@ -447,8 +448,12 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                             @if (!empty($detailAccountRecords))
                                                                                 @foreach ($detailAccountRecords as $index => $detailAccountRecord)
                                                                                     @php
-                                                                                        $selectedPriceTag = $detailAccountRecord->price_tag_id;
-                                                                                        $filteredProducts = $detailAccountProducts->where('master_price_tag',$selectedPriceTag);
+                                                                                        $selectedPriceTag =
+                                                                                            $detailAccountRecord->price_tag_id;
+                                                                                        $filteredProducts = $detailAccountProducts->where(
+                                                                                            'master_price_tag',
+                                                                                            $selectedPriceTag,
+                                                                                        );
                                                                                         $rowIndex = $index + 1;
                                                                                     @endphp
                                                                                     <tr class="tr_clone validator_0 main_row main_row_{{ $rowIndex }}"
@@ -571,7 +576,8 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                             <td class="quantity">
                                                                                                 <input
                                                                                                     id= "masterThirdLevel"
-                                                                                                    type = "text" value="{{$detailAccountProduct->master_third_level}}"
+                                                                                                    type = "text"
+                                                                                                    value="{{ $detailAccountProduct->master_third_level }}"
                                                                                                     name="master_third_level[]"
                                                                                                     class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} masterThirdLevel_{{ $rowIndex }}"
                                                                                                     hidden>
@@ -579,7 +585,8 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                             <td class="quantity">
                                                                                                 <input
                                                                                                     id= "master_price_tag"
-                                                                                                    type = "text" value="{{$detailAccountProduct->master_price_tag}}"
+                                                                                                    type = "text"
+                                                                                                    value="{{ $detailAccountProduct->master_price_tag }}"
                                                                                                     name="master_price_tag[]"
                                                                                                     class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} master_price_tag_{{ $rowIndex }}"
                                                                                                     hidden>
@@ -866,46 +873,71 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                 Address </label>
                                                                             <textarea name="address" id="address" placeholder="Please Enter Address "
                                                                                 class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" type="text" cols="30"
-                                                                                rows="10">{{ @$detailAccountDetails->address }}</textarea>
+                                                                                rows="5">{{ @$detailAccountDetails->address }}</textarea>
                                                                         </div>
                                                                         <div class="col-lg-0 col-12 form-group mb-2">
                                                                             <label for="account_name"
                                                                                 class="form-label">
-                                                                                Contact No 1 </label>
-                                                                            <input id="contact_no_1" type="text"
-                                                                                name="contact_no_1"
-                                                                                value="{{ old('contact_no_1', !empty($detailAccountDetails->contact_no_1) ? $detailAccountDetails->contact_no_1 : '') }}"
-                                                                                placeholder="Please Enter Contact No 1"
-                                                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                                Remarks </label>
+                                                                            <textarea name="remarks" id="remarks" placeholder="Please Enter Remarks "
+                                                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" type="text" cols="30"
+                                                                                rows="5">{{ @$detailAccountDetails->remarks }}</textarea>
                                                                         </div>
                                                                         <div class="col-lg-0 col-12 form-group mb-2">
-                                                                            <label for="contact_no_2"
-                                                                                class="form-label">
-                                                                                Contact No 2 /
-                                                                                WhatsApp</label>
-                                                                            <input id="contact_no_2" type="text"
-                                                                                name="contact_no_2"
-                                                                                value="{{ old('contact_no_2', !empty($detailAccountDetails->contact_no_2) ? $detailAccountDetails->contact_no_2 : '') }}"
-                                                                                placeholder="Please Enter Contact No 2 "
-                                                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                            <div class="row">
+                                                                                <div
+                                                                                    class="col col-md-6 form-group mb-2">
+                                                                                    <label for="account_name"
+                                                                                        class="form-label">
+                                                                                        Contact No 1 </label>
+                                                                                    <input id="contact_no_1"
+                                                                                        type="text"
+                                                                                        name="contact_no_1"
+                                                                                        value="{{ old('contact_no_1', !empty($detailAccountDetails->contact_no_1) ? $detailAccountDetails->contact_no_1 : '') }}"
+                                                                                        placeholder="Please Enter Contact No 1"
+                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                                </div>
+
+                                                                                <div
+                                                                                    class="col col-md-6 form-group mb-2">
+                                                                                    <label for="contact_no_2"
+                                                                                        class="form-label">
+                                                                                        Contact No 2 /
+                                                                                        WhatsApp</label>
+                                                                                    <input id="contact_no_2"
+                                                                                        type="text"
+                                                                                        name="contact_no_2"
+                                                                                        value="{{ old('contact_no_2', !empty($detailAccountDetails->contact_no_2) ? $detailAccountDetails->contact_no_2 : '') }}"
+                                                                                        placeholder="Please Enter Contact No 2 "
+                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                         <div class="col-lg-0 col-12 form-group mb-2">
-                                                                            <label for="cnic" class="form-label">
-                                                                                Email </label>
-                                                                            <input id="email" type="text"
-                                                                                name="email"
-                                                                                value="{{ old('email', !empty($detailAccountDetails->email) ? $detailAccountDetails->email : '') }}"
-                                                                                placeholder="Please Enter the email "
-                                                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
-                                                                        </div>
-                                                                        <div class="col-lg-0 col-12 form-group mb-2">
-                                                                            <label for="cnic" class="form-label">
-                                                                                CNIC </label>
-                                                                            <input id="cnic" type="text"
-                                                                                name="cnic"
-                                                                                value="{{ old('cnic', !empty($detailAccountDetails->cnic) ? $detailAccountDetails->cnic : '') }}"
-                                                                                placeholder="Please Enter the CNIC "
-                                                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                            <div class="row">
+                                                                                <div
+                                                                                    class="col col-md-6 form-group mb-2">
+                                                                                    <label for="cnic"
+                                                                                        class="form-label">
+                                                                                        Email </label>
+                                                                                    <input id="email"
+                                                                                        type="text" name="email"
+                                                                                        value="{{ old('email', !empty($detailAccountDetails->email) ? $detailAccountDetails->email : '') }}"
+                                                                                        placeholder="Please Enter the email "
+                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                                </div>
+                                                                                <div
+                                                                                    class="col col-md-6 form-group mb-2">
+                                                                                    <label for="cnic"
+                                                                                        class="form-label">
+                                                                                        CNIC </label>
+                                                                                    <input id="cnic"
+                                                                                        type="text" name="cnic"
+                                                                                        value="{{ old('cnic', !empty($detailAccountDetails->cnic) ? $detailAccountDetails->cnic : '') }}"
+                                                                                        placeholder="Please Enter the CNIC "
+                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col col-md-6 form-group mb-2">
@@ -931,6 +963,20 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                     placeholder="Please Enter Opening Balance "
                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
                                                                             </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col col-md-6 form-group mb-2">
+                                                                                <label for="credit_days"
+                                                                                    class="form-label">
+                                                                                    Credit
+                                                                                    Days </label>
+                                                                                <input id="credit-days"
+                                                                                    type="text" name="credit_days"
+                                                                                    value="{{ old('credit_days', !empty($detailAccountDetails->credit_days) ? $detailAccountDetails->credit_days : '') }}"
+                                                                                    placeholder="Please Enter credit Days "
+                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                            </div>
+
                                                                         </div>
                                                                     </div>
                                                                 </div>

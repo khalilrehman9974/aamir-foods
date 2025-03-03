@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('packing_type');
             $table->string('measurement_type');
             $table->string('size')->nullable();
+            $table->string('bags')->nullable();
+            $table->string('measurementType')->nullable();
             $table->double('quantity');
             $table->double('price');
             $table->double('amount');

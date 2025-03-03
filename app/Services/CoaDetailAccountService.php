@@ -98,12 +98,14 @@ class CoaDetailAccountService
     {
         return [
             'address' => $request['address'],
+            'remarks' => $request['remarks'],
             'cnic' => $request['cnic'],
             'contact_no_1' => $request['contact_no_1'],
             'contact_no_2' => $request['contact_no_2'],
             'email' => $request['email'],
             'opening_balance' => $request['opening_balance'],
             'credit_limit' => $request['credit_limit'],
+            'credit_days' => $request['credit_days'],
             'created_by' => Auth::user()->id,
             'updated_by' => Auth::user()->id,
             'det_account_code' => $detailAccountMasterInsert

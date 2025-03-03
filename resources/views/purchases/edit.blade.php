@@ -13,19 +13,16 @@
     <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
 
     <!--  BEGIN CUSTOM STYLE FILE  -->
-    <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
     <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
-    @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
-    @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
+
 
 
     <!--  BEGIN CUSTOM STYLE FILE  -->
-    <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="../src/plugins/src/filepond/filepond.min.css">
     <link rel="stylesheet" href="../src/plugins/src/filepond/FilePondPluginImagePreview.min.css">
 
     <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
-    <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
+
 
     </x-slot>
 
@@ -111,7 +108,7 @@
                                                                 <div class="col-lg-0 col-6 ">
                                                                     <label for="date">
                                                                         Date</label>
-                                                                    <input type="text"
+                                                                    <input type="text" value="{{$date}}"
                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
                                                                         id="date" name="date"
                                                                         placeholder="Select The Date">
@@ -204,12 +201,17 @@
                                                                                 <th style="width: 20%;">Product</th>
                                                                                 <th style="width: 8%;">P.T</th>
                                                                                 <th style="width: 8%;">M.T</th>
-                                                                                <th>Size</th>
+                                                                                <th style="width: 8%;">Size</th>
+                                                                                <th class="" style="width: 13%;">
+                                                                                    Bags/
+                                                                                    Units</th>
+                                                                                <th class=""style="width: 13%;">
+                                                                                    Measurement Type</th>
                                                                                 <th class="">
                                                                                     Received Qty</th>
-                                                                                <th class="">
+                                                                                <th class="" style="width: 13%;">
                                                                                     Price</th>
-                                                                                <th class="">
+                                                                                <th class="" style="width: 13%;">
                                                                                     Amount</th>
 
 
@@ -299,6 +301,20 @@
                                                                                                 placeholder="Size"
                                                                                                 value="{{ old('size', !empty(@$purchaseDetail->size) ? @$purchaseDetail->size : '') }}"
                                                                                                 readonly>
+                                                                                        </td>
+
+                                                                                        <td class="bagsQuantity">
+                                                                                            <input type="number" id="bags"
+                                                                                                name="bags[]" value="{{ old('bags', !empty(@$purchaseDetail->bags) ? @$purchaseDetail->bags : '') }}"
+                                                                                                style="color: black;"
+                                                                                                class="bags form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} bags bags_{{ $index }}"
+                                                                                                placeholder="Bags" readonly>
+                                                                                        </td>
+                                                                                        <td class="measurementQuantity">
+                                                                                            <input type="number" id="measurementType" style="color: black;"
+                                                                                                name="measurementType[]" value="{{ old('measurementType', !empty(@$purchaseDetail->measurementType) ? @$purchaseDetail->measurementType : '') }}"
+                                                                                                class="measurementType form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurementType measurementType_{{ $index }}"
+                                                                                                placeholder="M.T" readonly>
                                                                                         </td>
 
                                                                                         <td class="quantity">
@@ -416,7 +432,7 @@
                                                                                     style="color: black;"
                                                                                     id="gross-amount"
                                                                                     name="gross_bill"
-                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} gross-amount"
                                                                                     placeholder="Gross.Amount"
                                                                                     readonly>
                                                                             </div>
@@ -537,8 +553,6 @@
 
     <x-slot:footerFiles>
         <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
-        <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
-        <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
         <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"

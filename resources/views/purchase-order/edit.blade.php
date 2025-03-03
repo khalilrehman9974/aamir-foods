@@ -5,10 +5,7 @@
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <x-slot:headerFiles>
-        <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
         <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
-        @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
-        @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
             integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
@@ -17,12 +14,11 @@
         <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
         <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
         <!--  BEGIN CUSTOM STYLE FILE  -->
-        <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
+
         <link rel="stylesheet" href="../src/plugins/src/filepond/filepond.min.css">
         <link rel="stylesheet" href="../src/plugins/src/filepond/FilePondPluginImagePreview.min.css">
 
         <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
-        <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
         <!--  END CUSTOM STYLE FILE  -->
     </x-slot>
 
@@ -74,8 +70,8 @@
                                         <input id="date" name="date"
                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} date flatpickr flatpickr-input"
                                             type="text"
-                                            value="{{ empty($purchaseOrder->date) ? null : \Illuminate\Support\Carbon::parse($purchaseOrder->date)->format('Y-m-d') }}"
-                                            placeholder="Select Date.." readonly="readonly">
+                                            value="{{ empty($purchaseOrder->date) ? null : \Illuminate\Support\Carbon::parse($purchaseOrder->date)->format('d-m-Y') }}"
+                                            placeholder="Select Date..">
 
                                     </div>
                                 </div>
@@ -862,8 +858,6 @@
         <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
         <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>
 
-        <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
-        <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
         {{-- <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script> --}}
         <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>

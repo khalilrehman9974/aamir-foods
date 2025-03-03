@@ -162,6 +162,8 @@ class SaleReturnService
         $session = $this->commonService->getSession();
         return [
 
+            'grn_no' => $request['grn_no'],
+            'sale_invoice_number' => $request['sale_invoice_number'],
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'party_id' => $request['party_id'],
             'sale_return_number' => $request['party_id'],

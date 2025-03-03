@@ -39,7 +39,8 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Sale Return</li>
-                <li class="breadcrumb-item"><a href="{{ route('sale-return.sales-return') }}">List of Sale Retrnsu</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('sale-return.sales-return') }}">List of Sale Retrnsu</a>
+                </li>
                 <li class="breadcrumb-item"><a href="{{ route('sale-return.create') }}">Create</a></li>
 
             </ol>
@@ -74,27 +75,41 @@
                                                         @csrf
                                                         <input type="hidden" name="id" id="id"
                                                             value="{{ isset($saleReturn->id) ? $saleReturn->id : '' }}" />
+                                                        <div class="col-lg-0 col-6">
+                                                            <label for="grn_no" class="form-label">GRN NO: </label>
+                                                            <input id="grn_no" type="text" style="color:black;"
+                                                                name="grn_no" value="{{ $grnMaster->id }}"
+                                                                class="form-control form-control-sm" readonly>
+                                                        </div>
+
+                                                        <div class="col-lg-0 col-6">
+                                                            <label for="dispatch_note" class="form-label">Sale
+                                                                Return Invoice# </label>
+                                                            <input id="invoice_no" type="text" style="color:black;"
+                                                                name="sale_return_number" value="{{ $invoiceNo }}"
+                                                                class="form-control form-control-sm" readonly>
+                                                        </div>
 
                                                         <div class="form-group">
                                                             <div class="row  invoice-content">
-                                                                <div class="col-lg-0 col-6">
-                                                                    <label for="dispatch_note"
-                                                                        class="form-label">Sale Return Invoice# </label>
-                                                                    <input id="invoice_no" type="text"
-                                                                        style="color:black;" name="sale_return_number"
-                                                                        value="{{ $invoiceNo }}"
-                                                                        class="form-control form-control-sm" readonly>
-                                                                </div>
-
                                                                 <div class="col-lg-0 col-6" style="float: right">
                                                                     <label for="date">
                                                                         Date</label>
                                                                     <input type="text"
                                                                         class="form-control form-control-sm"
                                                                         id="date" style="color:black;"
-                                                                        name="date"
-                                                                        value="{{ $saleInvoiceMaster->date }}"
-                                                                        placeholder="Select The Date" readonly>
+                                                                        name="date" placeholder="Select The Date"
+                                                                        readonly>
+                                                                </div>
+
+                                                                <div class="col-lg-0 col-6">
+                                                                    <label for="sale_invoice_number"
+                                                                        class="form-label">Sale Invoice# </label>
+                                                                    <input id="sale_invoice_number" type="text"
+                                                                        style="color:black;"
+                                                                        name="sale_invoice_number"
+                                                                        placeholder="Enter Sale Invoice Number."
+                                                                        class="form-control form-control-sm" required>
                                                                 </div>
 
                                                             </div>
@@ -113,7 +128,7 @@
                                                                         @foreach ($parties as $key => $value)
                                                                             <option value="{{ $key }}"
                                                                                 @php
-$isSelected = old('party_id') == $key || $saleInvoiceMaster->pluck('party_id')->contains($key); @endphp
+$isSelected = old('party_id') == $key || $grnMaster->pluck('party_id')->contains($key); @endphp
                                                                                 {{ $isSelected ? 'selected' : '' }}>
                                                                                 {{ $value }}
                                                                             </option>
@@ -131,8 +146,8 @@ $isSelected = old('party_id') == $key || $saleInvoiceMaster->pluck('party_id')->
                                                                         required>
                                                                         @foreach ($saleMans as $key => $value)
                                                                             <option value="{{ $key }}"
-                                                                                @php
-$isSelected = old('saleman') == $key || $saleInvoiceMaster->pluck('saleman')->contains($key); @endphp
+                                                                                {{-- @php
+//  $isSelected = old('saleman') == $key || $saleReturn->pluck('saleman')->contains($key); @endphp --}}
                                                                                 {{ $isSelected ? 'selected' : '' }}>
                                                                                 {{ $value }}
                                                                             </option>
@@ -150,36 +165,47 @@ $isSelected = old('saleman') == $key || $saleInvoiceMaster->pluck('saleman')->co
                                                                     <label for="inputState"
                                                                         class="form-label">Belt</label>
 
-                                                                    <select id="sector" name="sector"
-                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sector"
+                                                                    {{-- <select id="sector-dropdown" name="sector"
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sector-dropdown"
                                                                         required>
-                                                                        @foreach ($sectors as $key => $value)
+                                                                    </select> --}}
+
+                                                                    <select id="sector-dropdown" name="sector"
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sector-dropdown"
+                                                                        required>
+                                                                        <option value="">Select Belt</option>
+                                                                        {{-- @foreach ($sectors as $key => $value)
                                                                             <option value="{{ $key }}"
                                                                                 @php
-$isSelected = old('sector') == $key || $saleInvoiceMaster->pluck('sector')->contains($key); @endphp
+$isSelected = old('sector') == $key || $saleReturn->pluck('sector')->contains($key); @endphp
                                                                                 {{ $isSelected ? 'selected' : '' }}>
+                                                                                {{ $value }}
+                                                                            </option>
+                                                                        @endforeach --}}
+                                                                        @foreach ($sectors as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                {{ (old('sector') == $key ? 'selected' : '') || (!empty($saleReturn->sector) ? collect($saleReturn->sector)->contains($key) : '') ? 'selected' : '' }}>
                                                                                 {{ $value }}
                                                                             </option>
                                                                         @endforeach
                                                                     </select>
+
+
+
                                                                 </div>
 
                                                                 <div class="col-lg-0 col-6">
                                                                     <label for="inputState" class="form-label">Area
                                                                     </label>
 
-                                                                    <select id="area" name="area"
-                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} area"
+                                                                    <select id="area-dropdown" name="area"
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} area-dropdown"
                                                                         required>
-                                                                        @foreach ($areas as $key => $value)
-                                                                            <option value="{{ $key }}"
-                                                                                @php
-$isSelected = old('area') == $key || $saleInvoiceMaster->pluck('area')->contains($key); @endphp
-                                                                                {{ $isSelected ? 'selected' : '' }}>
-                                                                                {{ $value }}
-                                                                            </option>
-                                                                        @endforeach
+                                                                        <option value="">-- Select
+                                                                            Areas --
+                                                                        </option>
                                                                     </select>
+
                                                                 </div>
 
                                                             </div>
@@ -193,16 +219,15 @@ $isSelected = old('area') == $key || $saleInvoiceMaster->pluck('area')->contains
 
 
                                                                     <select id="delivered_to" name="delivered_to"
-                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered_to"
-                                                                        >
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered_to">
                                                                         <option value="">Same To Party</option>
                                                                         @foreach ($deliveredToParties as $key => $value)
-                                                                        <option value="{{ $key }}"
-                                                                            {{ (old('delivered_to') == $key ? 'selected' : '') || (!empty($saleReturn->delivered_to) ? collect($saleReturn->delivered_to)->contains($key) : '') ? 'selected' : '' }}>
-                                                                            {{ $value }}
-                                                                        </option>
-                                                                    @endforeach
-                                                                    {{-- @foreach ($deliveredToParties as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                {{ (old('delivered_to') == $key ? 'selected' : '') || (!empty($saleReturn->delivered_to) ? collect($saleReturn->delivered_to)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                {{ $value }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                        {{-- @foreach ($deliveredToParties as $key => $value)
                                                                             <option value="{{ $key }}"
                                                                                 @php
                                                                                 $isSelected = old('delivered_to') == $key || $dispatchNote->pluck('delivered_to')->contains($key); @endphp
@@ -220,13 +245,14 @@ $isSelected = old('area') == $key || $saleInvoiceMaster->pluck('area')->contains
                                                                     <select id="transporter" name="transporter_id"
                                                                         class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} transporter"
                                                                         required>
-                                                                        <option value="">Select Transporter</option>
-                                                                        @foreach ($dropDownData['Transporters'] as $key => $value)
-                                                                        <option value="{{ $key }}"
-                                                                            {{ (old('transporter_id') == $key ? 'selected' : '') || (!empty($saleReturn->transporter_id) ? collect($saleReturn->transporter_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                            {{ $value }}
+                                                                        <option value="">Select Transporter
                                                                         </option>
-                                                                    @endforeach
+                                                                        @foreach ($dropDownData['Transporters'] as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                {{ (old('transporter_id') == $key ? 'selected' : '') || (!empty($saleReturn->transporter_id) ? collect($saleReturn->transporter_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                {{ $value }}
+                                                                            </option>
+                                                                        @endforeach
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -247,8 +273,8 @@ $isSelected = old('area') == $key || $saleInvoiceMaster->pluck('area')->contains
                                                                         No</label>
                                                                     <input id="bility_no" type="bilty_no"
                                                                         name="bilty_no" style="color:black;"
-                                                                        placeholder="Please Enter the Area "
-                                                                        class="form-control form-control-sm" >
+                                                                        placeholder="Please Enter the Bilty No. "
+                                                                        class="form-control form-control-sm">
                                                                 </div>
 
                                                             </div>
@@ -300,10 +326,10 @@ $isSelected = old('area') == $key || $saleInvoiceMaster->pluck('area')->contains
                                                                             </thead>
                                                                             <tbody>
 
-                                                                                @if (!empty($saleInvoiceDetails))
+                                                                                @if (!empty($grnDetails))
 
-                                                                                    @foreach ($saleInvoiceDetails as $saleInvoiceDetail)
-                                                                                        {{-- {{dd($saleInvoiceDetail);}} --}}
+                                                                                    @foreach ($grnDetails as $grnDetail)
+                                                                                        {{-- {{dd($grnDetail);}} --}}
                                                                                         @php
                                                                                             $index = $loop->index + 2; // Starts from 2
                                                                                         @endphp
@@ -376,25 +402,27 @@ $isSelected = old('area') == $key || $saleInvoiceMaster->pluck('area')->contains
                                                                                                     @foreach ($products as $key => $value)
                                                                                                         <option
                                                                                                             value="{{ $key }}"
-                                                                                                            {{ (old('product_id') == $key ? 'selected' : '') || (!empty($saleInvoiceDetail->product_id) ? collect($saleInvoiceDetail->product_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                                            {{ (old('product_id') == $key ? 'selected' : '') || (!empty($grnDetail->product_id) ? collect($grnDetail->product_id)->contains($key) : '') ? 'selected' : '' }}>
                                                                                                             {{ $value }}
                                                                                                         </option>
                                                                                                     @endforeach
                                                                                                 </select> --}}
 
-                                                                                                <select style="color:black;"
+                                                                                                <select
+                                                                                                    style="color:black;"
                                                                                                     class="mb-3 form-control select2 custom-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
                                                                                                     disabled>
                                                                                                     <option selected>
-                                                                                                        {{ $products[$saleInvoiceDetail->product_id] ?? 'Product Not Found' }}
+                                                                                                        {{ $products[$grnDetail->product_id] ?? 'Product Not Found' }}
                                                                                                         {{-- Show Product Name --}}
                                                                                                     </option>
                                                                                                 </select>
 
                                                                                                 {{-- Hidden field to store the Product ID --}}
-                                                                                                <input type="hidden" style="color:black;"
+                                                                                                <input type="hidden"
+                                                                                                    style="color:black;"
                                                                                                     name="product_id[]"
-                                                                                                    value="{{ $saleInvoiceDetail->product_id }}">
+                                                                                                    value="{{ $grnDetail->product_id }}">
 
                                                                                             </td>
                                                                                             <td>
@@ -402,8 +430,7 @@ $isSelected = old('area') == $key || $saleInvoiceMaster->pluck('area')->contains
                                                                                                     style="color: black;"
                                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing packing_{{ $index }}"
                                                                                                     id="packing"
-                                                                                                    value = {{$saleInvoiceDetail->packing_type}}
-                                                                                                    {{-- value="{{ old('packing_type', !empty($saleInvoiceDetail->packing_type) ? $saleInvoiceDetail->packing_type : '') }}" --}}
+                                                                                                    value={{ $grnDetail->packing_type }}
                                                                                                     name="packing_type[]"
                                                                                                     placeholder="P.T"
                                                                                                     readonly>
@@ -413,8 +440,7 @@ $isSelected = old('area') == $key || $saleInvoiceMaster->pluck('area')->contains
                                                                                                     style="color: black;"
                                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_{{ $index }}"
                                                                                                     placeholder="M.T"
-                                                                                                    value = {{$saleInvoiceDetail->measurement_type}}
-                                                                                                    {{-- value="{{ old('measurement_type', !empty($saleInvoiceDetail->measurement_type) ? $saleInvoiceDetail->measurement_type : '') }}" --}}
+                                                                                                    value={{ $grnDetail->measurement_type }}
                                                                                                     name="measurement_type[]"
                                                                                                     id="measurement"
                                                                                                     readonly>
@@ -424,21 +450,18 @@ $isSelected = old('area') == $key || $saleInvoiceMaster->pluck('area')->contains
                                                                                                 <input type="text"
                                                                                                     id="quantity"
                                                                                                     class="qty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_{{ $index }}"
-                                                                                                    value = {{$saleInvoiceDetail->quantity}}
-                                                                                                    {{-- value="{{ old('quantity', !empty($saleInvoiceDetail->quantity) ? $saleInvoiceDetail->quantity : '') }}" --}}
+                                                                                                    value={{ $grnDetail->received_qty }}
                                                                                                     name="quantity[]"
                                                                                                     style="color:black;"
                                                                                                     placeholder="Qty"
-                                                                                                    >
+                                                                                                    readonly>
                                                                                             </td>
 
                                                                                             <td class="total_unit">
                                                                                                 <input type="text"
-                                                                                                    id="dzn"
+                                                                                                    id="dozen"
                                                                                                     name="dzns[]"
                                                                                                     style="color: black;"
-                                                                                                    value = {{$saleInvoiceDetail->dzns}}
-                                                                                                    {{-- value="{{ old('dzns', !empty($saleInvoiceDetail->dzns) ? $saleInvoiceDetail->dzns : '') }}" --}}
                                                                                                     class="dozen form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} dozen_{{ $index }}"
                                                                                                     placeholder="Dzn"
                                                                                                     required>
@@ -448,19 +471,15 @@ $isSelected = old('area') == $key || $saleInvoiceMaster->pluck('area')->contains
                                                                                                     id="total_dzns"
                                                                                                     style="color: black;"
                                                                                                     name="total_dzns[]"
-                                                                                                    value = {{$saleInvoiceDetail->total_dzns}}
-                                                                                                    {{-- value="{{ old('total_dzns', !empty($saleInvoiceDetail->total_dzns) ? $saleInvoiceDetail->total_dzns : '') }}" --}}
                                                                                                     class="totDzn form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} totDzn_{{ $index }}"
                                                                                                     placeholder="Tot.Dzns"
                                                                                                     readonly>
                                                                                             </td>
 
-                                                                                            <td class="rate">
+                                                                                            <td class="rate2">
                                                                                                 <input type="number"
                                                                                                     id="rate"
                                                                                                     name="rate[]"
-                                                                                                    value="{{isset($pricesArray[$saleInvoiceDetail->product_id]) ? (is_array($pricesArray[$saleInvoiceDetail->product_id]) ? implode(',', $pricesArray[$saleInvoiceDetail->product_id]) : $pricesArray[$saleInvoiceDetail->product_id]) : '' }}"
-                                                                                                    {{-- value="{{ old('rate', isset($pricesArray[$saleInvoiceDetail->product_id]) ? $pricesArray[$saleInvoiceDetail->product_id] : '') }}" --}}
                                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} rate rate_{{ $index }}"
                                                                                                     placeholder="Rate"
                                                                                                     required>
@@ -472,8 +491,6 @@ $isSelected = old('area') == $key || $saleInvoiceMaster->pluck('area')->contains
                                                                                                 <input type="text"
                                                                                                     id="amount"
                                                                                                     style="color: black;"
-                                                                                                    value = {{$saleInvoiceDetail->amount}}
-                                                                                                    {{-- value="{{ old('amount', !empty($saleInvoiceDetail->amount) ? $saleInvoiceDetail->amount : '') }}" --}}
                                                                                                     name="amount[]"
                                                                                                     class="amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} amount_{{ $index }}"
                                                                                                     placeholder="Amount"
@@ -501,7 +518,7 @@ $isSelected = old('area') == $key || $saleInvoiceMaster->pluck('area')->contains
                                                                                     Boray</label>
                                                                                 <input type="text"
                                                                                     style="color: black;"
-                                                                                    value="{{ old('total_boray', !empty($saleInvoiceMaster->total_boray) ? $saleInvoiceMaster->total_boray : '') }}"
+                                                                                    value="{{ old('total_boray', !empty($grnMaster->total_boray) ? $grnMaster->total_boray : '') }}"
                                                                                     id="boray-amount"
                                                                                     name="boray_amount"
                                                                                     class="quantity-amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
@@ -511,7 +528,7 @@ $isSelected = old('area') == $key || $saleInvoiceMaster->pluck('area')->contains
                                                                                     Carton</label>
                                                                                 <input type="text"
                                                                                     style="color: black;"
-                                                                                    value="{{ old('total_carton', !empty($saleInvoiceMaster->total_carton) ? $saleInvoiceMaster->total_carton : '') }}"
+                                                                                    value="{{ old('total_carton', !empty($grnMaster->total_carton) ? $grnMaster->total_carton : '') }}"
                                                                                     id="carton-amount"
                                                                                     name="carton_amount"
                                                                                     class="quantity-amount form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
@@ -535,7 +552,7 @@ $isSelected = old('area') == $key || $saleInvoiceMaster->pluck('area')->contains
                                                                                 <label for="invoice-detail-notes"
                                                                                     class="col-sm-12 col-form-label col-form-label-sm">Remarks</label>
                                                                                 <div class="col-sm-12">
-                                                                                    <textarea class="form-control" id="remarks" name="remarks" placeholder='Enter The Remarks' style="height: 88px;">{{ @$saleInvoiceMaster->remarks }}</textarea>
+                                                                                    <textarea class="form-control" id="remarks" name="remarks" placeholder='Enter The Remarks' style="height: 88px;">{{ @$grnMaster->remarks }}</textarea>
                                                                                 </div>
                                                                             </div>
 
@@ -614,7 +631,8 @@ $isSelected = old('area') == $key || $saleInvoiceMaster->pluck('area')->contains
                                                                                     <input type="number"
                                                                                         style="color: black;"
                                                                                         id="commission-amount"
-                                                                                        name="commission" value="{{ $saleInvoiceMaster->commission }}"
+                                                                                        name="commission"
+                                                                                        value="{{ $grnMaster->commission }}"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} commission_amount"
                                                                                         placeholder="Commission Amount">
                                                                                 </div>
@@ -651,7 +669,8 @@ $isSelected = old('area') == $key || $saleInvoiceMaster->pluck('area')->contains
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <a href="{{ route('sale-return.sales-return') }}" style="float: right;"
+                                                            <a href="{{ route('sale-return.sales-return') }}"
+                                                                style="float: right;"
                                                                 class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
                                                             {{-- @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
                                                             @endif --}}
@@ -683,12 +702,42 @@ $isSelected = old('area') == $key || $saleInvoiceMaster->pluck('area')->contains
     </div>
     <script src="{{ asset('js/saleReturn.js') }}"></script>
 
+    <script>
+        $('.sector-dropdown').on('change', function() {
+            var idSector = this.value;
+            var partyId = $('.party').val();
 
+            let url = config.routes.getPartyAreaDetail
+            $("#area-dropdown").html(
+                '<option value="select-all">Select Area</option>'); // Add Select All option
+            $.ajax({
+                url: url,
+                type: "GET",
+                data: {
+                    sector_id: idSector,
+                    party_id: partyId,
+                    _token: '{{ csrf_token() }}'
+                },
+                dataType: 'json',
+                success: function(result) {
+                    $.each(result.areas, function(key, data) {
+                        $("#area-dropdown").append('<option value="' + data.id +
+                            '">' + data.name + '</option>');
+                    });
+                }
+            });
+        });
+    </script>
 
     <script>
         var config = {
             routes: {
                 getPartyCode: "{{ url('sale/get-product-rate') }}",
+                getProducts: "{{ url('sale-order/get-products') }}",
+                getPartyAreaDetail: "{{ url('sale-return/get-party-sale-man-area') }}",
+                getProductPackingTypeDetail: "{{ url('sale-order/get-product-packing-type') }}",
+                getProductMeasurementTypeDetail: "{{ url('sale-order/get-product-measurement-type') }}",
+                getDeliveredToParty: "{{ url('sale-order/get-delivered-to-party') }}",
             },
         }
     </script>

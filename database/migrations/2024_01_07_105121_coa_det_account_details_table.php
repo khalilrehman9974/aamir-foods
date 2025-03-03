@@ -17,12 +17,14 @@ return new class extends Migration
             $table->id();
             $table->integer('det_account_code')->nullable();
             $table->string('address', 250)->nullable();
+            $table->string('remarks', 250)->nullable();
             $table->string('email', 50)->nullable();
             $table->string('cnic', 50)->nullable();
             $table->string('contact_no_1', 30)->nullable();
             $table->string('contact_no_2', 30)->nullable();
             $table->double('opening_balance')->nullable();
             $table->double('credit_limit')->nullable();
+            $table->double('credit_days')->nullable();
             $table->dateTime('deleted_at')->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();

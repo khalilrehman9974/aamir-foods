@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\StockLedger;
+use App\Models\Transporter;
 use Illuminate\Http\Request;
 use App\Models\AccountLedger;
+use App\Models\GRNotesDetail;
 use App\Models\PurchaseDetail;
 use App\Models\PurchaseMaster;
 use App\Services\CommonService;
 use App\Models\CoaDetailAccount;
 use App\Models\GoodsReceivedNote;
-use App\Models\GRNotesDetail;
-use App\Models\Transporter;
 use App\Services\PurchaseService;
 use Illuminate\Support\Facades\DB;
 use App\Services\StockLedgerService;
@@ -114,6 +115,7 @@ class PurchaseController extends Controller
     {
         $pageTitle = 'Update Purchase';
         $purchase = PurchaseMaster::find($id);
+        $date = Carbon::parse($purchase->date)->format('d-m-Y');
         $parties = CoaDetailAccount::where('id', $purchase->party_id)->pluck('account_name', 'id');
         $transporters = Transporter::where('id', $purchase->transporter_id)->pluck('name', 'id');
         $dropDownData = $this->purchaseService->DropDownData();
@@ -122,7 +124,7 @@ class PurchaseController extends Controller
             $message = config('constants.wrong');
         }
 
-        return view('purchases.edit', compact('pageTitle','parties','transporters','purchase','dropDownData', 'purchaseDetails'));
+        return view('purchases.edit', compact('pageTitle','date','parties','transporters','purchase','dropDownData', 'purchaseDetails'));
     }
 
     public function update(Request $request)

@@ -15,7 +15,9 @@ return new class extends Migration
     {
         Schema::create('sale_return_masters', function (Blueprint $table) {
             $table->Increments('id');
+            $table->string('grn_no');
             $table->string('sale_return_number');
+            $table->string('sale_invoice_number');
             $table->date('date');
             $table->string('party_id');
             $table->string('saleman');

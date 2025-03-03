@@ -573,12 +573,17 @@
                                                                                 <th style="width: 20%;">Product</th>
                                                                                 <th style="width: 8%;">P.T</th>
                                                                                 <th style="width: 8%;">M.T</th>
-                                                                                <th>Size</th>
+                                                                                <th style="width: 8%;">Size</th>
+                                                                                <th class="" style="width: 13%;">
+                                                                                    Bags/
+                                                                                    Units</th>
+                                                                                <th class=""style="width: 13%;">
+                                                                                    Measurement Type</th>
                                                                                 <th class="">
-                                                                                    Total Qty</th>
-                                                                                <th class="">
+                                                                                    Received Qty</th>
+                                                                                <th class="" style="width: 13%;">
                                                                                     Price</th>
-                                                                                <th class="">
+                                                                                <th class="" style="width: 13%;">
                                                                                     Amount</th>
 
 
@@ -670,10 +675,24 @@
                                                                                                 readonly>
                                                                                         </td>
 
+                                                                                        <td class="bagsQuantity">
+                                                                                            <input type="number" id="bags"
+                                                                                                name="bags[]" value="{{ old('bags', !empty(@$purchaseDetail->bags) ? @$purchaseDetail->bags : '') }}"
+                                                                                                style="color: black;"
+                                                                                                class="bags form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} bags bags_{{ $index }}"
+                                                                                                placeholder="Bags">
+                                                                                        </td>
+                                                                                        <td class="measurementQuantity">
+                                                                                            <input type="number" id="measurementType" style="color: black;"
+                                                                                                name="measurementType[]" value="{{ old('measurementType', !empty(@$purchaseDetail->measurementType) ? @$purchaseDetail->measurementType : '') }}"
+                                                                                                class="measurementType form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurementType measurementType_{{ $index }}"
+                                                                                                placeholder="M.T">
+                                                                                        </td>
+
                                                                                         <td class="quantity">
-                                                                                            <input type="text" style="color: black;" id="quantity"
+                                                                                            <input type="text" style="color: black;" id="qty"
                                                                                                 value="{{ old('quantity', !empty($purchaseDetail->quantity) ? $purchaseDetail->quantity : '') }}"
-                                                                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} quantity quantity_{{ $index }}"
+                                                                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty qty_{{ $index }}"
                                                                                                 name="quantity[]" placeholder="Qty"
                                                                                                 >
                                                                                         </td>
@@ -784,7 +803,7 @@
                                                                                     style="color: black;"
                                                                                     id="gross-amount"
                                                                                     name="gross_bill"
-                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} gross-amount"
                                                                                     placeholder="Gross.Amount"
                                                                                     readonly>
                                                                             </div>
@@ -901,7 +920,7 @@
         </div>
     </div>
 
-    <script src="{{ asset('js/purchaseInvoice.js') }}"></script>
+    <script src="{{ asset('js/purchaseReturnInvoice.js') }}"></script>
 
     <x-slot:footerFiles>
         <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>

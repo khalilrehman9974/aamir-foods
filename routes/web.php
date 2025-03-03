@@ -290,6 +290,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/delete', [App\Http\Controllers\SalesReturnController::class, 'delete'])->name('sale-return.delete');
         Route::get('/get/brand-products', [App\Http\Controllers\SalesReturnController::class, 'getProductsByBrand'])->name('brand.products');
         Route::get('/get/product-detail', [App\Http\Controllers\SalesReturnController::class, 'getProductDetail'])->name('product.detail');
+        Route::get('get-party-sale-man-area', ['as' => 'party-sale-man-area', 'uses' => 'App\Http\Controllers\SalesReturnController@getSaleManAreaDetail']);
     });
 
     Route::group(['prefix' => 'transporter', 'middleware' => 'auth'], function () {
@@ -321,7 +322,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('create', ['as' => 'purchase-return.create', 'uses' => 'App\Http\Controllers\PurchaseReturnController@create']);
         Route::post('save', ['as' => 'purchase-return.save', 'uses' => 'App\Http\Controllers\PurchaseReturnController@store']);
         Route::get('edit/{id}', ['as' => 'purchase-return.edit', 'uses' => 'App\Http\Controllers\PurchaseReturnController@edit']);
-        Route::post('update', ['as' => 'purchase-return.update', 'uses' => 'App\Http\Controllers\PurchaseReturnController@store']);
+        Route::post('update', ['as' => 'purchase-return.update', 'uses' => 'App\Http\Controllers\PurchaseReturnController@update']);
         Route::get('/delete', ['as' => 'purchase-return.delete', 'uses' => 'App\Http\Controllers\PurchaseReturnController@delete']);
         Route::post('show/{id}', ['as' => 'purchase-return.show', 'uses' => 'App\Http\Controllers\PurchaseReturnController@show']);
         Route::get('search', ['as' => 'purchase-return.search', 'uses' => 'App\Http\Controllers\PurchaseReturnController@search']);

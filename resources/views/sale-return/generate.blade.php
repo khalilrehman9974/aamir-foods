@@ -78,10 +78,9 @@
                                                                     {{-- <input type="hidden" name="id" id="id"
                                                                         value="{{ isset($note->id) ? $note->id : '' }}" /> --}}
                                                                     <div class="col-md-6">
-                                                                        <label for="inputState" class="form-label">Sale
-                                                                            Invoice#</label>
+                                                                        <label for="inputState" class="form-label">GRN No:</label>
                                                                             <input type="text" name="id" id="id" class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                            placeholder="Please Enter Sale Invoice Number" required>
+                                                                            placeholder="Please Enter GRN Number" required>
                                                                     </div>
 
                                                                 </div>

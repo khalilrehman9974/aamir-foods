@@ -122,6 +122,8 @@ class PurchaseService
             'packing_type' => $request['packing_type'],
             'measurement_type' => $request['measurement_type'],
             'size' => $request['size'],
+            'bags' => $request['bags'],
+            'measurementType' => $request['measurementType'],
             'quantity' => $request['quantity'],
             'price' => $request['price'],
             'amount' => $request['amount'],
@@ -142,6 +144,8 @@ class PurchaseService
                 $rec['packing_type'] = $data['packing_type'][$key];
                 $rec['measurement_type'] = $data['measurement_type'][$key];
                 $rec['size'] = $data['size'][$key];
+                $rec['bags'] = $data['bags'][$key];
+                $rec['measurementType'] = $data['measurementType'][$key];
                 $rec['quantity'] = $data['quantity'][$key];
                 $rec['price'] = $data['price'][$key];
                 $rec['amount'] = $data['amount'][$key];

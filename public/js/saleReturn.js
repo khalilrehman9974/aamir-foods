@@ -1,31 +1,31 @@
-
-
 //Runtime calculation
-
 
 $(document).ready(function () {
 
-    $('.dozen, .qty').on("input", function () {
+    $('.dozen, .qty, .rate, .commission_amount, .discount_amount').on("input", function () {
         var row_id = $(this).closest("tr").find(".row_id").val();
         let quantity = $(this).closest("tr").find(".qty_" + row_id).val();
-        let dzns = $(this).closest("tr").find(".dozen_" + row_id).val() ? $(".dozen_" + row_id).val() : 0;;
+        let dzns = $(this).closest("tr").find(".dozen_" + row_id).val() ? $(".dozen_" + row_id).val() : 0;
         if (parseInt(quantity) > 0) {
             $(this).closest("tr").find(".totDzn_" + row_id).val(quantity * dzns);
         } else {
             $(this).closest("tr").find(".totDzn_" + row_id).val('');
         }
-        // let totalDzn = $(this).closest("tr").find(".totDzn_" + row_id).val();
-        // let price = $(this).closest("tr").find(".rate_" + row_id).val();
-        // if (parseInt(totalDzn) > 0) {
-        //     $(this).closest("tr").find(".amount_" + row_id).val(totalDzn * price);
-        // } else {
-        //     $(this).closest("tr").find(".amount_" + row_id).val('');
-        // }
+
+        let totalDzn = $(this).closest("tr").find(".totDzn_" + row_id).val();
+        let price = $(this).closest("tr").find(".rate_" + row_id).val();
+        if (parseInt(totalDzn) > 0) {
+            $(this).closest("tr").find(".amount_" + row_id).val(totalDzn * price);
+        } else {
+            $(this).closest("tr").find(".amount_" + row_id).val('');
+        }
         doAmountTotal();
+        NetAmountTotal();
     });
 
 
-    $('.qty').on("input", function () {
+    // $('.qty').on("input", function () {
+    $(".qty").each(function () {
 
         let totalBorayAmount = 0;
         let totalCartonAmount = 0;
@@ -53,8 +53,18 @@ $(document).ready(function () {
     let currentIndex = getTableElement.rows.length;
 
     function updateAmount(row_id) {
+
+        let quantityTotal = $(this).closest("tr").find(".qty_" + row_id).val();
+        let dzns = $(this).closest("tr").find(".dozen_" + row_id).val() || 0;
+        if (parseInt(quantityTotal) > 0) {
+            $(this).closest("tr").find(".totDzn_" + row_id).val(quantityTotal * dzns);
+        } else {
+            $(this).closest("tr").find(".totDzn_" + row_id).val('');
+        }
+
         let quantity = $(".totDzn_" + row_id).val();
         let price = $(".rate_" + row_id).val();
+
 
         if (parseFloat(quantity) > 0 && parseFloat(price) > 0) {
             $(".amount_" + row_id).val((quantity * price).toFixed(2)); // Format to 2 decimal places
@@ -80,7 +90,7 @@ $(document).ready(function () {
     // });
 
     // Event listener for rate input (when manually changed)
-    $(document).on("input", ".rate, .dozen, .qty", function () {
+    $(document).on("input", ".rate, .dozen", function () {
         var row_id = $(this).closest("tr").find(".row_id").val();
         updateAmount(row_id);
     });
@@ -128,13 +138,13 @@ $(document).ready(function () {
         NetAmountTotal();
     });
 
-    $('.discount_amount').on("input", function () {
+    $('.discount_amount, .commission_amount').on("input", function () {
         NetAmountTotal();
     });
 
 
     function doAmountTotal() {
-        $('#total-amount').text("");
+        // $('#total-amount').text("");
         var totalAmount = 0;
         $(".amount").each(function () {
             if (!isNaN(this.value) && this.value.length != 0) {

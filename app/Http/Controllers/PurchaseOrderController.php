@@ -91,7 +91,7 @@ class PurchaseOrderController extends Controller
             $message = config('constants.wrong');
         }
 
-        return view('purchase-order.create', compact('dropDownData','purchaseOrder','poNo','pageTitle','purchaseOrderDetails'));
+        return view('purchase-order.edit', compact('dropDownData','purchaseOrder','poNo','pageTitle','purchaseOrderDetails'));
     }
 
     public function update(Request $request)

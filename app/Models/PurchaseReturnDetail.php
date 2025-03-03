@@ -10,7 +10,7 @@ class PurchaseReturnDetail extends Model
     protected $guarded = ['id'];
     protected $table = 'purchase_return_details';
 
-    protected $fillable = ['purchase_return_master_id','product_id','packing_type','measurement_type', 'quantity','size','price','amount'];
+    protected $fillable = ['purchase_return_master_id','product_id','packing_type','measurement_type', 'quantity','size','bags','measurementType','price','amount'];
 
     public function purchase_return_master_id(){
         return $this->belongsTo(PurchaseReturnMaster::class);

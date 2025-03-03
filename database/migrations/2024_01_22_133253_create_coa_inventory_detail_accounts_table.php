@@ -27,6 +27,10 @@ return new class extends Migration
             $table->string('size')->nullable();
             $table->string('max_limit');
             $table->string('min_limit');
+            $table->string('danger_level');
+            $table->string('opening_stock');
+            $table->string('use_in');
+            $table->string('remarks');
             $table->integer('created_by');
             $table->integer('updated_by');
             $table->timestamp('deleted_at')->nullable();

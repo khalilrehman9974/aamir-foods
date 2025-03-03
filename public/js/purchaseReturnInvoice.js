@@ -1,15 +1,11 @@
-
-
 //Runtime calculation
 
-
 $(document).ready(function () {
-    // Function to update the amount
-    let getTableElement = document.querySelector('.item-table');
-    let currentIndex = getTableElement.rows.length;
 
+
+    // Function to update the amount
     function updateAmount(row_id) {
-        let quantity = $(".quantity_" + row_id).val();
+        let quantity = $(".qty_" + row_id).val();
         let price = $(".price_" + row_id).val();
 
         if (parseFloat(quantity) > 0 && parseFloat(price) > 0) {
@@ -19,6 +15,7 @@ $(document).ready(function () {
         }
         doAmountTotal();
         netAmountTotal();
+        quantityTotal();
     }
 
 
@@ -69,10 +66,10 @@ $(document).ready(function () {
     $('.delete-item').on("click", function () {
         doAmountTotal();
         netAmountTotal();
+        quantityTotal();
     });
 
     function doAmountTotal() {
-        $('#total-amount').text("");
         var totalAmount = 0;
         $(".amount").each(function () {
             if (!isNaN(this.value) && this.value.length != 0) {
@@ -83,6 +80,17 @@ $(document).ready(function () {
         // $('#net-amount').val(totalAmount.toFixed(2));
     }
 
+    function quantityTotal() {
+
+        var totalQuantity = 0;
+        $(".qty").each(function () {
+            if (!isNaN(this.value) && this.value.length != 0) {
+                totalQuantity += parseFloat(this.value);
+            }
+        });
+        $('#total_quantity').val(totalQuantity.toFixed(2));
+        // $('#net-amount').val(totalAmount.toFixed(2));
+    }
 
     // $(".carriage, .tax , .price").on("input", function () {
     function netAmountTotal() {
@@ -91,14 +99,90 @@ $(document).ready(function () {
         let carriage = parseFloat($(".carriage").val()) || 0;
         let tax = parseFloat($(".tax").val()) || 0;
         let totalAmount = parseFloat($(".gross-amount").val()) || 0;
-
-        console.log(totalAmount);
         // Calculate total less amount
         var totalAddAmount = carriage + tax;
 
         // Set the net amount by summing totalAmount and totalLessAmount
-        $('#net-amount').val((totalAmount + totalAddAmount).toFixed(2));
+        $('#net-amount').val((totalAmount - totalAddAmount).toFixed(2));
     }
+
+
+
+});
+
+
+$(document).on('click', 'body *', function() {
+    $('.bags, .measurementType').on("input", function() {
+        var row_id = $(this).closest("tr").find(".row_id").val();
+        let bagsQuantity = parseInt($(this).closest("tr").find(".bags_" + row_id).val(), 10) || 0;
+        let measurementQty = parseInt($(this).closest("tr").find(".measurementType_" + row_id)
+            .val(), 10) || 0;
+        // console.log(row_id + ", " + quantity + ", " + price);
+        if (parseInt(measurementQty) > 0) {
+            $(this).closest("tr").find(".qty_" + row_id).val(bagsQuantity * measurementQty);
+        } else {
+            $(this).closest("tr").find(".qty_" + row_id).val('');
+        }
+
+        let quantity = $(".qty_" + row_id).val();
+        let price = $(".price_" + row_id).val();
+
+        if (parseFloat(quantity) > 0 && parseFloat(price) > 0) {
+            $(".amount_" + row_id).val((quantity * price).toFixed(2)); // Format to 2 decimal places
+        } else {
+            $(".amount_" + row_id).val('');
+        }
+        doAmountTotal();
+        netAmountTotal();
+        quantityTotal();
+    });
+
+
+
+
+    $('.delete-item').on("click", function() {
+        doAmountTotal();
+        netAmountTotal();
+        quantityTotal();
+    });
+
+    function doAmountTotal() {
+        var totalAmount = 0;
+        $(".amount").each(function () {
+            if (!isNaN(this.value) && this.value.length != 0) {
+                totalAmount += parseFloat(this.value);
+            }
+        });
+        $('#gross-amount').val(totalAmount.toFixed(2));
+    }
+
+    function quantityTotal() {
+
+        var totalQuantity = 0;
+        $(".qty").each(function () {
+            if (!isNaN(this.value) && this.value.length != 0) {
+                totalQuantity += parseFloat(this.value);
+            }
+        });
+        $('#total_quantity').val(totalQuantity.toFixed(2));
+        // $('#net-amount').val(totalAmount.toFixed(2));
+    }
+
+    // $(".carriage, .tax , .price").on("input", function () {
+    function netAmountTotal() {
+
+        // Convert carriage and tax values to numbers
+        let carriage = parseFloat($(".carriage").val()) || 0;
+        let tax = parseFloat($(".tax").val()) || 0;
+        let totalAmount = parseFloat($(".gross-amount").val()) || 0;
+        // Calculate total less amount
+        var totalAddAmount = carriage + tax;
+
+        // Set the net amount by summing totalAmount and totalLessAmount
+        $('#net-amount').val((totalAmount - totalAddAmount).toFixed(2));
+    }
+
+
 
 
 

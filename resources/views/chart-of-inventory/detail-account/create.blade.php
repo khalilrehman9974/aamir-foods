@@ -305,7 +305,61 @@
                                                                 @endif
                                                             </div>
 
+                                                            <div class="col-md-6">
+                                                                <label for="danger_level" class="form-label">
+                                                                    Danger Level</label>
+                                                                <input id="danger_level" type="text" name="danger_level"
+                                                                    value="{{ old('danger_level', !empty($detailAccount->danger_level) ? $detailAccount->danger_level : '') }}"
+                                                                    placeholder="Please Enter Danger level"
+                                                                    class="form-control" required>
+                                                                @if ($errors->has('danger_level'))
+                                                                    <div class="invalid-feedback">
+                                                                        {{ $errors->first('danger_level') }}
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+
                                                         </div>
+                                                    </div>
+                                                    <div class="col-lg-0 col-12 ">
+                                                        <div class="row">
+
+                                                            <div class="col-md-6">
+                                                                <label for="opening_stock" class="form-label">
+                                                                    Opening Stock</label>
+                                                                <input id="opening_stock" type="text" name="opening_stock"
+                                                                    value="{{ old('opening_stock', !empty($detailAccount->opening_stock) ? $detailAccount->opening_stock : '') }}"
+                                                                    placeholder="Opening Stock"
+                                                                    class="form-control" required>
+                                                                @if ($errors->has('opening_stock'))
+                                                                    <div class="invalid-feedback">
+                                                                        {{ $errors->first('opening_stock') }}
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label for="use_in" class="form-label">
+                                                                    Use In</label>
+                                                                <input id="use_in" type="text" name="use_in"
+                                                                    value="{{ old('use_in', !empty($detailAccount->use_in) ? $detailAccount->use_in : '') }}"
+                                                                    placeholder="Use In"
+                                                                    class="form-control" required>
+                                                                @if ($errors->has('use_in'))
+                                                                    <div class="invalid-feedback">
+                                                                        {{ $errors->first('use_in') }}
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-0 col-12 form-group mb-2">
+                                                        <label for="account_name"
+                                                            class="form-label">
+                                                            Remarks </label>
+                                                        <textarea name="remarks" id="remarks" placeholder="Please Enter Remarks "
+                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" type="text" cols="30"
+                                                            rows="5">{{ @$detailAccount->remarks }}</textarea>
                                                     </div>
                                                     <div class="col-lg-0 col-12 form-group mb-4">
                                                         <label for="name" class="form-label">

@@ -12,7 +12,8 @@ class CoaInventoryDetailAccount extends Model
 
     use HasFactory;
 
-    protected $fillable = ['main_head', 'sub_head','sub_sub_head', 'code', 'priceTag_id', 'name', 'image','measurement_type_id','packing_type_id','size','max_limit','min_limit'];
+    protected $fillable = ['main_head', 'sub_head','sub_sub_head', 'code', 'priceTag_id', 'name',
+    'remarks','danger_level','opening_stock','use_in', 'image','measurement_type_id','packing_type_id','size','max_limit','min_limit'];
 
     public function getMainHead()
     {
