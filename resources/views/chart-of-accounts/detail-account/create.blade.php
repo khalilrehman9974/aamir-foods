@@ -561,13 +561,19 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
 
                                                                                     </tr>
                                                                                     @foreach ($filteredProducts as $detailAccountProduct)
+
+                                                                                        @php
+                                                                                            $index =
+                                                                                            $loop->index +1; // Starts from 2
+                                                                                            {{dd($index);}}
+                                                                                        @endphp
                                                                                         <tr class="child_row"
-                                                                                            data-parent-id="parent_row_1">
+                                                                                            data-parent-id="parent_row_{{$index}}">
                                                                                             <td>
                                                                                                 <input type="text"
                                                                                                     name="sub_row_id[]"
                                                                                                     class="sub_row_id"
-                                                                                                    value="{{ $rowIndex }}"
+                                                                                                    value="{{$index}}"
                                                                                                     hidden>
                                                                                             </td>
                                                                                             <td>
@@ -579,7 +585,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                                     type = "text"
                                                                                                     value="{{ $detailAccountProduct->master_third_level }}"
                                                                                                     name="master_third_level[]"
-                                                                                                    class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} masterThirdLevel_{{ $rowIndex }}"
+                                                                                                    class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} masterThirdLevel_{{$index}}"
                                                                                                     hidden>
                                                                                             </td>
                                                                                             <td class="quantity">
@@ -588,7 +594,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                                     type = "text"
                                                                                                     value="{{ $detailAccountProduct->master_price_tag }}"
                                                                                                     name="master_price_tag[]"
-                                                                                                    class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} master_price_tag_{{ $rowIndex }}"
+                                                                                                    class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} master_price_tag_{{$index}}"
                                                                                                     hidden>
                                                                                             </td>
                                                                                             <td class="product">
@@ -596,7 +602,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                                     type="text"
                                                                                                     name="product_id[]"
                                                                                                     placeholder="Please Select the Product"
-                                                                                                    class="{{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} form-control mb-3 product product_{{ $rowIndex }} select2"
+                                                                                                    class="{{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} form-control mb-3 product product_{{$index}} select2"
                                                                                                     multiple>
                                                                                                     <option
                                                                                                         value="select-all">
@@ -624,7 +630,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                             <td class="quantity">
                                                                                                 <input type="text"
                                                                                                     id="price"
-                                                                                                    class="price form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} price_{{ $rowIndex }}"
+                                                                                                    class="price form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} price_{{$index}}"
                                                                                                     name="price[]"
                                                                                                     value="{{ old('price', !empty($detailAccountProduct->price) ? $detailAccountProduct->price : '') }}"
                                                                                                     placeholder="Price">
@@ -636,7 +642,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                                     name="scheme[]"
                                                                                                     value="{{ old('scheme', !empty($detailAccountProduct->scheme) ? $detailAccountProduct->scheme : '') }}"
                                                                                                     placeholder="Scheme... "
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} scheme_{{ $rowIndex }}">
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} scheme_{{$index}}">
                                                                                             </td>
 
                                                                                             <td class="quantity">
@@ -645,7 +651,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                                     name="discount[]"
                                                                                                     value="{{ old('discount', !empty($detailAccountProduct->discount) ? $detailAccountProduct->discount : '') }}"
                                                                                                     placeholder="Discount... "
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount_{{ $rowIndex }}">
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount_{{$index}}">
                                                                                             </td>
 
                                                                                             <td
@@ -1149,7 +1155,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                             <td></td>
                             <td class="quantity"><input id= "masterThirdLevel" type = "text" name="master_third_level[]" value = "${parentValue}" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} masterThirdLevel_${parentId}" hidden></td>
                             <td class="quantity"><input id= "masterPriceTag" type = "text" name="master_price_tag[]" value = "${parentPriceTagValue}" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} masterPriceTag_${parentId}" hidden></td>
-                            <td class="product" style="width: 20%;"> <select id="product" type = "text" name="product_id[]" class ="form-control form-control-sm product product_${parentId} select2" placeholder = "Please Select the Product"  ><option value="select-all" >Select All </option> </select></td>
+                            <td class="product" style="width: 20%;"> <select id="product" type = "text" name="product_id[]" class ="form-control form-control-sm product product_${parentId} select2 " placeholder = "Please Select the Product"  ><option value="select-all" >Select All </option> </select></td>
                             <td class="quantity"> <input type="text" id="price" value="{{ old('price', !empty($detailAccountRecords->price) ? $detailAccountRecord->price : '') }}"name="price[]" placeholder="Price" class="price form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} price_${parentId}" ></td>
                             <td class="quantity"><input id = "scheme" type = "text" name = "scheme[]" value = "{{ old('scheme', !empty($detailAccount->scheme) ? $detailAccount->scheme : '') }}" placeholder = "Scheme... " class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} scheme_${parentId} "></td>
                             <td class="quantity"><input id = "discount" type = "text" name = "discount[]" value = "{{ old('discount', !empty($detailAccount->discount) ? $detailAccount->discount : '') }}" placeholder = "Discount... " class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount_${parentId}" ></td>
@@ -1393,9 +1399,11 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                     if (event.target.classList.contains("plus-btn")) {
 
                         var parentRow = event.target.closest(".main_row");
+
                         // Ensure that parentRow is found correctly
                         if (parentRow) {
                             var parentId = parentRow.getAttribute("data-parent-id");
+                            console.log(parentId);
                             // var parentValue = parentRow.value();
                             var parentValue = $(".inventory_third_level_" +
                                 currentIndex).val();
@@ -1404,8 +1412,8 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
 
 
                             // Check if a sub-table already exists for the parent row
-                            var subTable = parentRow.querySelectorAll(
-                                ".item-sub-table");
+                            var subTable = parentRow.querySelectorAll(".item-sub-table");
+                            // console.log(subTable);
                             // var subTable = event.target.closest(".child_row");
 
                             if (!subTable) {
@@ -1420,8 +1428,10 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                             childRow.classList.add("child_row");
                             childRow.setAttribute("data-parent-id", parentId);
 
+
+
                             childRow.innerHTML =
-                                `<td><input type="checkbox" name="row_id[]" class="row_id" value="${childRowCount}" hidden></td>
+                                `<td><input type="checkbox" name="child_row_id[]" class="child_row_id" value="${childRowCount}" hidden></td>
                             <td></td>
                             <td class="quantity"><input id= "masterThirdLevel" type = "text" name="master_third_level[]" value = "${parentValue}" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} masterThirdLevel_${parentId}" hidden></td>
                             <td class="quantity"><input id= "masterPriceTag" type = "text" name="master_price_tag[]" value = "${parentPriceTagValue}" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} masterPriceTag_${parentId}" hidden></td>
@@ -1735,16 +1745,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
     <x-slot:footerFiles>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        {{-- <script src="{{ asset('plugins/sweetalerts2/sweetalerts2.min.js') }}"></script>
-        <script src="{{ asset('plugins/sweetalerts2/custom-sweetalert.js') }}"></script> --}}
         <script src="{{ asset('js/common.js') }}"></script>
-
-        <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
-        @vite(['resources/assets/js/elements/custom-search.js'])
-
-
-
-        <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
 
         <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
         <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>
@@ -1762,11 +1763,6 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
         <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
 
         {{-- <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script> --}}
-        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
-            integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
         <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])

@@ -42,6 +42,8 @@ return new class extends Migration
             $table->timestamp('deleted_at')->nullable();
             $table->string('created_by');
             $table->string('updated_by');
+            $table->bigInteger('created_by');
+            $table->bigInteger('updated_by');
 
 
             $table->foreign('f_year_id')

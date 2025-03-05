@@ -151,6 +151,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('generate', ['as' => 'dispatch-note.generate', 'uses' => 'App\Http\Controllers\DispatchNoteController@generate']);
         Route::get('create', ['as' => 'dispatch-note.create', 'uses' => 'App\Http\Controllers\DispatchNoteController@create']);
         Route::post('save', ['as' => 'dispatch-note.save', 'uses' => 'App\Http\Controllers\DispatchNoteController@store']);
+        Route::get('print/{id}', ['as' => 'dispatch-note.print', 'uses' => 'App\Http\Controllers\DispatchNoteController@print']);
         Route::get('edit/{id}', ['as' => 'dispatch-note.edit', 'uses' => 'App\Http\Controllers\DispatchNoteController@edit']);
         Route::post('update', ['as' => 'dispatch-note.update', 'uses' => 'App\Http\Controllers\DispatchNoteController@update']);
         Route::get('get-sale-order-data/{name}', ['as' => 'sale-order-data', 'uses' => 'App\Http\Controllers\DispatchNoteController@getSaleOrderData']);
@@ -267,6 +268,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'sale', 'middleware' => 'auth'], function () {
         Route::get('/sales-list', [App\Http\Controllers\SalesController::class, 'index'])->name('sale.sales');
         Route::get('create', ['as' => 'sale.create', 'uses' => 'App\Http\Controllers\SalesController@create']);
+        Route::get('print/{id}', ['as' => 'sale.print', 'uses' => 'App\Http\Controllers\SalesController@print']);
         Route::get('generate', ['as' => 'sale.generate', 'uses' => 'App\Http\Controllers\SalesController@generate']);
         Route::get('/edit/{id}', [App\Http\Controllers\SalesController::class, 'edit'])->name('sale.edit');
         Route::get('/view/{id}', [App\Http\Controllers\SalesController::class, 'view'])->name('sale.view');
@@ -281,7 +283,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'sale-return'], function () {
         Route::get('/sales-return-list', [App\Http\Controllers\SalesReturnController::class, 'index'])->name('sale-return.sales-return');
         Route::get('create', ['as' => 'sale-return.create', 'uses' => 'App\Http\Controllers\SalesReturnController@create']);
-        // Route::get('/create', [App\Http\Controllers\SalesReturnController::class, 'create'])->name('sale-return.create');
+        Route::get('print/{id}', ['as' => 'sale-return.print', 'uses' => 'App\Http\Controllers\SalesReturnController@print']);
         Route::get('generate', ['as' => 'sale-return.generate', 'uses' => 'App\Http\Controllers\SalesReturnController@generate']);
         Route::get('/edit/{id}', [App\Http\Controllers\SalesReturnController::class, 'edit'])->name('sale-return.edit');
         Route::get('/view/{id}', [App\Http\Controllers\SalesReturnController::class, 'view'])->name('sale-return.view');
@@ -308,6 +310,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('list', ['as' => 'purchase.list', 'uses' => 'App\Http\Controllers\PurchaseController@index']);
         Route::get('generate', ['as' => 'purchase.generate', 'uses' => 'App\Http\Controllers\PurchaseController@generate']);
         Route::get('create', ['as' => 'purchase.create', 'uses' => 'App\Http\Controllers\PurchaseController@create']);
+        Route::get('print/{id}', ['as' => 'purchase.print', 'uses' => 'App\Http\Controllers\PurchaseController@print']);
         Route::post('save', ['as' => 'purchase.save', 'uses' => 'App\Http\Controllers\PurchaseController@store']);
         Route::get('edit/{id}', ['as' => 'purchase.edit', 'uses' => 'App\Http\Controllers\PurchaseController@edit']);
         Route::post('update', ['as' => 'purchase.update', 'uses' => 'App\Http\Controllers\PurchaseController@update']);
@@ -320,6 +323,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('list', ['as' => 'purchase-return.list', 'uses' => 'App\Http\Controllers\PurchaseReturnController@index']);
         Route::get('generate', ['as' => 'purchase-return.generate', 'uses' => 'App\Http\Controllers\PurchaseReturnController@generate']);
         Route::get('create', ['as' => 'purchase-return.create', 'uses' => 'App\Http\Controllers\PurchaseReturnController@create']);
+        Route::get('print/{id}', ['as' => 'purchase-return.print', 'uses' => 'App\Http\Controllers\PurchaseReturnController@print']);
         Route::post('save', ['as' => 'purchase-return.save', 'uses' => 'App\Http\Controllers\PurchaseReturnController@store']);
         Route::get('edit/{id}', ['as' => 'purchase-return.edit', 'uses' => 'App\Http\Controllers\PurchaseReturnController@edit']);
         Route::post('update', ['as' => 'purchase-return.update', 'uses' => 'App\Http\Controllers\PurchaseReturnController@update']);
@@ -402,6 +406,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('list', ['as' => 'grn.list', 'uses' => 'App\Http\Controllers\GRNotesController@index']);
         Route::get('generate', ['as' => 'grn.generate', 'uses' => 'App\Http\Controllers\GRNotesController@generate']);
         Route::get('create', ['as' => 'grn.create', 'uses' => 'App\Http\Controllers\GRNotesController@create']);
+        Route::get('print/{id}', ['as' => 'grn.print', 'uses' => 'App\Http\Controllers\GRNotesController@print']);
         Route::post('save', ['as' => 'grn.save', 'uses' => 'App\Http\Controllers\GRNotesController@store']);
         Route::get('edit/{id}', ['as' => 'grn.edit', 'uses' => 'App\Http\Controllers\GRNotesController@edit']);
         Route::post('update', ['as' => 'grn.update', 'uses' => 'App\Http\Controllers\GRNotesController@update']);
@@ -459,6 +464,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('list', ['as' => 'purchase-order.list', 'uses' => 'App\Http\Controllers\PurchaseOrderController@index']);
         Route::get('create', ['as' => 'purchase-order.create', 'uses' => 'App\Http\Controllers\PurchaseOrderController@create']);
         Route::post('save', ['as' => 'purchase-order.store', 'uses' => 'App\Http\Controllers\PurchaseOrderController@store']);
+        Route::get('print/{id}', ['as' => 'purchase-order.print', 'uses' => 'App\Http\Controllers\PurchaseOrderController@print']);
         Route::get('edit/{id}', ['as' => 'purchase-order.edit', 'uses' => 'App\Http\Controllers\PurchaseOrderController@edit']);
         Route::post('update', ['as' => 'purchase-order.update', 'uses' => 'App\Http\Controllers\PurchaseOrderController@update']);
         Route::delete('delete/{id}', ['as' => 'purchase-order.delete', 'uses' => 'App\Http\Controllers\PurchaseOrderController@destroy']);
@@ -514,6 +520,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('create', ['as' => 'sale-order.create', 'uses' => 'App\Http\Controllers\SaleOrderController@create']);
         Route::post('save', ['as' => 'sale-order.save', 'uses' => 'App\Http\Controllers\SaleOrderController@store']);
         Route::get('edit/{id}', ['as' => 'sale-order.edit', 'uses' => 'App\Http\Controllers\SaleOrderController@edit']);
+        Route::get('print/{id}', ['as' => 'sale-order.print', 'uses' => 'App\Http\Controllers\SaleOrderController@print']);
         Route::post('update', ['as' => 'sale-order.update', 'uses' => 'App\Http\Controllers\SaleOrderController@update']);
         Route::delete('delete/{id}', ['as' => 'sale-order.delete', 'uses' => 'App\Http\Controllers\SaleOrderController@delete']);
         Route::get('get-party-sale-man', ['as' => 'party-sale-man', 'uses' => 'App\Http\Controllers\SaleOrderController@getSaleManDetail']);
@@ -531,6 +538,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('create', ['as' => 'claim.create', 'uses' => 'App\Http\Controllers\ClaimRateAdjustmentController@create']);
         Route::post('save', ['as' => 'claim.save', 'uses' => 'App\Http\Controllers\ClaimRateAdjustmentController@store']);
         Route::get('edit/{id}', ['as' => 'claim.edit', 'uses' => 'App\Http\Controllers\ClaimRateAdjustmentController@edit']);
+        Route::get('print/{id}', ['as' => 'claim.print', 'uses' => 'App\Http\Controllers\ClaimRateAdjustmentController@print']);
         Route::post('update', ['as' => 'claim.update', 'uses' => 'App\Http\Controllers\ClaimRateAdjustmentController@update']);
         Route::delete('delete/{id}', ['as' => 'claim.delete', 'uses' => 'App\Http\Controllers\ClaimRateAdjustmentController@delete']);
         Route::get('get-party-sale-man/{name}', ['as' => 'party-sale-man', 'uses' => 'App\Http\Controllers\ClaimRateAdjustmentController@getSaleManDetail']);

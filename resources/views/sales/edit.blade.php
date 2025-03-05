@@ -13,19 +13,14 @@
         <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
 
         <!--  BEGIN CUSTOM STYLE FILE  -->
-        <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
         <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
-        @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
-        @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
 
 
         <!--  BEGIN CUSTOM STYLE FILE  -->
-        <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
         <link rel="stylesheet" href="../src/plugins/src/filepond/filepond.min.css">
         <link rel="stylesheet" href="../src/plugins/src/filepond/FilePondPluginImagePreview.min.css">
 
         <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
-        <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
 
     </x-slot>
 
@@ -113,8 +108,8 @@
                                                                     <input type="text"
                                                                         class="form-control form-control-sm"
                                                                         id="date" style="color:black;"
-                                                                        name="date" value="{{ $sale->date }}"
-                                                                        placeholder="Select The Date" readonly>
+                                                                        name="date" value="{{ $date }}"
+                                                                        placeholder="Select The Date">
                                                                 </div>
 
                                                                 <div class="col-lg-0 col-6" style="float: right">
@@ -1026,8 +1021,6 @@ $isSelected = old('transporter_id') == $key || $sale->pluck('transporter_id')->c
 
     <x-slot:footerFiles>
         <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
-        <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
-        <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
         <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"

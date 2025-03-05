@@ -2,16 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\Area;
+use App\Models\User;
+use App\Models\Sector;
+use App\Models\SaleMan;
 use App\Models\PackingType;
 use Illuminate\Http\Request;
+use App\Models\PurchaseDetail;
+use App\Models\PurchaseMaster;
 use App\Models\MeasurementType;
 use App\Services\CommonService;
+use App\Models\CoaDetailAccount;
+use App\Models\DeliveredToParties;
 use Illuminate\Support\Facades\DB;
 use App\Models\PurchaseOrderDetail;
 use App\Models\PurchaseOrderMaster;
 use App\Services\PurchaseOrderService;
 use App\Models\CoaInventoryDetailAccount;
-use App\Models\PurchaseMaster;
 
 class PurchaseOrderController extends Controller
 {
@@ -36,8 +44,9 @@ class PurchaseOrderController extends Controller
         $request = request()->all();
         $orders = $this->purchaseOrderService->searchPOrder($request);
         $param = request()->param;
+        $dropDownData = $this->purchaseOrderService->DropDownData();
 
-        return view('purchase-order.index', compact('orders','param', 'request','pageTitle'));
+        return view('purchase-order.index', compact('orders','dropDownData','param', 'request','pageTitle'));
     }
 
     /*
@@ -113,6 +122,23 @@ class PurchaseOrderController extends Controller
         //     return redirect('purchase-order/create')->with('error', $e->getMessage());
         // }
         return redirect('purchase-order/list')->with('message', config('constants.add'));
+    }
+
+    public function print($id)
+    {
+        $title = 'Purchase Order';
+        $purchaseOrder = PurchaseOrderMaster::find($id);
+        $date = Carbon::parse($purchaseOrder->date)->format('d-m-Y');
+        $party = CoaDetailAccount::where('id', $purchaseOrder->party_id)->value('account_name');
+        $purchaseOrderDetails = PurchaseOrderDetail::where('purchase_order_master_id', $purchaseOrder->id)->get();
+        // dd($purchaseOrderDetails);
+        $productsArray = $purchaseOrderDetails->pluck('product_id')->toArray();
+        $products = CoaInventoryDetailAccount::whereIn('id',$productsArray)->pluck('name','id');
+        $user = User::where('id',$purchaseOrder->created_by)->value('name');
+        $deliverdToParties = DeliveredToParties::where('id',$purchaseOrder->delivered_to)->value('party_name');
+
+
+        return view('purchase-order.print', compact('title','products','user','deliverdToParties','purchaseOrder','date','purchaseOrderDetails','party'));
     }
 
     /*

@@ -114,7 +114,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $sale->date }}</h6>
+                                                    <h6 class="mb-0">{{ \Carbon\Carbon::parse($sale->date)->format('d-m-Y') }}</h6>
 
                                                 </div>
                                             </div>
@@ -187,6 +187,7 @@
                                                         </svg>
                                                     </a>
                                                 @endif
+                                                <a href="{{ route('sale-return.print', ['id' => $sale->id]) }}" target="_blank" title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></a>
                                                 {{-- @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
                                                     <a href="{{ route('sale-return.delete') }}"
                                                         class="action-btn btn-delete bs-tooltip" data-toggle="tooltip"

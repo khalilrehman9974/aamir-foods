@@ -6,10 +6,12 @@
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <x-slot:headerFiles>
-        @vite(['resources/scss/light/assets/elements/search.scss', 'resources/scss/dark/assets/elements/search.scss'])
-        <link rel="stylesheet" href="{{ asset('plugins/sweetalerts2/sweetalerts2.css') }}">
-        <meta name="csrf-token" content="{{ csrf_token() }}" />
-        <script src="{{ asset('js/jquery.min.js') }}"></script>
+        <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+            integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
     </x-slot>
 
     <x-slot:scrollspyConfig>
@@ -45,34 +47,6 @@
                     <a href="{{ route('dispatch-note.generate') }}" class="btn btn-primary mt-2 mb-2 me-8"
                         style="float : right; " style="">Create
                     </a>
-                    {{-- <button onclick="openInputDialog()">Create</button> --}}
-                    {{-- <div class="container">
-                        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#simpleModal">
-                            Create
-                        </button>
-                    </div>
-
-                    <! -- Simple Modal -->
-                        <div class="modal fade" id="simpleModal" role="dialog">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-body">
-                                        <label for="sale-order-number">
-                                            Sale Order Number:
-                                        </label>
-                                        <input type="text" style="color: black; "
-                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                            placeholder="Sale Order Number" id="number" name="number">
-                                    </div>
-                                    <div class="model-footer">
-                                        <a href="{{ route('dispatch-note.list') }}" style="float:right;"
-                                            class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                        </div> --}}
                 </div>
 
 
@@ -85,43 +59,58 @@
     <div class="row layout-top-spacing">
         <div id="tableCustomBasic" class="col-lg-12 col-12">
             <div class="row">
-                <div class="col-md-1 mt-1" role="group">
-                </div>
-
-                <div class="col-lg-8 col-md-8 col-sm-9 filtered-list-search mx-auto">
+                <div class="col-lg-12" style="margin-right: 0px !important;">
                     <form class="form-inline my-2 my-lg-0 justify-content-center" method="get"
                         action="{{ route('dispatch-note.list') }}">
-                        <div class="w-100">
-                            <input type="text" value="{{ $param }}" name="param" id="param"
-                                class="w-100 form-control product-search br-30" id="input-search"
-                                placeholder="Search Dispatch Note...">
-                            <button class="btn btn-primary _effect--ripple waves-effect waves-light" type="submit">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
-                                    <circle cx="11" cy="11" r="8"></circle>
-                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                </svg>
-                            </button>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="text" value="{{ $param }}" name="date"
+                                            id="date" class="form-control-sm search" id="input-search"
+                                            placeholder="Date" style="width: 100%;">
+                                        <span class="input-group-prepend">
+                                            {{-- <button type="submit" class="btn btn-primary" disabled><i
+                                                        class="fa fa-search"></i></button> --}}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <select class="form-control-sm mb-3 select2 custom-select" value="{{ $param }}" name="party_id"
+                                            id="party_id" style="width: 100%;">
+                                            <option value="">Select</option>
+                                            @foreach ($dropDownData['parties'] as $key => $value)
+                                                <option value="{{ $key }}"
+                                                    {{ (old('party_id') == $key ? 'selected' : '') || (!empty($claim->party_id) ? collect($claim->party_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                    {{ $value }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
 
-                        </div>
+                            <div class="col-md-2">
+                                <span class="input-group-prepend" style="margin-top: 0px; ">
+                                    <button type="submit" class="btn btn-primary" value="Search"
+                                        id="search-button" style="width: 100%;"><i class="fa fa-search"></i>&nbsp;
+                                        Search</button>
+
+                                </span>
+                            </div>
+                            <div class="col-md-2 ">
+                                <span class="input-group-prepend" style="margin-top: 0px;">
+                                    <a href="{{ route('dispatch-note.list') }}" class="btn btn-primary"
+                                        value="Search" id="clear-filter" style="margin-left: 10px">Clear
+                                        Filter</a>
+
+                                </span>
+                            </div>
                     </form>
                 </div>
-                <div class="col-md-3 mt-1 " role="group">
-                    <a href="{{ route('dispatch-note.list') }}"
-                        class="btn btn-primary _effect--ripple waves-effect waves-light" id="Refresh Cw" type="submit">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" class="feather feather-refresh-cw">
-                            <polyline points="23 4 23 10 17 10"></polyline>
-                            <polyline points="1 20 1 14 7 14">
-                            </polyline>
-                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15">
-                            </path>
-                        </svg>
 
-                    </a>
-                </div>
             </div>
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">
@@ -175,7 +164,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ @$note->date }}</h6>
+                                                    <h6 class="mb-0">{{ \Carbon\Carbon::parse($note->date)->format('d-m-Y') }}</h6>
 
                                                 </div>
                                             </div>
@@ -291,6 +280,7 @@
                                                     data-toggle="tooltip" data-placement="top" title="Enter Sale Invoice">
                                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M288 256H96v64h192v-64zm89-151L279.1 7c-4.5-4.5-10.6-7-17-7H256v128h128v-6.1c0-6.3-2.5-12.4-7-16.9zm-153 31V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H248c-13.2 0-24-10.8-24-24zM64 72c0-4.4 3.6-8 8-8h80c4.4 0 8 3.6 8 8v16c0 4.4-3.6 8-8 8H72c-4.4 0-8-3.6-8-8V72zm0 64c0-4.4 3.6-8 8-8h80c4.4 0 8 3.6 8 8v16c0 4.4-3.6 8-8 8H72c-4.4 0-8-3.6-8-8v-16zm256 304c0 4.4-3.6 8-8 8h-80c-4.4 0-8-3.6-8-8v-16c0-4.4 3.6-8 8-8h80c4.4 0 8 3.6 8 8v16zm0-200v96c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16v-96c0-8.8 7.2-16 16-16h224c8.8 0 16 7.2 16 16z"/></svg>
                                                 </a>
+                                                <a href="{{ route('dispatch-note.print', ['id' => $note->id]) }}" target="_blank" title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></a>
                                                 {{-- <a href="javascript:void(0);"
                                                     class="action-btn btn-delete bs-tooltip delete"
                                                     data-id="{{ $note->id }}" data-toggle="tooltip"
@@ -331,10 +321,20 @@
         </div>
     </div>
 
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
+    </script>
 
     <x-slot:footerFiles>
-        <script src="{{ asset('plugins/sweetalerts2/sweetalerts2.min.js') }}"></script>
-        <script src="{{ asset('js/common.js') }}"></script>
+        <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
+            integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])
         <script>
             var config = {

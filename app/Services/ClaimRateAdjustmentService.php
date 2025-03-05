@@ -43,12 +43,13 @@ class ClaimRateAdjustmentService
     {
         $q = ClaimRateAdjustment::query();
         if (!empty($request['date'])) {
-            $q->where('date', $request['date']);
+            $formattedDate = date('Y-m-d', strtotime($request['date']));
+            $q->where('date', $formattedDate);
         } elseif (!empty($request['party_id'])) {
             $q->where('party_id', $request['party_id']);
         }
 
-        $saleOrders = $q->with(['party','SaleMan'])->orderBy('updated_at', 'DESC')->paginate(config('constants.PER_PAGE'));
+        $saleOrders = $q->with(['party','SaleMan'])->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
         return $saleOrders;
     }
 

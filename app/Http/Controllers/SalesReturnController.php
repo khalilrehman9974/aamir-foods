@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Area;
+use App\Models\User;
 use App\Models\Sector;
 use App\Models\SaleMan;
 use App\Models\SaleDetail;
@@ -23,13 +24,13 @@ use App\Models\GoodsReceivedNote;
 use App\Models\DeliveredToParties;
 use Illuminate\Support\Facades\DB;
 use App\Services\SaleReturnService;
+use App\Models\CoaDetailAccountArea;
 use App\Services\StockLedgerService;
 use App\Models\DetailAccountProducts;
 use App\Services\AccountLedgerService;
+use App\Models\CoaDetailAccountSectors;
 use App\Models\CoaInventoryDetailAccount;
 use App\Http\Requests\StoreSaleReturnRequest;
-use App\Models\CoaDetailAccountArea;
-use App\Models\CoaDetailAccountSectors;
 
 class SalesReturnController extends Controller
 {
@@ -176,7 +177,7 @@ class SalesReturnController extends Controller
         $commissionArray = $getCommission->pluck('commision')->toArray();
         $saleMans =SaleMan::where('id', $saleReturn->saleman)->pluck('name','id');
 
-        $areaArray =CoaDetailAccountArea::where('master_account_id', $saleReturn->party_id)->where('sector_id', $saleReturn->area)->get();
+        $areaArray =CoaDetailAccountArea::where('master_account_id', $saleReturn->party_id)->where('sector_id', $saleReturn->sector)->get();
         $fetchAreaIds= $areaArray->pluck('area_id')->ToArray();
         $areas = Area::whereIn("id", $fetchAreaIds)->pluck('name','id');
 
@@ -207,7 +208,7 @@ class SalesReturnController extends Controller
      * */
     public function update(Request $request)
     {
-        
+
         // DB::beginTransaction();
         // try {
             $request = request()->all();
@@ -235,6 +236,26 @@ class SalesReturnController extends Controller
         // }
 
         return redirect('sale-return/sales-return-list')->with('message', config('constants.update'));
+    }
+
+    public function print($id)
+    {
+        $title = 'Sale Return Invoice';
+        $saleReturnMaster = SaleReturnMaster::find($id);
+        $date = Carbon::parse($saleReturnMaster->date)->format('d-m-Y');
+        $party = CoaDetailAccount::where('id', $saleReturnMaster->party_id)->value('account_name');
+        $saleMan = SaleMan::where('id', $saleReturnMaster->saleman)->value('name');
+        $belt = Sector::where('id', $saleReturnMaster->sector)->value('name');
+        $area = Area::where('id', $saleReturnMaster->area)->value('name');
+        $saleReturnDetails = SaleReturnDetail::where('sale_return_master_id', $saleReturnMaster->id)->get();
+        // dd($saleReturnDetails);
+        $productsArray = $saleReturnDetails->pluck('product_id')->toArray();
+        $products = CoaInventoryDetailAccount::whereIn('id',$productsArray)->pluck('name','id');
+        $user = User::where('id',$saleReturnMaster->created_by)->value('name');
+        $deliverdToParties = DeliveredToParties::where('id',$saleReturnMaster->delivered_to)->value('party_name');
+        $transporters = Transporter::where('id',$saleReturnMaster->transporter_id)->value('name');
+
+        return view('sale-return.print', compact('title','products','transporters','user','deliverdToParties','saleReturnMaster','date','saleReturnDetails','party','saleMan','belt','area'));
     }
 
     /*

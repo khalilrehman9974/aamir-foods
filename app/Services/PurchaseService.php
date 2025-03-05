@@ -72,11 +72,24 @@ class PurchaseService
 
     public function search($request)
     {
+
+
         $q = PurchaseMaster::query();
-        if (!empty($request['param'])) {
-            $q = PurchaseMaster::with('type','party','transporter')->where('grn_no', 'like', '%' . $request['param'] . '%');
+
+        if (!empty($request['date'])) {
+            $formattedDate = date('Y-m-d', strtotime($request['date']));
+            $q->where('date', $formattedDate);
+        } elseif (!empty($request['party_id'])) {
+            $q->where('party_id', $request['party_id']);
         }
-        $purchases = $q->orderBy('grn_no', 'ASC')->paginate(config('constants.PER_PAGE'));
+
+
+
+        // $q = PurchaseMaster::query();
+        // if (!empty($request['param'])) {
+        //     $q = PurchaseMaster::with('type','party','transporter')->where('grn_no', 'like', '%' . $request['param'] . '%');
+        // }
+        $purchases = $q->with('party','transporter')->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
 
         return $purchases;
     }

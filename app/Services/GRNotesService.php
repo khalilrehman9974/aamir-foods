@@ -64,14 +64,17 @@ class GRNotesService
 
     public function searchGRN($request)
     {
+
         $q = GoodsReceivedNote::query();
-        if (!empty($request['param'])) {
-            $q = GoodsReceivedNote::with('transporter','party')
-            ->where('party_id', 'like', '%' . $request['param'] . '%')
-            ->orwhere('date', 'like', '%' . $request['param'] . '%')
-            ->orwhere('purchase_order_no', 'like', '%' . $request['param'] . '%');
+
+        if (!empty($request['date'])) {
+            $formattedDate = date('Y-m-d', strtotime($request['date']));
+            $q->where('date', $formattedDate);
+        } elseif (!empty($request['party_id'])) {
+            $q->where('party_id', $request['party_id']);
         }
-        $goodsReceivedNotes = $q->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
+
+        $goodsReceivedNotes = $q->with('transporter','party')->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
 
         return $goodsReceivedNotes;
     }

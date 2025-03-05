@@ -652,13 +652,6 @@
                                                                                         </td>
                                                                                         <br>
                                                                                         <td class="quantity">
-                                                                                            <input type="text" style="color: black; "
-                                                                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_{{ $index }}"
-                                                                                                placeholder="M.T" name="measurement_type[]"
-                                                                                                value="{{ old('measurement_type', !empty($purchaseDetail->measurement_type) ? $purchaseDetail->measurement_type : '') }}"
-                                                                                                id="measurement" readonly>
-                                                                                        </td>
-                                                                                        <td class="quantity">
                                                                                             <input type="text" style="color: black;"
                                                                                                 class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} packing_{{ $index }}"
                                                                                                 id="packing" name="packing_type[]"
@@ -666,6 +659,14 @@
                                                                                                 value="{{ old('packing_type', !empty($purchaseDetail->packing_type) ? $purchaseDetail->packing_type : '') }}"
                                                                                                 readonly>
                                                                                         </td>
+                                                                                        <td class="quantity">
+                                                                                            <input type="text" style="color: black; "
+                                                                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_{{ $index }}"
+                                                                                                placeholder="M.T" name="measurement_type[]"
+                                                                                                value="{{ old('measurement_type', !empty($purchaseDetail->measurement_type) ? $purchaseDetail->measurement_type : '') }}"
+                                                                                                id="measurement" readonly>
+                                                                                        </td>
+
                                                                                         <td class="quantity">
                                                                                             <input type="text" style="color: black;"
                                                                                                 class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} size_{{ $index }}"

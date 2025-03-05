@@ -3,15 +3,19 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Transporter;
 use Illuminate\Http\Request;
 use App\Models\GRNotesDetail;
 use App\Services\CommonService;
 use App\Models\CoaDetailAccount;
 use App\Services\GRNotesService;
 use App\Models\GoodsReceivedNote;
+use App\Models\DeliveredToParties;
 use Illuminate\Support\Facades\DB;
 use App\Models\PurchaseOrderDetail;
 use App\Models\PurchaseOrderMaster;
+use App\Models\CoaInventoryDetailAccount;
 // use App\Http\Requests\Request;
 
 class GRNotesController extends Controller
@@ -40,8 +44,9 @@ class GRNotesController extends Controller
         $request = request()->all();
         $notes = $this->grNotesService->searchGRN($request);
         $param = request()->param;
+        $dropDownData = $this->grNotesService->DropDownData();
 
-        return view('goods-received-notes.index', compact('notes','param', 'request','pageTitle'));
+        return view('goods-received-notes.index', compact('notes','param', 'dropDownData','request','pageTitle'));
     }
 
     /*
@@ -127,6 +132,22 @@ class GRNotesController extends Controller
         }
 
         return view('goods-received-notes.edit', compact('pageTitle' ,'date','maxid','note','parties', 'note_details','dropDownData'));
+    }
+
+    public function print($id)
+    {
+        $title = 'Goods Received Notes';
+        $grnMaster = GoodsReceivedNote::find($id);
+        $date = Carbon::parse($grnMaster->date)->format('d-m-Y');
+        $party = CoaDetailAccount::where('id', $grnMaster->party_id)->value('account_name');
+        $grnDetails = GRNotesDetail::where('master_id', $grnMaster->id)->get();
+        // dd($grnDetails);
+        $productsArray = $grnDetails->pluck('product_id')->toArray();
+        $products = CoaInventoryDetailAccount::whereIn('id',$productsArray)->pluck('name','id');
+        $user = User::where('id',$grnMaster->created_by)->value('name');
+        $transporters = Transporter::where('id',$grnMaster->transporter_id)->value('name');
+
+        return view('goods-received-notes.print', compact('title','transporters','products','user','grnMaster','date','grnDetails','party'));
     }
 
 

@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Area;
+use App\Models\User;
 use App\Models\Sector;
 use App\Models\SaleMan;
 use App\Models\PackingType;
 use App\Models\SaleManArea;
+use App\Models\Transporter;
 use Illuminate\Http\Request;
 use App\Models\SaleManSector;
 use App\Models\MeasurementType;
@@ -16,9 +19,9 @@ use App\Models\CoaDetailAccount;
 use App\Models\DeliveredToParties;
 use Illuminate\Support\Facades\DB;
 use App\Models\ClaimRateAdjustment;
+use App\Models\DetailAccountProducts;
 use App\Models\ClaimRateAdjustmentDetail;
 use App\Models\CoaInventoryDetailAccount;
-use App\Models\DetailAccountProducts;
 use App\Services\ClaimRateAdjustmentService;
 
 class ClaimRateAdjustmentController extends Controller
@@ -98,6 +101,7 @@ class ClaimRateAdjustmentController extends Controller
         $pageTitle = 'Update Claim $ Rate Adjustments';
         $currentid = $id;
         $claim = ClaimRateAdjustment::find($id);
+        $date = Carbon::parse($claim->date)->format('d-m-Y');
         $claimDetails = ClaimRateAdjustmentDetail::where('master_id', $id)->get();
         $dropDownData = $this->claimRateService->DropDownData();
 
@@ -123,7 +127,7 @@ class ClaimRateAdjustmentController extends Controller
             $message = config('constants.wrong');
         }
 
-        return view('rate-claim-adjustment.create', compact('claim','deliverdToParties','products','areas','sectors','saleMans', 'dropDownData', 'currentid', 'claimDetails', 'pageTitle'));
+        return view('rate-claim-adjustment.edit', compact('claim','date','deliverdToParties','products','areas','sectors','saleMans', 'dropDownData', 'currentid', 'claimDetails', 'pageTitle'));
     }
 
     /*
@@ -152,6 +156,25 @@ class ClaimRateAdjustmentController extends Controller
         // }
 
         return redirect('claim/list')->with('message', config('constants.update'));
+    }
+
+    public function print($id)
+    {
+        $title = 'Claim & Rate Adjustment';
+        $claimMaster = ClaimRateAdjustment::find($id);
+        $date = Carbon::parse($claimMaster->date)->format('d-m-Y');
+        $party = CoaDetailAccount::where('id', $claimMaster->party_id)->value('account_name');
+        $saleMan = SaleMan::where('id', $claimMaster->saleman)->value('name');
+        $belt = Sector::where('id', $claimMaster->sector)->value('name');
+        $area = Area::where('id', $claimMaster->area)->value('name');
+        $claimDetails = ClaimRateAdjustmentDetail::where('master_id', $claimMaster->id)->get();
+        $productsArray = $claimDetails->pluck('product_id')->toArray();
+        $products = CoaInventoryDetailAccount::whereIn('id',$productsArray)->pluck('name','id');
+        $user = User::where('id',$claimMaster->created_by)->value('name');
+        $deliverdToParties = DeliveredToParties::where('id',$claimMaster->delivered_to)->value('party_name');
+        $transporters = Transporter::where('id',$claimMaster->transporter)->value('name');
+
+        return view('rate-claim-adjustment.print', compact('title','products','transporters','user','deliverdToParties','claimMaster','date','claimDetails','party','saleMan','belt','area'));
     }
 
     /*

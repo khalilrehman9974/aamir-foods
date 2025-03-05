@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\StockLedger;
 use App\Models\Transporter;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ use App\Services\PurchaseService;
 use Illuminate\Support\Facades\DB;
 use App\Services\StockLedgerService;
 use App\Services\AccountLedgerService;
+use App\Models\CoaInventoryDetailAccount;
 
 class PurchaseController extends Controller
 {
@@ -45,8 +47,10 @@ class PurchaseController extends Controller
         $pageTitle = 'List Of Purchases';
         $request = request()->all();
         $purchases = $this->purchaseService->search($request);
+        $param = request()->param;
+        $dropDownData = $this->purchaseService->DropDownData();
 
-        return view('purchases.index', compact('purchases', 'request','pageTitle'));
+        return view('purchases.index', compact('purchases','dropDownData','param','request','pageTitle'));
     }
 
     /*
@@ -156,6 +160,23 @@ class PurchaseController extends Controller
         // }
 
         return redirect('purchase/list')->with('message', config('constants.update'));
+    }
+
+    public function print($id)
+    {
+        $title = 'Purchase Invoice';
+        $purchaseMaster = PurchaseMaster::find($id);
+
+        $date = Carbon::parse($purchaseMaster->date)->format('d-m-Y');
+        $party = CoaDetailAccount::where('id', $purchaseMaster->party_id)->value('account_name');
+        $purchaseDetails = PurchaseDetail::where('purchase_master_id', $purchaseMaster->id)->get();
+        // dd($purchaseDetails);
+        $productsArray = $purchaseDetails->pluck('product_id')->toArray();
+        $products = CoaInventoryDetailAccount::whereIn('id',$productsArray)->pluck('name','id');
+        $user = User::where('id',$purchaseMaster->created_by)->value('name');
+        $transporters = Transporter::where('id',$purchaseMaster->transporter_id)->value('name');
+
+        return view('purchases.print', compact('title','transporters','products','user','purchaseMaster','date','purchaseDetails','party'));
     }
 
     /*

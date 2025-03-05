@@ -79,21 +79,16 @@ class DispatchNoteService
 
     public function searchDispatch($request)
     {
+
         $q = DispatchNoteMaster::query();
-        if (!empty($request['param'])) {
-            $q = DispatchNoteMaster::with('party','saleMan','Belt','Area','DeliveredToParty')->where('date', 'like', '%' . $request['param'] . '%')
-            ->orWhere('sale_order_number', 'like', '%' . $request['param'] . '%')
-            ->orWhere('party_id', 'like', '%' . $request['param'] . '%')
-            ->orWhere('saleman', 'like', '%' . $request['param'] . '%')
-            ->orWhere('area', 'like', '%' . $request['param'] . '%')
-            ->orWhere('vehicle_no', 'like', '%' . $request['param'] . '%')
-            ->orWhere('bility_no', 'like', '%' . $request['param'] . '%')
-            ->orWhere('driver_name', 'like', '%' . $request['param'] . '%')
-            ->orWhere('total_boray', 'like', '%' . $request['param'] . '%')
-            ->orWhere('total_carton', 'like', '%' . $request['param'] . '%')
-            ->orWhere('sector', 'like', '%' . $request['param'] . '%');
+        if (!empty($request['date'])) {
+            $formattedDate = date('Y-m-d', strtotime($request['date']));
+            $q->where('date', $formattedDate);
+        } elseif (!empty($request['party_id'])) {
+            $q->where('party_id', $request['party_id']);
         }
-        $dispatchNotes = $q->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
+
+        $dispatchNotes = $q->with('party','saleMan','Belt','Area','DeliveredToParty')->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
 
         return $dispatchNotes;
     }

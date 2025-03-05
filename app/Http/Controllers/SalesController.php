@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 
+use Carbon\Carbon;
 use App\Models\Area;
+use App\Models\User;
 use App\Models\Sector;
 use App\Models\SaleMan;
 use App\Models\SaleDetail;
@@ -55,9 +57,11 @@ class SalesController extends Controller
     {
         $pageTitle = 'List Of Sales';
         $request = request()->all();
+        $param = request()->param;
         $sales = $this->saleService->searchSale($request);
+        $dropDownData = $this->saleService->DropDownData();
 
-        return view('sales.index', compact('sales', 'request', 'pageTitle'));
+        return view('sales.index', compact('sales','param','dropDownData', 'request', 'pageTitle'));
     }
 
     /*
@@ -145,7 +149,7 @@ class SalesController extends Controller
         $pageTitle = 'Update Sales Invoice';
         $currentInvoice = $id;
         $sale = SaleMaster::find($id);
-        // dd($sale);
+        $date = Carbon::parse($sale->date)->format('d-m-Y');
         $parties =CoaDetailAccount::where('id', $sale->party_id)->pluck('account_name','id');
         $saleMans =SaleMan::where('id', $sale->saleman)->pluck('name','id');
         $sectors =Sector::where('id', $sale->sector)->pluck('name','id');
@@ -154,8 +158,6 @@ class SalesController extends Controller
         $deliveredToParties =DeliveredToParties::where('id', $sale->delivered_to)->pluck('party_name','id');
         $saleDetails = SaleDetail::where('sale_master_id', $id)->get();
 
-
-        // dd($saleDetails);
         $getProducts = DetailAccountProducts::where('detail_account_id',$sale->party_id)->get();
         $productsArray = $getProducts->pluck('product_id')->toArray();
         $products = CoaInventoryDetailAccount::whereIn('id', $productsArray)->pluck('name','id');
@@ -169,7 +171,7 @@ class SalesController extends Controller
             $message = config('constants.wrong');
         }
 
-        return view('sales.edit', compact('currentInvoice','pricesArray','deliveredToParties','transporters','areas','sectors','saleMans','parties','sale','pageTitle','products','saleDetails'));
+        return view('sales.edit', compact('currentInvoice','date','pricesArray','deliveredToParties','transporters','areas','sectors','saleMans','parties','sale','pageTitle','products','saleDetails'));
     }
 
     /*
@@ -205,6 +207,25 @@ class SalesController extends Controller
         // }
 
         return redirect('sale/sales-list')->with('message', config('constants.update'));
+    }
+
+    public function print($id)
+    {
+        $title = 'Sale Invoice';
+        $saleMaster = SaleMaster::find($id);
+        $date = Carbon::parse($saleMaster->date)->format('d-m-Y');
+        $party = CoaDetailAccount::where('id', $saleMaster->party_id)->value('account_name');
+        $saleMan = SaleMan::where('id', $saleMaster->saleman)->value('name');
+        $belt = Sector::where('id', $saleMaster->sector)->value('name');
+        $area = Area::where('id', $saleMaster->area)->value('name');
+        $saleDetails = SaleDetail::where('sale_master_id', $saleMaster->id)->get();
+        $productsArray = $saleDetails->pluck('product_id')->toArray();
+        $products = CoaInventoryDetailAccount::whereIn('id',$productsArray)->pluck('name','id');
+        $user = User::where('id',$saleMaster->created_by)->value('name');
+        $deliverdToParties = DeliveredToParties::where('id',$saleMaster->delivered_to)->value('party_name');
+        $transporters = Transporter::where('id',$saleMaster->transporter_id)->value('name');
+
+        return view('sales.print', compact('title','products','transporters','user','deliverdToParties','saleMaster','date','saleDetails','party','saleMan','belt','area'));
     }
 
     /*
@@ -267,9 +288,5 @@ class SalesController extends Controller
         return $dispatchNote = DispatchNoteMaster::with('items')->get();
     }
 
-    public function getProductRates($name)
-    {
-        dd($name);
 
-    }
 }

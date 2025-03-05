@@ -6,25 +6,14 @@
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <x-slot:headerFiles>
-        <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
-        <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
-        @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
-        @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
 
+        <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
             integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
         <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
         <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
-        <!--  BEGIN CUSTOM STYLE FILE  -->
-        <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
-        {{-- <link rel="stylesheet" href="../src/plugins/src/filepond/filepond.min.css">
-        <link rel="stylesheet" href="../src/plugins/src/filepond/FilePondPluginImagePreview.min.css"> --}}
 
-        {{-- <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" /> --}}
-        <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
-        <!--  END CUSTOM STYLE FILE  -->
     </x-slot>
     <!-- END GLOBAL MANDATORY STYLES -->
 
@@ -70,20 +59,7 @@
                 <div class="col-lg-12" style="margin-right: 0px !important;">
                     <form class="form-inline my-2 my-lg-0 justify-content-center" method="get"
                         action="{{ route('sale-order.list') }}">
-                        {{-- <div class="w-100">
-                            <input type="text"  value="{{ $param }}" name="param" id="param"
-                                class="w-100 form-control product-search br-30" id="input-search"
-                                placeholder="Search Sale Order...">
-                            <button class="btn btn-primary _effect--ripple waves-effect waves-light" type="submit">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="feather feather-search">
-                                    <circle cx="11" cy="11" r="8"></circle>
-                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                </svg>
-                            </button>
 
-                        </div> --}}
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
@@ -92,8 +68,7 @@
                                             id="date" class="form-control-sm search" id="input-search"
                                             placeholder="Date" style="width: 100%;">
                                         <span class="input-group-prepend">
-                                            {{-- <button type="submit" class="btn btn-primary" disabled><i
-                                                        class="fa fa-search"></i></button> --}}
+
                                         </span>
                                     </div>
                                 </div>
@@ -113,21 +88,6 @@
                                     </div>
                                 </div>
                             </div>
-                            {{-- <div class="col-md-3">
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <select class="select2 form-control mb-3 custom-select" name="seller"
-                                            id="seller" style="width: 100%; height:36px;">
-                                            <option value="">Select</option>
-                                            @foreach ($dropDownData['sellers'] as $key => $value)
-                                                <option value="{{ $key }}"
-                                                    {{ (old('seller_id') == $key ? 'selected' : '') || (!empty($contract->seller_id) ? collect($contract->seller_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                    {{ $value }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                            </div> --}}
 
                             <div class="col-md-2">
                                 <span class="input-group-prepend" style="margin-top: 0px; ">
@@ -144,17 +104,6 @@
                                         Filter</a>
 
                                 </span>
-                                {{-- <a href="{{ route('sale-order.list') }}" class="btn btn-primary _effect--ripple waves-effect waves-light" id="Refresh Cw"
-                                    type="submit" >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" class="feather feather-refresh-cw">
-                                    <polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14">
-                                        </polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15">
-                                            </path>
-                                        </svg>
-
-                                    </a> --}}
                             </div>
                     </form>
                 </div>
@@ -193,11 +142,11 @@
                                                 </div>
                                             </div>
                                         </td>
+
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $saleOrder->date }}</h6>
-
+                                                    <h6 class="mb-0">{{ \Carbon\Carbon::parse($saleOrder->date)->format('d-m-Y') }}</h6>
                                                 </div>
                                             </div>
                                         </td>
@@ -253,6 +202,7 @@
                                                     data-toggle="tooltip" data-placement="top" title="Enter Dispatch Info">
                                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M48 0C21.5 0 0 21.5 0 48L0 368c0 26.5 21.5 48 48 48l16 0c0 53 43 96 96 96s96-43 96-96l128 0c0 53 43 96 96 96s96-43 96-96l32 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l0-64 0-32 0-18.7c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7L416 96l0-48c0-26.5-21.5-48-48-48L48 0zM416 160l50.7 0L544 237.3l0 18.7-128 0 0-96zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
                                                 </a>
+                                                <a href="{{ route('sale-order.print', ['id' => $saleOrder->id]) }}" target="_blank" title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></a>
                                                 @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
                                                 {{-- <a href="javascript:void(0);"
                                                     class="action-btn btn-delete bs-tooltip delete"
@@ -300,20 +250,11 @@
     </script>
     <x-slot:footerFiles>
         <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
-
-        {{-- <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
-        <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script> --}}
-
-        <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
-        <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
-        {{-- <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script> --}}
         <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
             integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        {{-- <script src="{{ asset('js/common.js') }}"></script> --}}
-
         <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])
         <script>

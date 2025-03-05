@@ -6,10 +6,12 @@
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <x-slot:headerFiles>
-        <meta name="csrf-token" content="{{ csrf_token() }}" />
-        <script src="{{ asset('js/jquery.min.js') }}"></script>
-        @vite(['resources/scss/light/assets/elements/search.scss', 'resources/scss/dark/assets/elements/search.scss'])
-        <link rel="stylesheet" href="{{ asset('plugins/sweetalerts2/sweetalerts2.css') }}">
+        <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+            integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
     </x-slot>
     <!-- END GLOBAL MANDATORY STYLES -->
 
@@ -55,20 +57,6 @@
                 <div class="col-lg-12" style="margin-right: 0px !important;">
                     <form class="form-inline my-2 my-lg-0 justify-content-center" method="get"
                         action="{{ route('claim.list') }}">
-                        {{-- <div class="w-100">
-                            <input type="text"  value="{{ $param }}" name="param" id="param"
-                                class="w-100 form-control product-search br-30" id="input-search"
-                                placeholder="Search Sale Order...">
-                            <button class="btn btn-primary _effect--ripple waves-effect waves-light" type="submit">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="feather feather-search">
-                                    <circle cx="11" cy="11" r="8"></circle>
-                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                </svg>
-                            </button>
-
-                        </div> --}}
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
@@ -86,7 +74,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <div class="input-group">
-                                        <select class="select2 custom-select form-control-sm mb-3 " value="{{ $param }}" name="party_id"
+                                        <select class="form-control-sm mb-3 select2 custom-select" value="{{ $param }}" name="party_id"
                                             id="party_id" style="width: 100%;">
                                             <option value="">Select</option>
                                             @foreach ($dropDownData['parties'] as $key => $value)
@@ -98,21 +86,6 @@
                                     </div>
                                 </div>
                             </div>
-                            {{-- <div class="col-md-3">
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <select class="select2 form-control mb-3 custom-select" name="seller"
-                                            id="seller" style="width: 100%; height:36px;">
-                                            <option value="">Select</option>
-                                            @foreach ($dropDownData['sellers'] as $key => $value)
-                                                <option value="{{ $key }}"
-                                                    {{ (old('seller_id') == $key ? 'selected' : '') || (!empty($contract->seller_id) ? collect($contract->seller_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                    {{ $value }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                            </div> --}}
 
                             <div class="col-md-2">
                                 <span class="input-group-prepend" style="margin-top: 0px; ">
@@ -129,17 +102,6 @@
                                         Filter</a>
 
                                 </span>
-                                {{-- <a href="{{ route('claim.list') }}" class="btn btn-primary _effect--ripple waves-effect waves-light" id="Refresh Cw"
-                                    type="submit" >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" class="feather feather-refresh-cw">
-                                    <polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14">
-                                        </polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15">
-                                            </path>
-                                        </svg>
-
-                                    </a> --}}
                             </div>
                     </form>
                 </div>
@@ -183,7 +145,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $claim->date }}</h6>
+                                                    <h6 class="mb-0">{{ \Carbon\Carbon::parse($claim->date)->format('d-m-Y') }}</h6>
 
                                                 </div>
                                             </div>
@@ -242,6 +204,7 @@
                                                         </svg>
                                                     </a>
                                                 @endif
+                                                <a href="{{ route('claim.print', ['id' => $claim->id]) }}" target="_blank" title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></a>
                                                 {{-- <a href="{{ route('dispatch-note.create', ['id' => $claim->id]) }}"
 
                                                     class="action-btn btn-edit bs-tooltip me-2"
@@ -288,9 +251,21 @@
             </div>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
+    </script>
+
     <x-slot:footerFiles>
-        <script src="{{ asset('js/common.js') }}"></script>
-        <script src="{{ asset('plugins/sweetalerts2/sweetalerts2.min.js') }}"></script>
+        <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
+            integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])
         <script>
             var config = {

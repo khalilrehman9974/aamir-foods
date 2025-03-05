@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Area;
+use App\Models\User;
 use App\Models\Sector;
 use App\Models\SaleMan;
 use App\Models\SaleOrder;
@@ -22,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\DetailAccountProducts;
 use App\Services\DispatchNoteService;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\Transporter;
 
 class DispatchNoteController extends Controller
 {
@@ -43,8 +46,9 @@ class DispatchNoteController extends Controller
         $request = request()->all();
         $param = request()->param;
         $dispatchNotes = $this->dispatchNoteService->searchDispatch($request);
+        $dropDownData = $this->dispatchNoteService->DropDownData();
 
-        return view('dispatch-note.index', compact('dispatchNotes', 'pageTitle', 'param'));
+        return view('dispatch-note.index', compact('dispatchNotes','dropDownData', 'pageTitle', 'param'));
     }
 
     /**
@@ -152,22 +156,10 @@ class DispatchNoteController extends Controller
         $dropDownData = $this->dispatchNoteService->DropDownData();
         $dispatchNotes = DispatchNoteDetail::where('dispatch_note_master_id', $id)->get();
         $parties = CoaDetailAccount::where('id', $note->party_id)->pluck('account_name', 'id');
-
-        // $fetchSaleManId= CoaDetailAccount::where('id', $note->party_id)->first('saleMan_id');
         $saleMans = SaleMan::where('id', $note->saleman)->pluck('name', 'id');
-        // $saleMans = $getSaleman->pluck('name','id');
-        // dd($dispatchNotes);
         $images = DispatchNoteImages::where('dispatch_note_id', $id)->get();
-
-        // $fetchSectors  = SaleManSector::where('master_id', $note->saleman)->get();
-        // $sectorsArray = $fetchSectors->pluck('sector_id')->toArray();
         $sectors = Sector::where('id', $note->sector)->pluck('name', 'id');
-        // $sectors = $fetchSectorId->pluck('name','id')->toArray();
-
-        // $fetchAreas = SaleManArea::where('sector_id', $note->belt)->get();
-        // $areasArray = $fetchAreas->pluck('area_id')->toArray();
         $areas = Area::where('id', $note->area)->pluck('name', 'id');
-        // $areas = $fetchAreaId->pluck('name','id')->toArray();
         $deliveredToParties = DeliveredToParties::where('id', $note->delivered_to)->pluck('party_name', 'id');
 
         $getProducts = DetailAccountProducts::where('detail_account_id', $note->party_id)->get();
@@ -207,6 +199,27 @@ class DispatchNoteController extends Controller
         }
 
         return redirect('dispatch-note/list')->with('message', config('constants.update'));
+    }
+
+    public function print($id)
+    {
+        $title = 'Dispatch Note';
+        $dispatchNote = DispatchNoteMaster::find($id);
+        // dd($dispatchNote);
+        $date = Carbon::parse($dispatchNote->date)->format('d-m-Y');
+        $party = CoaDetailAccount::where('id', $dispatchNote->party_id)->value('account_name');
+        $saleMan = SaleMan::where('id', $dispatchNote->saleman)->value('name');
+        $belt = Sector::where('id', $dispatchNote->sector)->value('name');
+        $area = Area::where('id', $dispatchNote->area)->value('name');
+
+        $dispatchNoteDetails = DispatchNoteDetail::where('dispatch_note_master_id', $dispatchNote->id)->get();
+        $productsArray = $dispatchNoteDetails->pluck('product_id')->toArray();
+        $products = CoaInventoryDetailAccount::whereIn('id',$productsArray)->pluck('name','id');
+        $user = User::where('id',$dispatchNote->created_by)->value('name');
+        $deliverdToParties = DeliveredToParties::where('id',$dispatchNote->delivered_to)->value('party_name');
+        $transporters = Transporter::where('id',$dispatchNote->transporter_id)->value('name');
+
+        return view('dispatch-note.print', compact('title','products','transporters','user','deliverdToParties','dispatchNote','date','dispatchNoteDetails','party','saleMan','belt','area'));
     }
 
     /**

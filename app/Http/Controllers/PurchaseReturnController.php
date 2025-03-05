@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Transporter;
 use Illuminate\Http\Request;
 use App\Models\AccountLedger;
@@ -17,6 +18,7 @@ use App\Models\PurchaseReturnMaster;
 use App\Services\StockLedgerService;
 use App\Services\AccountLedgerService;
 use App\Services\purchaseReturnService;
+use App\Models\CoaInventoryDetailAccount;
 
 class PurchaseReturnController extends Controller
 {
@@ -48,7 +50,9 @@ class PurchaseReturnController extends Controller
         $request = request()->all();
         $purchaseReturns = $this->purchaseReturnService->searchPurchaseReturn($request);
         $param = request()->param;
-        return view('purchase-return.index', compact('purchaseReturns','param', 'request','pageTitle'));
+        $dropDownData = $this->purchaseReturnService->DropDownData();
+
+        return view('purchase-return.index', compact('purchaseReturns','dropDownData','param', 'request','pageTitle'));
     }
 
 
@@ -166,6 +170,23 @@ class PurchaseReturnController extends Controller
 
         return redirect('purchase-return/list')->with('message', config('constants.update'));
     }
+
+    public function print($id)
+    {
+        $title = 'Purchase Return Invoice';
+        $purchasereturnMaster = PurchaseReturnMaster::find($id);
+        $date = Carbon::parse($purchasereturnMaster->date)->format('d-m-Y');
+        $party = CoaDetailAccount::where('id', $purchasereturnMaster->party_id)->value('account_name');
+        $purchaseReturnDetails = PurchaseReturnDetail::where('purchase_return_master_id', $purchasereturnMaster->id)->get();
+        // dd($purchasereturnMaster);
+        $productsArray = $purchaseReturnDetails->pluck('product_id')->toArray();
+        $products = CoaInventoryDetailAccount::whereIn('id',$productsArray)->pluck('name','id');
+        $user = User::where('id',$purchasereturnMaster->created_by)->value('name');
+        $transporters = Transporter::where('id',$purchasereturnMaster->transporter_id)->value('name');
+
+        return view('purchase-return.print', compact('title','transporters','products','user','purchasereturnMaster','date','purchaseReturnDetails','party'));
+    }
+
 
     /*
      * Delete existing resource.

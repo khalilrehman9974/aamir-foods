@@ -82,13 +82,24 @@ class PurchaseReturnService
      * */
     public function searchPurchaseReturn($request)
     {
+
         $q = PurchaseReturnMaster::query();
-        if (!empty($request['param'])) {
-            $q = PurchaseReturnMaster::with( 'party','transporter')
-                ->orwhere('date', 'like', '%' . $request['param'] . '%')
-                ->orwhere('bill_no', 'like', '%' . $request['param'] . '%');
+
+        if (!empty($request['date'])) {
+            $formattedDate = date('Y-m-d', strtotime($request['date']));
+            $q->where('date', $formattedDate);
+        } elseif (!empty($request['party_id'])) {
+            $q->where('party_id', $request['party_id']);
         }
-        $pRorders = $q->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
+
+
+        // $q = PurchaseReturnMaster::query();
+        // if (!empty($request['param'])) {
+        //     $q = PurchaseReturnMaster::with( 'party','transporter')
+        //         ->orwhere('date', 'like', '%' . $request['param'] . '%')
+        //         ->orwhere('bill_no', 'like', '%' . $request['param'] . '%');
+        // }
+        $pRorders = $q->with( 'party','transporter')->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
 
         return $pRorders;
     }

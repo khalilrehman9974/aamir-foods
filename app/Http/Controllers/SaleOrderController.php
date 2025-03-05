@@ -2,27 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\Area;
+use App\Models\Sector;
 use App\Models\SaleMan;
 use App\Models\SaleOrder;
 use App\Models\PackingType;
+use App\Models\SaleManArea;
 use Illuminate\Http\Request;
+use App\Models\SaleManSector;
 use App\Models\MeasurementType;
 use App\Models\SaleOrderDetail;
+use App\Models\SaleOrderImages;
 use App\Services\CommonService;
 use App\Models\CoaDetailAccount;
+use App\Models\DeliveredToParties;
 use App\Services\SaleOrderService;
 use Illuminate\Support\Facades\DB;
-use App\Events\AamirFoodsNotifications;
-use App\Models\Area;
 use App\Models\CoaDetailAccountArea;
+use App\Models\DetailAccountProducts;
+use App\Events\AamirFoodsNotifications;
 use App\Models\CoaDetailAccountSectors;
 use App\Models\CoaInventoryDetailAccount;
-use App\Models\DeliveredToParties;
-use App\Models\DetailAccountProducts;
-use App\Models\SaleManArea;
-use App\Models\SaleManSector;
-use App\Models\SaleOrderImages;
-use App\Models\Sector;
+use App\Models\User;
 
 class SaleOrderController extends Controller
 {
@@ -138,6 +140,7 @@ class SaleOrderController extends Controller
         $pageTitle = 'Update Sale Orders';
         $currentid = $id;
         $saleOrder = SaleOrder::find($id);
+        $date = Carbon::parse($saleOrder->date)->format('d-m-Y');
         $fetchSaleManId= CoaDetailAccount::where('id', $saleOrder->party_id)->first('saleMan_id');
         $getSaleman = SaleMan::where('id', $fetchSaleManId->saleMan_id)->get();
         $saleMans = $getSaleman->pluck('name','id');
@@ -166,7 +169,7 @@ class SaleOrderController extends Controller
             $message = config('constants.wrong');
         }
 
-        return view('sale-orders.create', compact('saleOrder','products', 'dropDownData','deliverdToParties', 'areas','sectors','images', 'saleMans', 'currentid', 'saleOrderDetails', 'pageTitle'));
+        return view('sale-orders.edit', compact('saleOrder','date','products', 'dropDownData','deliverdToParties', 'areas','sectors','images', 'saleMans', 'currentid', 'saleOrderDetails', 'pageTitle'));
     }
 
     /*
@@ -237,6 +240,26 @@ class SaleOrderController extends Controller
         }
 
         return view('sale-orders.view', compact('saleOrderMaster'));
+    }
+
+    public function print($id)
+    {
+        $title = 'Sale Order';
+        $saleOrder = SaleOrder::find($id);
+        // dd($saleOrder);
+        $date = Carbon::parse($saleOrder->date)->format('d-m-Y');
+        $party = CoaDetailAccount::where('id', $saleOrder->party_id)->value('account_name');
+        $saleMan = SaleMan::where('id', $saleOrder->saleman)->value('name');
+        $belt = Sector::where('id', $saleOrder->belt)->value('name');
+        $area = Area::where('id', $saleOrder->area)->value('name');
+        $saleOrderDetails = SaleOrderDetail::where('sale_order_master_id', $saleOrder->id)->get();
+        $productsArray = $saleOrderDetails->pluck('product_id')->toArray();
+        $products = CoaInventoryDetailAccount::whereIn('id',$productsArray)->pluck('name','id');
+        $user = User::where('id',$saleOrder->created_by)->value('name');
+        $deliverdToParties = DeliveredToParties::where('id',$saleOrder->delivered_to)->value('party_name');
+
+
+        return view('sale-orders.print', compact('title','products','user','deliverdToParties','saleOrder','date','saleOrderDetails','party','saleMan','belt','area'));
     }
 
     public function getSaleManDetail(Request $request)

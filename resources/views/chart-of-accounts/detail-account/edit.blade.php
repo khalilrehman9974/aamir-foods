@@ -4,6 +4,22 @@
         {{ $pageTitle }}
     </x-slot>
     <x-slot:headerFiles>
+
+        {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+            integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
+        @vite(['resources/scss/light/assets/components/timeline.scss'])
+        <meta charset="UTF-8">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <link rel="stylesheet" href="{{ asset('plugins/sweetalerts2/sweetalerts2.css') }}">
+        {{-- @vite(['resources/scss/light/plugins/sweetalerts2/custom-sweetalert.scss'])
+        @vite(['resources/scss/dark/plugins/sweetalerts2/custom-sweetalert.scss']) --}}
+        @vite(['resources/scss/light/assets/components/accordions.scss'])
+        @vite(['resources/scss/dark/assets/components/accordions.scss'])
+        @vite(['resources/scss/light/assets/elements/alert.scss'])
+        @vite(['resources/scss/dark/assets/elements/alert.scss'])
+
         <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
         <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
         @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
@@ -22,6 +38,18 @@
 
         <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
         <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
+
+        {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+            integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
+
+
+        {{-- <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" /> --}}
+
+
+
+        <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
 
 
     </x-slot>
@@ -533,13 +561,17 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
 
                                                                                     </tr>
                                                                                     @foreach ($filteredProducts as $detailAccountProduct)
+                                                                                        @php
+                                                                                            $index = $loop->index + 1; // Starts from 2
+
+                                                                                        @endphp
                                                                                         <tr class="child_row"
-                                                                                            data-parent-id="parent_row_1">
+                                                                                            data-parent-id="parent_row_{{ $index }}">
                                                                                             <td>
                                                                                                 <input type="text"
                                                                                                     name="sub_row_id[]"
                                                                                                     class="sub_row_id"
-                                                                                                    value="{{ $rowIndex }}"
+                                                                                                    value="{{ $index }}"
                                                                                                     hidden>
                                                                                             </td>
                                                                                             <td>
@@ -551,7 +583,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                                     type = "text"
                                                                                                     value="{{ $detailAccountProduct->master_third_level }}"
                                                                                                     name="master_third_level[]"
-                                                                                                    class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} masterThirdLevel_{{ $rowIndex }}"
+                                                                                                    class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} masterThirdLevel_{{ $index }}"
                                                                                                     hidden>
                                                                                             </td>
                                                                                             <td class="quantity">
@@ -560,7 +592,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                                     type = "text"
                                                                                                     value="{{ $detailAccountProduct->master_price_tag }}"
                                                                                                     name="master_price_tag[]"
-                                                                                                    class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} master_price_tag_{{ $rowIndex }}"
+                                                                                                    class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} master_price_tag_{{ $index }}"
                                                                                                     hidden>
                                                                                             </td>
                                                                                             <td class="product">
@@ -568,7 +600,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                                     type="text"
                                                                                                     name="product_id[]"
                                                                                                     placeholder="Please Select the Product"
-                                                                                                    class="{{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} form-control mb-3 product product_{{ $rowIndex }} select2"
+                                                                                                    class="{{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} form-control mb-3 product product_{{ $index }} select2"
                                                                                                     multiple>
                                                                                                     <option
                                                                                                         value="select-all">
@@ -596,7 +628,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                             <td class="quantity">
                                                                                                 <input type="text"
                                                                                                     id="price"
-                                                                                                    class="price form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} price_{{ $rowIndex }}"
+                                                                                                    class="price form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} price_{{ $index }}"
                                                                                                     name="price[]"
                                                                                                     value="{{ old('price', !empty($detailAccountProduct->price) ? $detailAccountProduct->price : '') }}"
                                                                                                     placeholder="Price">
@@ -608,7 +640,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                                     name="scheme[]"
                                                                                                     value="{{ old('scheme', !empty($detailAccountProduct->scheme) ? $detailAccountProduct->scheme : '') }}"
                                                                                                     placeholder="Scheme... "
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} scheme_{{ $rowIndex }}">
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} scheme_{{ $index }}">
                                                                                             </td>
 
                                                                                             <td class="quantity">
@@ -617,7 +649,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                                     name="discount[]"
                                                                                                     value="{{ old('discount', !empty($detailAccountProduct->discount) ? $detailAccountProduct->discount : '') }}"
                                                                                                     placeholder="Discount... "
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount_{{ $rowIndex }}">
+                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount_{{ $index }}">
                                                                                             </td>
 
                                                                                             <td
@@ -805,9 +837,8 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
 
                                                         </div>
                                                     </div>
-                                                    <br>
-                                                    <br>
-                                                    <div id="defaultAccordionOne" class="collapse"
+
+                                                    {{-- <div id="defaultAccordionOne" class="collapse"
                                                         aria-labelledby="headingOne1"
                                                         data-bs-parent="#toggleAccordion">
                                                         <div class="card-body">
@@ -907,6 +938,173 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
 
                                                             </div>
                                                         </div>
+                                                    </div> --}}
+
+                                                    <div class="col-lg-0 col-12 form-group mb-2">
+                                                        <div id="toggleAccordion" class="accordion layout-spacing">
+                                                            <div class="card">
+                                                                <div class="card-header" id="headingOne1">
+                                                                    <section class="mb-0 mt-0">
+                                                                        <div role="menu" class="collapsed"
+                                                                            data-bs-toggle="collapse"
+                                                                            data-bs-target="#defaultAccordionOne"
+                                                                            aria-expanded="false"
+                                                                            aria-controls="defaultAccordionOne">
+                                                                            Additional Information
+                                                                            <div class="icons">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                                    width="24" height="24"
+                                                                                    viewBox="0 0 24 24" fill="none"
+                                                                                    stroke="currentColor"
+                                                                                    stroke-width="2"
+                                                                                    stroke-linecap="round"
+                                                                                    stroke-linejoin="round"
+                                                                                    class="feather feather-chevron-down">
+                                                                                    <polyline points="6 9 12 15 18 9">
+                                                                                    </polyline>
+                                                                                </svg>
+                                                                            </div>
+                                                                        </div>
+                                                                    </section>
+                                                                </div>
+
+                                                                <div id="defaultAccordionOne" class="collapse"
+                                                                    aria-labelledby="headingOne1"
+                                                                    data-bs-parent="#toggleAccordion">
+                                                                    <div class="card-body">
+                                                                        <div class="col-lg-0 col-12 form-group mb-2">
+                                                                            <label for="account_name"
+                                                                                class="form-label">
+                                                                                Address </label>
+                                                                            <textarea name="address" id="address" placeholder="Please Enter Address "
+                                                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" type="text" cols="30"
+                                                                                rows="5">{{ @$detailAccountDetails->address }}</textarea>
+                                                                        </div>
+                                                                        <div class="col-lg-0 col-12 form-group mb-2">
+                                                                            <label for="account_name"
+                                                                                class="form-label">
+                                                                                Remarks </label>
+                                                                            <textarea name="remarks" id="remarks" placeholder="Please Enter Remarks "
+                                                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" type="text" cols="30"
+                                                                                rows="5">{{ @$detailAccountDetails->remarks }}</textarea>
+                                                                        </div>
+                                                                        <div class="col-lg-0 col-12 form-group mb-2">
+                                                                            <div class="row">
+                                                                                <div
+                                                                                    class="col col-md-6 form-group mb-2">
+                                                                                    <label for="account_name"
+                                                                                        class="form-label">
+                                                                                        Contact No 1 </label>
+                                                                                    <input id="contact_no_1"
+                                                                                        type="text"
+                                                                                        name="contact_no_1"
+                                                                                        value="{{ old('contact_no_1', !empty($detailAccountDetails->contact_no_1) ? $detailAccountDetails->contact_no_1 : '') }}"
+                                                                                        placeholder="Please Enter Contact No 1"
+                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                                </div>
+
+                                                                                <div
+                                                                                    class="col col-md-6 form-group mb-2">
+                                                                                    <label for="contact_no_2"
+                                                                                        class="form-label">
+                                                                                        Contact No 2 /
+                                                                                        WhatsApp</label>
+                                                                                    <input id="contact_no_2"
+                                                                                        type="text"
+                                                                                        name="contact_no_2"
+                                                                                        value="{{ old('contact_no_2', !empty($detailAccountDetails->contact_no_2) ? $detailAccountDetails->contact_no_2 : '') }}"
+                                                                                        placeholder="Please Enter Contact No 2 "
+                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-0 col-12 form-group mb-2">
+                                                                            <div class="row">
+                                                                                <div
+                                                                                    class="col col-md-6 form-group mb-2">
+                                                                                    <label for="cnic"
+                                                                                        class="form-label">
+                                                                                        Email </label>
+                                                                                    <input id="email"
+                                                                                        type="text" name="email"
+                                                                                        value="{{ old('email', !empty($detailAccountDetails->email) ? $detailAccountDetails->email : '') }}"
+                                                                                        placeholder="Please Enter the email "
+                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                                </div>
+                                                                                <div
+                                                                                    class="col col-md-6 form-group mb-2">
+                                                                                    <label for="cnic"
+                                                                                        class="form-label">
+                                                                                        CNIC </label>
+                                                                                    <input id="cnic"
+                                                                                        type="text" name="cnic"
+                                                                                        value="{{ old('cnic', !empty($detailAccountDetails->cnic) ? $detailAccountDetails->cnic : '') }}"
+                                                                                        placeholder="Please Enter the CNIC "
+                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col col-md-6 form-group mb-2">
+                                                                                <label for="credit_limit"
+                                                                                    class="form-label">
+                                                                                    Credit
+                                                                                    Limit </label>
+                                                                                <input id="credit-limit"
+                                                                                    type="text" name="credit_limit"
+                                                                                    value="{{ old('credit_limit', !empty($detailAccountDetails->credit_limit) ? $detailAccountDetails->credit_limit : '') }}"
+                                                                                    placeholder="Please Enter Detail Account "
+                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                            </div>
+                                                                            <div class="col col-md-6 form-group mb-2">
+                                                                                <label for="opening_balance"
+                                                                                    class="form-label">
+                                                                                    Opening
+                                                                                    Balance </label>
+                                                                                <input id="opening-balance"
+                                                                                    type="text"
+                                                                                    name="opening_balance"
+                                                                                    value="{{ old('opening_balance', !empty($detailAccountDetails->opening_balance) ? $detailAccountDetails->opening_balance : '') }}"
+                                                                                    placeholder="Please Enter Opening Balance "
+                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col col-md-6 form-group mb-2">
+                                                                                <label for="credit_days"
+                                                                                    class="form-label">
+                                                                                    Credit
+                                                                                    Days </label>
+                                                                                <input id="credit-days"
+                                                                                    type="text" name="credit_days"
+                                                                                    value="{{ old('credit_days', !empty($detailAccountDetails->credit_days) ? $detailAccountDetails->credit_days : '') }}"
+                                                                                    placeholder="Please Enter credit Days "
+                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <br />
+                                                        {{-- @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1) --}}
+                                                        @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
+                                                            <button type="submit" id="save"
+                                                                class="btn btn-success  rounded bs-popover me-1 mt-5 mb-4 save"
+                                                                data-bs-container="body" data-bs-placement="right"
+                                                                data-bs-content="Tooltip on right">
+                                                                @if (!isset($detailAccount))
+                                                                    Save
+                                                                @else
+                                                                    Update
+                                                                @endif
+                                                            </button>
+                                                        @endif
+                                                        <a href="{{ route('detail-account.list') }}"
+                                                            class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
+
                                                     </div>
                                                 </form>
                                             </div>
@@ -1641,6 +1839,16 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
 
     <x-slot:footerFiles>
 
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        {{-- <script src="{{ asset('plugins/sweetalerts2/sweetalerts2.min.js') }}"></script>
+<script src="{{ asset('plugins/sweetalerts2/custom-sweetalert.js') }}"></script> --}}
+        <script src="{{ asset('js/common.js') }}"></script>
+
+        <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
+        @vite(['resources/assets/js/elements/custom-search.js'])
+
+
+
         <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
 
         <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
@@ -1648,13 +1856,20 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
 
         <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
         <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
-        {{-- <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script> --}}
         <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
             integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="{{ asset('js/common.js') }}"></script>
+
+
+
+        <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
+            integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
         <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])

@@ -84,11 +84,21 @@ class PurchaseOrderService
      * */
      public function searchPOrder($request)
      {
-         $q = PurchaseOrderMaster::query();
-         if (!empty($request['param'])) {
-             $q = PurchaseOrderMaster::with('party')->where('contact_person', 'like', '%' . $request['param'] . '%');
-         }
-         $porders = $q->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
+
+        $q = PurchaseOrderMaster::query();
+
+        if (!empty($request['date'])) {
+            $formattedDate = date('Y-m-d', strtotime($request['date']));
+            $q->where('date', $formattedDate);
+        } elseif (!empty($request['party_id'])) {
+            $q->where('party_id', $request['party_id']);
+        }
+
+        //  $q = PurchaseOrderMaster::query();
+        //  if (!empty($request['param'])) {
+        //      $q = PurchaseOrderMaster::with('party')->where('contact_person', 'like', '%' . $request['param'] . '%');
+        //  }
+         $porders = $q->with('party')->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
 
          return $porders;
      }
