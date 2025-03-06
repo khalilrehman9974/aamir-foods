@@ -14,6 +14,7 @@ use App\Models\StoreIssueNote;
 use App\Models\StoreIssueNoteDetail;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\Department;
 
 class StoreIssueNoteService
 {
@@ -48,6 +49,7 @@ class StoreIssueNoteService
     {
         $result = [
             'products' => CoaInventoryDetailAccount::pluck('name', 'id'),
+            'departments' => Department::pluck('name', 'id'),
         ];
 
         return $result;
@@ -73,16 +75,31 @@ class StoreIssueNoteService
 
     public function search($request)
     {
-        // leftjoin('products', 'product.id', '=', 'issue_note.product_id')->
-        $q = StoreIssueNote::query();
-        if (!empty($request['param'])) {
-            $q = StoreIssueNote::with('product')
-            ->where('issued_to', 'like', '%' . $request['param'] . '%')
-            ->orWhere('issued_by', 'like', '%' . $request['param'] . '%');
-        }
-        $storeIssueNotes = $q->orderBy('issued_to', 'ASC')->paginate(config('constants.PER_PAGE'));
 
+        $q = StoreIssueNote::query();
+
+        if (!empty($request['date'])) {
+            $formattedDate = date('Y-m-d', strtotime($request['date']));
+            $q->where('date', $formattedDate);
+        } elseif (!empty($request['to_department'])) {
+            $q->where('to_department', $request['to_department']);
+        }
+
+        $storeIssueNotes = $q->with('fromDepartment','toDepartment')->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
         return $storeIssueNotes;
+
+
+
+        // leftjoin('products', 'product.id', '=', 'issue_note.product_id')->
+        // $q = StoreIssueNote::query();
+        // if (!empty($request['param'])) {
+        //     $q = StoreIssueNote::with('product')
+        //     ->where('issued_to', 'like', '%' . $request['param'] . '%')
+        //     ->orWhere('issued_by', 'like', '%' . $request['param'] . '%');
+        // }
+        // $storeIssueNotes = $q->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
+
+        // return $storeIssueNotes;
     }
 
     /*
@@ -93,27 +110,50 @@ class StoreIssueNoteService
     public function prepareIssueNoteMasterData($request)
     {
         return [
-            'issued_to' => $request['issued_to'],
-            'issued_by' => $request['issued_by'],
-            'product_id' => $request['product_id'],
-            'remarks' => $request['remarks'],
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'receiver_name' => $request['receiver_name'],
+            'from_department' => $request['from_department'],
+            'to_department' => $request['to_department'],
             'created_by' => Auth::user()->id,
             'updated_by' => Auth::user()->id
         ];
     }
 
 
-    public function saveIssueNote($request, $store_issue_notesParentId)
+    public function prepareIssueNoteDetailData($request, $issueNoteParentId)
     {
-        $data = $request;
-        foreach ($data["date"] as $key => $value) {
-                $rec['date'] = Carbon::parse($data['date'][$key])->format("Y-m-d") ;
-                $rec['description'] = $data['description'][$key];
-                $rec['quantity'] = $data['quantity'][$key];
-                $rec['created_by'] = Auth::Id();
-                $rec['updated_by'] = Auth::Id();
-                $rec['store_issue_notes_id'] = $store_issue_notesParentId;
+        return [
+            'product_id' => $request['product_id'],
+            'packing_type' => $request['packing_type'],
+            'measurement_type' => $request['measurement_type'],
+            'size' => $request['size'],
+            'bags' => $request['bags'],
+            'avg_weight' => $request['avg_weight'],
+            'total_qty' => $request['total_qty'],
+            'remarks' => $request['remarks'],
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id,
+            'store_issue_notes_id' => $issueNoteParentId,
+        ];
+    }
+
+    public function saveIssueNote($data)
+    {
+        foreach ($data['product_id'] as $key => $value) {
+            if (!empty($data['product_id'][$key])) {
+                $rec['product_id'] = $data['product_id'][$key];
+                $rec['packing_type'] = $data['packing_type'][$key];
+                $rec['measurement_type'] = $data['measurement_type'][$key];
+                $rec['size'] = $data['size'][$key];
+                $rec['bags'] = $data['bags'][$key];
+                $rec['avg_weight'] = $data['avg_weight'][$key];
+                $rec['total_qty'] = $data['total_qty'][$key];
+                $rec['remarks'] = $data['remarks'][$key];
+                $rec['created_by'] = Auth::user()->id;
+                $rec['updated_by'] = Auth::user()->id;
+                $rec['store_issue_notes_id'] = $data['store_issue_notes_id'];
                 StoreIssueNoteDetail::create($rec);
+            }
         }
     }
 }

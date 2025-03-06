@@ -6,11 +6,15 @@
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <x-slot:headerFiles>
-        @vite(['resources/scss/light/assets/elements/search.scss', 'resources/scss/dark/assets/elements/search.scss'])
-        <link rel="stylesheet" href="{{ asset('plugins/sweetalerts2/sweetalerts2.css') }}">
-        <meta name="csrf-token" content="{{ csrf_token() }}" />
-        <script src="{{ asset('js/jquery.min.js') }}"></script>
-    </x-slot>
+
+    <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+        integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+
+</x-slot>
 
     <x-slot:scrollspyConfig>
         data-bs-spy="scroll" data-bs-target="#navSection" data-bs-offset="100"
@@ -55,42 +59,60 @@
     <div class="row layout-top-spacing">
         <div id="tableCustomBasic" class="col-lg-12 col-12">
             <div class="row">
-                <div class="col-md-1 mt-1" role="group">
-                </div>
-                <div class="col-lg-8 col-md-8 col-sm-9 filtered-list-search mx-auto">
+                <div class="col-lg-12" style="margin-right: 0px !important;">
                     <form class="form-inline my-2 my-lg-0 justify-content-center" method="get"
                         action="{{ route('store-issue-note.list') }}">
-                        <div class="w-100">
-                            <input type="text" value="{{$param}}" name="param" id="param"
-                                class="w-100 form-control product-search br-30" id="input-search"
-                                placeholder="Search Store Issue Note...">
-                            <button class="btn btn-primary _effect--ripple waves-effect waves-light" type="submit">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
-                                    <circle cx="11" cy="11" r="8"></circle>
-                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                </svg>
-                            </button>
 
-                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <label for="inputState" class="form-label">Date</label>
+                                        <input type="text" value="{{ $param }}" name="date"
+                                            id="date" class="form-control-sm search" id="input-search"
+                                            placeholder="Date" style="width: 100%;">
+                                        <span class="input-group-prepend">
+
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <label for="inputState" class="form-label">To Department</label>
+                                        <select class="form-control-sm mb-3 select2 custom-select" name="to_department"
+                                            id="to_department" style="width: 100%;">
+                                            <option value="">Select</option>
+                                            @foreach ($dropDownData['departments'] as $key => $value)
+                                                <option value="{{ $key }}"
+                                                    {{ (old('to_department') == $key ? 'selected' : '') || (!empty($saleOrder->to_department) ? collect($saleOrder->to_department)->contains($key) : '') ? 'selected' : '' }}>
+                                                    {{ $value }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <span class="input-group-prepend" style="margin-top: 0px; ">
+                                    <button type="submit" class="btn btn-primary" value="Search"
+                                        id="search-button" style="width: 100%;"><i class="fa fa-search"></i>&nbsp;
+                                        Search</button>
+
+                                </span>
+                            </div>
+                            <div class="col-md-2 ">
+                                <span class="input-group-prepend" style="margin-top: 0px;">
+                                    <a href="{{ route('store-issue-note.list') }}" class="btn btn-primary"
+                                        value="Search" id="clear-filter" style="margin-left: 10px">Clear
+                                        Filter</a>
+
+                                </span>
+                            </div>
                     </form>
                 </div>
-                <div class="col-md-3 mt-1 " role="group">
-                    <a href="{{ route('store-issue-note.list') }}"
-                        class="btn btn-primary _effect--ripple waves-effect waves-light" id="Refresh Cw" type="submit">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" class="feather feather-refresh-cw">
-                            <polyline points="23 4 23 10 17 10"></polyline>
-                            <polyline points="1 20 1 14 7 14">
-                            </polyline>
-                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15">
-                            </path>
-                        </svg>
 
-                    </a>
-                </div>
             </div>
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">
@@ -107,10 +129,11 @@
                             <thead>
                                 <tr>
                                     <th scope="col" style="width: 10%"><b>Id </b></th>
-                                    <th scope="col" style="width: 30%"><b>Product </b></th>
-                                    <th scope="col" style="width: 20%"><b>Issued To</b></th>
-                                    <th scope="col" style="width: 20%"><b>Issued By</b></th>
-                                    <th scope="col" style="width: 20%"><b>Remarks </b></th>
+                                    <th scope="col" style="width: 20%"><b>Date </b></th>
+                                    <th scope="col" style="width: 30%"><b>Receiver Name </b></th>
+                                    <th scope="col" style="width: 20%"><b>From Department</b></th>
+                                    <th scope="col" style="width: 20%"><b>To Department</b></th>
+
                                     <th class="text-center" scope="col"></th>
                                 </tr>
                             </thead>
@@ -127,7 +150,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $note->product->name }}</h6>
+                                                    <h6 class="mb-0">{{ \Carbon\Carbon::parse($note->date)->format('d-m-Y') }}</h6>
 
                                                 </div>
                                             </div>
@@ -135,7 +158,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $note->issued_to }}</h6>
+                                                    <h6 class="mb-0">{{$note->receiver_name}}</h6>
 
                                                 </div>
                                             </div>
@@ -143,7 +166,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $note->issued_by }}</h6>
+                                                    <h6 class="mb-0">{{ $note->fromDepartment->name }}</h6>
 
                                                 </div>
                                             </div>
@@ -151,11 +174,12 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $note->remarks }}</h6>
+                                                    <h6 class="mb-0">{{ $note->toDepartment->name }}</h6>
 
                                                 </div>
                                             </div>
                                         </td>
+
                                         <td class="text-center">
                                             <div class="action-btns">
                                                 {{-- @if ((!empty($permission->edit_access) && $permission->edit_access == 1) || Auth::user()->is_admin == 1)
@@ -173,7 +197,7 @@
                                                         </path>
                                                     </svg>
                                                 </a>
-                                                <a href="javascript:void(0);"
+                                                {{-- <a href="javascript:void(0);"
                                                     class="action-btn btn-delete bs-tooltip delete"
                                                     data-id="{{ $note->id }}" data-toggle="tooltip"
                                                     data-placement="top" title="Delete">
@@ -192,7 +216,7 @@
                                                             y2="17">
                                                         </line>
                                                     </svg>
-                                                </a>
+                                                </a> --}}
                                                 {{-- @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
 
                                                 @endif --}}
@@ -212,9 +236,19 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
+    </script>
     <x-slot:footerFiles>
-        <script src="{{ asset('plugins/sweetalerts2/sweetalerts2.min.js') }}"></script>
-        <script src="{{ asset('js/common.js') }}"></script>
+        <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
+            integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])
         <script>
             var config = {

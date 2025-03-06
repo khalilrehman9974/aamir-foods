@@ -7,24 +7,14 @@
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <x-slot:headerFiles>
         <!--  BEGIN CUSTOM STYLE FILE  -->
-        <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
         <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
-        @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
-        @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
-
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
             integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
         <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
         <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
-        <!--  BEGIN CUSTOM STYLE FILE  -->
-        <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
-        <link rel="stylesheet" href="../src/plugins/src/filepond/filepond.min.css">
-        <link rel="stylesheet" href="../src/plugins/src/filepond/FilePondPluginImagePreview.min.css">
 
-        <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
-        <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
         <!--  END CUSTOM STYLE FILE  -->
     </x-slot>
     <!-- END GLOBAL MANDATORY STYLES -->
@@ -66,7 +56,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label for="issued_to">Issue Note#</label>
-                                        <input type="text" value="{{ $maxid }}" style="color: black;"
+                                        <input type="text" value="{{ $issueNote->id }}" style="color: black;"
                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
                                             placeholder="Issue Note#..." readonly>
                                         @error('issued_to')
@@ -82,7 +72,7 @@
                                         <input type="text"
                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
                                             id="date" name="date"
-                                            value="{{ old('date', !empty($saleOrder->date) ? $saleOrder->date : '') }}"
+                                            value="{{$date}}"
                                             placeholder="Select The Date" required>
                                         @error('date')
                                             <span style="color:red" class="invalid-feedback">
@@ -279,13 +269,14 @@
                                                             <td class="totQuantity">
                                                                 <input type="number" id="totalQty"
                                                                     name="total_qty[]"
+                                                                    value="{{ old('total_qty', !empty(@$issueNote->total_qty) ? @$issueNote->total_qty : '') }}"
                                                                     class="totalQty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} totalQty_{{ $index }}"
                                                                     placeholder="Tot Qty" required>
                                                             </td>
 
                                                             <td class="quantity">
                                                                 <textarea id="unit" type="text" name="remarks[]" placeholder="Remarks...."
-                                                                    class="mt-0 form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} remarks_{{ $index }}"></textarea>
+                                                                    class="mt-0 form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} remarks_{{ $index }}">{{ @$issueNote->remarks }}</textarea>
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -500,9 +491,6 @@
 
         <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
         <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>
-
-        <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
-        <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
         {{-- <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script> --}}
         <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>

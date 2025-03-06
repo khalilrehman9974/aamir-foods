@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\Department;
+use App\Models\PackingType;
+use Illuminate\Http\Request;
 use App\Models\StoreIssueNote;
+use App\Models\MeasurementType;
 use App\Services\CommonService;
 use Illuminate\Support\Facades\DB;
 use App\Models\StoreIssueNoteDetail;
 use App\Services\StoreIssueNoteService;
-use Illuminate\Http\Request;
+use App\Models\CoaInventoryDetailAccount;
 
 class StoreIssueNoteController extends Controller
 {
@@ -24,15 +29,17 @@ class StoreIssueNoteController extends Controller
         $request = request()->all();
         $storeIssueNotes = $this->storeIssueNoteService->search($request);
         $param = request()->param;
-        
-        return view('store-issue-note.index', compact('storeIssueNotes','param', 'pageTitle'));
+        $dropDownData = $this->storeIssueNoteService->DropDownData();
+
+        return view('store-issue-note.index', compact('storeIssueNotes','dropDownData','param', 'pageTitle'));
     }
 
     public function create() {
         $pageTitle = 'Create Store Issue Note';
+        $maxid = StoreIssueNote::max('id')+ 1;
         $dropDownData = $this->storeIssueNoteService->DropDownData();
         $issueNoteDetails = StoreIssueNoteDetail::where('store_issue_notes_id')->get();
-        return view('store-issue-note.create', compact('issueNoteDetails','pageTitle', 'dropDownData'));
+        return view('store-issue-note.create', compact('issueNoteDetails','maxid','pageTitle', 'dropDownData'));
     }
     /**
      * Store a newly created resource in storage.
@@ -41,14 +48,19 @@ class StoreIssueNoteController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
+        // dd($request);
         $data = request()->except('id', 'token');
-        DB::beginTransaction();
+        // DB::beginTransaction();
         // try {
             //Insert data into IssueNote tables.
             $issueNoteMasterData = $this->storeIssueNoteService->prepareIssueNoteMasterData($request);
             $issueNoteMasterInsert = $this->commonService->findUpdateOrCreate(StoreIssueNote::class, ['id' => ''], $issueNoteMasterData);
-            $this->storeIssueNoteService->saveIssueNote($request, $issueNoteMasterInsert->id);
+            $issueNoteDetailData = $this->storeIssueNoteService->prepareIssueNoteDetailData($request, $issueNoteMasterInsert->id);
+            $this->storeIssueNoteService->saveIssueNote($issueNoteDetailData);
+
+            // $this->storeIssueNoteService->saveIssueNote($request, $issueNoteMasterInsert->id);
 
             DB::commit();
         // } catch (\Exception $e) {
@@ -69,12 +81,13 @@ class StoreIssueNoteController extends Controller
         $pageTitle = 'Update Store Issue Note';
         $dropDownData = $this->storeIssueNoteService->DropDownData();
         $issueNote = StoreIssueNote::find($id);
+        $date = Carbon::parse($issueNote->date)->format('d-m-Y');
         $issueNoteDetails = StoreIssueNoteDetail::where('store_issue_notes_id', $id)->get();
         if (empty($issueNote)) {
             $message = config('constants.wrong');
         }
 
-        return view('store-issue-note.create', compact('issueNote','dropDownData', 'issueNoteDetails', 'pageTitle'));
+        return view('store-issue-note.edit', compact('issueNote','date','dropDownData', 'issueNoteDetails', 'pageTitle'));
     }
 
      /**
@@ -86,19 +99,21 @@ class StoreIssueNoteController extends Controller
      */
     public function update(Request $request)
     {
-        DB::beginTransaction();
-        try {
+        // DB::beginTransaction();
+        // try {
             $request = request()->all();
+            StoreIssueNoteDetail::where('store_issue_notes_id', $request['id'])->delete();
 
             $issueNoteMasterData = $this->storeIssueNoteService->prepareIssueNoteMasterData($request);
-            $issueNoteMasterInsert = $this->storeIssueNoteService->findUpdateOrCreate(StoreIssueNote::class, ['id' => request('id')], $issueNoteMasterData);
-            $this->storeIssueNoteService->saveIssueNote($request, $issueNoteMasterInsert->id);
+            $issueNoteMasterInsert = $this->commonService->findUpdateOrCreate(StoreIssueNote::class, ['id' => request('id')], $issueNoteMasterData);
+            $issueNoteDetailData = $this->storeIssueNoteService->prepareIssueNoteDetailData($request, $issueNoteMasterInsert->id);
+            $this->storeIssueNoteService->saveIssueNote($issueNoteDetailData);
 
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('store-issue-note/create')->with('error', $e->getMessage());
-        }
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('store-issue-note/create')->with('error', $e->getMessage());
+        // }
 
         return redirect('store-issue-note/list')->with('message', config('constants.update'));
     }
@@ -111,7 +126,7 @@ class StoreIssueNoteController extends Controller
      */
     public function destroy($id)
     {
-        // try {
+        try {
             $deleteMaster = StoreIssueNote::where('id', request()->id)->delete();
             $deleteDetail = StoreIssueNoteDetail::where('id', request()->id)->delete();
             // $deleteStock = Stock::where('invoice_id', request()->id)->delete();
@@ -122,9 +137,44 @@ class StoreIssueNoteController extends Controller
                 return $this->commonService->deleteResource(StoreIssueNote::class, StoreIssueNoteDetail::class);
             }
 
-        // } catch (\Exception $e) {
-        //     DB::rollback();
-        //     return redirect('store-issue-note/list')->with('error', $e->getMessage());
-        // }
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect('store-issue-note/list')->with('error', $e->getMessage());
+        }
+    }
+
+    public function getProductMeasurementType($name)
+    {
+        $fetchMeasurementType = CoaInventoryDetailAccount::where('id', $name)->first('measurement_type_id');
+        $measurement =  MeasurementType::where('id', $fetchMeasurementType->measurement_type_id)->first('name');
+
+        if ($measurement) {
+            return response()->json(['status' => 'success', 'name' => $measurement]);
+        }
+        return response()->json(['status' => 'fail', 'data' => []]);
+    }
+
+    public function getProductPackingType($name)
+    {
+        $fetchPackingType = CoaInventoryDetailAccount::where('id', $name)->first('packing_type_id');
+        $packing =  PackingType::where('id', @$fetchPackingType->packing_type_id)->first('name');
+
+
+        if ($packing) {
+            return response()->json(['status' => 'success', 'name' => $packing]);
+        }
+        return response()->json(['status' => 'fail', 'data' => []]);
+
+
+    }
+
+    public function getProductSize($name)
+    {
+        $fetchSize = CoaInventoryDetailAccount::where('id', $name)->first('size');
+
+        if ($fetchSize) {
+            return response()->json(['status' => 'success', 'size' => $fetchSize->size]);
+        }
+        return response()->json(['status' => 'fail', 'data' => []]);
     }
 }

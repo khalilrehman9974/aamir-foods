@@ -141,8 +141,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('edit/{id}', ['as' => 'store-issue-note.edit', 'uses' => 'App\Http\Controllers\StoreIssueNoteController@edit']);
         Route::post('update', ['as' => 'store-issue-note.update', 'uses' => 'App\Http\Controllers\StoreIssueNoteController@update']);
         Route::delete('delete/{id}', ['as' => 'store-issue-note.delete', 'uses' => 'App\Http\Controllers\StoreIssueNoteController@destroy']);
-        // Route::post('show/{id}', ['as' => 'chart-of-account.show', 'uses' => 'CompaniesController@show']);
-        // Route::get('search', ['as' => 'chart-of-account.search', 'uses' => 'CompaniesController@search']);
+        Route::get('get-product-packing-type/{name}', ['as' => 'product-packing-type', 'uses' => 'App\Http\Controllers\StoreIssueNoteController@getProductPackingType']);
+        Route::get('get-product-measurement-type/{name}', ['as' => 'product-measurement-type', 'uses' => 'App\Http\Controllers\StoreIssueNoteController@getProductMeasurementType']);
+        Route::get('get-product-size/{name}', ['as' => 'product-size', 'uses' => 'App\Http\Controllers\StoreIssueNoteController@getProductSize']);
     });
 
     //Dispatch note

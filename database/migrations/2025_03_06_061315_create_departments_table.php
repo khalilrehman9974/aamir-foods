@@ -13,15 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('store_issue_notes', function (Blueprint $table) {
+        Schema::create('departments', function (Blueprint $table) {
             $table->increments('id');
-            $table->date('date');
-            $table->string('receiver_name', 200);
-            $table->integer('from_department');
-            $table->integer('to_department');
-            $table->timestamp('created_at');
-            $table->timestamp('updated_at');
-            $table->timestamp('deleted_at')->nullable();
+            $table->string('name');
+            $table->TIMESTAMP('created_at');
+            $table->TIMESTAMP('updated_at');
+            $table->TIMESTAMP('deleted_at')->nullable();
             $table->string('created_by');
             $table->string('updated_by');
         });
@@ -34,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('store_issue_notes');
+        Schema::dropIfExists('departments');
     }
 };
