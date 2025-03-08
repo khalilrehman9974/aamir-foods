@@ -152,7 +152,7 @@
 
                                         <td class="text-center">
                                             <div class="action-btns">
-                                                @if ((!empty($permission->edit_access) && $permission->edit_access == 1) || Auth::user()->is_admin == 1)
+                                                {{-- @if ((!empty($permission->edit_access) && $permission->edit_access == 1) || Auth::user()->is_admin == 1)
                                                     <a href="{{ route('detail-account.edit', ['id' => $account->id]) }}"
                                                         class="action-btn btn-edit bs-tooltip me-2"
                                                         data-toggle="tooltip" data-placement="top" title="Edit">
@@ -166,7 +166,7 @@
                                                             </path>
                                                         </svg>
                                                     </a>
-                                                @endif
+                                                @endif --}}
                                                 {{-- @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
                                                             <a href="javascript:void(0);"
                                                                class="action-btn btn-delete bs-tooltip delete" data-toggle="tooltip" data-id="{{ $account->id  }}"

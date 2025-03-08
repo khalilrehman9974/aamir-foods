@@ -40,8 +40,6 @@ return new class extends Migration
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')->nullable();
-            $table->string('created_by');
-            $table->string('updated_by');
             $table->bigInteger('created_by');
             $table->bigInteger('updated_by');
 
