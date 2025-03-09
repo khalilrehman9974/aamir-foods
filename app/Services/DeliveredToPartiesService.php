@@ -51,7 +51,7 @@ class DeliveredToPartiesService
         if (!empty($param)) {
             $q->where('party_name', 'LIKE', '%' . $param . '%');
         }
-        $deliveredToParties = $q->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
+        $deliveredToParties = $q->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
 
         return $deliveredToParties;
     }

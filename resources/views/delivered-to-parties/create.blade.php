@@ -93,8 +93,7 @@
                                             <div class="col-lg-12 col-12 ">
                                                 <form
                                                     action="{{ !empty($deliveredParties) ? route('delivered-to-parties.update') : route('delivered-to-parties.save') }}"
-                                                    method="POST" class="row g-3 needs-validation" autocomplete="off"
-                                                    novalidate>
+                                                    method="POST" class="row g-3 needs-validation" autocomplete="off">
                                                     @csrf
                                                     <input type="hidden" name="id" id="id"
                                                         value="{{ isset($deliveredParties->id) ? $deliveredParties->id : '' }}" />

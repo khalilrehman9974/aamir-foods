@@ -17,6 +17,8 @@ return new class extends Migration
             $table->increments('id');
             $table->date('date');
             $table->string('receiver_name', 200);
+            $table->integer('business_id');
+            $table->integer('f_year_id');
             $table->integer('from_department');
             $table->integer('to_department');
             $table->timestamp('created_at');

@@ -46,7 +46,7 @@
                 <div class="row layout-top-spacing">
                     <div id="tableCustomBasic" class="col-lg-12 col-12 layout-spacing">
                         <div class="col-lg-8 col-md-8 col-sm-9 filtered-list-search mx-auto">
-                            <form method="get" action="{{ route('sub-sub-head.list') }}" class="form-inline my-2 my-lg-0 justify-content-center">
+                            <form method="get" action="{{ route('delivered-to-parties.list') }}" class="form-inline my-2 my-lg-0 justify-content-center" autocomplete="off">
                                 <div class="w-100">
                                     <input type="text" name="search" class="w-100 form-control product-search br-30" id="input-search"
                                            placeholder="Search Party...">
@@ -100,7 +100,7 @@
                                                 <td>
                                                     <div class="media">
                                                         <div class="media-body align-self-center">
-                                                            <h6 class="mb-0">{{ $deliveredToPartie->Party->account_name}}</h6>
+                                                            <h6 class="mb-0">{{ @$deliveredToPartie->Party->account_name}}</h6>
 
                                                         </div>
                                                     </div>

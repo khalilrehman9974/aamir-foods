@@ -556,6 +556,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('edit/{id}', ['as' => 'storeReturn.edit', 'uses' => 'App\Http\Controllers\StoreReturnController@edit']);
         Route::post('update', ['as' => 'storeReturn.update', 'uses' => 'App\Http\Controllers\StoreReturnController@update']);
         Route::delete('delete/{id}', ['as' => 'storeReturn.delete', 'uses' => 'App\Http\Controllers\StoreReturnController@destroy']);
+        Route::get('get-product-packing-type/{name}', ['as' => 'product-packing-type', 'uses' => 'App\Http\Controllers\StoreReturnController@getProductPackingType']);
+        Route::get('get-product-measurement-type/{name}', ['as' => 'product-measurement-type', 'uses' => 'App\Http\Controllers\StoreReturnController@getProductMeasurementType']);
+        Route::get('get-product-size/{name}', ['as' => 'product-size', 'uses' => 'App\Http\Controllers\StoreReturnController@getProductSize']);
     });
 
     Route::get('/clear-cache', function () {

@@ -34,7 +34,7 @@ return new class extends Migration
             $table->double('total_carton')->nullable();
             $table->double('gross_bill')->nullable();
             $table->double('carriage')->nullable();
-            $table->double('discount')->nullable();
+            $table->double('totaldiscount')->nullable();
             $table->double('commission')->nullable();
             $table->double('net_amount')->nullable();
             $table->timestamp('created_at');

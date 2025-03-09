@@ -23,6 +23,7 @@ return new class extends Migration
             $table->double('dzns');
             $table->double('total_dzns');
             $table->double('rate');
+            $table->double('discount');
             $table->double('amount');
             $table->timestamp('created_at');
             $table->timestamp('updated_at');

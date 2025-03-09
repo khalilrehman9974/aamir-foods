@@ -109,10 +109,14 @@ class StoreIssueNoteService
      * */
     public function prepareIssueNoteMasterData($request)
     {
+        $session = $this->commonService->getSession();
+
         return [
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'receiver_name' => $request['receiver_name'],
             'from_department' => $request['from_department'],
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
             'to_department' => $request['to_department'],
             'created_by' => Auth::user()->id,
             'updated_by' => Auth::user()->id

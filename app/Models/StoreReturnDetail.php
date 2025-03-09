@@ -10,9 +10,10 @@ class StoreReturnDetail extends Model
 {
     use SoftDeletes;
     protected $table = 'store_return_details';
-    protected $fillable = ['store_return_master_id','description','quantity','date', 'created_by', 'updated_by'];
 
-    public function store_return_master_id(){
+    protected $fillable = ['store_return_master_id','product_id','packing_type','measurement_type','remarks','total_qty','avg_weight','bags','size', 'created_by','updated_by'];
+
+    public function storeReturnMaster(){
         return $this->hasMany(StoreReturnMaster::class, 'id', 'store_return_master_id');
     }
 

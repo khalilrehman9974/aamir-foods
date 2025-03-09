@@ -21,6 +21,8 @@ return new class extends Migration
             $table->integer('code');
             $table->integer('priceTag_id');
             $table->string('name');
+            $table->integer('business_id');
+            $table->integer('f_year_id');
             $table->string('image')->nullable();
             $table->integer('measurement_type_id');
             $table->integer('packing_type_id');

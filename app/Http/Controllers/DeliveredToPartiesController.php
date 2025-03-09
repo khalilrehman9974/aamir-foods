@@ -61,13 +61,11 @@ class DeliveredToPartiesController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(DeliveredToPartyRequest $request)
+    public function store(Request $request)
     {
-        dd($request->all());
         $request = $request->except('_token', 'id');
         DB::beginTransaction();
         try {
-
             $deliveredToPartiesMasterData = $this->deliveredToPartiesService->prepareDetailAccountMasterData($request);
             $detailAccountMasterInsert = $this->deliveredToPartiesService->findUpdateOrCreate(DeliveredToParties::class, ['id' => !empty(request('id')) ? request('id') : null], $deliveredToPartiesMasterData);
 
@@ -121,16 +119,13 @@ class DeliveredToPartiesController extends Controller
     }
 
 
-    public function update(DeliveredToPartyRequest $request)
+    public function update(Request $request)
     {
-
         DB::beginTransaction();
         try {
-
             $request = request()->all();
             DeliveredToPartiesSectors::where('delivered_to_party_id', $request['id'])->delete();
             DeliveredToPartiesAreas::where('delivered_to_party_id', $request['id'])->delete();
-
 
             $deliveredToPartiesMasterData = $this->deliveredToPartiesService->prepareDetailAccountMasterData($request);
             $detailAccountMasterInsert = $this->deliveredToPartiesService->findUpdateOrCreate(DeliveredToParties::class, ['id' => !empty(request('id')) ? request('id') : null], $deliveredToPartiesMasterData);

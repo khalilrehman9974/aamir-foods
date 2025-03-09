@@ -14,18 +14,18 @@ return new class extends Migration
     public function up()
     {
         Schema::create('store_return_masters', function (Blueprint $table) {
-            $table->increments('id')->unsigned();
-            $table->integer('product_id');
-            $table->string('return_to', 200);
-            $table->string('return_by', 200);
+            $table->increments('id');
+            $table->date('date');
+            $table->string('receiver_name', 200);
             $table->integer('business_id');
             $table->integer('f_year_id');
-            $table->text('remarks')->nullable();
+            $table->integer('from_department');
+            $table->integer('to_department');
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')->nullable();
-            $table->bigInteger('created_by');
-            $table->bigInteger('updated_by');
+            $table->string('created_by');
+            $table->string('updated_by');
 
         });
     }

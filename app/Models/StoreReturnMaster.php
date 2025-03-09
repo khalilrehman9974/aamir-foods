@@ -8,12 +8,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StoreReturnMaster extends Model
 {
+
     use SoftDeletes;
     protected $guarded = ['id'];
     protected $table = 'store_return_masters';
-    protected $fillable = ['product_id','business_id','f_year_id', 'return_to','return_by','remarks'];
+    protected $fillable = ['date','receiver_name','from_department', 'to_department','created_by','updated_by'];
 
-    public function product(){
-        return $this->hasOne(CoaInventoryDetailAccount::class, 'code', 'product_id');
+    public function fromDepartment(){
+        return $this->hasOne(Department::class, 'id', 'from_department');
+    }
+
+    public function toDepartment(){
+        return $this->hasOne(Department::class, 'id', 'to_department');
     }
 }

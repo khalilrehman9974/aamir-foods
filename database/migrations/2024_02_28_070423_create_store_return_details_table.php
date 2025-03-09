@@ -16,9 +16,14 @@ return new class extends Migration
         Schema::create('store_return_details', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('store_return_master_id')->unsigned()->index();
-            $table->date('date', 150);
-            $table->string('description');
-            $table->integer('quantity');
+            $table->integer('product_id');
+            $table->string('packing_type');
+            $table->string('measurement_type');
+            $table->string('size')->nullable();
+            $table->double('bags')->nullable();
+            $table->double('avg_weight')->nullable();
+            $table->double('total_qty');
+            $table->string('remarks')->nullable();
             $table->TIMESTAMP('created_at');
             $table->TIMESTAMP('updated_at');
             $table->TIMESTAMP('deleted_at')->nullable();

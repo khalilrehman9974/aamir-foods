@@ -74,7 +74,7 @@
                                                 <form
                                                     action="{{ !empty($detailAccount) ? route('co-inventory-detail-account.update') : route('co-inventory-detail-account.save') }}"
                                                     method="POST" class="row g-3 needs-validation"
-                                                    enctype="multipart/form-data" novalidate>
+                                                    enctype="multipart/form-data" autocomplete="off" novalidate>
                                                     @csrf
                                                     <input type="hidden" name="id" id="id"
                                                         value="{{ isset($detailAccount->id) ? $detailAccount->id : '' }}" />
@@ -308,7 +308,8 @@
                                                             <div class="col-md-6">
                                                                 <label for="danger_level" class="form-label">
                                                                     Danger Level</label>
-                                                                <input id="danger_level" type="text" name="danger_level"
+                                                                <input id="danger_level" type="text"
+                                                                    name="danger_level"
                                                                     value="{{ old('danger_level', !empty($detailAccount->danger_level) ? $detailAccount->danger_level : '') }}"
                                                                     placeholder="Please Enter Danger level"
                                                                     class="form-control" required>
@@ -327,10 +328,11 @@
                                                             <div class="col-md-6">
                                                                 <label for="opening_stock" class="form-label">
                                                                     Opening Stock</label>
-                                                                <input id="opening_stock" type="text" name="opening_stock"
+                                                                <input id="opening_stock" type="text"
+                                                                    name="opening_stock"
                                                                     value="{{ old('opening_stock', !empty($detailAccount->opening_stock) ? $detailAccount->opening_stock : '') }}"
-                                                                    placeholder="Opening Stock"
-                                                                    class="form-control" required>
+                                                                    placeholder="Opening Stock" class="form-control"
+                                                                    required>
                                                                 @if ($errors->has('opening_stock'))
                                                                     <div class="invalid-feedback">
                                                                         {{ $errors->first('opening_stock') }}
@@ -342,8 +344,8 @@
                                                                     Use In</label>
                                                                 <input id="use_in" type="text" name="use_in"
                                                                     value="{{ old('use_in', !empty($detailAccount->use_in) ? $detailAccount->use_in : '') }}"
-                                                                    placeholder="Use In"
-                                                                    class="form-control" required>
+                                                                    placeholder="Use In" class="form-control"
+                                                                    required>
                                                                 @if ($errors->has('use_in'))
                                                                     <div class="invalid-feedback">
                                                                         {{ $errors->first('use_in') }}
@@ -354,8 +356,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-0 col-12 form-group mb-2">
-                                                        <label for="account_name"
-                                                            class="form-label">
+                                                        <label for="account_name" class="form-label">
                                                             Remarks </label>
                                                         <textarea name="remarks" id="remarks" placeholder="Please Enter Remarks "
                                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" type="text" cols="30"

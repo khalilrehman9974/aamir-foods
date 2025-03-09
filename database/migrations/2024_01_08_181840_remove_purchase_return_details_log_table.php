@@ -32,6 +32,7 @@ return new class extends Migration
             $table->double('unit');
             $table->double('total_unit');
             $table->double('rate');
+            $table->double('discount');
             $table->double('amount');
             $table->timestamp('created_at');
             $table->timestamp('updated_at');

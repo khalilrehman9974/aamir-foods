@@ -12,6 +12,7 @@ use App\Models\StoreReturnMaster;
 use App\Models\StoreReturnDetail;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\Department;
 
 class StoreReturnService
 {
@@ -45,6 +46,7 @@ class StoreReturnService
     {
         $result = [
             'products' => CoaInventoryDetailAccount::pluck('name', 'id'),
+            'departments' => Department::pluck('name','id')
         ];
 
         return $result;
@@ -76,10 +78,17 @@ class StoreReturnService
     public function search($request)
     {
         $q = StoreReturnMaster::query();
-        if (!empty($request['param'])) {
-            $q = StoreReturnMaster::with('product')->where('return_to', 'like', '%' . $request['param'] . '%');
+
+        if (!empty($request['date'])) {
+            $formattedDate = date('Y-m-d', strtotime($request['date']));
+            $q->where('date', $formattedDate);
+        } elseif (!empty($request['to_department'])) {
+            $q->where('to_department', $request['to_department']);
         }
-        $storeReturns = $q->orderBy('return_to', 'ASC')->paginate(config('constants.PER_PAGE'));
+        $storeReturns = $q->with('fromDepartment','toDepartment')->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
+
+
+
 
         return $storeReturns;
     }
@@ -93,34 +102,58 @@ class StoreReturnService
     public function prepareStoreReturnMasterData($request)
     {
         $session = $this->commonService->getSession();
-        return[
-            'return_to' => $request['return_to'],
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'receiver_name' => $request['receiver_name'],
+            'from_department' => $request['from_department'],
             'business_id' => $session->business_id,
             'f_year_id' => $session->financial_year,
-            'return_by' => $request['return_by'],
-            'product_id' => $request['product_id'],
-            'remarks' => $request['remarks'],
+            'to_department' => $request['to_department'],
             'created_by' => Auth::user()->id,
             'updated_by' => Auth::user()->id
         ];
     }
+
+    public function preparestoreReturnDetailData($request, $returnNoteParentId)
+    {
+        return [
+            'product_id' => $request['product_id'],
+            'packing_type' => $request['packing_type'],
+            'measurement_type' => $request['measurement_type'],
+            'size' => $request['size'],
+            'bags' => $request['bags'],
+            'avg_weight' => $request['avg_weight'],
+            'total_qty' => $request['total_qty'],
+            'remarks' => $request['remarks'],
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id,
+            'store_return_master_id' => $returnNoteParentId,
+        ];
+    }
+
 
     /*
      * Prepare dispatch detail data.
      * @param: $request
      * @return Array
      * */
-    public function saveStoreReturn($request, $storeReturnMasterParentId)
+    public function saveStoreReturn($data)
     {
-        $data = $request;
-        foreach ($data["date"] as $key => $value) {
-                $rec['date'] = Carbon::parse($data['date'][$key])->format("Y-m-d") ;
-                $rec['description'] = $data['description'][$key];
-                $rec['quantity'] = $data['quantity'][$key];
-                $rec['created_by'] = Auth::Id();
-                $rec['updated_by'] = Auth::Id();
-                $rec['store_return_master_id'] = $storeReturnMasterParentId;
+        foreach ($data['product_id'] as $key => $value) {
+            if (!empty($data['product_id'][$key])) {
+                $rec['product_id'] = $data['product_id'][$key];
+                $rec['packing_type'] = $data['packing_type'][$key];
+                $rec['measurement_type'] = $data['measurement_type'][$key];
+                $rec['size'] = $data['size'][$key];
+                $rec['bags'] = $data['bags'][$key];
+                $rec['avg_weight'] = $data['avg_weight'][$key];
+                $rec['total_qty'] = $data['total_qty'][$key];
+                $rec['remarks'] = $data['remarks'][$key];
+                $rec['created_by'] = Auth::user()->id;
+                $rec['updated_by'] = Auth::user()->id;
+                $rec['store_return_master_id'] = $data['store_return_master_id'];
                 StoreReturnDetail::create($rec);
+            }
         }
     }
 
