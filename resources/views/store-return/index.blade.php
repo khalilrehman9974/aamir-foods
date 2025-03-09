@@ -37,7 +37,7 @@
                         <nav class="breadcrumb-style-one" aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Store Issue Note</li>
+                                <li class="breadcrumb-item active" aria-current="page">Store Return Note</li>
                                 <li class="breadcrumb-item"><a href="{{ route('storeReturn.list') }}">List</a>
                                 </li>
                             </ol>
@@ -118,7 +118,7 @@
                 <div class="widget-header">
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4>List Of Store Issue Notes</h4>
+                            <h4>List Of Store Return Notes</h4>
                         </div>
                     </div>
                 </div>
@@ -197,6 +197,7 @@
                                                         </path>
                                                     </svg>
                                                 </a>
+                                                <a href="{{ route('storeReturn.print', ['id' => $note->id]) }}" target="_blank" title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></a>
                                                 {{-- <a href="javascript:void(0);"
                                                     class="action-btn btn-delete bs-tooltip delete"
                                                     data-id="{{ $note->id }}" data-toggle="tooltip"

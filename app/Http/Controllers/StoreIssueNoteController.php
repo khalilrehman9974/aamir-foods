@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Department;
 use App\Models\PackingType;
 use Illuminate\Http\Request;
@@ -141,6 +142,25 @@ class StoreIssueNoteController extends Controller
             DB::rollback();
             return redirect('store-issue-note/list')->with('error', $e->getMessage());
         }
+    }
+
+
+    public function print($id)
+    {
+        $title = 'Store Issue Note';
+        $issueNoteMaster = StoreIssueNote::find($id);
+        // dd($saleOrder);
+        $date = Carbon::parse($issueNoteMaster->date)->format('d-m-Y');
+        $toDepartment = Department::where('id', $issueNoteMaster->to_department)->value('name');
+        $fromDepartment = Department::where('id', $issueNoteMaster->from_department)->value('name');
+        $issueNoteDetails = StoreIssueNoteDetail::where('store_issue_notes_id', $issueNoteMaster->id)->get();
+        // dd($issueNoteDetails);
+        $productsArray = $issueNoteDetails->pluck('product_id')->toArray();
+        $products = CoaInventoryDetailAccount::whereIn('id',$productsArray)->pluck('name','id');
+        $user = User::where('id',$issueNoteMaster->created_by)->value('name');
+
+
+        return view('store-issue-note.print', compact('title','products','user','issueNoteMaster','date','issueNoteDetails','toDepartment','fromDepartment'));
     }
 
     public function getProductMeasurementType($name)

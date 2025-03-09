@@ -4,13 +4,17 @@ namespace App\Http\Controllers;
 
 use session;
 use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Department;
 use App\Models\PackingType;
 use Illuminate\Http\Request;
+use App\Models\StoreIssueNote;
 use App\Models\MeasurementType;
 use App\Services\CommonService;
 use App\Models\StoreReturnDetail;
 use App\Models\StoreReturnMaster;
 use Illuminate\Support\Facades\DB;
+use App\Models\StoreIssueNoteDetail;
 use App\Services\StoreReturnService;
 use App\Models\CoaInventoryDetailAccount;
 
@@ -138,6 +142,25 @@ class StoreReturnController extends Controller
         //     DB::rollback();
         //     return redirect('storeReturn/list')->with('error', $e->getMessage());
         // }
+    }
+
+
+    public function print($id)
+    {
+        $title = 'Store Return Note';
+        $returnNoteMaster = StoreReturnMaster::find($id);
+        // dd($saleOrder);
+        $date = Carbon::parse($returnNoteMaster->date)->format('d-m-Y');
+        $toDepartment = Department::where('id', $returnNoteMaster->to_department)->value('name');
+        $fromDepartment = Department::where('id', $returnNoteMaster->from_department)->value('name');
+        $returnNoteDetails = StoreReturnDetail::where('store_return_master_id', $returnNoteMaster->id)->get();
+        // dd($issueNoteDetails);
+        $productsArray = $returnNoteDetails->pluck('product_id')->toArray();
+        $products = CoaInventoryDetailAccount::whereIn('id',$productsArray)->pluck('name','id');
+        $user = User::where('id',$returnNoteMaster->created_by)->value('name');
+
+
+        return view('store-return.print', compact('title','products','user','returnNoteMaster','date','returnNoteDetails','toDepartment','fromDepartment'));
     }
 
     public function getProductMeasurementType($name)

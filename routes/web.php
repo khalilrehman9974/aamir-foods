@@ -138,6 +138,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('list', ['as' => 'store-issue-note.list', 'uses' => 'App\Http\Controllers\StoreIssueNoteController@index']);
         Route::get('create', ['as' => 'store-issue-note.create', 'uses' => 'App\Http\Controllers\StoreIssueNoteController@create']);
         Route::post('save', ['as' => 'store-issue-note.save', 'uses' => 'App\Http\Controllers\StoreIssueNoteController@store']);
+        Route::get('print/{id}', ['as' => 'store-issue-note.print', 'uses' => 'App\Http\Controllers\StoreIssueNoteController@print']);
         Route::get('edit/{id}', ['as' => 'store-issue-note.edit', 'uses' => 'App\Http\Controllers\StoreIssueNoteController@edit']);
         Route::post('update', ['as' => 'store-issue-note.update', 'uses' => 'App\Http\Controllers\StoreIssueNoteController@update']);
         Route::delete('delete/{id}', ['as' => 'store-issue-note.delete', 'uses' => 'App\Http\Controllers\StoreIssueNoteController@destroy']);
@@ -554,6 +555,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('create', ['as' => 'storeReturn.create', 'uses' => 'App\Http\Controllers\StoreReturnController@create']);
         Route::post('save', ['as' => 'storeReturn.save', 'uses' => 'App\Http\Controllers\StoreReturnController@store']);
         Route::get('edit/{id}', ['as' => 'storeReturn.edit', 'uses' => 'App\Http\Controllers\StoreReturnController@edit']);
+        Route::get('print/{id}', ['as' => 'storeReturn.print', 'uses' => 'App\Http\Controllers\StoreReturnController@print']);
         Route::post('update', ['as' => 'storeReturn.update', 'uses' => 'App\Http\Controllers\StoreReturnController@update']);
         Route::delete('delete/{id}', ['as' => 'storeReturn.delete', 'uses' => 'App\Http\Controllers\StoreReturnController@destroy']);
         Route::get('get-product-packing-type/{name}', ['as' => 'product-packing-type', 'uses' => 'App\Http\Controllers\StoreReturnController@getProductPackingType']);

@@ -122,11 +122,10 @@ class SaleManController extends Controller
     {
         DB::beginTransaction();
         try {
-
+        $request = request()->all();
         SaleManZone::where('master_id', $request['id'])->delete();
         SaleManSector::where('master_id', $request['id'])->delete();
         SaleManArea::where('master_id', $request['id'])->delete();
-        $request = $request->except('_token', 'id');
 
         $saleManMasterData = $this->saleManService->prepareSaleManMasterData($request);
         $saleManMasterInsert = $this->saleManService->findUpdateOrCreate(SaleMan::class, ['id' => !empty(request('id')) ? request('id') : null], $saleManMasterData);
