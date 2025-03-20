@@ -20,7 +20,7 @@ class CoaDetailAccount extends Model
 
     public function getMainHead()
     {
-        return $this->hasOne(CoaMainHead::class, 'account_code', 'main_head');
+        return $this->hasOne(CoaMainHead::class, 'id', 'main_head');
     }
 
     public function saleOrder(){
@@ -29,17 +29,17 @@ class CoaDetailAccount extends Model
 
     public function getControlHead()
     {
-        return $this->hasOne(CoaControlHead::class, 'account_code', 'control_head');
+        return $this->hasOne(CoaControlHead::class, 'id', 'control_head');
     }
 
     public function getSubHead()
     {
-        return $this->hasOne(CoaSubHead::class, 'account_code', 'sub_head');
+        return $this->hasOne(CoaSubHead::class, 'id', 'sub_head');
     }
 
     public function getSubSubHead()
     {
-        return $this->hasOne(CoaSubSubHead::class, 'account_code', 'sub_sub_head');
+        return $this->hasOne(CoaSubSubHead::class, 'id', 'sub_sub_head');
     }
 
 

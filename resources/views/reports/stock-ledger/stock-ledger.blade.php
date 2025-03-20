@@ -201,7 +201,7 @@
     <?php
         if (!function_exists('calculateStockBalance')) {
             function calculateStockBalance($openingBalance, $entries) {
-        
+
                 $balance = (float)$openingBalance;
 
                 foreach ($entries as $key => $entry) {
@@ -276,11 +276,18 @@
         }
 
         // Sample data from the provided image
-        $openingBalance = $product->opening_stock;
+        // $openingBalance = $product->opening_stock;
+        $openingBalance = is_numeric($product->opening_stock) ? (float)$product->opening_stock : 0;
+        if ($openingBalance === 0) {
+            $openingStockRate = 0;
+        } else {
+            $openingStockRate = 5000;
+        }
+
         $entries = $stockLedger;
-        $openingStockRate = 5000;
+
         $stkValOpeningStock = number_format($openingBalance * $openingStockRate, 2);
-        
+
         $result = calculateStockBalance($openingBalance, $entries);
         if (!empty($result)) {
             $lastEntry = $result->last(); // Get the last element in the array
@@ -294,14 +301,14 @@
             $balanceAmount = (float) preg_replace('/[^\d.]/', '', $lastEntry['Balance'] ?? 0);
             $rateAmount = (float) preg_replace('/[^\d.]/', '', $lastEntry['Val_of_Stock'] ?? 0);
             $totalAvgWeight = number_format($rateAmount / $balanceAmount , 2);
-        } 
-        else 
+        }
+        else
         {
             $totalAvgWeight = 0;
         }
-        
+
         $totalStockValue = $lastEntry['Val_of_Stock'] ?? 0;
-        
+
         $totalStockInQuantity = calculateTotalStockInQuantity($openingBalance, $result);
         $totalStockInBags = calculateTotalStockInBags($result);
         $totalStockOutBags = calculateTotalStockOutBags($result);
@@ -342,7 +349,7 @@
 
                 </div>
                 <div style="width: 30%; text-align: left;">
-                   
+
                     <p><b>Opening Stock:</b> <span>
                         {{ $product->opening_stock }}
                     </span></p>
@@ -369,14 +376,14 @@
                 <div style="width: 70%; text-align: left;">
                     <p><b>Item Code:</b> <span>
                         {{ $product->id }}
-                    </span></p> 
-                    
+                    </span></p>
+
                 </div>
                 <div style="width: 30%; text-align: right;">
                     <p><b>Maximum Level:</b> <span>
                         {{ $product->max_limit }}
                     </span></p>
-                   
+
                 </div>
             </div>
             <div class="row" style="margin-bottom: 3px;">
@@ -384,10 +391,10 @@
                     <p><b>item Name:</b> <span>
                         {{ $product->name }}
                     </span></p>
-                 
+
                 </div>
                 <div style="width: 30%; text-align: right;">
-                   
+
                     <p><b>Danger Level:</b> <span>
                         {{ $product->danger_level }}
                     </span></p>
@@ -395,12 +402,12 @@
             </div>
             <div class="row" style="margin-bottom: 3px;">
                 <div style="width: 70%; text-align: left;">
-                   
+
                     <p><b>Use In:</b> <span>
                         {{ $product->use_in }}
                     </span></p>
                 </div>
-                
+
             </div>
         </div>
 
@@ -456,7 +463,7 @@
                         <td style="text-align: end;">{{$openingStockRate}}</td>
                         <td style="text-align: end;">{{$stkValOpeningStock}}</td>
                     </tr>
-                    
+
                     @foreach ($result as $stock)
                         <tr>
 
@@ -470,7 +477,7 @@
                             <td style="text-align: end;">{{ $stock->stock_in_quantity }}</td>
                             <td style="text-align: end;">{{ $stock->stock_out_bags }}</td>
                             <td style="text-align: end;">{{ $stock->stock_out_weight }}</td>
-                            <td style="text-align: end;">{{ $stock->stock_out_quantity }}</td> 
+                            <td style="text-align: end;">{{ $stock->stock_out_quantity }}</td>
                             <td style="text-align: end;">{{ $stock->Balance }}</td>
                             <td style="text-align: center; padding: 0px 0px 0px 0px !important; width: 3%; border-color: white; border-right: black;"> </td>
                             <td style="text-align: end;">{{ $stock->rate }}</td>
@@ -537,7 +544,7 @@
                         <td style="text-align: end;">{{$totalStockValue}}</td>
 
                     </tr>
-                   
+
                 </tbody>
             </table>
         </div>

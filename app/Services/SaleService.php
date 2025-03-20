@@ -258,7 +258,7 @@ class SaleService
                 $rec['stock_out_weight'] = $data['stock_out_weight'];
                 $rec['stock_out_quantity'] = $data['stock_out_quantity'][$key];
                 $rec['document_no'] = $data['document_no'];
-                $rec['rate'] = $data['rate'][$key];
+                $rec['rate'] = $data['rate'];
                 $rec['invoice_id'] = $data['invoice_id'];
                 $rec['created_by'] = $data['created_by'];
                 $rec['updated_by'] = $data['updated_by'];
