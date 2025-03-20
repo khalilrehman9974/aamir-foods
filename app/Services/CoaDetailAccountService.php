@@ -46,12 +46,12 @@ class CoaDetailAccountService
 
     public function getSubSubHeadsBySubHead($subHead)
     {
-        return CoaSubSubHead::where('sub_head', $subHead)->pluck('account_name', 'account_code');
+        return CoaSubSubHead::where('sub_head', $subHead)->pluck('account_name', 'id'); // change Here
     }
 
     public function generateDetailAccountCode($subSubHeadCode)
     {
-        $getDetailAccount = CoaDetailAccount::where('sub_sub_head', $subSubHeadCode)->max('account_code');
+        $getDetailAccount = CoaDetailAccount::max('id');
         if ($getDetailAccount) {
             return $getDetailAccount + 1;
         }
@@ -201,12 +201,14 @@ class CoaDetailAccountService
     public function saveDetailAccountAreas($data)
     {
 
-        if (empty($data['area_id'])) {
+        if (empty($data['area_id'])){
             $rec['area_id'] = null;
             $rec['sector_id'] = null;
             $rec['master_account_id'] = $data['master_account_id'];
             CoaDetailAccountArea::create($rec);
-        } else {
+        }
+        else
+        {
             foreach ($data['area_id'] as $key => $value) {
                 if (!empty($data['area_id'][$key])) {
                     $rec['area_id'] = $data['area_id'][$key];
@@ -217,7 +219,6 @@ class CoaDetailAccountService
                 }
             }
         }
-
     }
 
     public function prepareDetailAccountDetailData($request, $detailAccountMasterInsert)

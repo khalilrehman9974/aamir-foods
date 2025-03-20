@@ -44,7 +44,7 @@ class CRVoucherController extends Controller
     public function create()
     {
         $pageTitle = 'Create CRVoucher';
-        $maxid = VoucherMaster::where('vr_type_id', 'CRV')->max('id') + 1;
+        $maxid = VoucherMaster::where('vr_type', 'CRV')->max('id') + 1;
         $dropDownData = $this->cashReceiptVoucherService->DropDownData();
         return view('vouchers.crv.create', compact( 'pageTitle','maxid','dropDownData'));
     }

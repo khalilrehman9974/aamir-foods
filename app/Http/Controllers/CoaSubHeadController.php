@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreSubHeadRequest;
 use App\Models\CoaSubHead;
-use App\Services\ChartOfAccountService;
+use App\Models\CoaMainHead;
+use Illuminate\Http\Request;
 use App\Services\CommonService;
 use App\Services\PermissionService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Services\ChartOfAccountService;
+use App\Http\Requests\StoreSubHeadRequest;
+use App\Models\CoaControlHead;
 
 class CoaSubHeadController extends Controller
 {
@@ -60,6 +62,7 @@ class CoaSubHeadController extends Controller
      */
     public function store(StoreSubHeadRequest $request)
     {
+        // dd( $request);
         $data = $request->except('_token', 'id');
         $data['created_by'] = Auth::user()->id;
         $data['updated_by'] = Auth::user()->id;
@@ -126,7 +129,8 @@ class CoaSubHeadController extends Controller
      */
     public function getMaxSubHeadCode($controlHead)
     {
-        $subHeadAccount = $this->chartOfAccountService->generateSubHeadAccountCode($controlHead);
+        $accountCode = CoaControlHead::where('id', $controlHead)->value('account_code');
+        $subHeadAccount = $this->chartOfAccountService->generateSubHeadAccountCode($accountCode);
         if ($subHeadAccount ) {
             return response()->json(['status' => 'success', 'account_code' => $subHeadAccount]);
         }
@@ -135,6 +139,7 @@ class CoaSubHeadController extends Controller
 
     public function getControlAccountForMainHead($mainHead)
     {
+
         $controlAccounts = $this->chartOfAccountService->getControlHeadsForMainHead($mainHead);
         if ($controlAccounts) {
             return response()->json(['status' => 'success', 'data' => $controlAccounts]);

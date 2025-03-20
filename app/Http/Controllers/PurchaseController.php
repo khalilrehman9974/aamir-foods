@@ -27,16 +27,16 @@ class PurchaseController extends Controller
     protected $stockLedgerService;
     protected $accountLedgerService;
 
-    public function __construct(CommonService $commonService,
-    PurchaseService $purchaseService,
-    StockLedgerService $stockLedgerService,
-    AccountLedgerService $accountLedgerService)
-    {
+    public function __construct(
+        CommonService $commonService,
+        PurchaseService $purchaseService,
+        StockLedgerService $stockLedgerService,
+        AccountLedgerService $accountLedgerService
+    ) {
         $this->commonService = $commonService;
         $this->purchaseService = $purchaseService;
         $this->stockLedgerService = $stockLedgerService;
         $this->accountLedgerService = $accountLedgerService;
-
     }
 
     /*
@@ -50,7 +50,7 @@ class PurchaseController extends Controller
         $param = request()->param;
         $dropDownData = $this->purchaseService->DropDownData();
 
-        return view('purchases.index', compact('purchases','dropDownData','param','request','pageTitle'));
+        return view('purchases.index', compact('purchases', 'dropDownData', 'param', 'request', 'pageTitle'));
     }
 
     /*
@@ -64,7 +64,7 @@ class PurchaseController extends Controller
         $grnMaster = GoodsReceivedNote::find($request->id);
         $parties = CoaDetailAccount::where('id', $grnMaster->party_id)->pluck('account_name', 'id');
         $transporters = Transporter::where('id', $grnMaster->transporter_id)->pluck('name', 'id');
-        $grnDetails = GRNotesDetail::where('master_id',$grnMaster->id)->get();
+        $grnDetails = GRNotesDetail::where('master_id', $grnMaster->id)->get();
         $maxId = PurchaseMaster::max('id') + 1;
         // dd($grnMaster);
         $dropDownData = $this->purchaseService->DropDownData();
@@ -73,7 +73,7 @@ class PurchaseController extends Controller
         if (empty($grnMaster)) {
             abort(404);
         }
-        return view('purchases.create', compact('pageTitle','grnMaster','transporters','grnDetails','parties','maxId','purchaseDetails','dropDownData'));
+        return view('purchases.create', compact('pageTitle', 'grnMaster', 'transporters', 'grnDetails', 'parties', 'maxId', 'purchaseDetails', 'dropDownData'));
     }
 
     public function generate()
@@ -92,19 +92,21 @@ class PurchaseController extends Controller
         // DB::beginTransaction();
         // // try {
 
-            //Insert data into purchase tables.
-            $purchaseMasterData = $this->purchaseService->preparePurchaseMasterData($request);
-            $purchaseMasterInsert = $this->commonService->findUpdateOrCreate(PurchaseMaster::class, ['id' => ''], $purchaseMasterData);
-            $purchaseDetailData = $this->purchaseService->preparePurchaseDetailData($request, $purchaseMasterInsert->id);
-            $this->purchaseService->savePurchase($purchaseDetailData);
+        //Insert data into purchase tables.
+        $purchaseMasterData = $this->purchaseService->preparePurchaseMasterData($request);
+        $purchaseMasterInsert = $this->commonService->findUpdateOrCreate(PurchaseMaster::class, ['id' => ''], $purchaseMasterData);
+        $purchaseDetailData = $this->purchaseService->preparePurchaseDetailData($request, $purchaseMasterInsert->id);
+        $this->purchaseService->savePurchase($purchaseDetailData);
 
-            // $stockLeadgerData = $this->stockLedgerService->prepareAndSaveData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE,);
-            //Insert data into accounts ledger table.
-            // $creditAccountData = $this->accountLedgerService->prepareCreditData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE, PurchaseService::PURCHASE_DESCRIPTION);
-            // $debitAccountData = $this->accountLedgerService->prepareDebitData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE, PurchaseService::PURCHASE_DESCRIPTION);
-            // AccountLedger::insert($creditAccountData);
-            // AccountLedger::insert($debitAccountData);
-            DB::commit();
+        $stockLedgers = $this->purchaseService->prepareStockLedgerData($request, $purchaseMasterInsert->id);
+        $this->purchaseService->saveStockLedger($stockLedgers);
+        // $stockLeadgerData = $this->stockLedgerService->prepareAndSaveData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE,);
+        //Insert data into accounts ledger table.
+        // $creditAccountData = $this->accountLedgerService->prepareCreditData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE, PurchaseService::PURCHASE_DESCRIPTION);
+        // $debitAccountData = $this->accountLedgerService->prepareDebitData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE, PurchaseService::PURCHASE_DESCRIPTION);
+        // AccountLedger::insert($creditAccountData);
+        // AccountLedger::insert($debitAccountData);
+        DB::commit();
         // } catch (\Exception $e) {
         //     DB::rollback();
         //     return redirect('purchase/create')->with('error', $e->getMessage());
@@ -128,7 +130,7 @@ class PurchaseController extends Controller
             $message = config('constants.wrong');
         }
 
-        return view('purchases.edit', compact('pageTitle','date','parties','transporters','purchase','dropDownData', 'purchaseDetails'));
+        return view('purchases.edit', compact('pageTitle', 'date', 'parties', 'transporters', 'purchase', 'dropDownData', 'purchaseDetails'));
     }
 
     public function update(Request $request)
@@ -136,23 +138,26 @@ class PurchaseController extends Controller
         // dd($request);
         // try {
         //     DB::beginTransaction();
-            $request = request()->all();
-            // GRNotesDetail::where('master_id', $request['id'])->delete();
-            PurchaseDetail::where('purchase_master_id', $request['id'])->delete();
-            // StockLedger::where('invoice_id', $request['id'])->delete();
-            // AccountLedger::where('invoice_id', $request['id'])->delete();
+        $request = request()->all();
+        PurchaseDetail::where('purchase_master_id', $request['id'])->delete();
+        StockLedger::where('invoice_id', $request['id'])->delete();
 
-            //Save data into relevant tables.
-            $purchaseMasterData = $this->purchaseService->preparePurchaseMasterData($request);
-            $purchaseMasterInsert = $this->commonService->findUpdateOrCreate(PurchaseMaster::class, ['id' => request('id')], $purchaseMasterData);
-            $purchaseDetailData = $this->purchaseService->preparePurchaseDetailData($request, $purchaseMasterInsert->id);
-            $this->purchaseService->savePurchase($purchaseDetailData);
-            //Save data into stock table.
-            // $this->stockLedgerService->prepareAndSaveData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE);
-            // $creditAccountData = $this->accountLedgerService->prepareCreditData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE, PurchaseService::PURCHASE_DESCRIPTION);
-            // $debitAccountData = $this->accountLedgerService->prepareDebitData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE, PurchaseService::PURCHASE_DESCRIPTION);
-            // AccountLedger::insert($creditAccountData);
-            // AccountLedger::insert($debitAccountData);
+        // AccountLedger::where('invoice_id', $request['id'])->delete();
+
+        //Save data into relevant tables.
+        $purchaseMasterData = $this->purchaseService->preparePurchaseMasterData($request);
+        $purchaseMasterInsert = $this->commonService->findUpdateOrCreate(PurchaseMaster::class, ['id' => request('id')], $purchaseMasterData);
+        $purchaseDetailData = $this->purchaseService->preparePurchaseDetailData($request, $purchaseMasterInsert->id);
+        $this->purchaseService->savePurchase($purchaseDetailData);
+
+        //Save data into stock table.
+        $stockLedgers = $this->purchaseService->prepareStockLedgerData($request, $purchaseMasterInsert->id);
+        $this->purchaseService->saveStockLedger($stockLedgers);
+        // $this->stockLedgerService->prepareAndSaveData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE);
+        // $creditAccountData = $this->accountLedgerService->prepareCreditData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE, PurchaseService::PURCHASE_DESCRIPTION);
+        // $debitAccountData = $this->accountLedgerService->prepareDebitData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE, PurchaseService::PURCHASE_DESCRIPTION);
+        // AccountLedger::insert($creditAccountData);
+        // AccountLedger::insert($debitAccountData);
         //     DB::commit();
         // } catch (\Exception $e) {
         //     DB::rollback();
@@ -172,11 +177,11 @@ class PurchaseController extends Controller
         $purchaseDetails = PurchaseDetail::where('purchase_master_id', $purchaseMaster->id)->get();
         // dd($purchaseDetails);
         $productsArray = $purchaseDetails->pluck('product_id')->toArray();
-        $products = CoaInventoryDetailAccount::whereIn('id',$productsArray)->pluck('name','id');
-        $user = User::where('id',$purchaseMaster->created_by)->value('name');
-        $transporters = Transporter::where('id',$purchaseMaster->transporter_id)->value('name');
+        $products = CoaInventoryDetailAccount::whereIn('id', $productsArray)->pluck('name', 'id');
+        $user = User::where('id', $purchaseMaster->created_by)->value('name');
+        $transporters = Transporter::where('id', $purchaseMaster->transporter_id)->value('name');
 
-        return view('purchases.print', compact('title','transporters','products','user','purchaseMaster','date','purchaseDetails','party'));
+        return view('purchases.print', compact('title', 'transporters', 'products', 'user', 'purchaseMaster', 'date', 'purchaseDetails', 'party'));
     }
 
     /*
@@ -192,10 +197,9 @@ class PurchaseController extends Controller
 
             DB::commit();
             // && $deleteStock && $accountEntryDetail
-            if ($deleteMaster && $deleteDetail ) {
+            if ($deleteMaster && $deleteDetail) {
                 return $this->commonService->deleteResource(PurchaseMaster::class, PurchaseDetail::class);
             }
-
         } catch (\Exception $e) {
             DB::rollback();
             return redirect('purchase/list')->with('error', $e->getMessage());
@@ -216,5 +220,4 @@ class PurchaseController extends Controller
 
         return view('purchases.view', compact('PurchaseMaster', 'PurchaseDetail'));
     }
-
 }

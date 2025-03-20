@@ -5,10 +5,7 @@
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <x-slot:headerFiles>
-        <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
         <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
-        @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
-        @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
             integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
@@ -16,14 +13,7 @@
 
         <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
         <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
-        <!--  BEGIN CUSTOM STYLE FILE  -->
-        <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
-        {{-- <link rel="stylesheet" href="../src/plugins/src/filepond/filepond.min.css">
-        <link rel="stylesheet" href="../src/plugins/src/filepond/FilePondPluginImagePreview.min.css"> --}}
 
-        {{-- <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" /> --}}
-        <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
-        <!--  END CUSTOM STYLE FILE  -->
     </x-slot>
     <!-- END GLOBAL MANDATORY STYLES -->
 
@@ -70,8 +60,7 @@
                                                 <div class="col-lg-12 col-12 ">
                                                     <form class="row g-3"
                                                         action="{{ !empty($note) ? route('dispatch-note.update') : route('dispatch-note.save') }}"
-                                                        method="POST" enctype="multipart/form-data"
-                                                        autocomplete="off">
+                                                        method="POST" enctype="multipart/form-data" autocomplete="off">
                                                         @csrf
                                                         <input type="hidden" name="id" id="id"
                                                             value="{{ isset($note->id) ? $note->id : '' }}" />
@@ -87,8 +76,7 @@
                                                                 </div>
                                                                 <div class="row">
                                                                     <div class="col-md-6">
-                                                                        <label for="inputState"
-                                                                            class="form-label">Sale
+                                                                        <label for="inputState" class="form-label">Sale
                                                                             Order#</label>
                                                                         <input type="text" id="saleOrder"
                                                                             name="sale_order_number"
@@ -106,8 +94,8 @@
                                                                             style="color: black; "
                                                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} date flatpickr "
                                                                             type="text" data-date-format="d-m-Y"
-                                                                            value="{{ old('date', !empty($note->date) ? $note->date : '') }}"
-                                                                            placeholder="Select Date.." readonly>
+                                                                            value="{{$date }}"
+                                                                            placeholder="Select Date.." >
                                                                     </div>
 
                                                                 </div>
@@ -135,8 +123,7 @@ $isSelected = old('party_id') == $key || $note->pluck('party_id')->contains($key
 
                                                                     </div>
                                                                     <div class="col-md-6">
-                                                                        <label for="inputState"
-                                                                            class="form-label">Sales
+                                                                        <label for="inputState" class="form-label">Sales
                                                                             Man</label>
 
                                                                         <select id="saleMan" name="saleman"
@@ -200,9 +187,9 @@ $isSelected = old('area') == $key || $note->pluck('area')->contains($key); @endp
 
 
                                                                         <select id="delivered_to" name="delivered_to"
-                                                                            class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered_to"
-                                                                            >
-                                                                            <option value="">Same As Party</option>
+                                                                            class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered_to">
+                                                                            <option value="">Same As Party
+                                                                            </option>
                                                                             @foreach ($deliveredToParties as $key => $value)
                                                                                 <option value="{{ $key }}"
                                                                                     @php
@@ -446,7 +433,7 @@ $isSelected = old('delivered_to') == $key || $note->pluck('delivered_to')->conta
 
                                                                                             <td class="unit">
                                                                                                 <textarea id="unit" type="text" name="remarks[]" placeholder="Please Enter Remarks "
-                                                                                                    class="mt-0 form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} remarks_{{ $index }}">{{$dispatchNote->remarks}}</textarea>
+                                                                                                    class="mt-0 form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} remarks_{{ $index }}">{{ $dispatchNote->remarks }}</textarea>
                                                                                             </td>
 
                                                                                         </tr>
@@ -593,7 +580,7 @@ $isSelected = old('delivered_to') == $key || $note->pluck('delivered_to')->conta
         // });
 
         $(document).on('click', 'body *', function() {
-            $('.qty').on("focusout", function() {
+            $('.qty').on("input", function() {
                 updatePackingTotals();
             });
         });
@@ -691,13 +678,13 @@ $isSelected = old('delivered_to') == $key || $note->pluck('delivered_to')->conta
 
 
             $(document).on('click', 'body *', function() {
-                $('.dzn').on("focusout", function() {
+                $('.dzn, .qty').on("input", function() {
                     var row_id = $(this).closest("tr").find(".row_id").val();
-                    console.log(row_id);
-                    let quantity = $(this).closest("tr").find(".qty_" + row_id).val();
-                    let dzns = $(this).closest("tr").find(".dzn_" + row_id).val();
+                    let quantity = $(this).closest("tr").find(".qty_" + row_id).val() || 0;
+                    let dzns = $(this).closest("tr").find(".dzn_" + row_id).val() || 0;
                     if (parseInt(quantity) > 0) {
-                        $(this).closest("tr").find(".totalDzn_" + row_id).val(quantity * dzns);
+                        let total = quantity * dzns || 0;
+                        $(this).closest("tr").find(".totalDzn_" + row_id).val(total);
                     } else {
                         $(this).closest("tr").find(".totalDzn_" + row_id).val('');
                     }
@@ -757,21 +744,23 @@ $isSelected = old('delivered_to') == $key || $note->pluck('delivered_to')->conta
             }
         }
 
+
         $(document).on('click', 'body *', function() {
-            $('.dzn_' + currentIndex).on("focusout", function() {
-                console.log("Maaaaasd2");
+            $('.dzn_' + currentIndex).on("input", function() {
                 var row_id = $(this).closest("tr").find(".row_id").val();
                 let quantity = $(this).closest("tr").find(".qty_" + row_id).val();
                 let dzns = $(this).closest("tr").find(".dzn_" + row_id).val();
                 if (parseInt(quantity) > 0) {
-                    $(this).closest("tr").find(".totalDzn_" + row_id).val(quantity * dzns);
+                    let total = quantity * dzns || 0;
+                    $(this).closest("tr").find(".totalDzn_" + row_id).val(total);
                 } else {
-                    $(this).closest("tr").find(".totalDzn_" + row_id).val('');
+                    $(this).closest("tr").find(".totalDzn_" + row_id).val('0');
                 }
             });
         });
 
         function updatePackingTotals() {
+
             let totalBorayAmount = 0;
             let totalCartonAmount = 0;
 
@@ -817,19 +806,11 @@ $isSelected = old('delivered_to') == $key || $note->pluck('delivered_to')->conta
     </script>
     <x-slot:footerFiles>
         <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
-
-        {{-- <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
-        <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script> --}}
-
-        <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
-        <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
-        {{-- <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script> --}}
         <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
             integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        {{-- <script src="{{ asset('js/common.js') }}"></script> --}}
 
         <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])

@@ -10,11 +10,12 @@ namespace App\Services;
 
 
 use Carbon\Carbon;
+use App\Models\Department;
+use App\Models\StockLedger;
 use App\Models\StoreIssueNote;
 use App\Models\StoreIssueNoteDetail;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CoaInventoryDetailAccount;
-use App\Models\Department;
 
 class StoreIssueNoteService
 {
@@ -67,7 +68,7 @@ class StoreIssueNoteService
                 'issue_note.issued_to',
                 'issue_note.issued_by',
                 'issue_note.remarks',
-                'products.name as productName',
+                'products.name as productName'
             )
             ->where('issue_note.id', $id)
             ->first();
@@ -160,4 +161,44 @@ class StoreIssueNoteService
             }
         }
     }
+
+
+    public function prepareLedgerData($request, $dispatchParentId)
+    {
+        return [
+            'product_id' => $request['product_id'],
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'naration' => 'Putting Naration',
+            'stock_in' =>  config('constants.ZERO'),
+            'stock_out' => $request['quantity'],
+            'remarks' => $request['remarks'],
+            'invoice_id' => $dispatchParentId,
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id
+        ];
+    }
+
+    /*
+     * Save dispatch data.
+     * @param: $data
+     * */
+    public function saveLedger($data)
+    {
+        // dd($data);
+        foreach ($data['product_id'] as $key => $value) {
+            if (!empty($data['product_id'][$key])) {
+                $rec['product_id'] = $data['product_id'][$key];
+                $rec['date'] = $data['date'][$key];
+                $rec['naration'] = $data['naration'][$key];
+                $rec['stock_in'] = $data['stock_in'];
+                $rec['stock_out'] = $data['stock_out'][$key];
+                $rec['remarks'] = $data['remarks'][$key];
+                $rec['invoice_id'] = $data['invoice_id'];
+                $rec['created_by'] = $data['created_by'];
+                $rec['updated_by'] = $data['updated_by'];
+                StockLedger::create($rec);
+            }
+        }
+    }
+
 }

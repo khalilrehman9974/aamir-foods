@@ -117,7 +117,6 @@ class SalesController extends Controller
         //     DB::beginTransaction();
         //    try {
 
-
         //Insert data into sale tables.
         $saleMasterData = $this->saleService->prepareSaleMasterData($request);
 
@@ -126,6 +125,10 @@ class SalesController extends Controller
         $this->saleService->saveSale($saleDetailData);
 
         //Insert data into stock table.
+        $stockLedgers = $this->saleService->prepareStockLedgerData($request, $saleMasterInsert->id);
+        $this->saleService->saveStockLedger($stockLedgers);
+
+
         // $this->stockLedgerService->prepareAndSaveData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'));
 
         //Insert data into accounts ledger table.
@@ -185,6 +188,7 @@ class SalesController extends Controller
         //     DB::beginTransaction();
             $request = request()->all();
             SaleDetail::where('sale_master_id', $request['id'])->delete();
+            StockLedger::where('invoice_id', $request['id'])->delete();
             // Stock::where('invoice_id', $request['saleId'])->delete();
             // AccountLedger::where('invoice_id', $request['saleId'])->delete();
 
@@ -195,6 +199,8 @@ class SalesController extends Controller
             $this->saleService->saveSale($saleDetailData);
 
             //Save data into stock table.
+            $stockLedgers = $this->saleService->prepareStockLedgerData($request, $saleMasterInsert->id);
+            $this->saleService->saveStockLedger($stockLedgers);
             // $this->stockLedgerService->prepareAndSaveData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'));
             // $debitAccountData = $this->saleService->prepareAccountDebitData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'), config('contants.SALE_DESCRIPTION'));
             // $creditAccountData = $this->saleService->prepareAccountCreditData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'), config('contants.SALE_DESCRIPTION'));

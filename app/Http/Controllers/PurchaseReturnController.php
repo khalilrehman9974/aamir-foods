@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\StockLedger;
 use App\Models\Transporter;
 use Illuminate\Http\Request;
 use App\Models\AccountLedger;
@@ -98,6 +99,8 @@ class PurchaseReturnController extends Controller
 
 
             //Insert data into stock table.
+            $stockLedgers = $this->purchaseReturnService->prepareStockLedgerData($request, $purchaseReturnMasterInsert->id);
+            $this->purchaseReturnService->saveStockLedger($stockLedgers);
             // $this->stockLedgerService->prepareAndSaveData($request, $purchaseReturnMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'));
             // //Insert data into accounts ledger table.
             // $debitAccountData = $this->purchaseReturnService->prepareAccountCreditData($request, $purchaseReturnMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'), config('contants.PURCHASE_RETURN_DESCRIPTION'));
@@ -143,10 +146,12 @@ class PurchaseReturnController extends Controller
     public function update(Request $request)
     {
 
-        DB::beginTransaction();
-        try {
+        // DB::beginTransaction();
+        // try {
             $request = request()->all();
             PurchaseReturnDetail::where('purchase_return_master_id', $request['id'])->delete();
+            StockLedger::where('invoice_id', $request['id'])->delete();
+
 
             //Save data into relevant tables.
 
@@ -155,18 +160,19 @@ class PurchaseReturnController extends Controller
             $purchasereturnDetailData = $this->purchaseReturnService->preparePurchaseReturnDetailData($request, $purchaseReturnMasterInsert->id);
             $this->purchaseReturnService->savePurchaseReturn($purchasereturnDetailData);
 
-
+            $stockLedgers = $this->purchaseReturnService->prepareStockLedgerData($request, $purchaseReturnMasterInsert->id);
+            $this->purchaseReturnService->saveStockLedger($stockLedgers);
             // $this->stockLedgerService->prepareAndSaveData($request, $purchaseMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'));
             // $debitAccountData = $this->purchaseReturnService->prepareAccountCreditData($request, $purchaseMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'), config('contants.PURCHASE_RETURN_DESCRIPTION'));
             // $creditAccountData = $this->purchaseReturnService->prepareAccountDebitData($request, $purchaseMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'), config('contants.PURCHASE_RETURN_DESCRIPTION'));
             // AccountLedger::insert($debitAccountData);
             // AccountLedger::insert($creditAccountData);
 
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('purchase-return/create')->with('error', $e->getMessage());
-        }
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('purchase-return/create')->with('error', $e->getMessage());
+        // }
 
         return redirect('purchase-return/list')->with('message', config('constants.update'));
     }

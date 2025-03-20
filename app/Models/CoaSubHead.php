@@ -13,11 +13,11 @@ class CoaSubHead extends Model
 
     public function getMainHead()
     {
-        return $this->hasOne(CoaMainHead::class, 'account_code', 'main_head');
+        return $this->hasOne(CoaMainHead::class, 'id', 'main_head');
     }
 
     public function getControlHead()
     {
-        return $this->hasOne(CoaControlHead::class, 'account_code', 'control_head');
+        return $this->hasOne(CoaControlHead::class, 'id', 'control_head');
     }
 }

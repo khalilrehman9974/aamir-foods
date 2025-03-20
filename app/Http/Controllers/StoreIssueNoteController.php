@@ -110,6 +110,9 @@ class StoreIssueNoteController extends Controller
             $issueNoteDetailData = $this->storeIssueNoteService->prepareIssueNoteDetailData($request, $issueNoteMasterInsert->id);
             $this->storeIssueNoteService->saveIssueNote($issueNoteDetailData);
 
+            $stockLedgers = $this->storeIssueNoteService->prepareLedgerData($request, $issueNoteMasterInsert->id);
+            $this->storeIssueNoteService->saveLedger($stockLedgers);
+
         //     DB::commit();
         // } catch (\Exception $e) {
         //     DB::rollback();

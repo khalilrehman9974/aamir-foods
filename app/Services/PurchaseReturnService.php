@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Carbon\Carbon;
+use App\Models\StockLedger;
 use App\Models\Transporter;
 use App\Models\CoaDetailAccount;
 use App\Models\PurchaseReturnDetail;
@@ -57,7 +58,7 @@ class PurchaseReturnService
                 'purchase_return_masters.remarks',
                 'purchase_return_masters.created_at',
                 'purchase_return_masters.updated_at',
-                'parties.name as partyName',
+                'parties.name as partyName'
             )
             ->where('purchase_return_masters.id', $id)
             ->first();
@@ -187,6 +188,57 @@ class PurchaseReturnService
             }
         }
     }
+
+    public function prepareStockLedgerData($request, $purchaseReturnInvoiceParentId)
+    {
+        $party = CoaDetailAccount::where('id', $request['party_id'])->first("account_name");
+
+        return [
+            'product_id' => $request['product_id'],
+            'party_title' =>  $party->account_name,
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'document_no' => 'P/R/I' . '-' . $purchaseReturnInvoiceParentId,
+            'stock_in_quantity' =>  config('constants.ZERO'),
+            'stock_in_bags' =>  config('constants.ZERO'),
+            'stock_in_weight' =>  config('constants.ZERO'),
+            'stock_out_bags' => !empty($request['bags']) ? $request['bags'] : 0,
+            'stock_out_weight' => !empty($request['measurementType']) ? $request['measurementType'] : 0,
+            'stock_out_quantity' => $request['quantity'],
+            'invoice_id' => $purchaseReturnInvoiceParentId,
+            'rate' => $request['price'],
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id
+        ];
+    }
+
+    /*
+     * Save StockLedger data.
+     * @param: $data
+     * */
+    public function saveStockLedger($data)
+    {
+        // dd($data);
+        foreach ($data['product_id'] as $key => $value) {
+            if (!empty($data['product_id'][$key])) {
+                $rec['product_id'] = $data['product_id'][$key];
+                $rec['date'] = $data['date'];
+                $rec['party_title'] = $data['party_title'];
+                $rec['stock_in_bags'] = $data['stock_in_bags'];
+                $rec['stock_in_weight'] = $data['stock_in_weight'];
+                $rec['stock_in_quantity'] = $data['stock_in_quantity'];
+                $rec['stock_out_bags'] = $data['stock_out_bags'][$key] ?? config('constants.ZERO');
+                $rec['stock_out_weight'] = $data['stock_out_weight'][$key] ?? config('constants.ZERO');
+                $rec['stock_out_quantity'] = $data['stock_out_quantity'][$key];
+                $rec['document_no'] = $data['document_no'];
+                $rec['rate'] = $data['rate'][$key];
+                $rec['invoice_id'] = $data['invoice_id'];
+                $rec['created_by'] = $data['created_by'];
+                $rec['updated_by'] = $data['updated_by'];
+                StockLedger::create($rec);
+            }
+        }
+    }
+
 
     public function prepareAccountCreditData($request, $purchaseParentId, $dataType, $description)
     {

@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\DetailAccountProducts;
 use App\Services\DispatchNoteService;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\StockLedger;
 use App\Models\Transporter;
 
 class DispatchNoteController extends Controller
@@ -48,7 +49,7 @@ class DispatchNoteController extends Controller
         $dispatchNotes = $this->dispatchNoteService->searchDispatch($request);
         $dropDownData = $this->dispatchNoteService->DropDownData();
 
-        return view('dispatch-note.index', compact('dispatchNotes','dropDownData', 'pageTitle', 'param'));
+        return view('dispatch-note.index', compact('dispatchNotes', 'dropDownData', 'pageTitle', 'param'));
     }
 
     /**
@@ -118,9 +119,6 @@ class DispatchNoteController extends Controller
         $dispatchNoteImages = $this->dispatchNoteService->prepareDispatchNoteImagesData($request, $dispatchMasterInsert->id);
         $this->dispatchNoteService->saveDispatchNoteImages($dispatchNoteImages);
 
-        // $stockLedgers = $this->dispatchNoteService->prepareLedgerData($request, $dispatchMasterInsert->id);
-        // $this->dispatchNoteService->saveLedger($stockLedgers);
-
         //     DB::commit();
         // } catch (\Exception $e) {
         //     DB::rollback();
@@ -152,7 +150,7 @@ class DispatchNoteController extends Controller
         $pageTitle = 'Update Dispatch Note';
         $currentid = $id;
         $note = DispatchNoteMaster::find($id);
-
+        $date = Carbon::parse($note->date)->format('d-m-Y');
         $dropDownData = $this->dispatchNoteService->DropDownData();
         $dispatchNotes = DispatchNoteDetail::where('dispatch_note_master_id', $id)->get();
         $parties = CoaDetailAccount::where('id', $note->party_id)->pluck('account_name', 'id');
@@ -170,7 +168,7 @@ class DispatchNoteController extends Controller
             $message = config('constants.wrong');
         }
 
-        return view('dispatch-note.edit', compact('pageTitle', 'dropDownData', 'products', 'deliveredToParties', 'parties', 'sectors', 'areas', 'images', 'currentid', 'note', 'saleMans', 'dispatchNotes'));
+        return view('dispatch-note.edit', compact('pageTitle','date', 'dropDownData', 'products', 'deliveredToParties', 'parties', 'sectors', 'areas', 'images', 'currentid', 'note', 'saleMans', 'dispatchNotes'));
     }
 
     /**
@@ -182,21 +180,21 @@ class DispatchNoteController extends Controller
      */
     public function update(Request $request)
     {
-        DB::beginTransaction();
+        // dd($request);
+        // DB::beginTransaction();
 
-        try {
-            $request = request()->all();
-
+        // try {
+        //     $request = request()->all();
             $dispatchMasterData = $this->dispatchNoteService->prepareDispatchMasterData($request);
             $dispatchMasterInsert = $this->commonService->findUpdateOrCreate(DispatchNoteMaster::class, ['id' => request('id')], $dispatchMasterData);
             $dispatchDetailData = $this->dispatchNoteService->prepareDispatchDetailData($request, $dispatchMasterInsert->id);
             $this->dispatchNoteService->saveDispatch($dispatchDetailData);
 
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('dispatch-note/create')->with('error', $e->getMessage());
-        }
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('dispatch-note/create')->with('error', $e->getMessage());
+        // }
 
         return redirect('dispatch-note/list')->with('message', config('constants.update'));
     }
@@ -214,12 +212,12 @@ class DispatchNoteController extends Controller
 
         $dispatchNoteDetails = DispatchNoteDetail::where('dispatch_note_master_id', $dispatchNote->id)->get();
         $productsArray = $dispatchNoteDetails->pluck('product_id')->toArray();
-        $products = CoaInventoryDetailAccount::whereIn('id',$productsArray)->pluck('name','id');
-        $user = User::where('id',$dispatchNote->created_by)->value('name');
-        $deliverdToParties = DeliveredToParties::where('id',$dispatchNote->delivered_to)->value('party_name');
-        $transporters = Transporter::where('id',$dispatchNote->transporter_id)->value('name');
+        $products = CoaInventoryDetailAccount::whereIn('id', $productsArray)->pluck('name', 'id');
+        $user = User::where('id', $dispatchNote->created_by)->value('name');
+        $deliverdToParties = DeliveredToParties::where('id', $dispatchNote->delivered_to)->value('party_name');
+        $transporters = Transporter::where('id', $dispatchNote->transporter_id)->value('name');
 
-        return view('dispatch-note.print', compact('title','products','transporters','user','deliverdToParties','dispatchNote','date','dispatchNoteDetails','party','saleMan','belt','area'));
+        return view('dispatch-note.print', compact('title', 'products', 'transporters', 'user', 'deliverdToParties', 'dispatchNote', 'date', 'dispatchNoteDetails', 'party', 'saleMan', 'belt', 'area'));
     }
 
     /**

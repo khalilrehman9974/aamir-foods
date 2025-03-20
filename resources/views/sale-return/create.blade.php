@@ -274,7 +274,7 @@ $isSelected = old('sector') == $key || $saleReturn->pluck('sector')->contains($k
                                                                     <input id="bility_no" type="bilty_no"
                                                                         name="bilty_no" style="color:black;"
                                                                         placeholder="Please Enter the Bilty No. "
-                                                                        class="form-control form-control-sm">
+                                                                        class="form-control form-control-sm" required>
                                                                 </div>
 
                                                             </div>

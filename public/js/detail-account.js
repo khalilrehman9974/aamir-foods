@@ -11,7 +11,7 @@ $('#control-head').on('change', function () {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         success: function (response) {
-            $("#sub").empty();
+            $("#sub-head").empty();
             // $("#selectVersion").append("<option selected disabled> Please select the sub head </option>");
             $.each(response.data, function (i, obj) {
                 $("#sub-head").empty();
@@ -35,6 +35,39 @@ $('#control-head').on('change', function () {
     })
 })
 
+// $('#sub-head').on('change', function () {
+//     var subCode = $('#sub-head :selected').val();
+//     $("#account_code").val('');
+//     let url = config.routes.getSubSubHeads + '/' + subCode;
+//     $.ajax({
+//         url: url,
+//         type: 'GET',
+//         headers: {
+//             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//         },
+//         success: function (response) {
+//             $("#sub-sub-head").empty();
+//             $.each(response.data, function (i, obj) {
+//                 $("#sub-sub-head").append($("<option />").val("account_name").text("Please select the sub-sub head"));
+//                 $.each(response.data, function (key, value) {
+//                     $("#sub-sub-head").append($("<option />").val(key).text(value));
+//                 });
+//             });
+//         },
+//         complete: function () {
+//             $('#loading').css('display', 'none');
+//         },
+//         error: function (errorThrown) {
+//             $('#account_code').val('');
+//             var errors = errorThrown.responseJSON.errors;
+//             Swal.fire({
+//                 icon: 'error',
+//                 title: 'Something went wrong',
+//             })
+//         }
+//     })
+// })
+
 $('#sub-head').on('change', function () {
     var subCode = $('#sub-head :selected').val();
     $("#account_code").val('');
@@ -48,12 +81,14 @@ $('#sub-head').on('change', function () {
         success: function (response) {
             $("#sub-sub-head").empty();
             $.each(response.data, function (i, obj) {
+                $("#sub-sub-head").empty();
                 $("#sub-sub-head").append($("<option />").val("").text("Please select the sub-sub head"));
                 $.each(response.data, function (key, value) {
                     $("#sub-sub-head").append($("<option />").val(key).text(value));
                 });
             });
         },
+
         complete: function () {
             $('#loading').css('display', 'none');
         },
@@ -67,6 +102,7 @@ $('#sub-head').on('change', function () {
         }
     })
 })
+
 
 $('#sub-sub-head').on('change', function () {
     var subSubCode = $('#sub-sub-head :selected').val();

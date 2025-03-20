@@ -5,6 +5,7 @@ namespace App\Services;
 
 use Carbon\Carbon;
 use App\Models\SaleMan;
+use App\Models\StockLedger;
 use App\Models\Transporter;
 use App\Models\CoaDetailAccount;
 use App\Models\SaleReturnDetail;
@@ -226,6 +227,55 @@ class SaleReturnService
                 $rec['total_dzns'] = $data['total_dzns'][$key];
                 $rec['sale_return_master_id'] = $data['sale_return_master_id'];
                 SaleReturnDetail::create($rec);
+            }
+        }
+    }
+
+    public function prepareStockLedgerData($request, $saleReturnInvoiceParentId)
+    {
+        $party = CoaDetailAccount::where('id', $request['party_id'])->first("account_name");
+
+        return [
+            'product_id' => $request['product_id'],
+            'party_title' =>  $party->account_name,
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'document_no' => 'S/R' . '-' . $saleReturnInvoiceParentId,
+            'stock_in_bags' =>  config('constants.ZERO'),
+            'stock_in_weight' =>  config('constants.ZERO'),
+            'stock_in_quantity' =>  $request['quantity'],
+            'stock_out_bags' =>  config('constants.ZERO'),
+            'stock_out_weight' =>  config('constants.ZERO'),
+            'stock_out_quantity' => config('constants.ZERO'),
+            'invoice_id' => $saleReturnInvoiceParentId,
+            'rate' => $request['rate'],
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id
+        ];
+    }
+
+    /*
+     * Save StockLedger data.
+     * @param: $data
+     * */
+    public function saveStockLedger($data)
+    {
+        foreach ($data['product_id'] as $key => $value) {
+            if (!empty($data['product_id'][$key])) {
+                $rec['product_id'] = $data['product_id'][$key];
+                $rec['date'] = $data['date'];
+                $rec['party_title'] = $data['party_title'];
+                $rec['stock_in_bags'] = $data['stock_in_bags'];
+                $rec['stock_in_weight'] = $data['stock_in_weight'];
+                $rec['stock_in_quantity'] = $data['stock_in_quantity'][$key];
+                $rec['stock_out_bags'] = $data['stock_out_bags'];
+                $rec['stock_out_weight'] = $data['stock_out_weight'];
+                $rec['stock_out_quantity'] = $data['stock_out_quantity'];
+                $rec['document_no'] = $data['document_no'];
+                $rec['rate'] = $data['rate'][$key];
+                $rec['invoice_id'] = $data['invoice_id'];
+                $rec['created_by'] = $data['created_by'];
+                $rec['updated_by'] = $data['updated_by'];
+                StockLedger::create($rec);
             }
         }
     }

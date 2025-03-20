@@ -1745,7 +1745,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
     <x-slot:footerFiles>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="{{ asset('js/common.js') }}"></script>
+        {{-- <script src="{{ asset('js/common.js') }}"></script> --}}
 
         <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
         <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>

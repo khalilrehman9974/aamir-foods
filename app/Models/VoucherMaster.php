@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class VoucherMaster extends Model
 {
@@ -24,6 +22,5 @@ class VoucherMaster extends Model
     {
         return $this->hasOne(Business::class, 'id', 'business_id');
     }
-
 
 }

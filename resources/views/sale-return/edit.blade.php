@@ -260,7 +260,7 @@ $isSelected = old('area') == $key || $saleReturn->pluck('area')->contains($key);
                                                                         name="bilty_no" style="color:black;"
                                                                         value="{{ $saleReturn->bilty_no }}"
                                                                         placeholder="Please Enter the Area "
-                                                                        class="form-control form-control-sm">
+                                                                        class="form-control form-control-sm" required>
                                                                 </div>
 
                                                             </div>

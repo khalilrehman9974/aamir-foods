@@ -14,21 +14,22 @@ return new class extends Migration
     public function up()
     {
         Schema::create('account_ledgers_log', function (Blueprint $table) {
-            $table->increments('id')->unsigned();
-            $table->date('date');
-            $table->integer('invoice_id')->nullable();
-            $table->integer('account_id');
-            $table->string('cheque_number', 70)->nullable();
-            $table->text('description')->nullable();
-            $table->string('transaction_type', 50);
+            $table->increments('id');
+            $table->integer('invoice_id');
+            $table->integer('party_id');
+            $table->integer('product_id');
+            $table->string('description');
+            $table->string('document_number');
+            $table->integer('bags')->nullable();
+            $table->integer('measurementType')->nullable();
+            $table->integer('total_quantity');
+            $table->integer('transporter_id')->unsigned()->index()->nullable();
+            $table->string('bilty_no')->nullable();
+            $table->integer('rate');
             $table->double('debit');
             $table->double('credit');
-            $table->string('voucher_number');
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
-            $table->timestamp('deleted_at')->nullable();
-            $table->string('created_by');
-            $table->string('updated_by');
         });
     }
 

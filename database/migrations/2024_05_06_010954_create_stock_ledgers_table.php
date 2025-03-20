@@ -15,12 +15,18 @@ return new class extends Migration
     {
         Schema::create('stock_ledgers', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('naration');
+            $table->date('date');
             $table->integer('product_id');
-            $table->double('debit')->nullable();
-            $table->double('credit')->nullable();
-            $table->string('transaction_type', 30);
-            $table->string('remarks')->nullable();
+            $table->string('party_title');
+            $table->string('document_no');
+            $table->integer('invoice_id');
+            $table->double('stock_in_bags');
+            $table->double('stock_in_weight');
+            $table->double('stock_in_quantity');
+            $table->double('stock_out_bags');
+            $table->double('stock_out_weight');
+            $table->double('stock_out_quantity');
+            $table->double('rate');
             $table->TIMESTAMP('created_at');
             $table->TIMESTAMP('updated_at');
             $table->TIMESTAMP('deleted_at')->nullable();

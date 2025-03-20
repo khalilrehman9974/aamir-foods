@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\coa_control_head;
 use App\Models\CoaControlHead;
+use App\Models\CoaMainHead;
 use App\Services\ChartOfAccountService;
 use App\Services\CommonService;
 use App\Services\PermissionService;
@@ -59,6 +60,7 @@ class CoaControlHeadController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request);
         $data = $request->except('_token','id');
         $data['created_by'] = Auth::user()->id;
         $data['updated_by'] = Auth::user()->id;
@@ -75,10 +77,10 @@ class CoaControlHeadController extends Controller
      * @param  \App\Models\coa_control_head  $coa_control_head
      * @return \Illuminate\Http\Response
      */
-    public function show(coa_control_head $coa_control_head)
-    {
-        //
-    }
+    // public function show(coa_control_head $coa_control_head)
+    // {
+    //     //
+    // }
 
     /**
      * Show the form for editing the specified resource.
@@ -106,10 +108,10 @@ class CoaControlHeadController extends Controller
      * @param  \App\Models\coa_control_head  $coa_control_head
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, coa_control_head $coa_control_head)
-    {
-        //
-    }
+    // public function update(Request $request, coa_control_head $coa_control_head)
+    // {
+    //     //
+    // }
 
     /**
      * Remove the specified resource from storage.
@@ -130,7 +132,8 @@ class CoaControlHeadController extends Controller
      */
     public function getMaxControlHeadCode($mainHead)
     {
-        $controlHeadAccount = $this->chartOfAccountService->generateControlAccountCode($mainHead);
+        $accountCode = CoaMainHead::where('id', $mainHead)->value('account_code');
+        $controlHeadAccount = $this->chartOfAccountService->generateControlAccountCode($accountCode);
         return response()->json(['status' => 'success',  'account_code' => $controlHeadAccount]);
     }
 }

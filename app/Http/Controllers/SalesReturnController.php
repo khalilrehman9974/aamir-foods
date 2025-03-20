@@ -140,6 +140,10 @@ class SalesReturnController extends Controller
             $this->salereturnService->saveSaleReturn($saleReturnDetailData);
 
             // Insert data into stock table.
+
+            $stockLedgers = $this->salereturnService->prepareStockLedgerData($request, $saleReturnMasterInsert->id);
+            $this->salereturnService->saveStockLedger($stockLedgers);
+
             // $this->stockLedgerService->prepareAndSaveData($request, $saleReturnMasterInsert->id, config('constants.SALE_RETURN_TRANSACTION_TYPE'));
 
             // Insert data into accounts ledger table.
@@ -212,9 +216,8 @@ class SalesReturnController extends Controller
         // DB::beginTransaction();
         // try {
             $request = request()->all();
-            // SaleReturnMaster::where('id', $request['id'])->delete();
             SaleReturnDetail::where('sale_return_master_id', $request['id'])->delete();
-            // StockLedger::where('invoice_id', $request['id'])->delete();
+            StockLedger::where('invoice_id', $request['id'])->delete();
             // AccountLedger::where('invoice_id', $request['id'])->delete();
 
             //Save data into relevant tables.
@@ -224,6 +227,9 @@ class SalesReturnController extends Controller
             $this->salereturnService->saveSaleReturn($saleReturnDetailData);
 
             //Save data into stock table.
+
+            $stockLedgers = $this->salereturnService->prepareStockLedgerData($request, $saleReturnMasterInsert->id);
+            $this->salereturnService->saveStockLedger($stockLedgers);
             // $this->stockLedgerService->prepareAndSaveData($request, $saleReturnMasterInsert->id, config('constants.SALE_RETURN_TRANSACTION_TYPE'));
             // $debitAccountData = $this->salereturnService->prepareAccountDebitData($request, $saleReturnMasterInsert->id, config('constants.SALE_RETURN_TRANSACTION_TYPE'), config('constants.SALE_RETURN_DESCRIPTION'));
             // $creditAccountData = $this->salereturnService->prepareAccountCreditData($request, $saleReturnMasterInsert->id, config('constants.SALE_RETURN_TRANSACTION_TYPE'), config('constants.SALE_RETURN_DESCRIPTION'));

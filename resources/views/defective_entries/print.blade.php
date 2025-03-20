@@ -203,12 +203,12 @@
                 <img alt="Amir Foods logo with text 'Since 1996' and 'AMIR Food' in a shield-like shape" class="h-16" height="80" src="{{ asset('images/logo.png') }}" width="80"/>
                 <div class="ml-4">
                     <p class="font-bold text-lg">AAMIR BROTHERS FOOD PRODUCTS MULTAN</p>
-                    <p>12KM Vehari Road Multan <span class="font-bold">CELL:</span> 0309 6662476</p>
+                    <p>12KM Vehari Road Multan <span class="font-bold">CELL:</span> 0309-6662476</p>
                     <p><span class="font-bold">EMAIL:</span> info.amirfoods@gmail.com</p>
                 </div>
             </div>
             <div class="text-right">
-                <p>ABF: Store-Return-Note-01</p>
+                <p>ABF: DI-01</p>
                 <p class="font-bold text-xl">{{$title}}</p>
             </div>
         </div>
@@ -220,61 +220,93 @@
         <div class="info" style="margin-top: 1%;">
             <div class="row" style="margin-bottom: 3px;">
                 <div style="width: 70%; text-align: left;">
-                    <p><b>Store Issue Note#:</b> <span>{{ $returnNoteMaster->id }}</span></p>
+                    <p><b>Date:</b> <span>{{ $date }}</span></p>
                 </div>
-                <div style="width: 30%; text-align: right;">
-                    <p><b> Date:</b> <span>{{ $date }}</span></p>
-                </div>
-            </div>
-
-            <div class="row" style="margin-bottom: 3px;">
-                <div style="width: 70%; text-align: left;">
-                    <p><b>Receiver Name:</b> <span>{{ $returnNoteMaster->receiver_name }}</span></p>
-                </div>
-                <div style="width: 30%; text-align: right;">
-                    <p><b>From Department:</b> <span>{{ $fromDepartment }}</span></p>
-                </div>
-            </div>
-            <div class="row" style="margin-bottom: 3px;">
-                <div style="width: 70%; text-align: left;">
-                    <p><b>To Department:</b> <span>{{ $toDepartment }}</span></p>
+                <div style="width: 30%; text-align: left;">
+                    <p><b>Entered By:</b> <span>{{ $defectiveItems->entered_by }}</span></p>
                 </div>
             </div>
         </div>
 
+        <br>
         <div class="table-container">
             <table>
                 <thead>
                     <tr>
                         <th style="width: 3%;">Sr.#</th>
-                        <th style="width: 30%;">Product</th>
+                        <th style="width: 15%;">Department</th>
+                        <th style="width: 15%;">Product</th>
                         <th style="width: 8%;">P/T</th>
                         <th style="width: 8%;">M/T</th>
-                        <th style="width: 8%;">Size</th>
-                        <th style="width: 10%;">Bags/Units</th>
-                        <th style="width: 5%;">Avg Weight</th>
-                        <th style="width: 5%;">Tot.Qty</th>
+                        <th style="width: 10%;">Size</th>
+                        <th style="width: 10%;">Bags</th>
+                        <th style="width: 10%;">Avg Weight</th>
+                        <th style="width: 10%;">Tot.Qty</th>
                         <th style="width: 20%;">Remarks</th>
+
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($returnNoteDetails as $returnNoteDetail)
+                    @foreach ($defectiveItemsDetails as $defectiveItemsDetail)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $products[$returnNoteDetail->product_id] }}</td>
-                            <td>{{ $returnNoteDetail->packing_type }}</td>
-                            <td>{{ $returnNoteDetail->measurement_type }}</td>
-                            <td>{{ $returnNoteDetail->size }}</td>
-                            <td>{{ $returnNoteDetail->bags }}</td>
-                            <td>{{ $returnNoteDetail->avg_weight }}</td>
-                            <td>{{ $returnNoteDetail->total_qty }}</td>
-                            <td>{{ $returnNoteDetail->remarks }}</td>
+                            <td>{{ $departments[$defectiveItemsDetail->from_department] }}</td>
+                            <td>{{ $products[$defectiveItemsDetail->product_id] }}</td>
+                            <td>{{ $defectiveItemsDetail->packing_type }}</td>
+                            <td>{{ $defectiveItemsDetail->measurement_type }}</td>
+                            <td>{{ $defectiveItemsDetail->size }}</td>
+                            <td>{{ $defectiveItemsDetail->bags }}</td>
+                            <td>{{ $defectiveItemsDetail->avg_weight }}</td>
+                            <td>{{ $defectiveItemsDetail->total_quantity }}</td>
+                            <td>{{ $defectiveItemsDetail->remarks }}</td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
 
+        {{-- <div class="row" style="display: flex;">
+            <div class="notes" style="width: 54%;">
+                <div>
+                    <p><b>Remarks: </b> {{ $purchaseMaster->remarks }}</p>
+                </div>
+            </div>
+            <div class="totals" style="width: 20%;">
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Tot.Qty</th>
+                            <td>{{ $purchaseMaster->total_quantity ?? '0' }}</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="totals" style="width: 26%;">
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Gross.Amount</th>
+                            <td>{{ $purchaseMaster->gross_bill ?? '0' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Carriage</th>
+                            <td>{{ $purchaseMaster->carriage ?? '0' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Tax.Amount</th>
+                            <td>{{ $purchaseMaster->tax ?? '0' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Net.Amount</th>
+                            <td>{{ $purchaseMaster->gross_bill ?? '0' }}</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div> --}}
 
         <header class="header">
             <div class="line"></div>
@@ -291,10 +323,10 @@
             </div>
         </div>
 
-        {{-- <div class="contact mt-4">
+        <div class="contact mt-4">
             <p>If you have any questions about this Document, Please contact</p>
             <p><b>Phone:</b> 0309 6662476 <b>Email:</b> info.amirfoods@gmail.com</p>
-        </div> --}}
+        </div>
     </div>
 </body>
 </html>

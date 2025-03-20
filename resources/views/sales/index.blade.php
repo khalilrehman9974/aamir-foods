@@ -216,7 +216,7 @@
                                         <td>
                                             <div class="media">
                                                 <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $sale->discount }}</h6>
+                                                    <h6 class="mb-0">{{ $sale->totaldiscount }}</h6>
 
                                                 </div>
                                             </div>

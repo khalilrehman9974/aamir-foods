@@ -254,7 +254,7 @@
                         <th style="width: 10%;">Bags/Units</th>
                         <th style="width: 5%;">Avg Weight</th>
                         <th style="width: 5%;">Tot.Qty</th>
-                        <th style="width: 20%;">Amount</th>
+                        <th style="width: 20%;">Remarks</th>
                     </tr>
                 </thead>
                 <tbody>

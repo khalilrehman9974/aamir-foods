@@ -12,6 +12,7 @@ use App\Models\DispatchNoteMaster;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CoaInventoryDetailAccount;
 use App\Models\DispatchNoteImages;
+use App\Models\StockLedger;
 
 class DispatchNoteService
 {
@@ -34,7 +35,7 @@ class DispatchNoteService
     {
         $object = $model::firstOrNew($where);
 
-        foreach ($data as $property => $value){
+        foreach ($data as $property => $value) {
             $object->{$property} = $value;
         }
         $object->save();
@@ -45,17 +46,17 @@ class DispatchNoteService
     public function DropDownData()
     {
         $result = [
-            'products' => CoaInventoryDetailAccount::pluck('name','id'),
-            'saleMans' => SaleMan::pluck('name','id'),
-            'areas' => Area::pluck('name','id'),
-            'parties' => CoaDetailAccount::pluck('account_name','id'),
-            'transporters' => Transporter::pluck('name','id'),
+            'products' => CoaInventoryDetailAccount::pluck('name', 'id'),
+            'saleMans' => SaleMan::pluck('name', 'id'),
+            'areas' => Area::pluck('name', 'id'),
+            'parties' => CoaDetailAccount::pluck('account_name', 'id'),
+            'transporters' => Transporter::pluck('name', 'id'),
         ];
 
         return $result;
     }
 
-        /*
+    /*
      * Get contract by id.
      * @param $id
      * */
@@ -88,14 +89,14 @@ class DispatchNoteService
             $q->where('party_id', $request['party_id']);
         }
 
-        $dispatchNotes = $q->with('party','saleMan','Belt','Area','DeliveredToParty')->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
+        $dispatchNotes = $q->with('party', 'saleMan', 'Belt', 'Area', 'DeliveredToParty')->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
 
         return $dispatchNotes;
     }
 
     public function prepareSOMasterData($saleOrder)
     {
-        $status= 'Dispatched';
+        $status = 'Dispatched';
         return [
             'date' => Carbon::parse($saleOrder['date'])->format('Y-m-d'),
             'party_id' => $saleOrder['party_id'],
@@ -225,7 +226,6 @@ class DispatchNoteService
             $rec['images'] = null;
             $rec['dispatch_note_id'] = $data['dispatch_note_id'];
             DispatchNoteImages::create($rec);
-
         } else {
             foreach ($data['images'] as $key => $value) {
                 if (!empty($value)) {
@@ -235,47 +235,10 @@ class DispatchNoteService
                 }
             }
         }
-
     }
 
 
-    public function prepareLedgerData($request, $dispatchParentId)
-    {
-        return [
-            'product_id' => $request['product_id'],
-            'packing_type' => $request['packing_type'],
-            'measurement_type' => $request['measurement_type'],
-            'quantity' => $request['quantity'],
-            'dzn' => $request['dzn'],
-            'total_dzn' => $request['total_dzn'],
-            'remarks' => $request['remarks'],
-            'dispatch_note_master_id' => $dispatchParentId,
-        ];
-    }
-
-    /*
-     * Save dispatch data.
-     * @param: $data
-     * */
-    public function saveLedger($data)
-    {
-        DispatchNoteDetail::where('dispatch_note_master_id', $data['dispatch_note_master_id'])->delete();
-        foreach ($data['product_id'] as $key => $value) {
-            if (!empty($data['product_id'][$key])) {
-                $rec['product_id'] = $data['product_id'][$key];
-                $rec['packing_type'] = $data['packing_type'][$key];
-                $rec['measurement_type'] = $data['measurement_type'][$key];
-                $rec['quantity'] = $data['quantity'][$key];
-                $rec['dzn'] = $data['dzn'][$key];
-                $rec['total_dzn'] = $data['total_dzn'][$key];
-                $rec['remarks'] = $data['remarks'][$key];
-                $rec['created_by'] = Auth::user()->id;
-                $rec['updated_by'] = Auth::user()->id;
-                $rec['dispatch_note_master_id'] = $data['dispatch_note_master_id'];
-                DispatchNoteDetail::create($rec);
-            }
-        }
-    }
+   
 
 
 

@@ -136,7 +136,7 @@
                                                                             @endif
                                                                         </button>
                                                                     @endif
-                                                                    <a href="{{ route('detail-account.list') }}"
+                                                                    <a href="{{ route('sub-head.list') }}"
                                                                        class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
                                                                     {{-- <input type="submit" value="Save"
                                                                         class="mt-4 btn btn-primary"> --}}

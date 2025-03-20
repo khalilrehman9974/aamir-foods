@@ -54,7 +54,7 @@ class ChartOfAccountService
 
     public function getMainHeads()
     {
-        return CoaMainHead::pluck('account_name', 'account_code');
+        return CoaMainHead::pluck('account_name', 'id');
     }
 
     public function getControlHeads()
@@ -74,7 +74,7 @@ class ChartOfAccountService
 
     public function generateControlAccountCode($mainAccountCode)
     {
-        $getMainHeadAccount = CoaControlHead::where('main_head', $mainAccountCode)->first();
+        $getMainHeadAccount = CoaControlHead::where('id', $mainAccountCode)->first();
         if ($getMainHeadAccount) {
             $controlAccountCode = (int)substr($getMainHeadAccount->account_code, 3, 6) + 1;
             return $mainAccountCode . $controlAccountCode;
@@ -119,8 +119,10 @@ class ChartOfAccountService
     public function generateSubHeadAccountCode($controlHeadCode)
     {
         $getControlHeadAccount = CoaSubHead::where('control_head', $controlHeadCode)->first();
+        // dd($getControlHeadAccount);
         if ($getControlHeadAccount) {
             $controlAccountCode = (int)substr($getControlHeadAccount->account_code, 3, 6) + 1;
+
             return $getControlHeadAccount->main_head . $controlAccountCode;
         }
         return $controlHeadCode . config('constants.account_codes.3rd_level');
@@ -128,17 +130,17 @@ class ChartOfAccountService
 
     public function getControlHeadsForMainHead($mainHead)
     {
-        return CoaControlHead::where('main_head', $mainHead)->pluck('account_name', 'account_code');
+        return CoaControlHead::where('main_head', $mainHead)->pluck('account_name', 'id');//change here
     }
 
     public function getSubHeadsForControlHead($controlHead)
     {
-        return CoaSubHead::where('control_head', $controlHead)->pluck('account_name', 'account_code');
+        return CoaSubHead::where('control_head', $controlHead)->pluck('account_name', 'id');//change here
     }
 
     public function getSubSubHeadsBySubHead($subHead)
     {
-        return CoaSubSubHead::where('sub_head', $subHead)->pluck('account_name', 'account_code');
+        return CoaSubSubHead::where('sub_head', $subHead)->pluck('account_name', 'id'); //change here
     }
 
     public function generateSubSubHeadAccountCode($subHeadCode)

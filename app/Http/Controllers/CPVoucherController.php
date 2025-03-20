@@ -44,7 +44,7 @@ class CPVoucherController extends Controller
     public function create()
     {
         $pageTitle = 'Create CPV';
-        $maxid = VoucherMaster::where('vr_type_id', 'CPV')->max('id') + 1;
+        $maxid = VoucherMaster::where('vr_type', 'CPV')->max('id') + 1;
         $dropDownData = $this->cpVoucherService->DropDownData();
         return view('vouchers.cpv.create', compact( 'pageTitle','maxid', 'dropDownData'));
     }

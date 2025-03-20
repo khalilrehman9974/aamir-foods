@@ -321,6 +321,21 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('search', ['as' => 'purchase.search', 'uses' => 'App\Http\Controllers\PurchaseController@search']);
     });
 
+
+    Route::group(['prefix' => 'defective'], function () {
+        Route::get('list', ['as' => 'defective.list', 'uses' => 'App\Http\Controllers\DefectiveItemsController@index']);
+        Route::get('generate', ['as' => 'defective.generate', 'uses' => 'App\Http\Controllers\DefectiveItemsController@generate']);
+        Route::get('create', ['as' => 'defective.create', 'uses' => 'App\Http\Controllers\DefectiveItemsController@create']);
+        Route::get('print/{id}', ['as' => 'defective.print', 'uses' => 'App\Http\Controllers\DefectiveItemsController@print']);
+        Route::post('save', ['as' => 'defective.save', 'uses' => 'App\Http\Controllers\DefectiveItemsController@store']);
+        Route::get('edit/{id}', ['as' => 'defective.edit', 'uses' => 'App\Http\Controllers\DefectiveItemsController@edit']);
+        Route::post('update', ['as' => 'defective.update', 'uses' => 'App\Http\Controllers\DefectiveItemsController@update']);
+        Route::delete('delete/{id}', ['as' => 'defective.delete', 'uses' => 'App\Http\Controllers\DefectiveItemsController@delete']);
+        Route::post('show/{id}', ['as' => 'defective.show', 'uses' => 'App\Http\Controllers\DefectiveItemsController@show']);
+        Route::get('search', ['as' => 'defective.search', 'uses' => 'App\Http\Controllers\DefectiveItemsController@search']);
+    });
+
+
     Route::group(['prefix' => 'purchase-return', 'middleware' => 'auth'], function () {
         Route::get('list', ['as' => 'purchase-return.list', 'uses' => 'App\Http\Controllers\PurchaseReturnController@index']);
         Route::get('generate', ['as' => 'purchase-return.generate', 'uses' => 'App\Http\Controllers\PurchaseReturnController@generate']);
@@ -562,6 +577,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('get-product-measurement-type/{name}', ['as' => 'product-measurement-type', 'uses' => 'App\Http\Controllers\StoreReturnController@getProductMeasurementType']);
         Route::get('get-product-size/{name}', ['as' => 'product-size', 'uses' => 'App\Http\Controllers\StoreReturnController@getProductSize']);
     });
+
+    Route::get('/stock-ledger', [App\Http\Controllers\ReportController::class, 'viewStockLedger'])->name('stock.ledger');
+    Route::get('/stock-ledger-report', [App\Http\Controllers\ReportController::class, 'getStockLedger'])->name('stock.ledger.report');
 
     Route::get('/clear-cache', function () {
         \Illuminate\Support\Facades\Artisan::call('cache:clear');

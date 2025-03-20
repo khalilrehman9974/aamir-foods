@@ -81,7 +81,7 @@ class CoaDetailAccountController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request);
+        dd($request);
         $request = $request->except('_token', 'id');
         DB::beginTransaction();
         try {
@@ -232,10 +232,13 @@ class CoaDetailAccountController extends Controller
 
     public function getSubSubHeadAccountsBySubHead($subHead)
     {
+
         $subSubAccounts = $this->coaDetailAccountService->getSubSubHeadsBySubHead($subHead);
         if ($subSubAccounts) {
-            return response()->json(['status' => 'success', 'data' => $subSubAccounts ? $subSubAccounts : []]);
+            return response()->json(['status' => 'success', 'data' => $subSubAccounts]);
         }
+        return response()->json(['status' => 'fail', 'data' => []]);
+
     }
 
     public function getSaleManDetail(Request $request)

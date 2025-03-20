@@ -117,7 +117,8 @@ class CoaSubSubHeadController extends Controller
      */
     public function getMaxSubSubHeadCode($subHead)
     {
-        $subSubHeadAccount = $this->chartOfAccountService->generateSubSubHeadAccountCode($subHead);
+        $accountCode = CoaSubHead::where('id', $subHead)->value('account_code');
+        $subSubHeadAccount = $this->chartOfAccountService->generateSubSubHeadAccountCode($accountCode);
         return response()->json(['status' => 'success', 'account_code' => $subSubHeadAccount]);
     }
 

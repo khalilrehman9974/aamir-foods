@@ -587,7 +587,7 @@ $isSelected = old('delivered_to') == $key || $sale_Order->pluck('delivered_to')-
         // });
 
         $(document).on('click', 'body *', function() {
-            $('.qty').on("focusout", function() {
+            $('.qty').on("input", function() {
                 updatePackingTotals();
             });
         });
@@ -686,13 +686,13 @@ $isSelected = old('delivered_to') == $key || $sale_Order->pluck('delivered_to')-
 
 
             $(document).on('click', 'body *', function() {
-                $('.dzn').on("focusout", function() {
+                $('.dzn, .qty').on("input", function() {
                     var row_id = $(this).closest("tr").find(".row_id").val();
-
-                    let quantity = $(this).closest("tr").find(".qty_" + row_id).val();
-                    let dzns = $(this).closest("tr").find(".dzn_" + row_id).val();
+                    let quantity = $(this).closest("tr").find(".qty_" + row_id).val() || 0;
+                    let dzns = $(this).closest("tr").find(".dzn_" + row_id).val() || 0;
                     if (parseInt(quantity) > 0) {
-                        $(this).closest("tr").find(".totalDzn_" + row_id).val(quantity * dzns);
+                        let total = quantity * dzns || 0;
+                        $(this).closest("tr").find(".totalDzn_" + row_id).val(total);
                     } else {
                         $(this).closest("tr").find(".totalDzn_" + row_id).val('');
                     }
@@ -754,7 +754,6 @@ $isSelected = old('delivered_to') == $key || $sale_Order->pluck('delivered_to')-
 
         $(document).on('click', 'body *', function() {
             $('.dzn_' + currentIndex).on("focusout", function() {
-                console.log("Maaaaasd2");
                 var row_id = $(this).closest("tr").find(".row_id").val();
                 let quantity = $(this).closest("tr").find(".qty_" + row_id).val();
                 let dzns = $(this).closest("tr").find(".dzn_" + row_id).val();
