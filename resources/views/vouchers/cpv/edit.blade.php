@@ -1,0 +1,387 @@
+<x-base-layout :scrollspy="false">
+    <x-slot:pageTitle>
+        {{ $pageTitle }}
+    </x-slot>
+
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <x-slot:headerFiles>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+            integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <!--  BEGIN CUSTOM STYLE FILE  -->
+        <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
+
+        <!--  BEGIN CUSTOM STYLE FILE  -->
+        <link rel="stylesheet" href="../src/plugins/src/filepond/filepond.min.css">
+        <link rel="stylesheet" href="../src/plugins/src/filepond/FilePondPluginImagePreview.min.css">
+
+        <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
+
+        <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+
+        <!--  END CUSTOM STYLE FILE  -->
+    </x-slot>
+
+    <x-slot:scrollspyConfig>
+        data-bs-spy="scroll" data-bs-target="#navSection" data-bs-offset="100"
+    </x-slot>
+
+
+    <div class="page-meta">
+        <nav class="breadcrumb-style-one" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Vouchers</li>
+                <li class="breadcrumb-item"><a href="{{ route('cpv.list') }}">List of Cash Payment Vouchers</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('cpv.create') }}">Create Voucher</a></li>
+
+            </ol>
+        </nav>
+    </div>
+
+    <div class="row layout-top-spacing">
+        <div id="tableCustomBasic" class="col-xl-12 col-12 layout-spacing">
+            <div class="statbox widget box box-shadow">
+                <div class="widget-header">
+                    <div class="row">
+                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                            <h4>Update Cash Payment Voucher</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="widget-content widget-content-area">
+
+                    <div class="simple-pill">
+
+                        <div class="tab-content" id="pills-tabContent">
+                            <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
+                                aria-labelledby="pills-home-tab" tabindex="0">
+                                <form action="{{ !empty($cpv) ? route('cpv.update') : route('cpv.save') }}"
+                                    method="POST" class="row g-3 needs-validation" novalidate>
+                                    @csrf
+                                    <input type="hidden" name="id" id="id"
+                                        value="{{ isset($cpv->id) ? $cpv->id : '' }}" />
+
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-0 col-7 mt-4">
+                                                <label for="">
+                                                    <h4>Voucher #:{{ @$maxid }}
+                                                        {{ @$currentid }}</h4>
+                                                </label>
+
+                                            </div>
+
+                                            <div class="col-md-5">
+
+                                                <div class="form-group mb-4">
+
+                                                    <label for="date">
+                                                        Date</label>
+                                                    <input type="text" class="form-control form-control-sm"
+                                                        value="{{ $date }}" name="date" id="date"
+                                                        placeholder="Select The Date">
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="tab-content" id="pills-tabContent">
+                                        <div class="invoice-detail-items" style="padding: 0px 0px 0px 0px;">
+                                            <div class="table-responsive">
+                                                <table class="table item-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="" hidden>
+                                                            </th>
+                                                            <th></th>
+                                                            <th class="" style="width: 37%">
+                                                                Account
+                                                                Title/Description
+                                                            </th>
+                                                            <th class="" style="width: 37%">
+                                                                Bank</th>
+                                                            <th class="" style="width: 25%">
+                                                                Amount
+                                                            </th>
+
+
+                                                        </tr>
+                                                        <tr aria-hidden="true" class="mt-3 d-block table-row-hidden">
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                        @if (!empty($cpvDetails))
+                                                            @foreach ($cpvDetails as $cpvDetail)
+                                                                <tr class="tr_clone validator_0">
+                                                                    <td class="delete-item-row">
+                                                                        <ul class="table-controls">
+                                                                            <li>
+                                                                                <a href="javascript:void(0);"
+                                                                                    class="delete-item"
+                                                                                    data-toggle="tooltip"
+                                                                                    data-placement="top" title=""
+                                                                                    data-original-title="Delete">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                                                        width="24" height="24"
+                                                                                        viewBox="0 0 24 24"
+                                                                                        fill="none"
+                                                                                        stroke="currentColor"
+                                                                                        stroke-width="2"
+                                                                                        stroke-linecap="round"
+                                                                                        stroke-linejoin="round"
+                                                                                        class="feather feather-x-circle">
+                                                                                        <circle cx="12"
+                                                                                            cy="12" r="10">
+                                                                                        </circle>
+                                                                                        <line x1="15"
+                                                                                            y1="9"
+                                                                                            x2="9"
+                                                                                            y2="15">
+                                                                                        </line>
+                                                                                        <line x1="9"
+                                                                                            y1="9"
+                                                                                            x2="15"
+                                                                                            y2="15">
+                                                                                        </line>
+                                                                                    </svg>
+                                                                                </a>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </td>
+                                                                    <td hidden>
+                                                                        <input type="text" name="row_id[]"
+                                                                            class="row_id" value="0" hidden>
+                                                                    </td>
+
+
+                                                                    <td class="description">
+                                                                        <select id="party" name="account_id[]"
+                                                                            class="form-control select2 custom-select mr-0 mb-0 form-control-sm">
+                                                                            <option selected="">
+                                                                                Please select the
+                                                                                Party</option>
+                                                                            @foreach ($dropDownData['accounts'] as $key => $value)
+                                                                                <option value="{{ $key }}"
+                                                                                    {{ (old('account_id') == $key ? 'selected' : '') || (!empty($cpvDetail->account_id) ? collect($cpvDetail->account_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                    {{ $value }}
+                                                                                </option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                        <textarea id="description" type="text" name="description[]" placeholder="Please Enter Description"
+                                                                            class="form-control form-control-sm mt-3">{{ $cpvDetail->description }}</textarea>
+                                                                    </td>
+                                                                    <td class="title">
+                                                                        <select id="account_title"
+                                                                            name="cash_account_id[]"
+                                                                            class="form-control select2 custom-select mr-0 mb-0 form-control-sm">
+                                                                            <option selected="">
+                                                                                Please select the
+                                                                                Party</option>
+                                                                            @foreach ($dropDownData['cashAccount'] as $key => $value)
+                                                                                <option value="{{ $key }}"
+                                                                                    {{ (old('account_id') == $key ? 'selected' : '') || (!empty($cpvDetail->cash_account_id) ? collect($cpvDetail->cash_account_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                    {{ $value }}
+                                                                                </option>
+                                                                            @endforeach
+                                                                        </select>
+
+
+                                                                    </td>
+                                                                    <td class="bpvAmount">
+                                                                        <input type="text" id="amount"
+                                                                            class="form-control form-control-sm amount"
+                                                                            value="{{ old('amount', !empty($cpvDetail->amount) ? $cpvDetail->amount : '') }}"
+                                                                            name="amount[]" placeholder="Amount">
+                                                                    </td>
+
+                                                                </tr>
+                                                            @endforeach
+                                                        @endif
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            <a href="javascript:void(0);" class="btn btn-dark additem mt-3"
+                                                id="add-item">Add
+                                                Item</a>
+
+                                        </div>
+
+
+                                        <div class="col-xl-6 invoice-address-client invoice-detail-total mt-3"
+                                            style="float:right">
+                                            <div class="invoice-address-client-fields">
+                                                <div class="form-group row">
+                                                    <label for="gross-amount"
+                                                        class="col-sm-4 col-form-label col-form-label-sm ">Tot.
+                                                        Amount
+                                                    </label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" id="gross-amount" style="color: black"
+                                                            class="form-control form-control-sm gross-amount "
+                                                            value="{{@$cpv->total_amount}}"
+                                                            name="total_amount" id="gross-amount"
+                                                            placeholder="Total Amount" readonly>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+
+
+
+
+
+                                    </div>
+
+
+                                    <div class="invoice-detail-terms">
+
+                                        <div class="row">
+                                            <div class="col-xl-12 ">
+                                                <a href="{{ route('cpv.list') }}" style="float: right;"
+                                                    class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
+                                                <button type="submit" style="float: right"
+                                                    class="btn btn-success  rounded bs-popover me-1 mt-5 mb-4 mr-5"
+                                                    data-bs-container="body" data-bs-placement="right"
+                                                    data-bs-content="Tooltip on right">
+                                                    @if (!isset($cpv))
+                                                        Save
+                                                    @else
+                                                        Update
+                                                    @endif
+                                                </button>
+                                                {{-- <input type="submit" style="float: right"
+                                                                        value="{{ 'SaveAsDraft' }}"
+                                                                        class="btn btn-primary save-as me-1 mt-5 mb-4 mr-5">
+                                                                    <input type="hidden" name="save_type"
+                                                                        id="save_type" /> --}}
+                                                {{-- @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
+
+                                                                        @endif --}}
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        document.getElementsByClassName('additem')[0].addEventListener('click', function() {
+
+            let getTableElement = document.querySelector('.item-table');
+            let currentIndex = getTableElement.rows.length;
+
+            let $html = '<tr>' +
+                '<td class="delete-item-row">' +
+                '<ul class="table-controls">' +
+                '<li><a href="javascript:void(0);" class="delete-item" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></a></li>' +
+                '</ul>' +
+                '</td>' +
+                '<td hidden><input type="text" name="row_id[]" class="row_id" value="' + currentIndex +
+                '" hidden></td>' +
+                '<td class="description"><select id="account_title" name="account_id[]" class="form-control form-control-sm select2 custom-select"> <option selected=""> Please select the Party</option> @foreach ($dropDownData['accounts'] as $key => $value) <option value="{{ $key }}" {{ (old('account_id') == $key ? 'selected' : '') || (!empty($bpv->account_id) ? collect($bpv->account_id)->contains($key) : '') ? 'selected' : '' }}> {{ $value }} </option> @endforeach </select><textarea id="description" type="text" name="description[]" value="{{ old('description', !empty($bpv->description) ? $bpv->description : '') }}" placeholder="Please Enter Description" class="form-control form-control-sm mt-3"></textarea> </td>' +
+                '<td class="title"> <select name="cash_account_id[]" id="bank" class="form-control select2 custom-select form-control-sm"> <option selected=""> Please select the Cash Account</option> @foreach ($dropDownData['cashAccount'] as $key => $value) <option value="{{ $key }}" {{ (old('cash_account_id') == $key ? 'selected' : '') || (!empty($bpv->cash_account_id) ? collect($bpv->cash_account_id)->contains($key) : '') ? 'selected' : '' }}> {{ $value }} </option> @endforeach </select> </td>' +
+                '<td class="bpvAmount"><input type="number" id="amount" class="form-control form-control-sm amount amount_' +
+                currentIndex +
+                ' " name="amount[]" placeholder="Amount"></td>' +
+                '<div class="form-check form-check-primary form-check-inline me-0 mb-0">' +
+                '</div>' +
+                '</div>' +
+                '</td>' +
+                '</tr>';
+
+            $(".item-table tbody").append($html);
+            deleteItemRow();
+            $('.select2').select2();
+            $(document).on('click', 'body *', function() {
+                $('.amount').on("input", function() {
+                    doAmountTotal();
+                });
+
+                $('.delete-item').on("click", function() {
+                    doAmountTotal();
+                });
+
+                function doAmountTotal() {
+                    $('#total-amount').text("");
+
+                    var totalAmount = 0;
+                    $(".amount").each(function() {
+                        if (!isNaN(this.value) && this.value.length != 0) {
+                            totalAmount += parseFloat(this.value);
+                        }
+                    });
+                    $('#gross-amount').val(totalAmount.toFixed(2));
+                }
+            });
+
+        })
+
+        deleteItemRow();
+        selectableDropdown(document.querySelectorAll('.invoice-select .dropdown-item'));
+        selectableDropdown(document.querySelectorAll('.invoice-tax-select .dropdown-item'), getTaxValue);
+        selectableDropdown(document.querySelectorAll('.invoice-discount-select .dropdown-item'), getDiscountValue);
+
+        var f2 = flatpickr(document.getElementById('due'), {
+            defaultDate: currentDate.setDate(currentDate.getDate() + 5),
+        });
+
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
+
+        function deleteItemRow() {
+            let deleteItem = document.querySelectorAll('.delete-item');
+            for (var i = 0; i < deleteItem.length; i++) {
+                deleteItem[i].addEventListener('click', function() {
+                    this.parentElement.parentNode.parentNode.parentNode.remove();
+                })
+            }
+        }
+    </script>
+
+    <x-slot:footerFiles>
+        <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
+        <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>
+
+        <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
+        @vite(['resources/assets/js/elements/custom-search.js'])
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
+            integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="{{ asset('js/common.js') }}"></script>
+        <script src="{{ asset('js/BankPaymentVoucher.js') }}"></script>
+
+
+        <script>
+            var input = document.getElementById("code");
+            input.addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    document.getElementById("party").click();
+                }
+            });
+        </script>
+
+    </x-slot>
+</x-base-layout>

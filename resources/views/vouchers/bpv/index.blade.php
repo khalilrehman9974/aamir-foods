@@ -6,8 +6,10 @@
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <x-slot:headerFiles>
-        @vite(['resources/scss/light/assets/elements/search.scss', 'resources/scss/dark/assets/elements/search.scss'])
-        <link rel="stylesheet" href="{{ asset('plugins/sweetalerts2/sweetalerts2.css') }}">
+        <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
+
+        <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
     </x-slot>
     <!-- END GLOBAL MANDATORY STYLES -->
 
@@ -47,10 +49,11 @@
         </div>
 
     </div>
-    <div class="row layout-top-spacing col-md-12">
-        <div id="tableCustomBasic" class="col-lg-12 col-12 layout-spacing">
-            <div class="col-lg-8 col-md-8 col-sm-9 filtered-list-search mx-auto">
-                <form class="form-inline my-2 my-lg-0 justify-content-center">
+    <div class="row layout-top-spacing">
+        <div id="tableCustomBasic" class="col-lg-12 col-12">
+            <div class="row">
+                <div class="col-lg-12" style="margin-right: 0px !important;">
+                    {{-- <form class="form-inline my-2 my-lg-0 justify-content-center">
                     <div class="w-100">
                         <input type="text" class="w-100 form-control product-search br-30" id="input-search"
                             placeholder="Search vouchers...">
@@ -63,7 +66,41 @@
                             </svg>
                         </button>
                     </div>
-                </form>
+                </form> --}}
+                    <form class="" method="get" action="{{ route('bpv.list') }}">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="text" value="{{ $param }}" name="date" id="date"
+                                            class="form-control-sm search" id="input-search" placeholder="Date"
+                                            style="width: 100%;">
+                                        <span class="input-group-prepend">
+                                            {{-- <button type="submit" class="btn btn-primary" disabled><i
+                                                        class="fa fa-search"></i></button> --}}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <span class="input-group-prepend" style="margin-top: 0px; ">
+                                    <button type="submit" class="btn btn-primary" value="Search" id="search-button"
+                                        style="width: 100%;"><i class="fa fa-search"></i>&nbsp;
+                                        Search</button>
+
+                                </span>
+                            </div>
+                            <div class="col-md-2 ">
+                                <span class="input-group-prepend" style="margin-top: 0px;">
+                                    <a href="{{ route('bpv.list') }}" class="btn btn-primary" value="Search"
+                                        id="clear-filter" style="margin-left: 10px">Clear
+                                        Filter</a>
+
+                                </span>
+                            </div>
+                    </form>
+                </div>
             </div>
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">
@@ -81,16 +118,14 @@
                             <thead>
                                 <tr>
                                     <th scope="col" style="width:5%"><b>ID </b> </th>
-                                    <th scope="col" style="width: 20%"> <b>Date </b> </th>
-                                    <th scope="col" style="width: 40%"> <b>Account Tiltle </b> </th>
-                                    <th scope="col" style="width: 20%"> <b>Total Amount </b> </th>
+                                    <th scope="col"> <b>Date </b> </th>
+                                    <th scope="col"> <b>Total Amount </b> </th>
                                     <th class="text-center" scope="col"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @if ($vouchers)
                                     @foreach ($vouchers as $bpv)
-                                    {{dd($bpv)}}
                                         <tr id="row_{{ $bpv->id }}">
                                             <td>
                                                 <div class="media">
@@ -103,15 +138,9 @@
                                             <td>
                                                 <div class="media">
                                                     <div class="media-body align-self-center">
-                                                        <h6 class="mb-0">{{ $bpv->date }}</h6>
-
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="media">
-                                                    <div class="media-body align-self-center">
-                                                        <h6 class="mb-0">{{ $bpv->vouchers }}</h6>
+                                                        <h6 class="mb-0">
+                                                            {{ \Carbon\Carbon::parse($bpv->date)->format('d-m-Y') }}
+                                                        </h6>
 
                                                     </div>
                                                 </div>
@@ -142,7 +171,7 @@
                                                             </svg>
                                                         </a>
                                                     @endif
-                                                    @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
+                                                    {{-- @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
                                                         <a href="{{ route('bpv.delete') }}"
                                                             class="action-btn btn-delete bs-tooltip"
                                                             data-toggle="tooltip" data-placement="top"
@@ -164,7 +193,7 @@
                                                                 </line>
                                                             </svg>
                                                         </a>
-                                                    @endif
+                                                    @endif --}}
 
                                                 </div>
                                             </td>
@@ -186,9 +215,18 @@
         </div>
     </div>
     <x-slot:footerFiles>
-        <script src="{{ asset('plugins/sweetalerts2/sweetalerts2.min.js') }}"></script>
-
+        <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+        <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])
+        <script>
+            var config = {
+                routes: {
+                    deleteMainHead: "{{ url('dispatch-note/delete') }}",
+                    dispatchNoteNumber: "{{ url('dispatch-note/dispatch-note.create') }}",
+                },
+            }
+        </script>
 
     </x-slot>
 </x-base-layout>

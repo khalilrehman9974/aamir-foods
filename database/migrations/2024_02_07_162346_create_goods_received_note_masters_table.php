@@ -21,6 +21,7 @@ return new class extends Migration
             $table->double('fare');
             $table->string('supplier_bill_no');
             $table->string('unloaded_by');
+            $table->string('status', 250);
             $table->integer('transporter_id')->unsigned()->index();
             $table->integer('business_id');
             $table->integer('f_year_id')->unsigned()->index();

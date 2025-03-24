@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\CRVDetails;
 use Illuminate\Http\Request;
 use App\Models\AccountLedger;
-use App\Models\VoucherDetail;
-use App\Models\VoucherMaster;
 use App\Services\CommonService;
+use App\Models\CashReceiptVoucher;
 use Illuminate\Support\Facades\DB;
-use App\Http\Requests\VoucherRequest;
 use App\Services\CashReceiptVoucherService;
 
 class CRVoucherController extends Controller
@@ -20,7 +20,6 @@ class CRVoucherController extends Controller
     {
         $this->commonService = $commonService;
         $this->cashReceiptVoucherService = $cashReceiptVoucherService;
-
     }
     /**
      * Display a listing of the resource.
@@ -32,8 +31,9 @@ class CRVoucherController extends Controller
         $pageTitle = 'List Of CR Vouchers';
         $request = request()->all();
         $vouchers = $this->cashReceiptVoucherService->searchVoucher($request);
+        $param = request()->param;
 
-        return view('vouchers.crv.index', compact('vouchers', 'pageTitle'));
+        return view('vouchers.crv.index', compact('vouchers', 'param', 'pageTitle'));
     }
 
     /**
@@ -44,9 +44,9 @@ class CRVoucherController extends Controller
     public function create()
     {
         $pageTitle = 'Create CRVoucher';
-        $maxid = VoucherMaster::where('vr_type', 'CRV')->max('id') + 1;
+        $maxid = CashReceiptVoucher::max('id') + 1;
         $dropDownData = $this->cashReceiptVoucherService->DropDownData();
-        return view('vouchers.crv.create', compact( 'pageTitle','maxid','dropDownData'));
+        return view('vouchers.crv.create', compact('pageTitle', 'maxid', 'dropDownData'));
     }
 
     /**
@@ -55,33 +55,30 @@ class CRVoucherController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(VoucherRequest $request)
+    public function store(Request $request)
     {
-        $request = $request->except('_token', 'voucherId');
-        $session = $this->commonService->getSession();
-        DB::beginTransaction();
-        try {
-            //Insert data into purchase tables.
-            $request['business_id'] = $session->business_id;
-            $request['f_year_id'] = $session->financial_year;
-            $voucherMasterData = $this->cashReceiptVoucherService->prepareVoucherMasterData($request);
-            $voucherMasterInsert = $this->commonService->findUpdateOrCreate(VoucherMaster::class, ['id' => ''], $voucherMasterData);
-            $voucherDetailCreditData = $this->cashReceiptVoucherService->prepareVoucherDetailCreditData($request, $voucherMasterInsert->id);
-            $voucherDetailDebitData = $this->cashReceiptVoucherService->prepareVoucherDetailDebitData($request, $voucherMasterInsert->id);
-            $this->cashReceiptVoucherService->saveVoucherDebitData($voucherDetailCreditData);
-            $this->cashReceiptVoucherService->saveVoucherCreditData($voucherDetailDebitData);
+        // dd($request);
+        $request = $request->except('_token', 'id');
+        // DB::beginTransaction();
+        // try {
+        //Insert data into purchase tables.
+        $voucherMasterData = $this->cashReceiptVoucherService->prepareVoucherMasterData($request);
+        $voucherMasterInsert = $this->cashReceiptVoucherService->findUpdateOrCreate(CashReceiptVoucher::class, ['id' => ''], $voucherMasterData);
+
+        $voucherDetailData = $this->cashReceiptVoucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
+        $this->cashReceiptVoucherService->saveVoucherDetailData($voucherDetailData);
 
 
-            $debitAccountData = $this->cashReceiptVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData, config('contants.CRV'),config('contants.Crv_cash_in_hand') );
-            $creditAccountData = $this->cashReceiptVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData, config('contants.CRV'), config('contants.Crv_party_transaction'));
-            AccountLedger::insert($debitAccountData);
-            AccountLedger::insert($creditAccountData);
+        // $debitAccountData = $this->cashReceiptVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData, config('contants.CRV'),config('contants.Crv_cash_in_hand') );
+        // $creditAccountData = $this->cashReceiptVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData, config('contants.CRV'), config('contants.Crv_party_transaction'));
+        // AccountLedger::insert($debitAccountData);
+        // AccountLedger::insert($creditAccountData);
 
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('crv/create')->with('error', $e->getMessage());
-        }
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('crv/create')->with('error', $e->getMessage());
+        // }
         return redirect('crv/list')->with('message', config('constants.add'));
     }
 
@@ -91,7 +88,7 @@ class CRVoucherController extends Controller
      * @param  \App\Models\VoucherMaster  $voucherMaster
      * @return \Illuminate\Http\Response
      */
-    public function show(VoucherMaster $voucherMaster)
+    public function show(Request $voucherMaster)
     {
         //
     }
@@ -104,42 +101,48 @@ class CRVoucherController extends Controller
      */
     public function edit($id)
     {
-        $voucher = VoucherMaster::find($id);
-        $voucherDetails = VoucherDetail::where('voucher_master_id', $id)->get();
-        if (empty($voucher)) {
+        $pageTitle = 'Update CRVoucher';
+        $currentid = $id;
+        $crv = CashReceiptVoucher::find($id);
+        $date = Carbon::parse($crv->date)->format('d-m-Y');
+        $dropDownData = $this->cashReceiptVoucherService->DropDownData();
+        $crvDetails = CRVDetails::where('voucher_master_id', $id)->get();
+        if (empty($crv)) {
             $message = config('constants.wrong');
         }
 
-        return view('vouchers.crv.create', compact('voucher', 'voucherDetails'));
+        return view('vouchers.crv.edit', compact('crv', 'currentid', 'dropDownData', 'date', 'pageTitle', 'crvDetails'));
     }
 
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\VoucherMaster  $voucherMaster
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy()
+    public function update(Request $request)
     {
-        try {
-            DB::beginTransaction();
-            $deleteMaster = VoucherMaster::where('id', request()->id)->delete();
-            $deleteDetail = VoucherDetail::where('voucher_master_id', request()->id)->delete();
-            // $deleteStock = Stock::where('invoice_id', request()->id)->delete();
-            // $accountEntryDetail = AccountLedger::where('invoice_id', request()->id)->delete();
-            DB::commit();
-            // && $deleteStock && $accountEntryDetail
-            if ($deleteMaster && $deleteDetail ) {
-                return $this->commonService->deleteResource(VoucherMaster::class, VoucherDetail::class);
-            }
 
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('crv/list')->with('error', $e->getMessage());
-        }
 
+        // DB::beginTransaction();
+        // try {
+
+        CRVDetails::where('voucher_master_id', $request['id'])->delete();
+        //Insert data into purchase tables.
+        $voucherMasterData = $this->cashReceiptVoucherService->prepareVoucherMasterData($request);
+        $voucherMasterInsert = $this->cashReceiptVoucherService->findUpdateOrCreate(CashReceiptVoucher::class, ['id' => request('id')], $voucherMasterData);
+
+        $voucherDetailData = $this->cashReceiptVoucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
+        $this->cashReceiptVoucherService->saveVoucherDetailData($voucherDetailData);
+
+
+        // $debitAccountData = $this->cashReceiptVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData, config('contants.CRV'),config('contants.Crv_cash_in_hand') );
+        // $creditAccountData = $this->cashReceiptVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData, config('contants.CRV'), config('contants.Crv_party_transaction'));
+        // AccountLedger::insert($debitAccountData);
+        // AccountLedger::insert($creditAccountData);
+
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('crv/create')->with('error', $e->getMessage());
+        // }
+        return redirect('crv/list')->with('message', config('constants.update'));
     }
+
 
     public function view($id)
     {
@@ -151,5 +154,4 @@ class CRVoucherController extends Controller
 
         return view('vouchers.crv.view', compact('voucherMaster', 'voucherDetail'));
     }
-
 }

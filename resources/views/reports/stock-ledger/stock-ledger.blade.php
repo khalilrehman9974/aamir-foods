@@ -313,7 +313,8 @@
         $totalStockInBags = calculateTotalStockInBags($result);
         $totalStockOutBags = calculateTotalStockOutBags($result);
         $totalStockOutQuantity = calculateTotalStockOutQuantity($result);
-        $avgInWeight = number_format($totalStockInQuantity / $totalStockInBags, 2);
+        // $avgInWeight = number_format($totalStockInQuantity / $totalStockInBags, 2);
+        $avgInWeight = $totalStockInBags > 0 ? number_format($totalStockInQuantity / $totalStockInBags, 2): 0;
         // $avgOutWeight = number_format($totalStockOutQuantity  / $totalStockOutBags, 2);
         // $avgOutWeight = $totalStockOutQuantity != 0 ? number_format($totalStockOutQuantity / $totalStockOutBags, 2) : 0;
         $avgOutWeight = ($totalStockOutBags > 0) ? number_format($totalStockOutQuantity / $totalStockOutBags, 2) : 0;
@@ -538,7 +539,7 @@
                         <td style="text-align: end;">{{$totalStockOutBags}}</td>
                         <td style="text-align: end;">{{$avgOutWeight}}</td>
                         <td style="text-align: end;">{{$totalStockOutQuantity}}</td>
-                        <td style="text-align: end;">{{$lastEntry['Balance']}}</td>
+                        <td style="text-align: end;">{{$lastEntry['Balance'] ?? $product->opening_stock}}</td>
                         <td style="text-align: center; padding: 0px 0px 0px 0px !important; width: 3%; border-color: white; border-right: black;"></td>
                         <td style="text-align: end;">{{ $totalAvgWeight }}</td>
                         <td style="text-align: end;">{{$totalStockValue}}</td>

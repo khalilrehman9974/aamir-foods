@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use App\Models\AccountLedger;
-use App\Models\VoucherDetail;
-use App\Models\VoucherMaster;
 use App\Services\CommonService;
 use Illuminate\Support\Facades\DB;
+use App\Models\JournalVoucherDetail;
+use App\Models\JournalVoucherMaster;
 use App\Http\Requests\VoucherRequest;
 use App\Services\JournalVoucherService;
+
 
 class JournalVoucherController extends Controller
 {
@@ -31,8 +34,9 @@ class JournalVoucherController extends Controller
         $pageTitle = 'List Of JVouchers';
         $request = request()->all();
         $vouchers = $this->journalVoucherService->searchVoucher($request);
+        $param = request()->param;
 
-        return view('vouchers.jv.index', compact('vouchers', 'pageTitle'));
+        return view('vouchers.jv.index', compact('vouchers','param', 'pageTitle'));
     }
 
     /**
@@ -43,7 +47,7 @@ class JournalVoucherController extends Controller
     public function create()
     {
         $pageTitle = 'Create Voucher';
-        $maxid = 1;
+        $maxid = JournalVoucherMaster::max('id') + 1;
         $dropDownData = $this->journalVoucherService->DropDownData();
         return view('vouchers.jv.create', compact('dropDownData','maxid','pageTitle'));
     }
@@ -54,29 +58,30 @@ class JournalVoucherController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(VoucherRequest $request)
+    public function store(Request $request)
     {
+        dd($request);
+
         $request = $request->except('_token', 'id');
-        $session = $this->commonService->getSession();
-        DB::beginTransaction();
-        try {
+
+        // DB::beginTransaction();
+        // try {
             //Insert data into Voucher tables.
-            $request['business_id'] = $session->business_id;
-            $request['f_year_id'] = $session->financial_year;
+
             $voucherMasterData = $this->journalVoucherService->prepareVoucherMasterData($request);
-            $voucherMasterInsert = $this->commonService->findUpdateOrCreate(VoucherMaster::class, ['id' => ''], $voucherMasterData);
+            $voucherMasterInsert = $this->commonService->findUpdateOrCreate(JournalVoucherMaster::class, ['id' => ''], $voucherMasterData);
             $voucherDetailData = $this->journalVoucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
             $this->journalVoucherService->saveVoucher($voucherDetailData);
 
 
-            $AccountData = $this->journalVoucherService->prepareAccountData($request, $voucherDetailData, config('contants.JV'),config('contants.Jv_transaction') );
-            AccountLedger::insert($AccountData);
+            // $AccountData = $this->journalVoucherService->prepareAccountData($request, $voucherDetailData, config('contants.JV'),config('contants.Jv_transaction') );
+            // AccountLedger::insert($AccountData);
 
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('jv/create')->with('error', $e->getMessage());
-        }
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('jv/create')->with('error', $e->getMessage());
+        // }
         return redirect('jv/list')->with('message', config('constants.add'));
     }
 
@@ -89,41 +94,44 @@ class JournalVoucherController extends Controller
      */
     public function edit($id)
     {
+        $pageTitle = 'Update JV';
         $currentid= $id;
-        $voucher = VoucherMaster::find($id);
-        $voucherDetails = VoucherDetail::where('voucher_master_id', $id)->get();
-        if (empty($voucher)) {
+        $jv = JournalVoucherMaster::find($id);
+        $date = Carbon::parse($jv->date)->format('d-m-Y');
+        $jvDetails = JournalVoucherDetail::where('voucher_master_id', $id)->get();
+        $dropDownData = $this->journalVoucherService->DropDownData();
+        if (empty($jv)) {
             $message = config('constants.wrong');
         }
 
-        return view('vouchers.jv.create', compact('voucher', 'voucherDetails','currentid'));
+
+        return view('vouchers.jv.edit', compact('jv','date','pageTitle', 'jvDetails','dropDownData','currentid'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\VoucherMaster  $voucherMaster
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy()
+    public function update(Request $request)
     {
-        DB::beginTransaction();
-        try {
-            $deleteMaster = VoucherMaster::where('id', request()->id)->delete();
-            $deleteDetail = VoucherDetail::where('voucher_master_id', request()->id)->delete();
 
-            DB::commit();
-            // && $deleteStock && $accountEntryDetail
-            if ($deleteMaster && $deleteDetail ) {
-                return $this->commonService->deleteResource(VoucherMaster::class, VoucherDetail::class);
-            }
+        // DB::beginTransaction();
+        // try {
+            //Insert data into Voucher tables.
+            JournalVoucherDetail::where('voucher_master_id', $request['id'])->delete();
+            $voucherMasterData = $this->journalVoucherService->prepareVoucherMasterData($request);
+            $voucherMasterInsert = $this->commonService->findUpdateOrCreate(JournalVoucherMaster::class, ['id' => request('id')], $voucherMasterData);
+            $voucherDetailData = $this->journalVoucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
+            $this->journalVoucherService->saveVoucher($voucherDetailData);
 
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('jv/list')->with('error', $e->getMessage());
-        }
 
+            // $AccountData = $this->journalVoucherService->prepareAccountData($request, $voucherDetailData, config('contants.JV'),config('contants.Jv_transaction') );
+            // AccountLedger::insert($AccountData);
+
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('jv/create')->with('error', $e->getMessage());
+        // }
+        return redirect('jv/list')->with('message', config('constants.update'));
     }
+
 
     public function view($id)
     {

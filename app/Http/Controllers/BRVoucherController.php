@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\BRVDetails;
 use Illuminate\Http\Request;
 use App\Models\AccountLedger;
-use App\Models\VoucherDetail;
-use App\Models\VoucherMaster;
 use App\Services\CommonService;
+use App\Models\BankReceiptVoucher;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\VoucherRequest;
 use App\Services\BankReceiptVoucherService;
@@ -32,8 +33,9 @@ class BRVoucherController extends Controller
         $pageTitle = 'List Of BR Vouchers';
         $request = request()->all();
         $vouchers = $this->bankReceiptVoucherService->searchVoucher($request);
+        $param = request()->param;
 
-        return view('vouchers.brv.index', compact('vouchers', 'pageTitle'));
+        return view('vouchers.brv.index', compact('vouchers','param', 'pageTitle'));
     }
 
     /**
@@ -44,7 +46,7 @@ class BRVoucherController extends Controller
     public function create()
     {
         $pageTitle = 'Create BRV';
-        $maxid = VoucherMaster::where('vr_type', 'BRV')->max('id') + 1;
+        $maxid = BankReceiptVoucher::max('id') + 1;
         $dropDownData = $this->bankReceiptVoucherService->DropDownData();
         return view('vouchers.brv.create', compact( 'pageTitle','maxid' ,'dropDownData'));
     }
@@ -55,33 +57,40 @@ class BRVoucherController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(VoucherRequest $request)
+    public function store(Request $request)
     {
+
         $request = $request->except('_token', 'id');
-        $session = $this->commonService->getSession();
-        DB::beginTransaction();
-        try {
+        // DB::beginTransaction();
+        // try {
             //Insert data into Vouchers tables.
-            $request['business_id'] = $session->business_id;
-            $request['f_year_id'] = $session->financial_year;
+
+
             $voucherMasterData = $this->bankReceiptVoucherService->prepareVoucherMasterData($request);
-            $voucherMasterInsert = $this->commonService->findUpdateOrCreate(VoucherMaster::class, ['id' => ''], $voucherMasterData);
-            $voucherDetailCreditData = $this->bankReceiptVoucherService->prepareVoucherDetailCreditData($request, $voucherMasterInsert->id);
-            $voucherDetailDebitData = $this->bankReceiptVoucherService->prepareVoucherDetailDebitData($request, $voucherMasterInsert->id);
-            $this->bankReceiptVoucherService->saveVoucherCreditData($voucherDetailCreditData);
-            $this->bankReceiptVoucherService->saveVoucherDebitData($voucherDetailDebitData);
+            $voucherMasterInsert = $this->bankReceiptVoucherService->findUpdateOrCreate(BankReceiptVoucher::class, ['id' => ''], $voucherMasterData);
+
+            $voucherDetailData = $this->bankReceiptVoucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
+            $this->bankReceiptVoucherService->saveVoucherDetailData($voucherDetailData);
 
 
-            $debitAccountData = $this->bankReceiptVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData, config('contants.BRV'), config('contants.Brv_bank_transaction'));
-            $creditAccountData = $this->bankReceiptVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData, config('contants.BRV'), config('contants.Brv_party_transaction'));
-            AccountLedger::insert($debitAccountData);
-            AccountLedger::insert($creditAccountData);
+            // $voucherMasterData = $this->bankReceiptVoucherService->prepareVoucherMasterData($request);
+            // $voucherMasterInsert = $this->commonService->findUpdateOrCreate(VoucherMaster::class, ['id' => ''], $voucherMasterData);
+            // $voucherDetailCreditData = $this->bankReceiptVoucherService->prepareVoucherDetailCreditData($request, $voucherMasterInsert->id);
+            // $voucherDetailDebitData = $this->bankReceiptVoucherService->prepareVoucherDetailDebitData($request, $voucherMasterInsert->id);
+            // $this->bankReceiptVoucherService->saveVoucherCreditData($voucherDetailCreditData);
+            // $this->bankReceiptVoucherService->saveVoucherDebitData($voucherDetailDebitData);
 
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('brv/create')->with('error', $e->getMessage());
-        }
+
+            // $debitAccountData = $this->bankReceiptVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData, config('contants.BRV'), config('contants.Brv_bank_transaction'));
+            // $creditAccountData = $this->bankReceiptVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData, config('contants.BRV'), config('contants.Brv_party_transaction'));
+            // AccountLedger::insert($debitAccountData);
+            // AccountLedger::insert($creditAccountData);
+
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('brv/create')->with('error', $e->getMessage());
+        // }
         return redirect('brv/list')->with('message', config('constants.add'));
     }
 
@@ -91,7 +100,7 @@ class BRVoucherController extends Controller
      * @param  \App\Models\VoucherMaster  $voucherMaster
      * @return \Illuminate\Http\Response
      */
-    public function show(VoucherMaster $voucherMaster)
+    public function show(Request $voucherMaster)
     {
         //
     }
@@ -104,41 +113,45 @@ class BRVoucherController extends Controller
      */
     public function edit($id)
     {
+        $pageTitle = 'Update BRV';
         $currentid= $id;
-        $voucher = VoucherMaster::find($id);
-        $voucherDetails = VoucherDetail::where('voucher_master_id', $id)->get();
+        $brv = BankReceiptVoucher::find($id);
+        $date = Carbon::parse($brv->date)->format('d-m-Y');
+        $brvDetails = BRVDetails::where('voucher_master_id', $id)->get();
+        $dropDownData = $this->bankReceiptVoucherService->DropDownData();
         if (empty($voucher)) {
             $message = config('constants.wrong');
         }
 
-        return view('vouchers.brv.create', compact('voucher','currentid', 'voucherDetails'));
+        return view('vouchers.brv.edit', compact('brv','dropDownData','date','currentid','pageTitle','brvDetails'));
     }
 
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\VoucherMaster  $voucherMaster
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy()
+    public function update(Request $request)
     {
-        DB::beginTransaction();
-        try {
-            $deleteMaster = VoucherMaster::where('id', request()->id)->delete();
-            $deleteDetail = VoucherDetail::where('voucher_master_id', request()->id)->delete();
 
-            DB::commit();
-            // && $deleteStock && $accountEntryDetail
-            if ($deleteMaster && $deleteDetail ) {
-                return $this->commonService->deleteResource(VoucherMaster::class, VoucherDetail::class);
-            }
+        // DB::beginTransaction();
+        // try {
+            //Insert data into Vouchers tables.
 
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('brv/list')->with('error', $e->getMessage());
-        }
+            BRVDetails::where('voucher_master_id', $request['id'])->delete();
+            $voucherMasterData = $this->bankReceiptVoucherService->prepareVoucherMasterData($request);
+            $voucherMasterInsert = $this->bankReceiptVoucherService->findUpdateOrCreate(BankReceiptVoucher::class, ['id' => request('id')], $voucherMasterData);
 
+            $voucherDetailData = $this->bankReceiptVoucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
+            $this->bankReceiptVoucherService->saveVoucherDetailData($voucherDetailData);
+
+            // $debitAccountData = $this->bankReceiptVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData, config('contants.BRV'), config('contants.Brv_bank_transaction'));
+            // $creditAccountData = $this->bankReceiptVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData, config('contants.BRV'), config('contants.Brv_party_transaction'));
+            // AccountLedger::insert($debitAccountData);
+            // AccountLedger::insert($creditAccountData);
+
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('brv/create')->with('error', $e->getMessage());
+        // }
+        return redirect('brv/list')->with('message', config('constants.update'));
     }
 
     public function view($id)

@@ -2,9 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\VoucherDetail;
-use App\Models\VoucherMaster;
+use Carbon\Carbon;
 use App\Models\CoaDetailAccount;
+use App\Models\JournalVoucherDetail;
+use App\Models\JournalVoucherMaster;
 use Illuminate\Support\Facades\Auth;
 
 class JournalVoucherService
@@ -22,7 +23,7 @@ class JournalVoucherService
      * */
     public function getVoucherMasterById($id)
     {
-        return VoucherMaster::select(
+        return JournalVoucherMaster::select(
             'voucher_masters.id',
             'voucher_masters.date',
             'voucher_masters.vr_type',
@@ -49,7 +50,7 @@ class JournalVoucherService
     * */
     public function getVoucherDetailById($id)
     {
-        return VoucherDetail::select(
+        return JournalVoucherMaster::select(
             'voucher_details.account_id',
             'voucher_details.description',
             'voucher_details.debit',
@@ -66,19 +67,15 @@ class JournalVoucherService
      * */
     public function searchVoucher($request)
     {
-        $query = VoucherMaster::groupBy(
-            'voucher_masters.id',
-            'voucher_masters.date',
-            'voucher_masters.total_amount',
-            'voucher_masters.created_at',
-            'voucher_masters.updated_at',
-        );
-        if (!empty($request['param'])) {
-            $query = $query->where('voucher_masters.id', "=", $request['param']);
+        $q = JournalVoucherMaster::query();
+        if (!empty($request['date'])) {
+            $formattedDate = date('Y-m-d', strtotime($request['date']));
+            $q->where('date', $formattedDate);
         }
-        $vouchers = $query->orderBy('id', 'DESC')->get();
 
-        return $this->commonService->paginate($vouchers, config('constants.PER_PAGE'));
+        $vouchers = $q->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
+
+        return $vouchers;
     }
 
 
@@ -90,10 +87,13 @@ class JournalVoucherService
      * */
     public function prepareVoucherMasterData($request)
     {
+        $session = $this->commonService->getSession();
         return [
-            'date' => $request['date'],
-            'vr_type' => config('constants.vouchers.JV'),
-            'total_amount' => $request['total_amount'],
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'debit_amount' => $request['debit_amount'],
+            'credit_amount' => $request['credit_amount'],
             'created_by' => Auth::user()->id,
             'updated_by' => Auth::user()->id
         ];
@@ -135,12 +135,11 @@ class JournalVoucherService
     public function prepareVoucherDetailData($request, $voucherParentId)
     {
         return [
-            'account_id' => $request['account_id'],
+            'debit_account' => $request['debit_account'],
+            'credit_account' => $request['credit_account'],
             'description' => $request['description'],
             'debit' => $request['debit'],
             'credit' => $request['credit'],
-            'created_by' => Auth::user()->id,
-            'updated_by' => Auth::user()->id,
             'voucher_master_id' => $voucherParentId,
         ];
     }
@@ -151,16 +150,15 @@ class JournalVoucherService
      * */
     public function saveVoucher($data)
     {
-        foreach ($data['account_id'] as $key => $value) {
-            if (!empty($data['account_id'][$key])) {
-                $rec['account_id'] = $data['account_id'][$key];
+        foreach ($data['debit_account'] as $key => $value) {
+            if (!empty($data['debit_account'][$key])) {
+                $rec['debit_account'] = $data['debit_account'][$key];
+                $rec['credit_account'] = $data['credit_account'][$key];
                 $rec['description'] = $data['description'][$key];
                 $rec['debit'] = $data['debit'][$key];
                 $rec['credit'] = $data['credit'][$key];
-                $rec['created_by'] = Auth::user()->id;
-                $rec['updated_by'] = Auth::user()->id;
                 $rec['voucher_master_id'] = $data['voucher_master_id'];
-                VoucherDetail::create($rec);
+                JournalVoucherDetail::create($rec);
             }
         }
     }

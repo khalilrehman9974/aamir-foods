@@ -140,7 +140,8 @@ class PurchaseController extends Controller
         //     DB::beginTransaction();
         $request = request()->all();
         PurchaseDetail::where('purchase_master_id', $request['id'])->delete();
-        StockLedger::where('invoice_id', $request['id'])->delete();
+        $documentNo = 'P/I' . '-' . $request['id'];
+        StockLedger::where('document_no', $documentNo)->where('invoice_id', $request['id'])->delete();
 
         // AccountLedger::where('invoice_id', $request['id'])->delete();
 

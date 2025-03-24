@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\BankReceiptVoucher;
+use App\Models\BRVDetails;
+use Carbon\Carbon;
 use App\Models\VoucherDetail;
 use App\Models\VoucherMaster;
 use App\Models\CoaDetailAccount;
@@ -14,6 +17,19 @@ class BankReceiptVoucherService
     public function __construct(CommonService $commonService)
     {
         $this->commonService = $commonService;
+    }
+
+
+    public function findUpdateOrCreate($model, array $where, array $data)
+    {
+        $object = $model::firstOrNew($where);
+
+        foreach ($data as $property => $value){
+            $object->{$property} = $value;
+        }
+        $object->save();
+
+        return $object;
     }
 
     /*
@@ -38,6 +54,7 @@ class BankReceiptVoucherService
     {
         $result = [
             'accounts' => CoaDetailAccount::pluck('account_name', 'id'),
+            'bankAccounts' => CoaDetailAccount::where('main_head', 1)->where('control_head', 1)->where('sub_head',2)->where('sub_sub_head', 1)->pluck('account_name', 'id'),
         ];
 
         return $result;
@@ -66,19 +83,16 @@ class BankReceiptVoucherService
      * */
     public function searchVoucher($request)
     {
-        $query = VoucherMaster::groupBy(
-            'voucher_masters.id',
-            'voucher_masters.date',
-            'voucher_masters.total_amount',
-            'voucher_masters.created_at',
-            'voucher_masters.updated_at',
-        );
-        if (!empty($request['param'])) {
-            $query = $query->where('voucher_masters.id', "=", $request['param']);
-        }
-        $vouchers = $query->orderBy('id', 'DESC')->get();
 
-        return $this->commonService->paginate($vouchers, config('constants.PER_PAGE'));
+        $q = BankReceiptVoucher::query();
+        if (!empty($request['date'])) {
+            $formattedDate = date('Y-m-d', strtotime($request['date']));
+            $q->where('date', $formattedDate);
+        }
+
+        $vouchers = $q->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
+
+        return $vouchers;
     }
 
 
@@ -90,9 +104,11 @@ class BankReceiptVoucherService
      * */
     public function prepareVoucherMasterData($request)
     {
+        $session = $this->commonService->getSession();
         return [
-            'date' => $request['date'],
-            'vr_type' => config('constants.vouchers.BRV'),
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
             'total_amount' => $request['total_amount'],
             'created_by' => Auth::user()->id,
             'updated_by' => Auth::user()->id
@@ -104,17 +120,30 @@ class BankReceiptVoucherService
      * @param: $request
      * @return Array
      * */
-    public function prepareVoucherDetailDebitData($request, $voucherParentId)
+    public function prepareVoucherDetailData($request, $voucherParentId)
     {
         return [
-            'account_id' => $request['bank_id'],
+            'account_id' => $request['account_id'],
+            'bank_id' => $request['bank_id'],
             'description' => $request['description'],
-            'debit' => $request['amount'],
-            'credit' => 0,
-            'created_by' => Auth::user()->id,
-            'updated_by' => Auth::user()->id,
+            'amount' => $request['amount'],
             'voucher_master_id' => $voucherParentId,
         ];
+    }
+
+
+    public function saveVoucherDetailData($data)
+    {
+        foreach ($data['account_id'] as $key => $value) {
+            if (!empty($data['account_id'][$key])) {
+                $rec['account_id'] = $data['account_id'][$key];
+                $rec['bank_id'] = $data['bank_id'][$key];
+                $rec['description'] = $data['description'][$key];
+                $rec['amount'] = $data['amount'][$key];
+                $rec['voucher_master_id'] = $data['voucher_master_id'];
+                BRVDetails::create($rec);
+            }
+        }
     }
 
     /*

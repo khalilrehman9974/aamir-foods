@@ -1,5 +1,5 @@
 $(document).on('click', 'body *', function() {
-    $('.debit').on("focusout", function() {
+    $('.debit').on("input", function() {
         doAmountTotal();
     });
 
@@ -9,7 +9,7 @@ $(document).on('click', 'body *', function() {
 
     function doAmountTotal() {
         $('#total-amount').text("");
-        console.log('in do amount total');
+
         var totalAmount = 0;
         $(".debit").each(function() {
             if (!isNaN(this.value) && this.value.length != 0) {
@@ -21,7 +21,7 @@ $(document).on('click', 'body *', function() {
 });
 
 $(document).on('click', 'body *', function() {
-    $('.credit').on("focusout", function() {
+    $('.credit').on("input", function() {
         doAmountTotal();
     });
 
@@ -31,7 +31,6 @@ $(document).on('click', 'body *', function() {
 
     function doAmountTotal() {
         $('#total-amount').text("");
-        console.log('in do amount total');
         var totalAmount = 0;
         $(".credit").each(function() {
             if (!isNaN(this.value) && this.value.length != 0) {

@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\BPVDetails;
 use Illuminate\Http\Request;
 use App\Models\AccountLedger;
-use App\Models\VoucherDetail;
-use App\Models\VoucherMaster;
 use App\Services\CommonService;
 use App\Models\CoaDetailAccount;
-use App\Models\VoucherDetailTemp;
-use App\Models\VoucherMasterTemp;
+use App\Models\BankPaymentVoucher;
 use Illuminate\Support\Facades\DB;
-use App\Http\Requests\VoucherRequest;
 use App\Services\AccountLedgerService;
 use App\Services\BankPaymentVoucherService;
 
@@ -53,12 +51,11 @@ class BPVoucherController extends Controller
      */
     public function create()
     {
-        $bpvTemp = VoucherMasterTemp::first();
-        $bpvDetailsTemp = VoucherDetailTemp::get();
         $pageTitle = 'Create BPV';
-        $maxid = VoucherMaster::where('vr_type', 'BPV')->max('id') + 1;
+        $maxid = BankPaymentVoucher::max('id') + 1;
         $dropDownData = $this->bankPaymentVoucherService->DropDownData();
-        return view('vouchers.bpv.create', compact('pageTitle','bpvTemp','bpvDetailsTemp', 'dropDownData', 'maxid'));
+
+        return view('vouchers.bpv.create', compact('pageTitle', 'dropDownData', 'maxid'));
     }
 
     /**
@@ -70,42 +67,26 @@ class BPVoucherController extends Controller
     public function store(Request $request)
     {
         // dd($request);
-        $session = $this->commonService->getSession();
         $request = $request->except('_token', 'id');
         // DB::beginTransaction();
         // try {
-        if ($request["save_type"] == config('constants.in_active')) {
-            $bpvTemp = $this->bankPaymentVoucherService->prepareVoucherMasterData($request);
-            $tblbpvInsert = $this->bankPaymentVoucherService->findUpdateOrCreate(VoucherMasterTemp::class, ['id' => ''], $bpvTemp);
-            $bpvTempDetailDebitData = $this->bankPaymentVoucherService->prepareVoucherDetailTempData($request, $tblbpvInsert->id);
-            $this->bankPaymentVoucherService->saveVoucherTempData($bpvTempDetailDebitData);
-
-        }
-        else {
 
             //Insert data into Vouchers tables.
-            $request['business_id'] = $session->business_id;
-            $request['f_year_id'] = $session->financial_year;
             $voucherMasterData = $this->bankPaymentVoucherService->prepareVoucherMasterData($request);
-            $voucherMasterInsert = $this->bankPaymentVoucherService->findUpdateOrCreate(VoucherMaster::class, ['id' => ''], $voucherMasterData);
-            // $voucherCreditData = $this->bankPaymentVoucherService->prepareVoucherCreditData($request);
-            $voucherDetailCreditData = $this->bankPaymentVoucherService->prepareVoucherDetailCreditData($request, $voucherMasterInsert->id);
-            $voucherDetailDebitData = $this->bankPaymentVoucherService->prepareVoucherDetailDebitData($request, $voucherMasterInsert->id);
-            $this->bankPaymentVoucherService->saveVoucherCreditData($voucherDetailCreditData);
-            $this->bankPaymentVoucherService->saveVoucherDebitData($voucherDetailDebitData);
+            $voucherMasterInsert = $this->bankPaymentVoucherService->findUpdateOrCreate(BankPaymentVoucher::class, ['id' => ''], $voucherMasterData);
+
+            $voucherDetailData = $this->bankPaymentVoucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
+            $this->bankPaymentVoucherService->saveVoucherDetailData($voucherDetailData);
 
             //Insert data into accounts ledger table.
-            $debitAccountData = $this->bankPaymentVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData);
-            $creditAccountData = $this->bankPaymentVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData);
-            $this->bankPaymentVoucherService->saveCreditData($creditAccountData);
-            $this->bankPaymentVoucherService->saveDebitData($debitAccountData);
+            // $debitAccountData = $this->bankPaymentVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData);
+            // $creditAccountData = $this->bankPaymentVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData);
+            // $this->bankPaymentVoucherService->saveCreditData($creditAccountData);
+            // $this->bankPaymentVoucherService->saveDebitData($debitAccountData);
 
             // AccountLedger::insert($debitAccountData);
             // AccountLedger::insert($creditAccountData);
 
-            VoucherMasterTemp::where('id', request()->id)->delete();
-            VoucherDetailTemp::where('voucher_master_id', request()->id)->delete();
-        }
 
         // DB::commit();
         // }
@@ -122,7 +103,7 @@ class BPVoucherController extends Controller
      * @param  \App\Models\VoucherMaster  $voucherMaster
      * @return \Illuminate\Http\Response
      */
-    public function show(VoucherMaster $voucherMaster)
+    public function show(Request $voucherMaster)
     {
         //
     }
@@ -137,41 +118,50 @@ class BPVoucherController extends Controller
     {
         $pageTitle = 'Edit BPV';
         $currentid = $id;
-        $bpv = VoucherMaster::with('voucherDetails')->where('id',$id)->first();
-        $voucherDetails = VoucherDetail::where('voucher_master_id', $id )->where('debit', '>', 0)->get();
-        $vouchers = $bpv->voucherDetails;
-        dd($bpv);
-        $bankId = VoucherDetail::where('credit', '>', 0)->first('account_id');
+        $bpv = BankPaymentVoucher::find($id);
+        $date = Carbon::parse($bpv->date)->format('d-m-Y');
+        $bpvDetails = BPVDetails::where('voucher_master_id', $id )->get();
         $dropDownData = $this->bankPaymentVoucherService->DropDownData();
         if (empty($voucher)) {
             $message = config('constants.wrong');
         }
 
-        return view('vouchers.bpv.create', compact('bpv','vouchers','bankId','dropDownData' ,'pageTitle','voucherDetails', 'currentid'));
+        return view('vouchers.bpv.edit', compact('bpv','date','dropDownData' ,'pageTitle','bpvDetails', 'currentid'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\VoucherMaster  $voucherMaster
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(VoucherMaster $voucherMaster)
+    public function update(Request $request)
     {
-        DB::beginTransaction();
-        try {
-            $deleteMaster = VoucherMaster::where('id', request()->id)->delete();
-            $deleteDetail = VoucherDetail::where('voucher_master_id', request()->id)->delete();
-            DB::commit();
-            // && $deleteStock && $accountEntryDetail
-            if ($deleteMaster && $deleteDetail) {
-                return $this->commonService->deleteResource(VoucherMaster::class, VoucherDetail::class);
-            }
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('bpv/list')->with('error', $e->getMessage());
-        }
+        // dd($request);
+        // DB::beginTransaction();
+        // try {
+
+            //Insert data into Vouchers tables.
+            BPVDetails::where('voucher_master_id', $request['id'])->delete();
+            $voucherMasterData = $this->bankPaymentVoucherService->prepareVoucherMasterData($request);
+            $voucherMasterInsert = $this->bankPaymentVoucherService->findUpdateOrCreate(BankPaymentVoucher::class, ['id' => request('id')], $voucherMasterData);
+
+            $voucherDetailData = $this->bankPaymentVoucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
+            $this->bankPaymentVoucherService->saveVoucherDetailData($voucherDetailData);
+
+            //Insert data into accounts ledger table.
+            // $debitAccountData = $this->bankPaymentVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData);
+            // $creditAccountData = $this->bankPaymentVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData);
+            // $this->bankPaymentVoucherService->saveCreditData($creditAccountData);
+            // $this->bankPaymentVoucherService->saveDebitData($debitAccountData);
+
+            // AccountLedger::insert($debitAccountData);
+            // AccountLedger::insert($creditAccountData);
+
+
+        // DB::commit();
+        // }
+        // catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('bpv/create')->with('error', $e->getMessage());
+        // }
+        return redirect('bpv/list')->with('message', config('constants.update'));
     }
+
 
     public function view($id)
     {

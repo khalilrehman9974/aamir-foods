@@ -197,9 +197,9 @@ $isSelected = old('area') == $key || $sale_Order->pluck('area')->contains($key);
 
 
                                                                         <select id="delivered_to" name="delivered_to"
-                                                                            class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered_to"
-                                                                            >
-                                                                            <option value="">Same As Party</option>
+                                                                            class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered_to">
+                                                                            <option value="">Same As Party
+                                                                            </option>
                                                                             @foreach ($deliveredToParties as $key => $value)
                                                                                 <option value="{{ $key }}"
                                                                                     @php
@@ -277,6 +277,30 @@ $isSelected = old('delivered_to') == $key || $sale_Order->pluck('delivered_to')-
                                                                             name="carriage">
                                                                     </div>
                                                                 </div>
+
+                                                                <div class="row">
+                                                                    <div class="col-md-6 mt-2">
+                                                                        <label for="status">
+                                                                            Status</label>
+
+                                                                        <select id="status" name="status"
+                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mb-3 select2 custom-select"
+                                                                            required>
+
+
+                                                                            <option value="Pending"
+                                                                                {{ old('status', $note->status ?? '') == 'Pending' ? 'selected' : '' }}>
+                                                                                Pending
+                                                                            </option>
+                                                                            <option value="Approved"
+                                                                                {{ old('status', $note->status ?? '') == 'Approved' ? 'selected' : '' }}>
+                                                                                Approved
+                                                                            </option>
+
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
                                                                 <br>
 
                                                                 <div class="tab-content" id="pills-tabContent">
@@ -361,8 +385,7 @@ $isSelected = old('delivered_to') == $key || $sale_Order->pluck('delivered_to')-
                                                                                                 </ul>
                                                                                             </td>
                                                                                             <td>
-                                                                                                <input
-                                                                                                    type="text"
+                                                                                                <input type="text"
                                                                                                     name="row_id[]"
                                                                                                     class="row_id"
                                                                                                     value="{{ $index }}"

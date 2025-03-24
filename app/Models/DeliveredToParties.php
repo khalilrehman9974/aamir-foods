@@ -21,7 +21,7 @@ class DeliveredToParties extends Model
 
     public function Party()
     {
-        return $this->hasOne(CoaDetailAccount::class,'account_code', 'detail_account_id');
+        return $this->hasOne(CoaDetailAccount::class,'id', 'detail_account_id');
     }
 
     public function SaleMan()

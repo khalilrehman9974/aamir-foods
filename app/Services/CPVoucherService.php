@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use App\Models\VoucherDetail;
 use App\Models\VoucherMaster;
 use App\Models\CoaDetailAccount;
+use App\Models\CashPaymentVoucher;
+use App\Models\CPVDetails;
 use Illuminate\Support\Facades\Auth;
 
 class CPVoucherService
@@ -34,10 +37,24 @@ class CPVoucherService
             ->first();
     }
 
+
+    public function findUpdateOrCreate($model, array $where, array $data)
+    {
+        $object = $model::firstOrNew($where);
+
+        foreach ($data as $property => $value){
+            $object->{$property} = $value;
+        }
+        $object->save();
+
+        return $object;
+    }
+
     public function DropDownData()
     {
         $result = [
             'accounts' => CoaDetailAccount::pluck('account_name', 'id'),
+            'cashAccount' => CoaDetailAccount::where('main_head', 1)->where('control_head', 1)->where('sub_head',2)->where('sub_sub_head', 2)->pluck('account_name', 'id'),
         ];
 
         return $result;
@@ -66,19 +83,15 @@ class CPVoucherService
      * */
     public function searchVoucher($request)
     {
-        $query = VoucherMaster::groupBy(
-            'voucher_masters.id',
-            'voucher_masters.date',
-            'voucher_masters.total_amount',
-            'voucher_masters.created_at',
-            'voucher_masters.updated_at',
-        );
-        if (!empty($request['param'])) {
-            $query = $query->where('voucher_masters.id', "=", $request['param']);
+        $q = CashPaymentVoucher::query();
+        if (!empty($request['date'])) {
+            $formattedDate = date('Y-m-d', strtotime($request['date']));
+            $q->where('date', $formattedDate);
         }
-        $vouchers = $query->orderBy('id', 'DESC')->get();
 
-        return $this->commonService->paginate($vouchers, config('constants.PER_PAGE'));
+        $vouchers = $q->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
+
+        return $vouchers;
     }
 
 
@@ -90,9 +103,11 @@ class CPVoucherService
      * */
     public function prepareVoucherMasterData($request)
     {
+        $session = $this->commonService->getSession();
         return [
-            'date' => $request['date'],
-            'vr_type' => config('constants.vouchers.CPV'),
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
             'total_amount' => $request['total_amount'],
             'created_by' => Auth::user()->id,
             'updated_by' => Auth::user()->id
@@ -104,18 +119,31 @@ class CPVoucherService
      * @param: $request
      * @return Array
      * */
-    public function prepareVoucherDetailDebitData($request, $voucherParentId)
+    public function prepareVoucherDetailData($request, $voucherParentId)
     {
         return [
             'account_id' => $request['account_id'],
+            'cash_account_id' => $request['cash_account_id'],
             'description' => $request['description'],
-            'debit' => $request['amount'],
-            'credit' => config('constants.ZERO'),
-            'created_by' => Auth::user()->id,
-            'updated_by' => Auth::user()->id,
+            'amount' => $request['amount'],
             'voucher_master_id' => $voucherParentId,
         ];
     }
+
+    public function saveVoucherDetailData($data)
+    {
+        foreach ($data['account_id'] as $key => $value) {
+            if (!empty($data['account_id'][$key])) {
+                $rec['account_id'] = $data['account_id'][$key];
+                $rec['cash_account_id'] = $data['cash_account_id'][$key];
+                $rec['description'] = $data['description'][$key];
+                $rec['amount'] = $data['amount'][$key];
+                $rec['voucher_master_id'] = $data['voucher_master_id'];
+                CPVDetails::create($rec);
+            }
+        }
+    }
+
 
     /*
      * Prepare Purchase detail data.

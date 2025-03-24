@@ -30,16 +30,16 @@ class PurchaseReturnController extends Controller
 
 
 
-    public function __construct(CommonService $commonService,
-    PurchaseReturnService $purchaseReturnService,
-    StockLedgerService $stockLedgerService,
-    AccountLedgerService $accountLedgerService)
-    {
+    public function __construct(
+        CommonService $commonService,
+        PurchaseReturnService $purchaseReturnService,
+        StockLedgerService $stockLedgerService,
+        AccountLedgerService $accountLedgerService
+    ) {
         $this->commonService = $commonService;
         $this->purchaseReturnService = $purchaseReturnService;
         $this->stockLedgerService = $stockLedgerService;
         $this->accountLedgerService = $accountLedgerService;
-
     }
 
     /*
@@ -53,7 +53,7 @@ class PurchaseReturnController extends Controller
         $param = request()->param;
         $dropDownData = $this->purchaseReturnService->DropDownData();
 
-        return view('purchase-return.index', compact('purchaseReturns','dropDownData','param', 'request','pageTitle'));
+        return view('purchase-return.index', compact('purchaseReturns', 'dropDownData', 'param', 'request', 'pageTitle'));
     }
 
 
@@ -74,10 +74,10 @@ class PurchaseReturnController extends Controller
         $maxId = PurchaseReturnMaster::max('id') + 1;
         $parties = CoaDetailAccount::where('id', $purchaseMaster->party_id)->pluck('account_name', 'id');
         $transporters = Transporter::where('id', $purchaseMaster->transporter_id)->pluck('name', 'id');
-        $purchaseDetails = PurchaseDetail::where('purchase_master_id',$purchaseMaster->id)->get();
+        $purchaseDetails = PurchaseDetail::where('purchase_master_id', $purchaseMaster->id)->get();
         $dropDownData = $this->purchaseReturnService->DropDownData();
         // $purchaseReturnDetails = PurchaseReturnDetail::where('purchase_return_master_id')->get();
-        return view('purchase-return.create', compact('pageTitle','purchaseDetails','transporters','parties','maxId','purchaseMaster','dropDownData'));
+        return view('purchase-return.create', compact('pageTitle', 'purchaseDetails', 'transporters', 'parties', 'maxId', 'purchaseMaster', 'dropDownData'));
     }
 
     /*
@@ -91,22 +91,22 @@ class PurchaseReturnController extends Controller
         // $request = $request->except('_token', 'id');
         // DB::beginTransaction();
         // try {
-            //Insert data into purchase tables.
-            $purchaseReturnMasterData = $this->purchaseReturnService->preparePurchaseReturnMasterData($request);
-            $purchaseReturnMasterInsert = $this->commonService->findUpdateOrCreate(PurchaseReturnMaster::class, ['id' => ''], $purchaseReturnMasterData);
-            $purchasereturnDetailData = $this->purchaseReturnService->preparePurchaseReturnDetailData($request, $purchaseReturnMasterInsert->id);
-            $this->purchaseReturnService->savePurchaseReturn($purchasereturnDetailData);
+        //Insert data into purchase tables.
+        $purchaseReturnMasterData = $this->purchaseReturnService->preparePurchaseReturnMasterData($request);
+        $purchaseReturnMasterInsert = $this->commonService->findUpdateOrCreate(PurchaseReturnMaster::class, ['id' => ''], $purchaseReturnMasterData);
+        $purchasereturnDetailData = $this->purchaseReturnService->preparePurchaseReturnDetailData($request, $purchaseReturnMasterInsert->id);
+        $this->purchaseReturnService->savePurchaseReturn($purchasereturnDetailData);
 
 
-            //Insert data into stock table.
-            $stockLedgers = $this->purchaseReturnService->prepareStockLedgerData($request, $purchaseReturnMasterInsert->id);
-            $this->purchaseReturnService->saveStockLedger($stockLedgers);
-            // $this->stockLedgerService->prepareAndSaveData($request, $purchaseReturnMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'));
-            // //Insert data into accounts ledger table.
-            // $debitAccountData = $this->purchaseReturnService->prepareAccountCreditData($request, $purchaseReturnMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'), config('contants.PURCHASE_RETURN_DESCRIPTION'));
-            // $creditAccountData = $this->purchaseReturnService->prepareAccountDebitData($request, $purchaseReturnMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'), config('contants.PURCHASE_RETURN_DESCRIPTION'));
-            // AccountLedger::insert($debitAccountData);
-            // AccountLedger::insert($creditAccountData);
+        //Insert data into stock table.
+        $stockLedgers = $this->purchaseReturnService->prepareStockLedgerData($request, $purchaseReturnMasterInsert->id);
+        $this->purchaseReturnService->saveStockLedger($stockLedgers);
+        // $this->stockLedgerService->prepareAndSaveData($request, $purchaseReturnMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'));
+        // //Insert data into accounts ledger table.
+        // $debitAccountData = $this->purchaseReturnService->prepareAccountCreditData($request, $purchaseReturnMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'), config('contants.PURCHASE_RETURN_DESCRIPTION'));
+        // $creditAccountData = $this->purchaseReturnService->prepareAccountDebitData($request, $purchaseReturnMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'), config('contants.PURCHASE_RETURN_DESCRIPTION'));
+        // AccountLedger::insert($debitAccountData);
+        // AccountLedger::insert($creditAccountData);
 
         //     DB::commit();
         // } catch (\Exception $e) {
@@ -136,7 +136,7 @@ class PurchaseReturnController extends Controller
             $message = config('constants.wrong');
         }
 
-        return view('purchase-return.edit', compact('purchaseReturn','transporters','parties','date','currentId','dropDownData', 'pageTitle','purchaseReturnDetails'));
+        return view('purchase-return.edit', compact('purchaseReturn', 'transporters', 'parties', 'date', 'currentId', 'dropDownData', 'pageTitle', 'purchaseReturnDetails'));
     }
 
     /*
@@ -148,25 +148,25 @@ class PurchaseReturnController extends Controller
 
         // DB::beginTransaction();
         // try {
-            $request = request()->all();
-            PurchaseReturnDetail::where('purchase_return_master_id', $request['id'])->delete();
-            StockLedger::where('invoice_id', $request['id'])->delete();
+        $request = request()->all();
+        PurchaseReturnDetail::where('purchase_return_master_id', $request['id'])->delete();
+        $documentNo = 'P/R/I' . '-' . $request['id'];
+        StockLedger::where('document_no', $documentNo)->where('invoice_id', $request['id'])->delete();
 
+        //Save data into relevant tables.
 
-            //Save data into relevant tables.
+        $purchaseReturnMasterData = $this->purchaseReturnService->preparePurchaseReturnMasterData($request);
+        $purchaseReturnMasterInsert = $this->commonService->findUpdateOrCreate(PurchaseReturnMaster::class, ['id' => request('id')], $purchaseReturnMasterData);
+        $purchasereturnDetailData = $this->purchaseReturnService->preparePurchaseReturnDetailData($request, $purchaseReturnMasterInsert->id);
+        $this->purchaseReturnService->savePurchaseReturn($purchasereturnDetailData);
 
-            $purchaseReturnMasterData = $this->purchaseReturnService->preparePurchaseReturnMasterData($request);
-            $purchaseReturnMasterInsert = $this->commonService->findUpdateOrCreate(PurchaseReturnMaster::class, ['id' => request('id')], $purchaseReturnMasterData);
-            $purchasereturnDetailData = $this->purchaseReturnService->preparePurchaseReturnDetailData($request, $purchaseReturnMasterInsert->id);
-            $this->purchaseReturnService->savePurchaseReturn($purchasereturnDetailData);
-
-            $stockLedgers = $this->purchaseReturnService->prepareStockLedgerData($request, $purchaseReturnMasterInsert->id);
-            $this->purchaseReturnService->saveStockLedger($stockLedgers);
-            // $this->stockLedgerService->prepareAndSaveData($request, $purchaseMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'));
-            // $debitAccountData = $this->purchaseReturnService->prepareAccountCreditData($request, $purchaseMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'), config('contants.PURCHASE_RETURN_DESCRIPTION'));
-            // $creditAccountData = $this->purchaseReturnService->prepareAccountDebitData($request, $purchaseMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'), config('contants.PURCHASE_RETURN_DESCRIPTION'));
-            // AccountLedger::insert($debitAccountData);
-            // AccountLedger::insert($creditAccountData);
+        $stockLedgers = $this->purchaseReturnService->prepareStockLedgerData($request, $purchaseReturnMasterInsert->id);
+        $this->purchaseReturnService->saveStockLedger($stockLedgers);
+        // $this->stockLedgerService->prepareAndSaveData($request, $purchaseMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'));
+        // $debitAccountData = $this->purchaseReturnService->prepareAccountCreditData($request, $purchaseMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'), config('contants.PURCHASE_RETURN_DESCRIPTION'));
+        // $creditAccountData = $this->purchaseReturnService->prepareAccountDebitData($request, $purchaseMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'), config('contants.PURCHASE_RETURN_DESCRIPTION'));
+        // AccountLedger::insert($debitAccountData);
+        // AccountLedger::insert($creditAccountData);
 
         //     DB::commit();
         // } catch (\Exception $e) {
@@ -186,11 +186,11 @@ class PurchaseReturnController extends Controller
         $purchaseReturnDetails = PurchaseReturnDetail::where('purchase_return_master_id', $purchasereturnMaster->id)->get();
         // dd($purchasereturnMaster);
         $productsArray = $purchaseReturnDetails->pluck('product_id')->toArray();
-        $products = CoaInventoryDetailAccount::whereIn('id',$productsArray)->pluck('name','id');
-        $user = User::where('id',$purchasereturnMaster->created_by)->value('name');
-        $transporters = Transporter::where('id',$purchasereturnMaster->transporter_id)->value('name');
+        $products = CoaInventoryDetailAccount::whereIn('id', $productsArray)->pluck('name', 'id');
+        $user = User::where('id', $purchasereturnMaster->created_by)->value('name');
+        $transporters = Transporter::where('id', $purchasereturnMaster->transporter_id)->value('name');
 
-        return view('purchase-return.print', compact('title','transporters','products','user','purchasereturnMaster','date','purchaseReturnDetails','party'));
+        return view('purchase-return.print', compact('title', 'transporters', 'products', 'user', 'purchasereturnMaster', 'date', 'purchaseReturnDetails', 'party'));
     }
 
 
@@ -206,10 +206,9 @@ class PurchaseReturnController extends Controller
 
             DB::commit();
             // && $deleteStock && $accountEntryDetail
-            if ($deleteMaster && $deleteDetail ) {
+            if ($deleteMaster && $deleteDetail) {
                 return $this->commonService->deleteResource(PurchaseReturnMaster::class, PurchaseReturnDetail::class);
             }
-
         } catch (\Exception $e) {
             DB::rollback();
             return redirect('purchase-return/list')->with('error', $e->getMessage());
@@ -230,5 +229,4 @@ class PurchaseReturnController extends Controller
 
         return view('purchases.view', compact('PurchaseReturnMaster', 'PurchaseReturnDetail'));
     }
-
 }

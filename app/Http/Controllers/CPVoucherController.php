@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\CPVDetails;
 use Illuminate\Http\Request;
 use App\Models\AccountLedger;
-use App\Models\VoucherDetail;
-use App\Models\VoucherMaster;
 use App\Services\CommonService;
+use App\Models\CashPaymentVoucher;
 use App\Services\CPVoucherService;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\VoucherRequest;
@@ -32,8 +33,9 @@ class CPVoucherController extends Controller
         $pageTitle = 'List Of CP Vouchers';
         $request = request()->all();
         $vouchers = $this->cpVoucherService->searchVoucher($request);
+        $param = request()->param;
 
-        return view('vouchers.cpv.index', compact('vouchers', 'pageTitle'));
+        return view('vouchers.cpv.index', compact('vouchers','param', 'pageTitle'));
     }
 
     /**
@@ -44,7 +46,7 @@ class CPVoucherController extends Controller
     public function create()
     {
         $pageTitle = 'Create CPV';
-        $maxid = VoucherMaster::where('vr_type', 'CPV')->max('id') + 1;
+        $maxid = CashPaymentVoucher::max('id') + 1;
         $dropDownData = $this->cpVoucherService->DropDownData();
         return view('vouchers.cpv.create', compact( 'pageTitle','maxid', 'dropDownData'));
     }
@@ -55,34 +57,33 @@ class CPVoucherController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(VoucherRequest $request)
+    public function store(Request $request)
     {
-        $data['vr_type_id'] = config('constants.CPV');
-        $session = $this->commonService->getSession();
-        $request = $request->except('_token', 'id');
-        DB::beginTransaction();
-        try {
+
+        // $request = $request->except('_token', 'id');
+        // DB::beginTransaction();
+        // try {
             //Insert data into purchase tables.
-            $request['business_id'] = $session->business_id;
-            $request['f_year_id'] = $session->financial_year;
+
+            // CRVDetails::where('voucher_master_id', $request['id'])->delete();
+            //Insert data into purchase tables.
             $voucherMasterData = $this->cpVoucherService->prepareVoucherMasterData($request);
-            $voucherMasterInsert = $this->commonService->findUpdateOrCreate(VoucherMaster::class, ['id' => ''], $voucherMasterData);
-            $voucherDetailCreditData = $this->cpVoucherService->prepareVoucherDetailCreditData($request, $voucherMasterInsert->id);
-            $voucherDetailDebitData = $this->cpVoucherService->prepareVoucherDetailDebitData($request, $voucherMasterInsert->id);
-            $this->cpVoucherService->saveVoucherCreditData($voucherDetailCreditData);
-            $this->cpVoucherService->saveVoucherDebitData($voucherDetailDebitData);
+            $voucherMasterInsert = $this->cpVoucherService->findUpdateOrCreate(CashPaymentVoucher::class, ['id' => ''], $voucherMasterData);
+
+            $voucherDetailData = $this->cpVoucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
+            $this->cpVoucherService->saveVoucherDetailData($voucherDetailData);
 
             //Insert data into accounts ledger table.
-            $debitAccountData = $this->cpVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData, config('contants.CPV'), config('contants.Cpv_party_transaction'));
-            $creditAccountData = $this->cpVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData, config('contants.CPV'), config('contants.Cpv_cash_in_hand'));
-            AccountLedger::insert($debitAccountData);
-            AccountLedger::insert($creditAccountData);
+            // $debitAccountData = $this->cpVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData, config('contants.CPV'), config('contants.Cpv_party_transaction'));
+            // $creditAccountData = $this->cpVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData, config('contants.CPV'), config('contants.Cpv_cash_in_hand'));
+            // AccountLedger::insert($debitAccountData);
+            // AccountLedger::insert($creditAccountData);
 
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('cpv/create')->with('error', $e->getMessage());
-        }
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('cpv/create')->with('error', $e->getMessage());
+        // }
         return redirect('cpv/list')->with('message', config('constants.add'));
     }
 
@@ -92,7 +93,7 @@ class CPVoucherController extends Controller
      * @param  \App\Models\VoucherMaster  $voucherMaster
      * @return \Illuminate\Http\Response
      */
-    public function show(VoucherMaster $voucherMaster)
+    public function show(Request $voucherMaster)
     {
         //
     }
@@ -105,40 +106,47 @@ class CPVoucherController extends Controller
      */
     public function edit($id)
     {
+        $pageTitle = 'Update CPV';
         $currentid= $id;
-        $voucher = VoucherMaster::find($id);
-        $voucherDetails = VoucherDetail::where('voucher_master_id', $id)->get();
-        if (empty($voucher)) {
+        $cpv = CashPaymentVoucher::find($id);
+        $date = Carbon::parse($cpv->date)->format('d-m-Y');
+        $cpvDetails = CPVDetails::where('voucher_master_id', $id)->get();
+        $dropDownData = $this->cpVoucherService->DropDownData();
+        if (empty($cpv)) {
             $message = config('constants.wrong');
         }
 
-        return view('vouchers.cpv.create', compact('voucher', 'voucherDetails','currentid'));
+        return view('vouchers.cpv.edit', compact('pageTitle','dropDownData','date','cpv', 'cpvDetails','currentid'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\VoucherMaster  $voucherMaster
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy()
+    public function update(Request $request)
     {
-        DB::beginTransaction();
-        try {
-            $deleteMaster = VoucherMaster::where('id', request()->id)->delete();
-            $deleteDetail = VoucherDetail::where('voucher_master_id', request()->id)->delete();
 
-            DB::commit();
-            // && $deleteStock && $accountEntryDetail
-            if ($deleteMaster && $deleteDetail ) {
-                return $this->commonService->deleteResource(VoucherMaster::class, VoucherDetail::class);
-            }
+        // $request = $request->except('_token', 'id');
+        // DB::beginTransaction();
+        // try {
+            //Insert data into purchase tables.
 
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('cpv/list')->with('error', $e->getMessage());
-        }
+            CPVDetails::where('voucher_master_id', $request['id'])->delete();
+            //Insert data into purchase tables.
+            $voucherMasterData = $this->cpVoucherService->prepareVoucherMasterData($request);
+            $voucherMasterInsert = $this->cpVoucherService->findUpdateOrCreate(CashPaymentVoucher::class, ['id' => request('id')], $voucherMasterData);
 
+            $voucherDetailData = $this->cpVoucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
+            $this->cpVoucherService->saveVoucherDetailData($voucherDetailData);
+
+            //Insert data into accounts ledger table.
+            // $debitAccountData = $this->cpVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData, config('contants.CPV'), config('contants.Cpv_party_transaction'));
+            // $creditAccountData = $this->cpVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData, config('contants.CPV'), config('contants.Cpv_cash_in_hand'));
+            // AccountLedger::insert($debitAccountData);
+            // AccountLedger::insert($creditAccountData);
+
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('cpv/create')->with('error', $e->getMessage());
+        // }
+        return redirect('cpv/list')->with('message', config('constants.update'));
     }
 
     public function view($id)

@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\StoreIssueNoteDetail;
 use App\Services\StoreIssueNoteService;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\StockLedger;
 
 class StoreIssueNoteController extends Controller
 {
@@ -62,6 +63,8 @@ class StoreIssueNoteController extends Controller
             $this->storeIssueNoteService->saveIssueNote($issueNoteDetailData);
 
             // $this->storeIssueNoteService->saveIssueNote($request, $issueNoteMasterInsert->id);
+            $stockLedgers = $this->storeIssueNoteService->prepareStockLedgerData($request, $issueNoteMasterInsert->id);
+            $this->storeIssueNoteService->saveStockLedger($stockLedgers);
 
             DB::commit();
         // } catch (\Exception $e) {
@@ -100,18 +103,21 @@ class StoreIssueNoteController extends Controller
      */
     public function update(Request $request)
     {
+        // dd($request);
         // DB::beginTransaction();
         // try {
             $request = request()->all();
             StoreIssueNoteDetail::where('store_issue_notes_id', $request['id'])->delete();
+            $documentNo = 'S/I/N' . '-' . $request['id'];
+            StockLedger::where('document_no', $documentNo)->where('invoice_id', $request['id'])->delete();
 
             $issueNoteMasterData = $this->storeIssueNoteService->prepareIssueNoteMasterData($request);
             $issueNoteMasterInsert = $this->commonService->findUpdateOrCreate(StoreIssueNote::class, ['id' => request('id')], $issueNoteMasterData);
             $issueNoteDetailData = $this->storeIssueNoteService->prepareIssueNoteDetailData($request, $issueNoteMasterInsert->id);
             $this->storeIssueNoteService->saveIssueNote($issueNoteDetailData);
 
-            $stockLedgers = $this->storeIssueNoteService->prepareLedgerData($request, $issueNoteMasterInsert->id);
-            $this->storeIssueNoteService->saveLedger($stockLedgers);
+            $stockLedgers = $this->storeIssueNoteService->prepareStockLedgerData($request, $issueNoteMasterInsert->id);
+            $this->storeIssueNoteService->saveStockLedger($stockLedgers);
 
         //     DB::commit();
         // } catch (\Exception $e) {

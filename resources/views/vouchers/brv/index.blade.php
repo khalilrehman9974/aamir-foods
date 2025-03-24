@@ -30,14 +30,15 @@
                         <nav class="breadcrumb-style-one" aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                                <li class="breadcrumb-item"><a href="{{ route('brv.list') }}">List of Bank Receipt Vouchers</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('brv.list') }}">List of Bank Receipt
+                                        Vouchers</a></li>
                             </ol>
                         </nav>
                     </div>
                 </div>
                 <div class="col-lg-0 col-6 ">
-                    <a href="{{ route('brv.create') }}" class="btn btn-primary mt-2 mb-2 me-8"
-                        style="float : right; " style="">Create
+                    <a href="{{ route('brv.create') }}" class="btn btn-primary mt-2 mb-2 me-8" style="float : right; "
+                        style="">Create
                     </a>
 
                 </div>
@@ -46,23 +47,44 @@
         </div>
 
     </div>
-    <div class="row layout-top-spacing col-md-12">
-        <div id="tableCustomBasic" class="col-lg-12 col-12 layout-spacing">
-            <div class="col-lg-8 col-md-8 col-sm-9 filtered-list-search mx-auto">
-                <form class="form-inline my-2 my-lg-0 justify-content-center">
-                    <div class="w-100">
-                        <input type="text" class="w-100 form-control product-search br-30" id="input-search"
-                            placeholder="Search vouchers...">
-                        <button class="btn btn-primary" type="submit">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="feather feather-search">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                            </svg>
-                        </button>
-                    </div>
-                </form>
+    <div class="row layout-top-spacing">
+        <div id="tableCustomBasic" class="col-lg-12 col-12">
+            <div class="row">
+                <div class="col-lg-12" style="margin-right: 0px !important;">
+                    <form class="" method="get" action="{{ route('brv.list') }}">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="text" value="{{ $param }}" name="date" id="date"
+                                            class="form-control-sm search" id="input-search" placeholder="Date"
+                                            style="width: 100%;">
+                                        <span class="input-group-prepend">
+                                            {{-- <button type="submit" class="btn btn-primary" disabled><i
+                                                    class="fa fa-search"></i></button> --}}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <span class="input-group-prepend" style="margin-top: 0px; ">
+                                    <button type="submit" class="btn btn-primary" value="Search" id="search-button"
+                                        style="width: 100%;"><i class="fa fa-search"></i>&nbsp;
+                                        Search</button>
+
+                                </span>
+                            </div>
+                            <div class="col-md-2 ">
+                                <span class="input-group-prepend" style="margin-top: 0px;">
+                                    <a href="{{ route('brv.list') }}" class="btn btn-primary" value="Search"
+                                        id="clear-filter" style="margin-left: 10px">Clear
+                                        Filter</a>
+
+                                </span>
+                            </div>
+                    </form>
+                </div>
             </div>
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">
@@ -80,67 +102,57 @@
                             <thead>
                                 <tr>
                                     <th scope="col" style="width:5%"><b>ID </b> </th>
-                                    <th scope="col" style="width: 20%"> <b>Date </b> </th>
-                                    <th scope="col" style="width: 40%"> <b>Account Tiltle </b> </th>
-                                    <th scope="col" style="width: 20%"> <b>Total Amount </b> </th>
+                                    <th scope="col"> <b>Date </b> </th>
+                                    <th scope="col"> <b>Total Amount </b> </th>
                                     <th class="text-center" scope="col"></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @if($vouchers)
-                                @foreach ($vouchers as $brv)
-                                    <tr id="row_{{ $brv->id }}">
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $brv->id }}</h6>
+                                @if ($vouchers)
+                                    @foreach ($vouchers as $brv)
+                                        <tr id="row_{{ $brv->id }}">
+                                            <td>
+                                                <div class="media">
+                                                    <div class="media-body align-self-center">
+                                                        <h6 class="mb-0">{{ $brv->id }}</h6>
 
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $brv->date }}</h6>
-
+                                            </td>
+                                            <td>
+                                                <div class="media">
+                                                    <div class="media-body align-self-center">
+                                                        {{ \Carbon\Carbon::parse($brv->date)->format('d-m-Y') }}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $brv->account_title_id }}</h6>
+                                            </td>
+                                            <td>
+                                                <div class="media">
+                                                    <div class="media-body align-self-center">
+                                                        <h6 class="mb-0">{{ $brv->total_amount }}</h6>
 
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="media">
-                                                <div class="media-body align-self-center">
-                                                    <h6 class="mb-0">{{ $brv->total_amount }}</h6>
+                                            </td>
 
-                                                </div>
-                                            </div>
-                                        </td>
-
-                                        <td class="text-center">
-                                            <div class="action-btns">
-                                                @if ((!empty($permission->edit_access) && $permission->edit_access == 1) || Auth::user()->is_admin == 1)
-                                                    <a href="{{ route('brv.edit', ['id' => $brv->id]) }}"
-                                                        class="action-btn btn-edit bs-tooltip me-2"
-                                                        data-toggle="tooltip" data-placement="top" title="Edit">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                            height="24" viewBox="0 0 24 24" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            stroke-linecap="round" stroke-linejoin="round"
-                                                            class="feather feather-edit-2">
-                                                            <path
-                                                                d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z">
-                                                            </path>
-                                                        </svg>
-                                                    </a>
-                                                @endif
-                                                @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
+                                            <td class="text-center">
+                                                <div class="action-btns">
+                                                    @if ((!empty($permission->edit_access) && $permission->edit_access == 1) || Auth::user()->is_admin == 1)
+                                                        <a href="{{ route('brv.edit', ['id' => $brv->id]) }}"
+                                                            class="action-btn btn-edit bs-tooltip me-2"
+                                                            data-toggle="tooltip" data-placement="top" title="Edit">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                                height="24" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round"
+                                                                class="feather feather-edit-2">
+                                                                <path
+                                                                    d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z">
+                                                                </path>
+                                                            </svg>
+                                                        </a>
+                                                    @endif
+                                                    {{-- @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
                                                     <a href="{{ route('brv.delete') }}"
                                                         class="action-btn btn-delete bs-tooltip" data-toggle="tooltip"
                                                         data-placement="top" title="Delete">
@@ -161,14 +173,14 @@
                                                             </line>
                                                         </svg>
                                                     </a>
-                                                @endif
+                                                @endif --}}
 
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                 @else
-                                <h4>No data found</h4>
+                                    <h4>No data found</h4>
                                 @endif
                             </tbody>
                         </table>
@@ -184,4 +196,3 @@
 
     </x-slot>
 </x-base-layout>
-

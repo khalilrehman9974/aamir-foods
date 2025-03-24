@@ -366,7 +366,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('create', ['as' => 'bpv.create', 'uses' => 'App\Http\Controllers\BPVoucherController@create']);
         Route::post('save', ['as' => 'bpv.save', 'uses' => 'App\Http\Controllers\BPVoucherController@store']);
         Route::get('edit/{id}', ['as' => 'bpv.edit', 'uses' => 'App\Http\Controllers\BPVoucherController@edit']);
-        Route::post('update', ['as' => 'bpv.update', 'uses' => 'App\Http\Controllers\BPVoucherController@store']);
+        Route::post('update', ['as' => 'bpv.update', 'uses' => 'App\Http\Controllers\BPVoucherController@update']);
         Route::get('/delete', ['as' => 'bpv.delete', 'uses' => 'App\Http\Controllers\BPVoucherController@delete']);
         Route::post('show/{id}', ['as' => 'bpv.show', 'uses' => 'App\Http\Controllers\BPVoucherController@show']);
         Route::get('search', ['as' => 'bpv.search', 'uses' => 'App\Http\Controllers\BPVoucherController@search']);
@@ -380,7 +380,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('create', ['as' => 'brv.create', 'uses' => 'App\Http\Controllers\BRVoucherController@create']);
         Route::post('save', ['as' => 'brv.save', 'uses' => 'App\Http\Controllers\BRVoucherController@store']);
         Route::get('edit/{id}', ['as' => 'brv.edit', 'uses' => 'App\Http\Controllers\BRVoucherController@edit']);
-        Route::post('update', ['as' => 'brv.update', 'uses' => 'App\Http\Controllers\BRVoucherController@store']);
+        Route::post('update', ['as' => 'brv.update', 'uses' => 'App\Http\Controllers\BRVoucherController@update']);
         Route::get('/delete', ['as' => 'brv.delete', 'uses' => 'App\Http\Controllers\BRVoucherController@delete']);
         Route::post('show/{id}', ['as' => 'brv.show', 'uses' => 'App\Http\Controllers\BRVoucherController@show']);
         Route::get('search', ['as' => 'brv.search', 'uses' => 'App\Http\Controllers\BRVoucherController@search']);
@@ -391,7 +391,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('create', ['as' => 'cpv.create', 'uses' => 'App\Http\Controllers\CPVoucherController@create']);
         Route::post('save', ['as' => 'cpv.save', 'uses' => 'App\Http\Controllers\CPVoucherController@store']);
         Route::get('edit/{id}', ['as' => 'cpv.edit', 'uses' => 'App\Http\Controllers\CPVoucherController@edit']);
-        Route::post('update', ['as' => 'cpv.update', 'uses' => 'App\Http\Controllers\CPVoucherController@store']);
+        Route::post('update', ['as' => 'cpv.update', 'uses' => 'App\Http\Controllers\CPVoucherController@update']);
         Route::get('/delete', ['as' => 'cpv.delete', 'uses' => 'App\Http\Controllers\CPVoucherController@delete']);
         Route::post('show/{id}', ['as' => 'cpv.show', 'uses' => 'App\Http\Controllers\CPVoucherController@show']);
         Route::get('search', ['as' => 'cpv.search', 'uses' => 'App\Http\Controllers\CPVoucherController@search']);
@@ -402,7 +402,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('create', ['as' => 'crv.create', 'uses' => 'App\Http\Controllers\CRVoucherController@create']);
         Route::post('save', ['as' => 'crv.save', 'uses' => 'App\Http\Controllers\CRVoucherController@store']);
         Route::get('edit/{id}', ['as' => 'crv.edit', 'uses' => 'App\Http\Controllers\CRVoucherController@edit']);
-        Route::post('update', ['as' => 'crv.update', 'uses' => 'App\Http\Controllers\CRVoucherController@store']);
+        Route::post('update', ['as' => 'crv.update', 'uses' => 'App\Http\Controllers\CRVoucherController@update']);
         Route::get('/delete', ['as' => 'crv.delete', 'uses' => 'App\Http\Controllers\CRVoucherController@delete']);
         Route::post('show/{id}', ['as' => 'crv.show', 'uses' => 'App\Http\Controllers\CRVoucherController@show']);
         Route::get('search', ['as' => 'crv.search', 'uses' => 'App\Http\Controllers\CRVoucherController@search']);
@@ -413,7 +413,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('create', ['as' => 'jv.create', 'uses' => 'App\Http\Controllers\JournalVoucherController@create']);
         Route::post('save', ['as' => 'jv.save', 'uses' => 'App\Http\Controllers\JournalVoucherController@store']);
         Route::get('edit/{id}', ['as' => 'jv.edit', 'uses' => 'App\Http\Controllers\JournalVoucherController@edit']);
-        Route::post('update', ['as' => 'jv.update', 'uses' => 'App\Http\Controllers\JournalVoucherController@store']);
+        Route::post('update', ['as' => 'jv.update', 'uses' => 'App\Http\Controllers\JournalVoucherController@update']);
         Route::get('/delete', ['as' => 'jv.delete', 'uses' => 'App\Http\Controllers\JournalVoucherController@delete']);
         Route::post('show/{id}', ['as' => 'jv.show', 'uses' => 'App\Http\Controllers\JournalVoucherController@show']);
         Route::get('search', ['as' => 'jv.search', 'uses' => 'App\Http\Controllers\JournalVoucherController@search']);

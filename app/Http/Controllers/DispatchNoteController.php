@@ -99,10 +99,8 @@ class DispatchNoteController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request);
-        $saleOrder = SaleOrder::where('id', $request->sale_order_number)->first();
-        // dd($saleOrder);
 
+        $saleOrder = SaleOrder::where('id', $request->sale_order_number)->first();
         $updateSaleOrderStatus = $this->dispatchNoteService->prepareSOMasterData($saleOrder);
         $dispatchMasterInsert = $this->commonService->findUpdateOrCreate(SaleOrder::class, ['id' => $saleOrder->id], $updateSaleOrderStatus);
 

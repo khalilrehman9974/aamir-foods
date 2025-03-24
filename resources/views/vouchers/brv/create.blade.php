@@ -24,6 +24,8 @@
         <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
         <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
 
+        <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
 
         <!--  END CUSTOM STYLE FILE  -->
     </x-slot>
@@ -56,9 +58,7 @@
                     </div>
                 </div>
                 <div class="widget-content widget-content-area">
-
                     <div class="simple-pill">
-
                         <div class="tab-content" id="pills-tabContent">
                             <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
                                 aria-labelledby="pills-home-tab" tabindex="0">
@@ -105,8 +105,8 @@
 
 
                                                         <div class="tab-content" id="pills-tabContent">
-                                                            <div class="invoice-detail-items mt-0">
-
+                                                            <div class="invoice-detail-items"
+                                                                style="padding: 0px 0px 0px 0px;">
                                                                 <div class="table-responsive">
                                                                     <table class="table item-table">
                                                                         <thead>
@@ -114,12 +114,15 @@
                                                                                 <th class="" hidden>
                                                                                 </th>
                                                                                 <th></th>
-                                                                                <th>Code</th>
-                                                                                <th class="">Account Title
+                                                                                <th class="" style="width: 37%">
+                                                                                    Account
+                                                                                    Title/Description
                                                                                 </th>
-                                                                                <th class="">Description</th>
-                                                                                {{-- <th class="">Amount
-                                                                                </th> --}}
+                                                                                <th class="" style="width: 37%">
+                                                                                    Bank</th>
+                                                                                <th class="" style="width: 25%">
+                                                                                    Amount
+                                                                                </th>
 
 
                                                                             </tr>
@@ -128,111 +131,13 @@
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
-                                                                            <tr class="tr_clone validator_0">
-                                                                                <td class="delete-item-row">
-                                                                                    <ul class="table-controls">
-                                                                                        <li>
-                                                                                            <a href="javascript:void(0);"
-                                                                                                class="delete-item"
-                                                                                                data-toggle="tooltip"
-                                                                                                data-placement="top"
-                                                                                                title=""
-                                                                                                data-original-title="Delete">
-                                                                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                                                                    width="24"
-                                                                                                    height="24"
-                                                                                                    viewBox="0 0 24 24"
-                                                                                                    fill="none"
-                                                                                                    stroke="currentColor"
-                                                                                                    stroke-width="2"
-                                                                                                    stroke-linecap="round"
-                                                                                                    stroke-linejoin="round"
-                                                                                                    class="feather feather-x-circle">
-                                                                                                    <circle
-                                                                                                        cx="12"
-                                                                                                        cy="12"
-                                                                                                        r="10">
-                                                                                                    </circle>
-                                                                                                    <line
-                                                                                                        x1="15"
-                                                                                                        y1="9"
-                                                                                                        x2="9"
-                                                                                                        y2="15">
-                                                                                                    </line>
-                                                                                                    <line
-                                                                                                        x1="9"
-                                                                                                        y1="9"
-                                                                                                        x2="15"
-                                                                                                        y2="15">
-                                                                                                    </line>
-                                                                                                </svg>
-                                                                                            </a>
-                                                                                        </li>
-                                                                                    </ul>
-                                                                                </td>
-                                                                                <td hidden>
-                                                                                    <input type="text"
-                                                                                        name="row_id[]" class="row_id"
-                                                                                        value="0" hidden>
-                                                                                </td>
-                                                                                <td class="rate">
-                                                                                    <input type="text"
-                                                                                        class="form-control form-control-sm"
-                                                                                        name="code[]"
-                                                                                        placeholder="Code">
-                                                                                </td>
 
-                                                                                <td class="description">
-                                                                                    <select id="account_title"
-                                                                                        class="form-select form-control-sm">
-                                                                                        <option selected="">
-                                                                                            Please select the
-                                                                                            Party</option>
-                                                                                        @foreach ($dropDownData['accounts'] as $key => $value)
-                                                                                            <option
-                                                                                                value="{{ $key }}"
-                                                                                                {{ (old('account_title_id') == $key ? 'selected' : '') || (!empty($brv->account_title_id) ? collect($brv->account_title_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                                {{ $value }}
-                                                                                            </option>
-                                                                                        @endforeach
-                                                                                    </select>
-                                                                                    <textarea id="description" type="text" name="description[]"
-                                                                                        value="{{ old('description', !empty($brv->description) ? $brv->description : '') }}"
-                                                                                        placeholder="Please Enter Description" class="form-control form-control-sm mt-3"></textarea>
-                                                                                </td>
-                                                                                <br>
-                                                                                <td class="title">
-                                                                                    <select id="account_title"
-                                                                                        class="form-select form-control-sm">
-                                                                                        <option selected="">
-                                                                                            Please select the
-                                                                                            Party</option>
-                                                                                        @foreach ($dropDownData['accounts'] as $key => $value)
-                                                                                            <option
-                                                                                                value="{{ $key }}"
-                                                                                                {{ (old('account_title_id') == $key ? 'selected' : '') || (!empty($brv->account_title_id) ? collect($brv->account_title_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                                {{ $value }}
-                                                                                            </option>
-                                                                                        @endforeach
-                                                                                    </select>
-                                                                                    <input type="text"
-                                                                                        id="amount"
-                                                                                        class="form-control form-control-sm mt-3 amount"
-                                                                                        value="{{ old('debit', !empty($brv->debit) ? $brv->debit : '') }}"
-                                                                                        name="amount[]"
-                                                                                        placeholder="Amount">
-                                                                                </td>
-
-
-
-                                                                            </tr>
                                                                         </tbody>
                                                                     </table>
                                                                 </div>
 
                                                                 <a href="javascript:void(0);"
-                                                                    class="btn btn-dark additem mt-3"
-                                                                    id="add-item">Add
+                                                                    class="btn btn-dark additem mt-3" id="add-item">Add
                                                                     Item</a>
 
                                                             </div>
@@ -247,7 +152,7 @@
                                                                             Amount
                                                                         </label>
                                                                         <div class="col-sm-8">
-                                                                            <input type="text" id="gross-amount"
+                                                                            <input type="text" id="gross-amount" style="color: black;"
                                                                                 class="form-control form-control-sm gross-amount "
                                                                                 name="total_amount" id="gross-amount"
                                                                                 placeholder="Total Amount" readonly>
@@ -283,11 +188,11 @@
                                                                             Update
                                                                         @endif
                                                                     </button>
-                                                                    <input type="submit" style="float: right"
+                                                                    {{-- <input type="submit" style="float: right"
                                                                         value="{{ 'SaveAsDraft' }}"
                                                                         class="btn btn-primary save-as me-1 mt-5 mb-4 mr-5">
                                                                     <input type="hidden" name="save_type"
-                                                                        id="save_type" />
+                                                                        id="save_type" /> --}}
                                                                     {{-- @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
 
                                                                         @endif --}}
@@ -310,21 +215,7 @@
         </div>
     </div>
 
-    <x-slot:footerFiles>
-        <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
-        <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>
 
-        <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
-        <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
-        <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script>
-
-        <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
-        @vite(['resources/assets/js/elements/custom-search.js'])
-        <script src="{{ asset('js/common.js') }}"></script>
-
-
-
-    </x-slot>
     <script>
         document.getElementsByClassName('additem')[0].addEventListener('click', function() {
 
@@ -339,10 +230,11 @@
                 '</td>' +
                 '<td hidden><input type="text" name="row_id[]" class="row_id" value="' + currentIndex +
                 '" hidden></td>' +
-                '<td class="rate"><input type="text" class = "form-control form-control-sm" name = "code[]" placeholder = "Code" ></td> ' +
-                '<td class="description"><select id="account_title_id" name = "account_title_id[]" class = "form-select form-control-sm" > <option selected = "" >Please select the Party </option> @foreach ($dropDownData['accounts'] as $key => $value) <option value = "{{ $key }}" {{ (old('account_title_id') == $key ? 'selected' : '') || (!empty($brv->account_title_id) ? collect($brv->account_title_id)->contains($key) : '') ? 'selected' : '' }}>{{ $value }} </option> @endforeach </select><textarea id="description" type="text" name="description[]" value="{{ old('description', !empty($brv->description) ? $brv->description : '') }}" placeholder="Please Enter Description " class="form-control form-control-sm mt-3"></textarea> </td>' +
-                '<td class="title"><select id="account_title_id" name = "account_title_id[]" class = "form-select form-control-sm" > <option selected = "" >Please select the Party </option> @foreach ($dropDownData['accounts'] as $key => $value) <option value = "{{ $key }}" {{ (old('account_title_id') == $key ? 'selected' : '') || (!empty($brv->account_title_id) ? collect($brv->account_title_id)->contains($key) : '') ? 'selected' : '' }}>{{ $value }} </option> @endforeach </select><input id="amount" type="text" name="amount[]" value="{{ old('debit', !empty($brv->debit) ? $brv->debit : '') }}" placeholder="Amount " class="form-control mt-3 form-control-sm amount"></td>' +
-                // '<td class="text-right qty"> <input id="amount" type="text" name="amount[]" value="{{ old('debit', !empty($brv->debit) ? $brv->debit : '') }}" placeholder="Amount " class="form-control form-control-sm amount"></td>' +
+                '<td class="description"><select id="account_title" name="account_id[]" class="form-control form-control-sm select2 custom-select"> <option selected=""> Please select the Party</option> @foreach ($dropDownData['accounts'] as $key => $value) <option value="{{ $key }}" {{ (old('account_id') == $key ? 'selected' : '') || (!empty($bpv->account_id) ? collect($bpv->account_id)->contains($key) : '') ? 'selected' : '' }}> {{ $value }} </option> @endforeach </select><textarea id="description" type="text" name="description[]" value="{{ old('description', !empty($bpv->description) ? $bpv->description : '') }}" placeholder="Please Enter Description" class="form-control form-control-sm mt-3"></textarea> </td>' +
+                '<td class="title"> <select name="bank_id[]" id="bank" class="form-control select2 custom-select form-control-sm"> <option selected=""> Please select the Bank</option> @foreach ($dropDownData['bankAccounts'] as $key => $value) <option value="{{ $key }}" {{ (old('bank_id') == $key ? 'selected' : '') || (!empty($bpv->bank_id) ? collect($bpv->bank_id)->contains($key) : '') ? 'selected' : '' }}> {{ $value }} </option> @endforeach </select> </td>' +
+                '<td class="bpvAmount"><input type="number" id="amount" class="form-control form-control-sm amount amount_' +
+                currentIndex +
+                ' " name="amount[]" placeholder="Amount"></td>' +
                 '<div class="form-check form-check-primary form-check-inline me-0 mb-0">' +
                 '</div>' +
                 '</div>' +
@@ -351,6 +243,28 @@
 
             $(".item-table tbody").append($html);
             deleteItemRow();
+            $('.select2').select2();
+            $(document).on('click', 'body *', function() {
+                $('.amount').on("input", function() {
+                    doAmountTotal();
+                });
+
+                $('.delete-item').on("click", function() {
+                    doAmountTotal();
+                });
+
+                function doAmountTotal() {
+                    $('#total-amount').text("");
+
+                    var totalAmount = 0;
+                    $(".amount").each(function() {
+                        if (!isNaN(this.value) && this.value.length != 0) {
+                            totalAmount += parseFloat(this.value);
+                        }
+                    });
+                    $('#gross-amount').val(totalAmount.toFixed(2));
+                }
+            });
 
         })
 
@@ -363,6 +277,10 @@
             defaultDate: currentDate.setDate(currentDate.getDate() + 5),
         });
 
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
+
         function deleteItemRow() {
             let deleteItem = document.querySelectorAll('.delete-item');
             for (var i = 0; i < deleteItem.length; i++) {
@@ -372,5 +290,35 @@
             }
         }
     </script>
+    <x-slot:footerFiles>
+        <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
+        <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>
+
+        <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
+        <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
+
+        <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
+        @vite(['resources/assets/js/elements/custom-search.js'])
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
+            integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="{{ asset('js/common.js') }}"></script>
+        <script src="{{ asset('js/BankPaymentVoucher.js') }}"></script>
+
+
+        <script>
+
+            var input = document.getElementById("code");
+            input.addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    document.getElementById("party").click();
+                }
+            });
+        </script>
+
+    </x-slot>
 
 </x-base-layout>

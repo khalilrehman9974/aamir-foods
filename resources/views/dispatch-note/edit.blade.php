@@ -272,6 +272,27 @@ $isSelected = old('delivered_to') == $key || $note->pluck('delivered_to')->conta
                                                                     </div>
 
                                                                 </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-6 mt-2">
+                                                                        <label for="status">
+                                                                            Status</label>
+
+                                                                        <select id="status" name="status"
+                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mb-3 select2 custom-select"
+                                                                            required>
+                                                                            <option value="Pending"
+                                                                                {{ old('status', $note->status ?? '') == 'Pending' ? 'selected' : '' }}>
+                                                                                Pending
+                                                                            </option>
+                                                                            <option value="Approved"
+                                                                                {{ old('status', $note->status ?? '') == 'Approved' ? 'selected' : '' }}>
+                                                                                Approved
+                                                                            </option>
+
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
                                                                 <br>
                                                                 <div class="tab-content" id="pills-tabContent">
                                                                     <div class="invoice-detail-items"

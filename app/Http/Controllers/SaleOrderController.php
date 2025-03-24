@@ -81,25 +81,6 @@ class SaleOrderController extends Controller
     public function store(Request $request)
     {
 
-
-
-
-
-        // if ($request->hasFile('images')) {
-        //     foreach ($request->file('images') as $file) {  // This should be an UploadedFile object
-        //         if ($file->isValid()) {                   // Check if the file is valid
-        //             $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-        //             $file->move(public_path('images/saleOrder'), $filename);
-
-        //             SaleOrderImages::create([
-        //                 'sale_order_id' => $request->id,
-        //                 'image'         => 'images/saleOrder/' . $filename,
-        //             ]);
-        //         }
-        //     }
-        // }
-
-
         $request =$request->except('_token', 'id');
         // DB::beginTransaction();
         // try {
@@ -112,16 +93,12 @@ class SaleOrderController extends Controller
         $saleOrderImages = $this->saleOrderService->prepareSaleOrderImagesData($request, $saleOrderMasterInsert->id);
         $this->saleOrderService->saveSaleOrderImages($saleOrderImages);
 
-
-
-
-
         // DB::commit();
         // } catch (\Exception $e) {
         //     DB::rollback();
         //     return redirect('sale-order/create')->with('error', $e->getMessage());
         // }
-        event(new AamirFoodsNotifications($saleOrderMasterData));
+        // event(new AamirFoodsNotifications($saleOrderMasterData));
         $message = config(
             'constants.add'
         );

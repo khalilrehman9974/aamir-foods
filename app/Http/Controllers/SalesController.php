@@ -188,10 +188,10 @@ class SalesController extends Controller
         //     DB::beginTransaction();
             $request = request()->all();
             SaleDetail::where('sale_master_id', $request['id'])->delete();
-            StockLedger::where('invoice_id', $request['id'])->delete();
-            // Stock::where('invoice_id', $request['saleId'])->delete();
+            $documentNo = 'S/I' . '-' . $request['id'];
+            StockLedger::where('document_no', $documentNo)->where('invoice_id', $request['id'])->delete();
             // AccountLedger::where('invoice_id', $request['saleId'])->delete();
-
+            
             //Save data into relevant tables.
             $saleMasterData = $this->saleService->prepareSaleMasterData($request);
             $saleMasterInsert = $this->commonService->findUpdateOrCreate(SaleMaster::class, ['id' => request('id')], $saleMasterData);

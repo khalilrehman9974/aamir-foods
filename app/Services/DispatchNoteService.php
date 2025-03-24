@@ -132,6 +132,7 @@ class DispatchNoteService
             'saleman' => $request['saleman'],
             'sector' => $request['sector'],
             'area' => $request['area'],
+            'status' => $request['status'],
             'delivered_to' => $request['delivered_to'] ?? null,
             'transporter_id' => $request['transporter_id'],
             'vehicle_no' => $request['vehicle_no'],
@@ -238,7 +239,7 @@ class DispatchNoteService
     }
 
 
-   
+
 
 
 

@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Department;
 use App\Models\PackingType;
+use App\Models\StockLedger;
 use Illuminate\Http\Request;
 use App\Models\StoreIssueNote;
 use App\Models\MeasurementType;
@@ -37,7 +38,7 @@ class StoreReturnController extends Controller
         $storeReturns = $this->storeReturnService->search($request);
         $param = request()->param;
 
-        return view('store-return.index', compact('storeReturns','dropDownData','param', 'pageTitle'));
+        return view('store-return.index', compact('storeReturns', 'dropDownData', 'param', 'pageTitle'));
     }
 
     public function create()
@@ -49,8 +50,8 @@ class StoreReturnController extends Controller
         $storeIssueNotes = $this->storeReturnService->search($request);
         $param = request()->param;
 
-        $maxid = StoreReturnMaster::max('id')+ 1;
-        return view('store-return.create', compact('pageTitle','maxid', 'dropDownData'));
+        $maxid = StoreReturnMaster::max('id') + 1;
+        return view('store-return.create', compact('pageTitle', 'maxid', 'dropDownData'));
     }
 
     public function store(Request $request)
@@ -63,6 +64,9 @@ class StoreReturnController extends Controller
         $storeReturnMasterInsert = $this->storeReturnService->findUpdateOrCreate(StoreReturnMaster::class, ['id' => ''], $storeReturnMasters);
         $storeReturnDetailData = $this->storeReturnService->preparestoreReturnDetailData($request, $storeReturnMasterInsert->id);
         $this->storeReturnService->saveStoreReturn($storeReturnDetailData);
+
+        $stockLedgers = $this->storeReturnService->prepareStockLedgerData($request, $storeReturnMasterInsert->id);
+        $this->storeReturnService->saveStockLedger($stockLedgers);
 
         // DB::commit();
         // } catch (\Exception $e) {
@@ -89,10 +93,10 @@ class StoreReturnController extends Controller
             $message = config('constants.wrong');
         }
 
-        return view('store-return.edit', compact('dropDownData','date','storeReturnMaster', 'storeReturnDetails','pageTitle'));
+        return view('store-return.edit', compact('dropDownData', 'date', 'storeReturnMaster', 'storeReturnDetails', 'pageTitle'));
     }
 
-          /**
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -103,12 +107,18 @@ class StoreReturnController extends Controller
     {
         // DB::beginTransaction();
         // try {
-            $request = request()->all();
-            StoreReturnDetail::where('store_return_master_id', $request['id'])->delete();
-            $storeReturnMasters = $this->storeReturnService->prepareStoreReturnMasterData($request);
-            $storeReturnMasterInsert = $this->storeReturnService->findUpdateOrCreate(StoreReturnMaster::class, ['id' => request('id')], $storeReturnMasters);
-            $storeReturnDetailData = $this->storeReturnService->preparestoreReturnDetailData($request, $storeReturnMasterInsert->id);
-            $this->storeReturnService->saveStoreReturn($storeReturnDetailData);
+        $request = request()->all();
+        StoreReturnDetail::where('store_return_master_id', $request['id'])->delete();
+        $documentNo = 'S/R/N' . '-' . $request['id'];
+        StockLedger::where('document_no', $documentNo)->where('invoice_id', $request['id'])->delete();
+
+        $storeReturnMasters = $this->storeReturnService->prepareStoreReturnMasterData($request);
+        $storeReturnMasterInsert = $this->storeReturnService->findUpdateOrCreate(StoreReturnMaster::class, ['id' => request('id')], $storeReturnMasters);
+        $storeReturnDetailData = $this->storeReturnService->preparestoreReturnDetailData($request, $storeReturnMasterInsert->id);
+        $this->storeReturnService->saveStoreReturn($storeReturnDetailData);
+
+        $stockLedgers = $this->storeReturnService->prepareStockLedgerData($request, $storeReturnMasterInsert->id);
+        $this->storeReturnService->saveStockLedger($stockLedgers);
 
         //     DB::commit();
         // } catch (\Exception $e) {
@@ -135,8 +145,8 @@ class StoreReturnController extends Controller
         //     DB::commit();
         //     // && $deleteStock && $accountEntryDetail
         //     if ($deleteMaster && $deleteDetail) {
-                return $this->commonService->deleteResource(StoreReturnMaster::class);
-                // , StoreReturnDetail::class
+        return $this->commonService->deleteResource(StoreReturnMaster::class);
+        // , StoreReturnDetail::class
         //     }
         // } catch (\Exception $e) {
         //     DB::rollback();
@@ -156,11 +166,11 @@ class StoreReturnController extends Controller
         $returnNoteDetails = StoreReturnDetail::where('store_return_master_id', $returnNoteMaster->id)->get();
         // dd($issueNoteDetails);
         $productsArray = $returnNoteDetails->pluck('product_id')->toArray();
-        $products = CoaInventoryDetailAccount::whereIn('id',$productsArray)->pluck('name','id');
-        $user = User::where('id',$returnNoteMaster->created_by)->value('name');
+        $products = CoaInventoryDetailAccount::whereIn('id', $productsArray)->pluck('name', 'id');
+        $user = User::where('id', $returnNoteMaster->created_by)->value('name');
 
 
-        return view('store-return.print', compact('title','products','user','returnNoteMaster','date','returnNoteDetails','toDepartment','fromDepartment'));
+        return view('store-return.print', compact('title', 'products', 'user', 'returnNoteMaster', 'date', 'returnNoteDetails', 'toDepartment', 'fromDepartment'));
     }
 
     public function getProductMeasurementType($name)
@@ -184,8 +194,6 @@ class StoreReturnController extends Controller
             return response()->json(['status' => 'success', 'name' => $packing]);
         }
         return response()->json(['status' => 'fail', 'data' => []]);
-
-
     }
 
     public function getProductSize($name)

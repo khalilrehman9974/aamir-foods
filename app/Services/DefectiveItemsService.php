@@ -22,7 +22,7 @@ class DefectiveItemsService
         $this->commonService = $commonService;
     }
 
-    
+
 
     public function DropDownData()
     {
@@ -116,6 +116,8 @@ class DefectiveItemsService
 
     public function prepareStockLedgerData($request, $defectiveItemsParentId)
     {
+        $department = Department::whereIn('id', $request['from_department'])->get();
+
         return [
             'product_id' => $request['product_id'],
             'party_title' => $request['from_department'],
@@ -145,7 +147,9 @@ class DefectiveItemsService
             if (!empty($data['product_id'][$key])) {
                 $rec['product_id'] = $data['product_id'][$key];
                 $rec['date'] = $data['date'];
-                $rec['party_title'] = $data['party_title'][$key];
+                $party_title = $data['party_title'][$key];
+                $rec['party_title'] = Department::where('id', $party_title)->value("name");
+                // $rec['party_title'] = $data['party_title'][$key];
                 $rec['stock_out_bags'] = $data['stock_out_bags'][$key] ?? config('constants.ZERO');
                 $rec['stock_out_weight'] = $data['stock_out_weight'][$key] ?? config('constants.ZERO');
                 $rec['stock_out_quantity'] = $data['stock_out_quantity'][$key];

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('grn_no');
             $table->integer('purchase_order_no');
             $table->date('date');
+            $table->string('status', 250);
             $table->integer('party_id')->unsigned()->index();
             $table->integer('transporter_id')->unsigned()->index();
             $table->string('supplier_bill_no', 20);

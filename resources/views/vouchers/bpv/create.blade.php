@@ -106,7 +106,6 @@
                                                             <th class="" hidden>
                                                             </th>
                                                             <th></th>
-                                                            {{-- <th></th> --}}
                                                             <th class="" style="width: 37%">Account
                                                                 Title/Description
                                                             </th>
@@ -120,212 +119,6 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @if (!empty($bpv))
-                                                            @foreach ($voucherDetails as $bpvDetail)
-                                                                <tr class="tr_clone validator_0">
-                                                                    <td class="delete-item-row">
-                                                                        <ul class="table-controls">
-                                                                            <li>
-                                                                                <a href="javascript:void(0);"
-                                                                                    class="delete-item"
-                                                                                    data-toggle="tooltip"
-                                                                                    data-placement="top" title=""
-                                                                                    data-original-title="Delete">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                                                        width="24" height="24"
-                                                                                        viewBox="0 0 24 24"
-                                                                                        fill="none"
-                                                                                        stroke="currentColor"
-                                                                                        stroke-width="2"
-                                                                                        stroke-linecap="round"
-                                                                                        stroke-linejoin="round"
-                                                                                        class="feather feather-x-circle">
-                                                                                        <circle cx="12"
-                                                                                            cy="12" r="10">
-                                                                                        </circle>
-                                                                                        <line x1="15"
-                                                                                            y1="9"
-                                                                                            x2="9"
-                                                                                            y2="15">
-                                                                                        </line>
-                                                                                        <line x1="9"
-                                                                                            y1="9"
-                                                                                            x2="15"
-                                                                                            y2="15">
-                                                                                        </line>
-                                                                                    </svg>
-                                                                                </a>
-                                                                            </li>
-                                                                        </ul>
-                                                                    </td>
-                                                                    <td hidden>
-                                                                        <input type="text" name="row_id[]"
-                                                                            class="row_id" value="0" hidden>
-                                                                    </td>
-
-                                                                    {{-- <td class="code">
-                                                                                            <input type="text"
-                                                                                                id="code"
-                                                                                                onkeypress="function()"
-                                                                                                class="form-control form-control-sm"
-                                                                                                {{-- value="{{ @$bpv ? '' : $detailAccount  }} {{ old('code', !empty($bpv->code) ? $bpv->code : '') }}"
-                                                                                                placeholder="Code">
-                                                                                        </td> --}}
-
-                                                                    <td class="description">
-                                                                        <select id="party" name="account_id[]"
-                                                                            class="form-control select2 custom-select mr-0 mb-0 form-control-sm">
-                                                                            <option selected="">
-                                                                                Please select the
-                                                                                Party</option>
-                                                                            @foreach ($dropDownData['accounts'] as $key => $value)
-                                                                                <option value="{{ $key }}"
-                                                                                    {{ (old('account_id') == $key ? 'selected' : '') || (!empty($bpvDetail->account_id) ? collect($bpvDetail->account_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                    {{ $value }}
-                                                                                </option>
-                                                                            @endforeach
-                                                                        </select>
-                                                                        <textarea id="description" type="text" name="description[]" placeholder="Please Enter Description"
-                                                                            class="form-control form-control-sm mt-3">{{ $bpvDetail->description }}</textarea>
-                                                                    </td>
-                                                                    <td class="title">
-                                                                        <select id="account_title" name="bank_id[]"
-                                                                            class="form-control select2 custom-select mr-0 mb-0 form-control-sm">
-                                                                            <option selected="">
-                                                                                Please select the
-                                                                                Party</option>
-                                                                            @foreach ($dropDownData['accounts'] as $key => $value)
-                                                                                <option value="{{ $key }}"
-                                                                                    {{ (old('bankId') == $key ? 'selected' : '') || (!empty($bankId) ? collect($bankId)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                    {{ $value }}
-                                                                                </option>
-                                                                            @endforeach
-                                                                        </select>
-
-
-                                                                    </td>
-                                                                    <td class="bpvAmount">
-                                                                        <input type="text" id="amount"
-                                                                            class="form-control form-control-sm amount"
-                                                                            value="{{ old('debit', !empty($bpvDetail->debit) ? $bpvDetail->debit : '') }}"
-                                                                            name="amount[]" placeholder="Amount">
-                                                                    </td>
-
-                                                                    {{-- <td class="title">
-                                                                                        <textarea id="description" type="text" name="description[]"
-                                                                                        value="{{ old('description', !empty($bpv->description) ? $bpv->description : '') }}"
-                                                                                        placeholder="Please Enter Description" class="form-control form-control-sm mt-0"></textarea>
-                                                                                        </td> --}}
-                                                                    {{--
-                                                                                            <td class="text-right qty">
-
-                                                                                        </td> --}}
-
-                                                                </tr>
-                                                            @endforeach
-                                                        @else
-                                                            {{-- @if ($bpvDetailsTemp->isNotEmpty()) --}}
-
-                                                            {{-- @include(
-                                                                                    'partials.bpvtemp',
-                                                                                    $bpvDetailsTemp);
-                                                                                @else --}}
-                                                            <tr class="tr_clone validator_0">
-                                                                <td class="delete-item-row">
-                                                                    <ul class="table-controls">
-                                                                        <li>
-                                                                            <a href="javascript:void(0);"
-                                                                                class="delete-item"
-                                                                                data-toggle="tooltip"
-                                                                                data-placement="top" title=""
-                                                                                data-original-title="Delete">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                                                    width="24" height="24"
-                                                                                    viewBox="0 0 24 24" fill="none"
-                                                                                    stroke="currentColor"
-                                                                                    stroke-width="2"
-                                                                                    stroke-linecap="round"
-                                                                                    stroke-linejoin="round"
-                                                                                    class="feather feather-x-circle">
-                                                                                    <circle cx="12"
-                                                                                        cy="12" r="10">
-                                                                                    </circle>
-                                                                                    <line x1="15"
-                                                                                        y1="9" x2="9"
-                                                                                        y2="15">
-                                                                                    </line>
-                                                                                    <line x1="9"
-                                                                                        y1="9" x2="15"
-                                                                                        y2="15">
-                                                                                    </line>
-                                                                                </svg>
-                                                                            </a>
-                                                                        </li>
-                                                                    </ul>
-                                                                </td>
-                                                                <td hidden>
-                                                                    <input type="text" name="row_id[]"
-                                                                        class="row_id" value="0" hidden>
-                                                                </td>
-
-                                                                {{-- <td class="code">
-                                                                                        <input type="text"
-                                                                                            id="code"
-                                                                                            class="form-control form-control-sm code"
-                                                                                            placeholder="Code">
-                                                                                    </td> --}}
-
-                                                                <td class="description">
-                                                                    <select id="party" name="account_id[]"
-                                                                        class="form-control select2 custom-select mr-0 mb-0 form-control-sm">
-                                                                        <option selected="">
-                                                                            Please select the
-                                                                            Party</option>
-                                                                        @foreach ($dropDownData['accounts'] as $key => $value)
-                                                                            <option value="{{ $key }}"
-                                                                                {{ (old('account_id') == $key ? 'selected' : '') || (!empty($bpv->account_id) ? collect($bpv->account_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                {{ $value }}
-                                                                            </option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                    <textarea id="description" type="text" name="description[]" placeholder="Please Enter Description"
-                                                                        class="form-control form-control-sm mt-3"></textarea>
-                                                                </td>
-                                                                <td class="title">
-                                                                    <select id="account_title" name="bank_id[]"
-                                                                        class="form-control select2 custom-select mr-0 mb-0 form-control-sm">
-                                                                        <option selected="">
-                                                                            Please select the
-                                                                            Bank</option>
-                                                                        @foreach ($dropDownData['accounts'] as $key => $value)
-                                                                            <option value="{{ $key }}"
-                                                                                {{ (old('bank_id') == $key ? 'selected' : '') || (!empty($bpv->bank_id) ? collect($bpv->bank_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                {{ $value }}
-                                                                            </option>
-                                                                        @endforeach
-                                                                    </select>
-
-                                                                </td>
-                                                                <td class="bpvAmount">
-                                                                    <input type="text" id="amount"
-                                                                        class="form-control form-control-sm amount"
-                                                                        value="{{ old('debit', !empty($bpvDetail->debit) ? $bpvDetail->debit : '') }}"
-                                                                        name="amount[]" placeholder="Amount">
-                                                                </td>
-
-                                                                {{-- <td class="title">
-                                                                                        <textarea id="description" type="text" name="description[]"
-                                                                                        value="{{ old('description', !empty($bpv->description) ? $bpv->description : '') }}"
-                                                                                        placeholder="Please Enter Description" class="form-control form-control-sm mt-0"></textarea>
-                                                                                        </td> --}}
-                                                                {{--
-                                                                                        <td class="text-right qty">
-
-                                                                                        </td> --}}
-
-                                                            </tr>
-                                                        @endif
-                                                        {{-- @endif --}}
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -357,29 +150,6 @@
                                             </div>
                                         </div>
 
-
-
-                                        {{-- <div class="invoice-detail-terms" style="float:right">
-                                                                <div class="col-xl-12 ">
-                                                                    <div class="row">
-
-                                                                        <div class="col-sm-4" style="float:right">
-                                                                            <label for="name" class="form-label"
-                                                                                style="float:right">
-                                                                                Upload Images
-                                                                            </label>
-                                                                        </div>
-
-                                                                        <div class="col-sm-4" style="padding-left: 7%;">
-                                                                            <input id="image" name="image[]" multiple
-                                                                                type="file" value="Upload" onchange="sub(this)"/>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div> --}}
-                                        <br>
-                                        <br>
                                         <br>
                                     </div>
                                     <div class="invoice-detail-terms">
@@ -398,14 +168,7 @@
                                                         Update
                                                     @endif
                                                 </button>
-                                                {{-- <input type="submit" style="float: right"
-                                                                        value="{{ 'SaveAsDraft' }}"
-                                                                        class="btn btn-primary save-as me-1 mt-5 mb-4 mr-5">
-                                                                    <input type="hidden" name="save_type"
-                                                                        value="0" id="save_type" /> --}}
-                                                {{-- @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
 
-                                                                        @endif --}}
                                             </div>
                                         </div>
 
@@ -434,13 +197,11 @@
                 '</td>' +
                 '<td hidden><input type="text" name="row_id[]" class="row_id" value="' + currentIndex +
                 '" hidden></td>' +
-                // '<td class="code"><input type="text" id="code" class="form-control form-control-sm code" placeholder = "Code" ></td> ' +
-                '<td class="description"><select id="account_title" name="account_id[]" class="form-control select2 custom-select form-control-sm"> <option selected=""> Please select the Party</option> @foreach ($dropDownData['accounts'] as $key => $value) <option value="{{ $key }}" {{ (old('account_id') == $key ? 'selected' : '') || (!empty($bpv->account_id) ? collect($bpv->account_id)->contains($key) : '') ? 'selected' : '' }}> {{ $value }} </option> @endforeach </select><textarea id="description" type="text" name="description[]" value="{{ old('description', !empty($bpv->description) ? $bpv->description : '') }}" placeholder="Please Enter Description" class="form-control form-control-sm mt-3"></textarea> </td>' +
-                '<td class="title"> <select name="bank_id[]" id="account_title" class="form-control select2 custom-select mr-0 mb-0 form-control-sm"> <option selected=""> Please select the Bank</option> @foreach ($dropDownData['accounts'] as $key => $value) <option value="{{ $key }}" {{ (old('bank_id') == $key ? 'selected' : '') || (!empty($bpv->bank_id) ? collect($bpv->bank_id)->contains($key) : '') ? 'selected' : '' }}> {{ $value }} </option> @endforeach </select> </td>' +
-                '<td class="bpvAmount"><input type="text" id="amount" class="form-control form-control-sm amount amount_' +
+                '<td class="description"><select id="account_title" name="account_id[]" class="form-control form-control-sm select2 custom-select"> <option selected=""> Please select the Party</option> @foreach ($dropDownData['accounts'] as $key => $value) <option value="{{ $key }}" {{ (old('account_id') == $key ? 'selected' : '') || (!empty($bpv->account_id) ? collect($bpv->account_id)->contains($key) : '') ? 'selected' : '' }}> {{ $value }} </option> @endforeach </select><textarea id="description" type="text" name="description[]" value="{{ old('description', !empty($bpv->description) ? $bpv->description : '') }}" placeholder="Please Enter Description" class="form-control form-control-sm mt-3"></textarea> </td>' +
+                '<td class="title"> <select name="bank_id[]" id="bank" class="form-control select2 custom-select form-control-sm"> <option selected=""> Please select the Bank</option> @foreach ($dropDownData['bankAccounts'] as $key => $value) <option value="{{ $key }}" {{ (old('bank_id') == $key ? 'selected' : '') || (!empty($bpv->bank_id) ? collect($bpv->bank_id)->contains($key) : '') ? 'selected' : '' }}> {{ $value }} </option> @endforeach </select> </td>' +
+                '<td class="bpvAmount"><input type="number" id="amount" class="form-control form-control-sm amount amount_' +
                 currentIndex +
                 ' " name="amount[]" placeholder="Amount"></td>' +
-                // '<td class="text-right qty"> <input id="amount" type="text" name="amount[]" value="{{ old('debit', !empty($bpv->debit) ? $bpv->debit : '') }}" placeholder="Amount " class="form-control form-control-sm amount"></td>' +
                 '<div class="form-check form-check-primary form-check-inline me-0 mb-0">' +
                 '</div>' +
                 '</div>' +
@@ -449,6 +210,28 @@
 
             $(".item-table tbody").append($html);
             deleteItemRow();
+            $('.select2').select2();
+            $(document).on('click', 'body *', function() {
+                $('.amount').on("input", function() {
+                    doAmountTotal();
+                });
+
+                $('.delete-item').on("click", function() {
+                    doAmountTotal();
+                });
+
+                function doAmountTotal() {
+                    $('#total-amount').text("");
+
+                    var totalAmount = 0;
+                    $(".amount").each(function() {
+                        if (!isNaN(this.value) && this.value.length != 0) {
+                            totalAmount += parseFloat(this.value);
+                        }
+                    });
+                    $('#gross-amount').val(totalAmount.toFixed(2));
+                }
+            });
 
         })
 
@@ -460,6 +243,9 @@
 
         var f2 = flatpickr(document.getElementById('due'), {
             defaultDate: currentDate.setDate(currentDate.getDate() + 5),
+        });
+        $(document).ready(function() {
+            $('.select2').select2();
         });
 
         function deleteItemRow() {
@@ -478,7 +264,6 @@
 
         <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
         <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
-        <script src="{{ asset('plugins/invoice-add/invoice-add.js') }}"></script>
 
         <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])

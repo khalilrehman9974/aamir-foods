@@ -39,7 +39,7 @@ class CoaDetailAccountService
         if (!empty($param)) {
             $q->where('account_name', 'LIKE', '%' . $param . '%');
         }
-        $detailAccounts = $q->orderBy('account_name', 'ASC')->paginate(config('constants.PER_PAGE'));
+        $detailAccounts = $q->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
 
         return $detailAccounts;
     }
