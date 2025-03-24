@@ -60,8 +60,6 @@ class JournalVoucherController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request);
-
         $request = $request->except('_token', 'id');
 
         // DB::beginTransaction();
