@@ -2,13 +2,15 @@
 
 namespace App\Services;
 
+use App\Models\CoaDetailAccount;
+use App\Models\PriceTag;
 use App\Models\CoaMainHead;
+use App\Models\PackingType;
+use App\Models\MeasurementType;
 use App\Models\CoaInventorySubHead;
+use Illuminate\Support\Facades\Auth;
 use App\Models\CoaInventorySubSubHead;
 use App\Models\CoaInventoryDetailAccount;
-use App\Models\MeasurementType;
-use App\Models\PackingType;
-use App\Models\PriceTag;
 
 /*
  * Class BankService
@@ -20,6 +22,13 @@ use App\Models\PriceTag;
 
 class CoaInventoryDetailAccountService
 {
+    protected $commonService;
+
+    public function __construct(CommonService $commonService)
+    {
+        $this->commonService = $commonService;
+    }
+
     const PER_PAGE = 10;
 
     /*
@@ -81,6 +90,54 @@ class CoaInventoryDetailAccountService
     public function getSubSubHeadsBySubHead($subHead)
     {
         return CoaInventorySubSubHead::where('sub_head_id', $subHead)->pluck('name', 'id');
+    }
+
+
+    public function prepareCoaDetailAccountData($request)
+    {
+        $session = $this->commonService->getSession();
+
+        return [
+            'main_head' => $request['coa_main_head'],
+            'control_head' => $request['main_head'],
+            'sub_head' => $request['sub_head'],
+            'sub_sub_head' => $request['sub_sub_head'],
+            'account_code' => $request['code'],
+            'account_name' => $request['name'],
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id,
+            'created_at' => now(),
+            'updated_at' => now()
+        ];
+    }
+
+    public function prepareCoaDetailAccountDetailData($request)
+    {
+        $openingStock = $request['opening_stock'];
+        $stockRate = $request['stock_rate'];
+        $openingBalance = $openingStock * $stockRate;
+        $openingBalance = ($openingStock > 0 && $stockRate > 0) ? $openingStock * $stockRate : 0;
+
+        $maxid = CoaDetailAccount::max('id');
+
+        return [
+            'det_account_code' => $maxid,
+            'address' => null,
+            'email' => null,
+            'cnic' => null,
+            'contact_no_1' => null,
+            'remarks' => null,
+            'opening_balance' => $openingBalance,
+            'credit_limit' => null,
+            'credit_days' => null,
+            'contact_no_2' => null,
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
     }
 }
 

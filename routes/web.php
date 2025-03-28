@@ -369,6 +369,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('update', ['as' => 'bpv.update', 'uses' => 'App\Http\Controllers\BPVoucherController@update']);
         Route::get('/delete', ['as' => 'bpv.delete', 'uses' => 'App\Http\Controllers\BPVoucherController@delete']);
         Route::post('show/{id}', ['as' => 'bpv.show', 'uses' => 'App\Http\Controllers\BPVoucherController@show']);
+        Route::get('print/{id}', ['as' => 'bpv.print', 'uses' => 'App\Http\Controllers\BPVoucherController@print']);
         Route::get('search', ['as' => 'bpv.search', 'uses' => 'App\Http\Controllers\BPVoucherController@search']);
         Route::get('get-party/{code}', ['as' => 'party-code', 'uses' => 'App\Http\Controllers\BPVoucherController@getParty']);
         Route::get('get-detail-data/{id}', ['as' => 'get-detail-data', 'uses' => 'App\Http\Controllers\BPVoucherController@getDetailData']);
@@ -383,6 +384,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('update', ['as' => 'brv.update', 'uses' => 'App\Http\Controllers\BRVoucherController@update']);
         Route::get('/delete', ['as' => 'brv.delete', 'uses' => 'App\Http\Controllers\BRVoucherController@delete']);
         Route::post('show/{id}', ['as' => 'brv.show', 'uses' => 'App\Http\Controllers\BRVoucherController@show']);
+        Route::get('print/{id}', ['as' => 'brv.print', 'uses' => 'App\Http\Controllers\BRVoucherController@print']);
         Route::get('search', ['as' => 'brv.search', 'uses' => 'App\Http\Controllers\BRVoucherController@search']);
     });
 
@@ -393,6 +395,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('edit/{id}', ['as' => 'cpv.edit', 'uses' => 'App\Http\Controllers\CPVoucherController@edit']);
         Route::post('update', ['as' => 'cpv.update', 'uses' => 'App\Http\Controllers\CPVoucherController@update']);
         Route::get('/delete', ['as' => 'cpv.delete', 'uses' => 'App\Http\Controllers\CPVoucherController@delete']);
+        Route::get('print/{id}', ['as' => 'cpv.print', 'uses' => 'App\Http\Controllers\CPVoucherController@print']);
         Route::post('show/{id}', ['as' => 'cpv.show', 'uses' => 'App\Http\Controllers\CPVoucherController@show']);
         Route::get('search', ['as' => 'cpv.search', 'uses' => 'App\Http\Controllers\CPVoucherController@search']);
     });
@@ -405,6 +408,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('update', ['as' => 'crv.update', 'uses' => 'App\Http\Controllers\CRVoucherController@update']);
         Route::get('/delete', ['as' => 'crv.delete', 'uses' => 'App\Http\Controllers\CRVoucherController@delete']);
         Route::post('show/{id}', ['as' => 'crv.show', 'uses' => 'App\Http\Controllers\CRVoucherController@show']);
+        Route::get('print/{id}', ['as' => 'crv.print', 'uses' => 'App\Http\Controllers\CRVoucherController@print']);
         Route::get('search', ['as' => 'crv.search', 'uses' => 'App\Http\Controllers\CRVoucherController@search']);
     });
 
@@ -415,6 +419,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('edit/{id}', ['as' => 'jv.edit', 'uses' => 'App\Http\Controllers\JournalVoucherController@edit']);
         Route::post('update', ['as' => 'jv.update', 'uses' => 'App\Http\Controllers\JournalVoucherController@update']);
         Route::get('/delete', ['as' => 'jv.delete', 'uses' => 'App\Http\Controllers\JournalVoucherController@delete']);
+        Route::get('print/{id}', ['as' => 'jv.print', 'uses' => 'App\Http\Controllers\JournalVoucherController@print']);
         Route::post('show/{id}', ['as' => 'jv.show', 'uses' => 'App\Http\Controllers\JournalVoucherController@show']);
         Route::get('search', ['as' => 'jv.search', 'uses' => 'App\Http\Controllers\JournalVoucherController@search']);
     });
@@ -580,6 +585,9 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/stock-ledger', [App\Http\Controllers\ReportController::class, 'viewStockLedger'])->name('stock.ledger');
     Route::get('/stock-ledger-report', [App\Http\Controllers\ReportController::class, 'getStockLedger'])->name('stock.ledger.report');
+
+    Route::get('/partyAccount-ledger', [App\Http\Controllers\ReportController::class, 'viewPartyAccountLedger'])->name('partyAccount.ledger');
+    Route::get('/partyAccount-ledger-report', [App\Http\Controllers\ReportController::class, 'getPartyAccountLedger'])->name('partyAccount.ledger.report');
 
     Route::get('/clear-cache', function () {
         \Illuminate\Support\Facades\Artisan::call('cache:clear');

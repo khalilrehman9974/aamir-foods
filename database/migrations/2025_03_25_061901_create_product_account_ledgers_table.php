@@ -13,11 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('account_ledgers', function (Blueprint $table) {
+        Schema::create('product_account_ledgers', function (Blueprint $table) {
             $table->increments('id');
             $table->date('date');
             $table->integer('invoice_id');
-            $table->integer('party_id');
+            $table->integer('product_id');
             $table->string('description');
             $table->string('document_number');
             $table->integer('bags')->nullable();
@@ -30,12 +30,10 @@ return new class extends Migration
             $table->double('credit');
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
-            $table->timestamp('deleted_at')->nullable();
 
             $table->foreign('transporter_id')
                 ->references('id')->on('transporters')
                 ->onSoftDelete('cascade');
-
         });
     }
 
@@ -46,6 +44,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('account_ledgers');
+        Schema::dropIfExists('product_account_ledgers');
     }
 };

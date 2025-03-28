@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\PriceTag;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Services\CommonService;
+use App\Models\CoaDetailAccount;
 use App\Models\CoaInventorySubHead;
 use App\Services\PermissionService;
 use App\Services\UploadFileService;
@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\CoaInventoryDetailAccount;
 use App\Services\CoaInventorySubHeadService;
 use App\Http\Requests\CoInvDetailAccountRequest;
+use App\Models\CoaDetAccountDetail;
+use App\Models\CoaMainHead;
 use App\Models\InventorySubSubHeadPriceTagModel;
 use App\Services\CoaInventoryDetailAccountService;
 
@@ -64,9 +66,11 @@ class ChartOfInvDetailAccountController extends Controller
         $accountCode = $this->coInventoryDetailAccountService->getMaxAccountCode();
         $mainHeads = $this->commonService->getInventoryMainHeads();
         $subHeads = $this->commonService->getInventorySubHeads();
+        $accountArray = [4,6];
+        $coaMainHeadAccounts = CoaMainHead::whereIn('id',$accountArray)->pluck('account_name', 'id');
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '24');
 
-        return view('chart-of-inventory.detail-account.create', compact('permission', 'dropDownData', 'mainHeads', 'subHeads', 'pageTitle', 'accountCode'));
+        return view('chart-of-inventory.detail-account.create', compact('permission','coaMainHeadAccounts', 'dropDownData', 'mainHeads', 'subHeads', 'pageTitle', 'accountCode'));
     }
 
     /**
@@ -91,6 +95,13 @@ class ChartOfInvDetailAccountController extends Controller
         if ($saved && $request->file('image')) {
             $this->uploadService->uploadSingleFile($request->image, $fileName, config('constants.file_upload.inventory'));
         }
+
+        $coaDetailAccount= $this->coInventoryDetailAccountService->prepareCoaDetailAccountData($request, $saved->id);
+        CoaDetailAccount::insert($coaDetailAccount);
+
+        $coaDetailAccountDetail= $this->coInventoryDetailAccountService->prepareCoaDetailAccountDetailData($request, $saved->id);
+        CoaDetAccountDetail::insert($coaDetailAccountDetail);
+
         $message = request('id') ? config('constants.update') : config('constants.add');
         session()->flash('message', $message);
         return redirect('co-inv-detail-account/list');
@@ -109,13 +120,15 @@ class ChartOfInvDetailAccountController extends Controller
         $priceTagId = $fetchPriceTags->pluck('priceTag')->toArray();
         $priceTag = PriceTag::whereIn("id", $priceTagId)->get();
         $priceTags = $priceTag->pluck('name','id')->toArray();
+        $accountArray = [4,6];
+        $coaMainHeadAccounts = CoaMainHead::whereIn('id',$accountArray)->pluck('account_name', 'id');
 
         if (!$detailAccount) {
             return abort(404);
         }
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
 
-        return view('chart-of-inventory.detail-account.create', compact('detailAccount','subSubHeads','priceTags', 'dropDownData', 'subHeads', 'mainHeads', 'permission', 'pageTitle'));
+        return view('chart-of-inventory.detail-account.create', compact('detailAccount','coaMainHeadAccounts','subSubHeads','priceTags', 'dropDownData', 'subHeads', 'mainHeads', 'permission', 'pageTitle'));
     }
 
     /**
@@ -158,7 +171,6 @@ class ChartOfInvDetailAccountController extends Controller
 
     public function getProductDetails(Request $request)
     {
-
         $fetchPriceTags = InventorySubSubHeadPriceTagModel::where("sub_sub_head_id", $request->product_id)->get();
         $priceTagId = $fetchPriceTags->pluck('priceTag')->toArray();
         $data['priceTags'] = PriceTag::whereIn("id", $priceTagId)->get();

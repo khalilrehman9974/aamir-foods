@@ -2,9 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AccountLedger;
+use App\Models\Area;
+use App\Models\CoaControlHead;
+use App\Models\CoaDetAccountDetail;
+use App\Models\CoaDetailAccount;
+use App\Models\CoaDetailAccountArea;
+use App\Models\CoaDetailAccountSectors;
 use App\Models\CoaInventoryDetailAccount;
 use App\Models\CoaInventoryMainHead;
+use App\Models\CoaMainHead;
+use App\Models\CoaSubHead;
+use App\Models\CoaSubSubHead;
+use App\Models\SaleMan;
+use App\Models\Sector;
 use App\Models\StockLedger;
+use App\Models\Transporter;
 use Illuminate\Http\Request;
 use App\Services\StockLedgerService;
 
@@ -26,11 +39,16 @@ class ReportController extends Controller
         return view('reports.stock-ledger.stock-ledger-view', compact('dropDownData', 'pageTitle'));
     }
 
+    public function viewPartyAccountLedger()
+    {
+        $pageTitle = 'Party Ledger';
+        $dropDownData = $this->stockLedgerService->DropDownData();
+        return view('reports.account-ledger.partyAccount-ledger-view', compact('dropDownData', 'pageTitle'));
+    }
+
     public function getStockLedger(Request $request)
     {
         $title = 'Stock Ledger';
-        // StockLedger::truncate();
-        // $request = request()->all();
         $param = request()->param;
         $dropDownData = $this->stockLedgerService->DropDownData();
 
@@ -61,49 +79,55 @@ class ReportController extends Controller
         $invMainHead = CoaInventoryMainHead::where('id', $product->main_head)->value('name');
 
         $products = CoaInventoryDetailAccount::where('id',$request['product_id'])->pluck('name','id');
-        // dd($products);
-        // $invoices = MillWeight::with(['dispatch'])->whereHas('dispatch', function($query) use ($request) {
-        //     if (!empty($request['buyer'])) {
-        //         $query->where('buyer_id', $request['buyer']);
-        //     }
-        //     if (!empty($request['seller'])) {
-        //         $query->where('seller_id', $request['seller']);
-        //     }
-        // })->get();
-
-        // $payments = Payment::with(['seller','buyer'])->where('buyer_id', $request['buyer'])->where('seller_id', $request['seller'])->get();
-        // $paymentsData = [];
-        // $invoicesData = [];
-        // foreach($invoices as $invoice){
-        //     $invoicesData[] = [
-        //         'date' => $invoice->date,
-        //         'buyer_id' => $invoice->dispatch->buyer_id,
-        //         'seller_id' => $invoice->dispatch->seller_id,
-        //         'description' => 'Invoice amount against cotton for lot number '. $invoice->lot_no,
-        //         'debit' => $invoice->net_amount,
-        //         'credit' => 0
-        //     ];
-        // }
-
-        // foreach($payments as $payment){
-        //     $paymentsData[] = [
-        //         'date' => $payment->date,
-        //         'buyer_id' => $payment->buyer_id,
-        //         'seller_id' => $payment->seller_id,
-        //         'description' => 'Payment against cotton for lot number '. $invoice->lot_no,
-        //         'debit' => 0,
-        //         'credit' => $payment->amount
-        //     ];
-        // }
-
-        // StockLedger::insert($invoicesData);
-        // StockLedger::insert($paymentsData);
-        // $totalDebit = StockLedger::sum('debit');
-        // $totalCredit = StockLedger::sum('credit');
-        // $balance = ($totalDebit ?? 0) - ($totalCredit ?? 0);
-
-        // $ledgerData = StockLedger::paginate(10);
 
         return view('reports.stock-ledger.stock-ledger', compact('param','products','invMainHead', 'dropDownData','product','stockLedger', 'title'));
+    }
+
+
+    public function getPartyAccountLedger(Request $request)
+    {
+        $title = 'Party Ledger';
+        $param = request()->param;
+        $dropDownData = $this->stockLedgerService->DropDownData();
+
+        if (!empty($request['party_id'])) {
+
+            $parties = CoaDetailAccount::where('id', $request['party_id'])->get();
+
+            $fromDate = date('Y-m-d', strtotime($request['from_date']));
+            $toDate = date('Y-m-d', strtotime($request['to_date']));
+            $partyAccountLedger = AccountLedger::orwhereBetween('date', [$fromDate, $toDate])
+                ->orwhere('party_id', $request->party_id) // Adjust if `party_id` is a separate column
+                ->orderBy('date', 'asc')
+                ->get();
+        } else {
+
+            $fromDate = date('Y-m-d', strtotime($request['from_date']));
+            $toDate = date('Y-m-d', strtotime($request['to_date']));
+            $partyAccountLedger = AccountLedger::orwhereBetween('date', [$fromDate, $toDate])
+                ->orwhere('party_id', $request->party_id) // Adjust if `party_id` is a separate column
+                ->orderBy('date', 'asc')
+                ->get();
+        }
+
+        $party = CoaDetailAccount::where('id',$request['party_id'])->first();
+        $partyDetailAccount =CoaDetAccountDetail::where('det_account_code', $party->id )->first();
+        $subSubHead = CoaSubSubHead::where('id', $party->sub_sub_head)->value('account_name');
+        $subHead = CoaSubHead::where('id', $party->sub_head)->value('account_name');
+        $controlHead = CoaControlHead::where('id', $party->control_head)->value('account_name');
+        $mainHead = CoaMainHead::where('id', $party->main_head)->value('account_name');
+        $saleMan = SaleMan::where('id', $party->saleMan_id)->value('name');
+
+        $fetchBelts =CoaDetailAccountSectors::where('master_account_id',$party->id )->pluck('sector_id');
+        $sectors = Sector::whereIn('id',$fetchBelts )->pluck('name');
+
+        $fetchAreas =CoaDetailAccountArea::where('master_account_id',$party->id )->pluck('area_id');
+        $areas = Area::whereIn('id',$fetchAreas )->pluck('name');
+        $searchParty = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        $accountLedgers = AccountLedger::where('party_id' ,$searchParty)->get();
+        $transporterArray = $accountLedgers->pluck('transporter_id');
+        $transporters = Transporter::whereIn('id',$transporterArray )->pluck('name','id');
+
+        return view('reports.account-ledger.partyAccount-ledger', compact('param','transporters','saleMan','areas','accountLedgers','sectors','mainHead','controlHead','subHead','subSubHead','partyDetailAccount','party', 'dropDownData', 'title'));
     }
 }

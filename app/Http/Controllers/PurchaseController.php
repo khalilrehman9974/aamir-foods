@@ -100,12 +100,26 @@ class PurchaseController extends Controller
 
         $stockLedgers = $this->purchaseService->prepareStockLedgerData($request, $purchaseMasterInsert->id);
         $this->purchaseService->saveStockLedger($stockLedgers);
-        // $stockLeadgerData = $this->stockLedgerService->prepareAndSaveData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE,);
-        //Insert data into accounts ledger table.
-        // $creditAccountData = $this->accountLedgerService->prepareCreditData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE, PurchaseService::PURCHASE_DESCRIPTION);
-        // $debitAccountData = $this->accountLedgerService->prepareDebitData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE, PurchaseService::PURCHASE_DESCRIPTION);
-        // AccountLedger::insert($creditAccountData);
-        // AccountLedger::insert($debitAccountData);
+
+        $debitAccountData = $this->purchaseService->prepareAccountDebitData($request, $purchaseMasterInsert->id);
+        $this->purchaseService->saveCreditAccountData($debitAccountData);
+
+        $creditAccountData = $this->purchaseService->prepareAccountCreditData($request, $purchaseMasterInsert->id);
+        AccountLedger::insert($creditAccountData);
+
+
+        $taxAccountData = $this->purchaseService->prepareTaxAccountCreditData($request, $purchaseMasterInsert->id);
+        AccountLedger::insert($taxAccountData);
+
+        $taxAccountDebitData = $this->purchaseService->prepareTaxAccountDebitData($request, $purchaseMasterInsert->id);
+        AccountLedger::insert($taxAccountDebitData);
+
+        $carriageAccountData = $this->purchaseService->prepareCarriageAccountCreditData($request, $purchaseMasterInsert->id);
+        AccountLedger::insert($carriageAccountData);
+
+        $carriageAccountDebitData = $this->purchaseService->prepareCarriageAccountDebitData($request, $purchaseMasterInsert->id);
+        AccountLedger::insert($carriageAccountDebitData);
+
         DB::commit();
         // } catch (\Exception $e) {
         //     DB::rollback();
@@ -137,13 +151,12 @@ class PurchaseController extends Controller
     {
         // dd($request);
         // try {
-        //     DB::beginTransaction();
+        // DB::beginTransaction();
         $request = request()->all();
         PurchaseDetail::where('purchase_master_id', $request['id'])->delete();
         $documentNo = 'P/I' . '-' . $request['id'];
         StockLedger::where('document_no', $documentNo)->where('invoice_id', $request['id'])->delete();
-
-        // AccountLedger::where('invoice_id', $request['id'])->delete();
+        AccountLedger::where('document_no', $documentNo)->where('invoice_id', $request['id'])->delete();
 
         //Save data into relevant tables.
         $purchaseMasterData = $this->purchaseService->preparePurchaseMasterData($request);
@@ -154,12 +167,28 @@ class PurchaseController extends Controller
         //Save data into stock table.
         $stockLedgers = $this->purchaseService->prepareStockLedgerData($request, $purchaseMasterInsert->id);
         $this->purchaseService->saveStockLedger($stockLedgers);
-        // $this->stockLedgerService->prepareAndSaveData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE);
-        // $creditAccountData = $this->accountLedgerService->prepareCreditData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE, PurchaseService::PURCHASE_DESCRIPTION);
-        // $debitAccountData = $this->accountLedgerService->prepareDebitData($request, $purchaseMasterInsert->id, PurchaseService::PURCHASE_TRANSACTION_TYPE, PurchaseService::PURCHASE_DESCRIPTION);
-        // AccountLedger::insert($creditAccountData);
-        // AccountLedger::insert($debitAccountData);
-        //     DB::commit();
+
+        $debitAccountData = $this->purchaseService->prepareAccountDebitData($request, $purchaseMasterInsert->id);
+        $this->purchaseService->saveCreditAccountData($debitAccountData);
+
+        $creditAccountData = $this->purchaseService->prepareAccountCreditData($request, $purchaseMasterInsert->id);
+        AccountLedger::insert($creditAccountData);
+
+
+        $taxAccountData = $this->purchaseService->prepareTaxAccountCreditData($request, $purchaseMasterInsert->id);
+        AccountLedger::insert($taxAccountData);
+
+        $taxAccountDebitData = $this->purchaseService->prepareTaxAccountDebitData($request, $purchaseMasterInsert->id);
+        AccountLedger::insert($taxAccountDebitData);
+
+        $carriageAccountData = $this->purchaseService->prepareCarriageAccountCreditData($request, $purchaseMasterInsert->id);
+        AccountLedger::insert($carriageAccountData);
+
+        $carriageAccountDebitData = $this->purchaseService->prepareCarriageAccountDebitData($request, $purchaseMasterInsert->id);
+        AccountLedger::insert($carriageAccountDebitData);
+
+
+        // DB::commit();
         // } catch (\Exception $e) {
         //     DB::rollback();
         //     return redirect('purchase/purchase-list')->with('error', $e->getMessage());

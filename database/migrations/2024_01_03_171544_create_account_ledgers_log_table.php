@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('account_ledgers_log', function (Blueprint $table) {
             $table->increments('id');
+            $table->date('date');
             $table->integer('invoice_id');
             $table->integer('party_id');
-            $table->integer('product_id');
             $table->string('description');
             $table->string('document_number');
             $table->integer('bags')->nullable();

@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AccountLedger extends Model
 {
-
     protected $guarded = ['id'];
+    use SoftDeletes;
 
     protected $table = 'account_ledgers';
-    protected $fillable = ['account_id','description','debit','credit'];
+
+    protected $fillable = ['date','invoice_id','party_id','document_number','rate','bilty_no',
+    'transporter_id','total_quantity','measurementType','bags','description','debit','credit'];
 
     protected $hidden = ['created_at','updated_at'];
 
@@ -20,8 +22,5 @@ class AccountLedger extends Model
         return $this->belongsTo(CoaDetailAccount::class, 'account_id', 'account_code');
     }
 
-    // public function bank(){
-    //     return $this->belongsTo(Bank::class, 'account_id', 'id');
-    // }
 
 }

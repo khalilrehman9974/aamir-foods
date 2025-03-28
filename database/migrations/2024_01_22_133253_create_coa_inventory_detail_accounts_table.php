@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('coa_inventory_detail_accounts', function (Blueprint $table) {
             $table->id();
+            $table->integer('coa_main_head');
             $table->foreignId('main_head')->nullable()->constrained('coa_inventory_main_heads')->onDelete('cascade');
             $table->foreignId('sub_head')->nullable()->constrained('coa_inventory_sub_heads')->onDelete('cascade');
             $table->foreignId('sub_sub_head')->nullable()->constrained('coa_inventory_sub_sub_heads')->onDelete('cascade');
@@ -31,6 +32,7 @@ return new class extends Migration
             $table->string('min_limit');
             $table->string('danger_level');
             $table->string('opening_stock');
+            $table->integer('stock_rate');
             $table->string('use_in');
             $table->string('remarks');
             $table->integer('created_by');

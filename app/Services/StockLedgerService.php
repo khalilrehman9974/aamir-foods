@@ -3,6 +3,7 @@
 
 namespace App\Services;
 
+use App\Models\CoaDetailAccount;
 use App\Stock;
 use App\Models\StockLedger;
 use Illuminate\Support\Facades\DB;
@@ -36,7 +37,8 @@ class StockLedgerService
     public function DropDownData()
     {
         $result = [
-            'products' => CoaInventoryDetailAccount::pluck('name', 'id')
+            'products' => CoaInventoryDetailAccount::pluck('name', 'id'),
+            'parties' => CoaDetailAccount::pluck('account_name', 'id')
         ];
 
         return $result;

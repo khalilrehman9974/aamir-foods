@@ -59,8 +59,8 @@
                         <div class="tab-content" id="pills-tabContent">
                             <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
                                 aria-labelledby="pills-home-tab" tabindex="0">
-                                <form id="jvForm" action="{{ !empty($jv) ? route('jv.update') : route('jv.save') }}" method="POST"
-                                    class="row g-3">
+                                <form id="jvForm" action="{{ !empty($jv) ? route('jv.update') : route('jv.save') }}"
+                                    method="POST" class="row g-3">
                                     @csrf
                                     <input type="hidden" name="id" id="id"
                                         value="{{ isset($jv->id) ? $jv->id : '' }}" />
@@ -100,11 +100,12 @@
                                                             </th>
                                                             <th></th>
 
-                                                            <th class=""><b>Debit Account /
-                                                                    <br>Description</b>
+                                                            <th class="" style="width: 50%"><b>Debit Account
+                                                                    /Credit
+                                                                    Account/Description</b>
                                                             </th>
-                                                            <th class=""><b>Credit Account</b>
-                                                            </th>
+                                                            {{-- <th class=""><b>Credit Account</b>
+                                                            </th> --}}
                                                             <th class=""><b>Debit</b>
                                                             </th>
                                                             <th class=""><b>Credit</b>
@@ -118,6 +119,9 @@
                                                     <tbody>
                                                         @if (!empty($jvDetails))
                                                             @foreach ($jvDetails as $jvDetail)
+                                                                @php
+                                                                    $index = $loop->index + 2; // Starts from 2
+                                                                @endphp
                                                                 <tr class="tr_clone validator_0">
                                                                     <td class="delete-item-row">
                                                                         <ul class="table-controls">
@@ -156,13 +160,13 @@
                                                                     </td>
                                                                     <td hidden>
                                                                         <input type="text" name="row_id[]"
-                                                                            class="row_id" value="0" hidden>
+                                                                            class="row_id" value="2" hidden>
                                                                     </td>
 
                                                                     <td class="title">
                                                                         <select id="debit_account"
                                                                             name="debit_account[]"
-                                                                            class="form-control select2 custom-select mr-0 mb-0 form-control-sm">
+                                                                            class="form-control select2 custom-select mr-0 mb-0 form-control-sm debit_account_{{ $index }}">
                                                                             <option selected="">
                                                                                 Please select the
                                                                                 Debit Account</option>
@@ -173,14 +177,24 @@
                                                                                 </option>
                                                                             @endforeach
                                                                         </select>
-                                                                        <textarea id="description" type="text" name="description[]"
-                                                                            placeholder="Please Enter Description" class="form-control form-control-sm mt-3">{{$jvDetail->description}}</textarea>
+
                                                                     </td>
                                                                     <br>
+
+
+                                                                    <td class="text-right qty">
+                                                                        <input type="number" id="debit"
+                                                                            class="form-control form-control-sm debit"
+                                                                            value="{{ old('debit', !empty($jvDetail->debit) ? $jvDetail->debit : '') }}"
+                                                                            name="debit[]" placeholder="Debit">
+                                                                    </td>
+                                                                <tr>
+                                                                    <td></td>
+
                                                                     <td class="title">
                                                                         <select id="credit_account"
                                                                             name="credit_account[]"
-                                                                            class="form-control select2 custom-select mr-0 mb-0 form-control-sm">
+                                                                            class="form-control select2 custom-select mr-0 mb-0 form-control-sm credit_account_{{ $index }}">
                                                                             <option selected="">
                                                                                 Please select the
                                                                                 Credit Account</option>
@@ -191,20 +205,17 @@
                                                                                 </option>
                                                                             @endforeach
                                                                         </select>
+                                                                        <textarea id="description" type="text" name="description[]" placeholder="Please Enter Description"
+                                                                            class="form-control form-control-sm mt-3">{{ $jvDetail->description }}</textarea>
                                                                     </td>
-
-                                                                    <td class="text-right qty">
-                                                                        <input type="number" id="debit"
-                                                                            class="form-control form-control-sm debit"
-                                                                            value="{{ old('debit', !empty($jvDetail->debit) ? $jvDetail->debit : '') }}"
-                                                                            name="debit[]" placeholder="Debit">
-                                                                    </td>
+                                                                    <td></td>
                                                                     <td class="text-right qty">
                                                                         <input type="number" id="credit"
                                                                             class="form-control form-control-sm credit"
                                                                             value="{{ old('credit', !empty($jvDetail->credit) ? $jvDetail->credit : '') }}"
                                                                             name="credit[]" placeholder="Credit">
                                                                     </td>
+                                                                </tr>
 
                                                                 </tr>
                                                             @endforeach
@@ -230,9 +241,9 @@
                                                     <div class="col-sm-8">
                                                         <input type="text" id="gross-amount"
                                                             class="form-control form-control-sm gross-amount "
-                                                            name="debit_amount" id="gross-amount" value="{{$jv->debit_amount}}"
-                                                            style="color: black" placeholder="Total Debit Amount"
-                                                            readonly>
+                                                            name="debit_amount" id="gross-amount"
+                                                            value="{{ $jv->debit_amount }}" style="color: black"
+                                                            placeholder="Total Debit Amount" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
@@ -243,9 +254,9 @@
                                                     <div class="col-sm-8">
                                                         <input type="text" id="credit-amount"
                                                             class="form-control form-control-sm credit-amount "
-                                                            name="credit_amount" style="color: black" value="{{$jv->credit_amount}}"
-                                                            id="credit-amount" placeholder="Total Credit Amount"
-                                                            readonly>
+                                                            name="credit_amount" style="color: black"
+                                                            value="{{ $jv->credit_amount }}" id="credit-amount"
+                                                            placeholder="Total Credit Amount" readonly>
                                                     </div>
                                                 </div>
 
@@ -294,7 +305,7 @@
     </div>
 
     <script>
-        document.getElementById('jvForm').addEventListener('submit', function (e) {
+        document.getElementById('jvForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
             const debitAmount = parseFloat(document.getElementById('gross-amount').value) || 0;
@@ -328,10 +339,22 @@
                 '</td>' +
                 '<td hidden><input type="text" name="row_id[]" class="row_id" value="' + currentIndex +
                 '" hidden></td>' +
-                '<td class="description"><select id="account_title" name="debit_account[]" class="form-control select2 custom-select mr-0 mb-0 form-control-sm"> <option selected=""> Please select the Debit Account</option> @foreach ($dropDownData['accounts'] as $key => $value) <option value="{{ $key }}" {{ (old('debit_account') == $key ? 'selected' : '') || (!empty($bpv->debit_account) ? collect($bpv->debit_account)->contains($key) : '') ? 'selected' : '' }}> {{ $value }} </option> @endforeach </select><textarea id="description" type="text" name="description[]" value="{{ old('description', !empty($bpv->description) ? $bpv->description : '') }}" placeholder="Please Enter Description" class="form-control form-control-sm mt-3"></textarea> </td>' +
-                '<td class="title"> <select name="credit_account[]" id="bank" class="form-control select2 custom-select mr-0 mb-0 form-control-sm"> <option selected=""> Please select the Credit Account</option> @foreach ($dropDownData['accounts'] as $key => $value) <option value="{{ $key }}" {{ (old('credit_account') == $key ? 'selected' : '') || (!empty($bpv->credit_account) ? collect($bpv->credit_account)->contains($key) : '') ? 'selected' : '' }}> {{ $value }} </option> @endforeach </select> </td>' +
+                '<td class="description"><select id="account_title" name="debit_account[]" class="form-control select2 custom-select mr-0 mb-0 form-control-sm debit_account_' +
+                currentIndex +
+                '"> <option selected=""> Please select the Debit Account</option> @foreach ($dropDownData['accounts'] as $key => $value) <option value="{{ $key }}" {{ (old('debit_account') == $key ? 'selected' : '') || (!empty($bpv->debit_account) ? collect($bpv->debit_account)->contains($key) : '') ? 'selected' : '' }}> {{ $value }} </option> @endforeach </select></td>' +
+
                 '<td class="text-right qty"> <input id="debit" type="number" name="debit[]" value="{{ old('debit', !empty($jv->debit) ? $jv->debit : '') }}" placeholder="Debit " class="form-control form-control-sm debit"></td>' +
+
+                '<tr>' +
+                '<td>' +
+                '</td>' +
+                '<td class="title"> <select name="credit_account[]" id="bank" class="form-control select2 custom-select mr-0 mb-0 form-control-sm credit_account_' +
+                currentIndex +
+                '"> <option selected=""> Please select the Credit Account</option> @foreach ($dropDownData['accounts'] as $key => $value) <option value="{{ $key }}" {{ (old('credit_account') == $key ? 'selected' : '') || (!empty($bpv->credit_account) ? collect($bpv->credit_account)->contains($key) : '') ? 'selected' : '' }}> {{ $value }} </option> @endforeach </select> <textarea id="description" type="text" name="description[]" value="{{ old('description', !empty($bpv->description) ? $bpv->description : '') }}" placeholder="Please Enter Description" class="form-control form-control-sm mt-3"></textarea> </td>' +
+                '<td>' +
+                '</td>' +
                 '<td class="text-right qty"> <input id="credit" type="number" name="credit[]" value="{{ old('credit', !empty($jv->credit) ? $jv->credit : '') }}" placeholder="Credit " class="form-control form-control-sm credit"></td>' +
+                '</tr>' +
                 '<div class="form-check form-check-primary form-check-inline me-0 mb-0">' +
                 '</div>' +
                 '</div>' +
@@ -341,6 +364,8 @@
             $(".item-table tbody").append($html);
             deleteItemRow();
             $('.select2').select2();
+            $('.debit_account_' + currentIndex).select2();
+            $('.credit_account_' + currentIndex).select2();
             $(document).on('click', 'body *', function() {
                 $('.debit').on("input", function() {
                     doAmountTotal();
@@ -398,7 +423,10 @@
 
         $(document).ready(function() {
             $('.select2').select2();
+            $('.debit_account_' + currentIndex).select2();
+            $('.credit_account_' + currentIndex).select2();
         });
+
 
 
         function deleteItemRow() {

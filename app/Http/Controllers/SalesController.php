@@ -61,7 +61,7 @@ class SalesController extends Controller
         $sales = $this->saleService->searchSale($request);
         $dropDownData = $this->saleService->DropDownData();
 
-        return view('sales.index', compact('sales','param','dropDownData', 'request', 'pageTitle'));
+        return view('sales.index', compact('sales', 'param', 'dropDownData', 'request', 'pageTitle'));
     }
 
     /*
@@ -73,31 +73,30 @@ class SalesController extends Controller
         $dropDownData = $this->commonService->DropDownData();
         $invoiceNo = SaleMaster::max('id') + 1;
         $dispatchNote = DispatchNoteMaster::find($request->id);
-
         $dispatchNoteDetails = DispatchNoteDetail::where('dispatch_note_master_id', $request->id)->get();
-        $parties =CoaDetailAccount::where('id', $dispatchNote->party_id)->pluck('account_name','id');
-        $getCommission =CoaDetailAccount::where('id', $dispatchNote->party_id)->get();
+        $parties = CoaDetailAccount::where('id', $dispatchNote->party_id)->pluck('account_name', 'id');
+        $getCommission = CoaDetailAccount::where('id', $dispatchNote->party_id)->get();
         $commissionArray = $getCommission->pluck('commision')->toArray();
-        $saleMans =SaleMan::where('id', $dispatchNote->saleman)->pluck('name','id');
-        $sectors =Sector::where('id', $dispatchNote->sector)->pluck('name','id');
-        $areas =Area::where('id', $dispatchNote->area)->pluck('name','id');
-        $transporters =Transporter::where('id', $dispatchNote->transporter_id)->pluck('name','id');
+        $saleMans = SaleMan::where('id', $dispatchNote->saleman)->pluck('name', 'id');
+        $sectors = Sector::where('id', $dispatchNote->sector)->pluck('name', 'id');
+        $areas = Area::where('id', $dispatchNote->area)->pluck('name', 'id');
+        $transporters = Transporter::where('id', $dispatchNote->transporter_id)->pluck('name', 'id');
 
-        $getProducts = DetailAccountProducts::where('detail_account_id',$dispatchNote->party_id)->get();
+        $getProducts = DetailAccountProducts::where('detail_account_id', $dispatchNote->party_id)->get();
         $productsArray = $getProducts->pluck('product_id')->toArray();
-        $products = CoaInventoryDetailAccount::whereIn('id', $productsArray)->pluck('name','id');
+        $products = CoaInventoryDetailAccount::whereIn('id', $productsArray)->pluck('name', 'id');
 
-        $getPrice = DetailAccountProducts::where('detail_account_id',$dispatchNote->party_id)->whereIn('product_id',$productsArray)->get();
+        $getPrice = DetailAccountProducts::where('detail_account_id', $dispatchNote->party_id)->whereIn('product_id', $productsArray)->get();
         $pricesArray = $getPrice->pluck('price', 'product_id')->toArray();
         $discountsArray = $getPrice->pluck('discount', 'product_id')->toArray();
 
-        $deliveredToParties =DeliveredToParties::where('id', $dispatchNote->delivered_to)->pluck('party_name','id');
+        $deliveredToParties = DeliveredToParties::where('id', $dispatchNote->delivered_to)->pluck('party_name', 'id');
 
         if (empty($dispatchNote)) {
             abort(404);
         }
 
-        return view('sales.create', compact('pageTitle', 'transporters','commissionArray', 'pricesArray','discountsArray','deliveredToParties', 'products','dispatchNoteDetails', 'areas','sectors','saleMans','parties','dropDownData', 'invoiceNo', 'dispatchNote'));
+        return view('sales.create', compact('pageTitle', 'transporters', 'commissionArray', 'pricesArray', 'discountsArray', 'deliveredToParties', 'products', 'dispatchNoteDetails', 'areas', 'sectors', 'saleMans', 'parties', 'dropDownData', 'invoiceNo', 'dispatchNote'));
     }
 
 
@@ -128,14 +127,29 @@ class SalesController extends Controller
         $stockLedgers = $this->saleService->prepareStockLedgerData($request, $saleMasterInsert->id);
         $this->saleService->saveStockLedger($stockLedgers);
 
+        $debitAccountData = $this->saleService->prepareAccountDebitData($request, $saleMasterInsert->id);
+        AccountLedger::insert($debitAccountData);
 
-        // $this->stockLedgerService->prepareAndSaveData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'));
+        $creditAccountData = $this->saleService->prepareAccountCreditData($request, $saleMasterInsert->id);
+        $this->saleService->saveCreditAccountData($creditAccountData);
 
-        //Insert data into accounts ledger table.
-        // $debitAccountData = $this->saleService->prepareAccountDebitData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'), config('contants.SALE_DESCRIPTION'));
-        // $creditAccountData = $this->saleService->prepareAccountCreditData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'), config('contants.SALE_DESCRIPTION'));
-        // AccountLedger::insert($debitAccountData);
-        // AccountLedger::insert($creditAccountData);
+        $commissionAccountData = $this->saleService->prepareCommissionAccountCreditData($request, $saleMasterInsert->id);
+        AccountLedger::insert($commissionAccountData);
+
+        $commissionAccountDebitData = $this->saleService->prepareCommissionAccountDebitData($request, $saleMasterInsert->id);
+        AccountLedger::insert($commissionAccountDebitData);
+
+        $discountAccountData = $this->saleService->prepareDiscountAccountCreditData($request, $saleMasterInsert->id);
+        AccountLedger::insert($discountAccountData);
+
+        $discountAccountDebitData = $this->saleService->prepareDiscountAccountDebitData($request, $saleMasterInsert->id);
+        AccountLedger::insert($discountAccountDebitData);
+
+        $carriageAccountData = $this->saleService->prepareCarriageAccountCreditData($request, $saleMasterInsert->id);
+        AccountLedger::insert($carriageAccountData);
+
+        $carriageAccountDebitData = $this->saleService->prepareCarriageAccountDebitData($request, $saleMasterInsert->id);
+        AccountLedger::insert($carriageAccountDebitData);
         // DB::commit();
         // } catch (\Exception $e) {
         //     DB::rollback();
@@ -153,19 +167,19 @@ class SalesController extends Controller
         $currentInvoice = $id;
         $sale = SaleMaster::find($id);
         $date = Carbon::parse($sale->date)->format('d-m-Y');
-        $parties =CoaDetailAccount::where('id', $sale->party_id)->pluck('account_name','id');
-        $saleMans =SaleMan::where('id', $sale->saleman)->pluck('name','id');
-        $sectors =Sector::where('id', $sale->sector)->pluck('name','id');
-        $areas =Area::where('id', $sale->area)->pluck('name','id');
-        $transporters =Transporter::where('id', $sale->transporter_id)->pluck('name','id');
-        $deliveredToParties =DeliveredToParties::where('id', $sale->delivered_to)->pluck('party_name','id');
+        $parties = CoaDetailAccount::where('id', $sale->party_id)->pluck('account_name', 'id');
+        $saleMans = SaleMan::where('id', $sale->saleman)->pluck('name', 'id');
+        $sectors = Sector::where('id', $sale->sector)->pluck('name', 'id');
+        $areas = Area::where('id', $sale->area)->pluck('name', 'id');
+        $transporters = Transporter::where('id', $sale->transporter_id)->pluck('name', 'id');
+        $deliveredToParties = DeliveredToParties::where('id', $sale->delivered_to)->pluck('party_name', 'id');
         $saleDetails = SaleDetail::where('sale_master_id', $id)->get();
 
-        $getProducts = DetailAccountProducts::where('detail_account_id',$sale->party_id)->get();
+        $getProducts = DetailAccountProducts::where('detail_account_id', $sale->party_id)->get();
         $productsArray = $getProducts->pluck('product_id')->toArray();
-        $products = CoaInventoryDetailAccount::whereIn('id', $productsArray)->pluck('name','id');
+        $products = CoaInventoryDetailAccount::whereIn('id', $productsArray)->pluck('name', 'id');
 
-        $getPrice = DetailAccountProducts::where('detail_account_id',$sale->party_id)->whereIn('product_id',$productsArray)->get();
+        $getPrice = DetailAccountProducts::where('detail_account_id', $sale->party_id)->whereIn('product_id', $productsArray)->get();
         $pricesArray = $getPrice->pluck('price', 'product_id')->toArray();
         $discountsArray = $getPrice->pluck('discount', 'product_id')->toArray();
 
@@ -174,7 +188,7 @@ class SalesController extends Controller
             $message = config('constants.wrong');
         }
 
-        return view('sales.edit', compact('currentInvoice','date','pricesArray','deliveredToParties','transporters','areas','sectors','saleMans','parties','sale','pageTitle','products','saleDetails'));
+        return view('sales.edit', compact('currentInvoice', 'date', 'pricesArray', 'deliveredToParties', 'transporters', 'areas', 'sectors', 'saleMans', 'parties', 'sale', 'pageTitle', 'products', 'saleDetails'));
     }
 
     /*
@@ -183,29 +197,48 @@ class SalesController extends Controller
      * */
     public function update(Request $request)
     {
-        // dd($request);
         // try {
         //     DB::beginTransaction();
-            $request = request()->all();
-            SaleDetail::where('sale_master_id', $request['id'])->delete();
-            $documentNo = 'S/I' . '-' . $request['id'];
-            StockLedger::where('document_no', $documentNo)->where('invoice_id', $request['id'])->delete();
-            // AccountLedger::where('invoice_id', $request['saleId'])->delete();
-            
-            //Save data into relevant tables.
-            $saleMasterData = $this->saleService->prepareSaleMasterData($request);
-            $saleMasterInsert = $this->commonService->findUpdateOrCreate(SaleMaster::class, ['id' => request('id')], $saleMasterData);
-            $saleDetailData = $this->saleService->prepareSaleDetailData($request, $saleMasterInsert->id);
-            $this->saleService->saveSale($saleDetailData);
+        $request = request()->all();
+        SaleDetail::where('sale_master_id', $request['id'])->delete();
+        $documentNo = 'S/I' . '-' . $request['id'];
+        StockLedger::where('document_no', $documentNo)->where('invoice_id', $request['id'])->delete();
+        AccountLedger::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
 
-            //Save data into stock table.
-            $stockLedgers = $this->saleService->prepareStockLedgerData($request, $saleMasterInsert->id);
-            $this->saleService->saveStockLedger($stockLedgers);
-            // $this->stockLedgerService->prepareAndSaveData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'));
-            // $debitAccountData = $this->saleService->prepareAccountDebitData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'), config('contants.SALE_DESCRIPTION'));
-            // $creditAccountData = $this->saleService->prepareAccountCreditData($request, $saleMasterInsert->id, config('contants.SALE_TRANSACTION_TYPE'), config('contants.SALE_DESCRIPTION'));
-            // AccountLedger::insert($debitAccountData);
-            // AccountLedger::insert($creditAccountData);
+        //Save data into relevant tables.
+        $saleMasterData = $this->saleService->prepareSaleMasterData($request);
+        $saleMasterInsert = $this->commonService->findUpdateOrCreate(SaleMaster::class, ['id' => request('id')], $saleMasterData);
+        $saleDetailData = $this->saleService->prepareSaleDetailData($request, $saleMasterInsert->id);
+        $this->saleService->saveSale($saleDetailData);
+
+        //Save data into stock table.
+        $stockLedgers = $this->saleService->prepareStockLedgerData($request, $saleMasterInsert->id);
+        $this->saleService->saveStockLedger($stockLedgers);
+
+        $debitAccountData = $this->saleService->prepareAccountDebitData($request, $saleMasterInsert->id);
+        AccountLedger::insert($debitAccountData);
+
+        $creditAccountData = $this->saleService->prepareAccountCreditData($request, $saleMasterInsert->id);
+        $this->saleService->saveCreditAccountData($creditAccountData);
+
+        $commissionAccountData = $this->saleService->prepareCommissionAccountCreditData($request, $saleMasterInsert->id);
+        AccountLedger::insert($commissionAccountData);
+
+        $commissionAccountDebitData = $this->saleService->prepareCommissionAccountDebitData($request, $saleMasterInsert->id);
+        AccountLedger::insert($commissionAccountDebitData);
+
+        $discountAccountData = $this->saleService->prepareDiscountAccountCreditData($request, $saleMasterInsert->id);
+        AccountLedger::insert($discountAccountData);
+
+        $discountAccountDebitData = $this->saleService->prepareDiscountAccountDebitData($request, $saleMasterInsert->id);
+        AccountLedger::insert($discountAccountDebitData);
+
+        $carriageAccountData = $this->saleService->prepareCarriageAccountCreditData($request, $saleMasterInsert->id);
+        AccountLedger::insert($carriageAccountData);
+
+        $carriageAccountDebitData = $this->saleService->prepareCarriageAccountDebitData($request, $saleMasterInsert->id);
+        AccountLedger::insert($carriageAccountDebitData);
+
         //     DB::commit();
         // } catch (\Exception $e) {
         //     DB::rollback();
@@ -226,12 +259,12 @@ class SalesController extends Controller
         $area = Area::where('id', $saleMaster->area)->value('name');
         $saleDetails = SaleDetail::where('sale_master_id', $saleMaster->id)->get();
         $productsArray = $saleDetails->pluck('product_id')->toArray();
-        $products = CoaInventoryDetailAccount::whereIn('id',$productsArray)->pluck('name','id');
-        $user = User::where('id',$saleMaster->created_by)->value('name');
-        $deliverdToParties = DeliveredToParties::where('id',$saleMaster->delivered_to)->value('party_name');
-        $transporters = Transporter::where('id',$saleMaster->transporter_id)->value('name');
+        $products = CoaInventoryDetailAccount::whereIn('id', $productsArray)->pluck('name', 'id');
+        $user = User::where('id', $saleMaster->created_by)->value('name');
+        $deliverdToParties = DeliveredToParties::where('id', $saleMaster->delivered_to)->value('party_name');
+        $transporters = Transporter::where('id', $saleMaster->transporter_id)->value('name');
 
-        return view('sales.print', compact('title','products','transporters','user','deliverdToParties','saleMaster','date','saleDetails','party','saleMan','belt','area'));
+        return view('sales.print', compact('title', 'products', 'transporters', 'user', 'deliverdToParties', 'saleMaster', 'date', 'saleDetails', 'party', 'saleMan', 'belt', 'area'));
     }
 
     /*
@@ -293,6 +326,4 @@ class SalesController extends Controller
     {
         return $dispatchNote = DispatchNoteMaster::with('items')->get();
     }
-
-
 }

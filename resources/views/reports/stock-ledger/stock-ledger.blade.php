@@ -281,7 +281,7 @@
         if ($openingBalance === 0) {
             $openingStockRate = 0;
         } else {
-            $openingStockRate = 5000;
+            $openingStockRate = $product->stock_rate;
         }
 
         $entries = $stockLedger;
@@ -501,7 +501,6 @@
                         <th style="text-align: center; padding: 0px 0px 0px 0px !important; width: 7%; border-color: white; border-right: black;"></th>
                         <th style="text-align: center; padding: 0px 0px 0px 0px !important; width: 15%; border-color: white; border-right: black;"></th>
                         <th style="text-align: center; padding: 0px 0px 0px 0px !important; width: 19%;">Opening Stock</th>
-                        {{-- <th style="text-align: center; padding: 0px 0px 0px 0px !important; width: 5%;">Doc Name.</th> --}}
                         <th colspan="3" style="text-align: center; padding: 0px 0px 0px 0px !important; width: 15%;">Stock In.</th>
                         <th colspan="3" style="text-align: center; padding: 0px 0px 0px 0px !important; width: 15%;">Stock Out</th>
                         <th style="text-align: center; padding: 0px 0px 0px 0px !important; width: 6%;">Balance</th>

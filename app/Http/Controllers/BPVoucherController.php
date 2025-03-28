@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\BPVDetails;
 use Illuminate\Http\Request;
 use App\Models\AccountLedger;
@@ -66,7 +67,7 @@ class BPVoucherController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request);
+       
         $request = $request->except('_token', 'id');
         // DB::beginTransaction();
         // try {
@@ -162,6 +163,21 @@ class BPVoucherController extends Controller
         return redirect('bpv/list')->with('message', config('constants.update'));
     }
 
+    public function print($id)
+    {
+        $title = 'Bank Payment Voucher';
+        $bpvMaster = BankPaymentVoucher::find($id);
+        $date = Carbon::parse($bpvMaster->date)->format('d-m-Y');
+        $bpvDetails = BPVDetails::where('voucher_master_id', $bpvMaster->id)->get();
+        $partyArray = $bpvDetails->pluck('account_id');
+        $bankArray = $bpvDetails->pluck('bank_id');
+        $party = CoaDetailAccount::whereIn('id', $partyArray)->pluck('account_name', 'id');
+        $banks = CoaDetailAccount::whereIn('id', $bankArray)->pluck('account_name', 'id');
+
+        $user = User::where('id', $bpvMaster->created_by)->value('name');
+
+        return view('vouchers.bpv.print', compact('title','user', 'bpvMaster','bpvDetails','banks', 'date', 'party'));
+    }
 
     public function view($id)
     {
@@ -195,7 +211,6 @@ class BPVoucherController extends Controller
 
     public function getDetailData($id)
     {
-        dd($id);
         $detailAccount = CoaDetailAccount::where('voucher_master_id', trim($id))->get();
         // dd($detailAccount);
         if ($detailAccount) {

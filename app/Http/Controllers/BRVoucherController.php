@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\BRVDetails;
 use Illuminate\Http\Request;
 use App\Models\AccountLedger;
 use App\Services\CommonService;
+use App\Models\CoaDetailAccount;
 use App\Models\BankReceiptVoucher;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\VoucherRequest;
@@ -152,6 +154,22 @@ class BRVoucherController extends Controller
         //     return redirect('brv/create')->with('error', $e->getMessage());
         // }
         return redirect('brv/list')->with('message', config('constants.update'));
+    }
+
+    public function print($id)
+    {
+        $title = 'Bank Receipt Voucher';
+        $brvMaster = BankReceiptVoucher::find($id);
+        $date = Carbon::parse($brvMaster->date)->format('d-m-Y');
+        $brvDetails = BRVDetails::where('voucher_master_id', $brvMaster->id)->get();
+        $partyArray = $brvDetails->pluck('account_id');
+        $bankArray = $brvDetails->pluck('bank_id');
+        $party = CoaDetailAccount::whereIn('id', $partyArray)->pluck('account_name', 'id');
+        $banks = CoaDetailAccount::whereIn('id', $bankArray)->pluck('account_name', 'id');
+
+        $user = User::where('id', $brvMaster->created_by)->value('name');
+
+        return view('vouchers.brv.print', compact('title','user', 'brvMaster','brvDetails','banks', 'date', 'party'));
     }
 
     public function view($id)

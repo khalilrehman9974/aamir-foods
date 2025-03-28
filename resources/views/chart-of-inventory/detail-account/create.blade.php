@@ -26,7 +26,7 @@
         <nav class="breadcrumb-style-one" aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Chart of Accounts</li>
+                <li class="breadcrumb-item active" aria-current="page">Chart of Inventory</li>
                 <li class="breadcrumb-item active" aria-current="page">Detail Account</li>
             </ol>
         </nav>
@@ -79,6 +79,31 @@
                                                     <input type="hidden" name="id" id="id"
                                                         value="{{ isset($detailAccount->id) ? $detailAccount->id : '' }}" />
                                                     <div class="form-group input-group ">
+                                                        <div class="col-md-12 mt-2">
+                                                            <label for="party"
+                                                                class="form-label">Coa Main Head</label>
+                                                            <select id="party" type="text"
+                                                                name="coa_main_head"
+                                                                class=" form-select"
+                                                                required>
+                                                                <option value="">Select Coa Main Head
+                                                                </option>
+                                                                @foreach ($coaMainHeadAccounts as $key => $value)
+                                                                    <option value="{{ $key }}"
+                                                                        {{ (old('coa_main_head') == $key ? 'selected' : '') || (!empty($detailAccount->coa_main_head) ? collect($detailAccount->coa_main_head)->contains($key) : '') ? 'selected' : '' }}>
+                                                                        {{ $value }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                            @error('coa_main_head')
+                                                                <span style="color:red".
+                                                                    class="invalid-feedback">
+                                                                    <strong>{{ $message }}</strong>
+                                                                </span>
+                                                            @enderror
+                                                        </div>
+                                                        <br>
+
                                                         <div class="col-lg-0 col-12 form-group mb-4">
                                                             <label for="inputState" class="form-label">Main
                                                                 Head</label>
@@ -100,6 +125,7 @@
                                                             @endif
 
                                                         </div>
+
                                                         <br>
                                                         <div class="col-lg-0 col-12 form-group mb-4">
                                                             <label for="inputState" class="form-label">Sub Head</label>
@@ -340,19 +366,34 @@
                                                                 @endif
                                                             </div>
                                                             <div class="col-md-6">
-                                                                <label for="use_in" class="form-label">
-                                                                    Use In</label>
-                                                                <input id="use_in" type="text" name="use_in"
-                                                                    value="{{ old('use_in', !empty($detailAccount->use_in) ? $detailAccount->use_in : '') }}"
-                                                                    placeholder="Use In" class="form-control"
+                                                                <label for="stock_rate" class="form-label">
+                                                                    Stock Rate</label>
+                                                                <input id="stock_rate" type="int"
+                                                                    name="stock_rate"
+                                                                    value="{{ old('stock_rate', !empty($detailAccount->stock_rate) ? $detailAccount->stock_rate : '') }}"
+                                                                    placeholder="Stock Rate" class="form-control"
                                                                     required>
-                                                                @if ($errors->has('use_in'))
+                                                                @if ($errors->has('opening_stock'))
                                                                     <div class="invalid-feedback">
-                                                                        {{ $errors->first('use_in') }}
+                                                                        {{ $errors->first('opening_stock') }}
                                                                     </div>
                                                                 @endif
                                                             </div>
 
+
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label for="use_in" class="form-label">
+                                                                Use In</label>
+                                                            <input id="use_in" type="text" name="use_in"
+                                                                value="{{ old('use_in', !empty($detailAccount->use_in) ? $detailAccount->use_in : '') }}"
+                                                                placeholder="Use In" class="form-control"
+                                                                required>
+                                                            @if ($errors->has('use_in'))
+                                                                <div class="invalid-feedback">
+                                                                    {{ $errors->first('use_in') }}
+                                                                </div>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-0 col-12 form-group mb-2">

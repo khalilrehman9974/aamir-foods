@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\CPVDetails;
 use Illuminate\Http\Request;
 use App\Models\AccountLedger;
 use App\Services\CommonService;
+use App\Models\CoaDetailAccount;
 use App\Models\CashPaymentVoucher;
 use App\Services\CPVoucherService;
 use Illuminate\Support\Facades\DB;
@@ -147,6 +149,22 @@ class CPVoucherController extends Controller
         //     return redirect('cpv/create')->with('error', $e->getMessage());
         // }
         return redirect('cpv/list')->with('message', config('constants.update'));
+    }
+
+    public function print($id)
+    {
+        $title = 'Cash Payment Voucher';
+        $cpvMaster = CashPaymentVoucher::find($id);
+        $date = Carbon::parse($cpvMaster->date)->format('d-m-Y');
+        $cpvDetails = CPVDetails::where('voucher_master_id', $cpvMaster->id)->get();
+        $partyArray = $cpvDetails->pluck('account_id');
+        $cashAccountArray = $cpvDetails->pluck('cash_account_id');
+        $party = CoaDetailAccount::whereIn('id', $partyArray)->pluck('account_name', 'id');
+        $cashAccounts = CoaDetailAccount::whereIn('id', $cashAccountArray)->pluck('account_name', 'id');
+
+        $user = User::where('id', $cpvMaster->created_by)->value('name');
+
+        return view('vouchers.cpv.print', compact('title','user', 'cpvMaster','cpvDetails','cashAccounts', 'date', 'party'));
     }
 
     public function view($id)

@@ -58,7 +58,7 @@
         <div id="tableCustomBasic" class="col-lg-12 col-12 layout-spacing">
             <div class="row">
                 <div class="col-lg-12" style="margin-right: 0px !important;">
-                    <form action="{{ route('stock.ledger.report') }}" method="get" id="form-search" target="_blank">
+                    <form action="{{ route('partyAccount.ledger.report') }}" method="get" id="form-search" target="_blank">
                         <div class="row">
 
                             <div class="col-md-3">
@@ -92,13 +92,13 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <div class="input-group">
-                                        <label for="inputState" class="form-label">Products</label>
-                                        <select class="select2 form-control mb-3 custom-select" name="product_id"
-                                            id="product" style="width: 100%; height:36px;">
+                                        <label for="inputState" class="form-label">Party</label>
+                                        <select class="select2 form-control mb-3 custom-select" name="party_id"
+                                            id="party" style="width: 100%; height:36px;">
                                             <option value="">Select</option>
-                                            @foreach ($dropDownData['products'] as $key => $value)
+                                            @foreach ($dropDownData['parties'] as $key => $value)
                                                 <option value="{{ $key }}"
-                                                    {{ (old('product_id') == $key ? 'selected' : '') || (!empty($contract->product_id) ? collect($contract->product_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                    {{ (old('party_id') == $key ? 'selected' : '') || (!empty($contract->party_id) ? collect($contract->party_id)->contains($key) : '') ? 'selected' : '' }}>
                                                     {{ $value }}</option>
                                             @endforeach
                                         </select>

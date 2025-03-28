@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\AccountLedger;
 use App\Services\CommonService;
+use App\Models\CoaDetailAccount;
 use Illuminate\Support\Facades\DB;
 use App\Models\JournalVoucherDetail;
 use App\Models\JournalVoucherMaster;
@@ -130,6 +132,22 @@ class JournalVoucherController extends Controller
         return redirect('jv/list')->with('message', config('constants.update'));
     }
 
+    public function print($id)
+    {
+        $title = 'Journal Voucher';
+        $jvMaster = JournalVoucherMaster::find($id);
+        $date = Carbon::parse($jvMaster->date)->format('d-m-Y');
+        $jvDetails = JournalVoucherDetail::where('voucher_master_id', $jvMaster->id)->get();
+        // dd($jvDetails);
+        $debitAccountArray = $jvDetails->pluck('debit_account');
+        $creditAccountArray = $jvDetails->pluck('credit_account');
+        $debitParty = CoaDetailAccount::whereIn('id', $debitAccountArray)->pluck('account_name', 'id');
+        $creditParty = CoaDetailAccount::whereIn('id', $creditAccountArray)->pluck('account_name', 'id');
+
+        $user = User::where('id', $jvMaster->created_by)->value('name');
+
+        return view('vouchers.jv.print', compact('title','user', 'jvMaster','jvDetails','creditParty', 'date', 'debitParty'));
+    }
 
     public function view($id)
     {

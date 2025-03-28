@@ -5,6 +5,7 @@ namespace App\Services;
 use Carbon\Carbon;
 use App\Models\StockLedger;
 use App\Models\Transporter;
+use App\Models\AccountLedger;
 use App\Models\PurchaseDetail;
 use App\Models\PurchaseMaster;
 use App\Models\CoaDetailAccount;
@@ -198,7 +199,6 @@ class PurchaseService
      * */
     public function saveStockLedger($data)
     {
-        // dd($data);
         foreach ($data['product_id'] as $key => $value) {
             if (!empty($data['product_id'][$key])) {
                 $rec['product_id'] = $data['product_id'][$key];
@@ -219,4 +219,173 @@ class PurchaseService
             }
         }
     }
+
+    public function prepareAccountCreditData($request, $purchaseParentId)
+    {
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $purchaseParentId,
+            'party_id' =>  $party,
+            'document_number' => 'P/I' . '-' . $purchaseParentId,
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => 'Purchase From'. ' ' . $party . '<br>' .  $request['remarks'],
+            'debit' => config('constants.ZERO'),
+            'credit' =>  $request['gross_bill'],
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+    public function prepareAccountDebitData($request, $purchaseParentId)
+    {
+        $remarks = $request['remarks'];
+        $description = 'Entry Through Product';
+        $productArray = $request['product_id'];
+        $product = CoaInventoryDetailAccount::whereIn('id', $productArray)->pluck('name')->toarray();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $purchaseParentId,
+            'party_id' =>  $product,
+            'document_number' => 'P/I' . '-' . $purchaseParentId,
+            'rate' =>$request['price'],
+            'bilty_no' => $request['supplier_bill_no'],
+            'transporter_id' => $request['transporter_id'],
+            'total_quantity' => $request['quantity'],
+            'measurementType' => $request['measurementType'],
+            'bags' => $request['bags'],
+            'description' => $description . '<br>' .$remarks ,
+            'debit' => $request['amount'],
+            'credit' => config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+
+
+    public function saveCreditAccountData($data)
+    {
+        foreach ($data['party_id'] as $key => $value) {
+            if (!empty($data['party_id'][$key])) {
+                $rec['party_id'] = $data['party_id'][$key];
+                $rec['date'] = $data['date'];
+                $rec['invoice_id'] = $data['invoice_id'];
+                $rec['document_number'] = $data['document_number'];
+                $rec['rate'] = $data['rate'][$key];
+                $rec['bilty_no'] = $data['bilty_no'];
+                $rec['transporter_id'] = $data['transporter_id'];
+                $rec['total_quantity'] = $data['total_quantity'][$key];
+                $rec['measurementType'] = $data['measurementType'][$key];
+                $rec['bags'] = $data['bags'][$key];
+                $rec['description'] = $data['description'];
+                $rec['debit'] = $data['debit'][$key];
+                $rec['credit'] = $data['credit'];
+                $rec['created_at'] = now();
+                $rec['updated_at'] = now();
+                AccountLedger::create($rec);
+            }
+        }
+    }
+
+
+
+    public function prepareCarriageAccountDebitData($request, $purchaseParentId)
+    {
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $purchaseParentId,
+            'party_id' =>  $party,
+            'document_number' => 'P/I' . '-' . $purchaseParentId,
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => 'Carriage Of'. ' ' . $party . '<br>' .  $request['remarks'],
+            'debit' => $request['carriage'],
+            'credit' => config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function prepareCarriageAccountCreditData($request, $purchaseParentId)
+    {
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        $commissionParty = 'Carriage Account';
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $purchaseParentId,
+            'party_id' =>  $commissionParty,
+            'document_number' => 'P/I' . '-' . $purchaseParentId,
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => 'Carriage Of'. ' ' . $party . '<br>' .  $request['remarks'],
+            'debit' => config('constants.ZERO'),
+            'credit' => $request['carriage'],
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+    public function prepareTaxAccountDebitData($request, $purchaseParentId)
+    {
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        $commissionParty = '';
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $purchaseParentId,
+            'party_id' =>  $party,
+            'document_number' => 'P/I' . '-' . $purchaseParentId,
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => 'Tax '. ' ' . $party . '<br>' .  $request['remarks'],
+            'debit' => $request['tax'],
+            'credit' => config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+    public function prepareTaxAccountCreditData($request, $purchaseParentId)
+    {
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        $commissionParty = 'Tax Account';
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $purchaseParentId,
+            'party_id' =>  $commissionParty,
+            'document_number' => 'P/I' . '-' . $purchaseParentId,
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => 'Tax '. ' ' . $party . '<br>' .  $request['remarks'],
+
+            'debit' => config('constants.ZERO'),
+            'credit' => $request['tax'],
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
 }

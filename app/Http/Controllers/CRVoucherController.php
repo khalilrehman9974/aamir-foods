@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\CRVDetails;
 use Illuminate\Http\Request;
 use App\Models\AccountLedger;
 use App\Services\CommonService;
+use App\Models\CoaDetailAccount;
 use App\Models\CashReceiptVoucher;
 use Illuminate\Support\Facades\DB;
 use App\Services\CashReceiptVoucherService;
@@ -143,6 +145,21 @@ class CRVoucherController extends Controller
         return redirect('crv/list')->with('message', config('constants.update'));
     }
 
+    public function print($id)
+    {
+        $title = 'Cash Receipt Voucher';
+        $crvMaster = CashReceiptVoucher::find($id);
+        $date = Carbon::parse($crvMaster->date)->format('d-m-Y');
+        $crvDetails = CRVDetails::where('voucher_master_id', $crvMaster->id)->get();
+        $partyArray = $crvDetails->pluck('account_id');
+        $cashAccountArray = $crvDetails->pluck('cash_account_id');
+        $party = CoaDetailAccount::whereIn('id', $partyArray)->pluck('account_name', 'id');
+        $cashAccounts = CoaDetailAccount::whereIn('id', $cashAccountArray)->pluck('account_name', 'id');
+
+        $user = User::where('id', $crvMaster->created_by)->value('name');
+
+        return view('vouchers.crv.print', compact('title','user', 'crvMaster','crvDetails','cashAccounts', 'date', 'party'));
+    }
 
     public function view($id)
     {

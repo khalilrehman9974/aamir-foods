@@ -105,11 +105,10 @@
                                                             </th>
                                                             <th></th>
 
-                                                            <th class=""><b>Debit Account /
-                                                                    <br>Description</b>
+                                                            <th class="" style="width: 50%"><b>Debit Account/Credit Account/Description</b>
                                                             </th>
-                                                            <th class=""><b>Credit Account</b>
-                                                            </th>
+                                                            {{-- <th class=""><b>Credit Account</b>
+                                                            </th> --}}
                                                             <th class=""><b>Debit</b>
                                                             </th>
                                                             <th class=""><b>Credit</b>
@@ -234,10 +233,18 @@
                 '</td>' +
                 '<td hidden><input type="text" name="row_id[]" class="row_id" value="' + currentIndex +
                 '" hidden></td>' +
-                '<td class="description"><select id="account_title" name="debit_account[]" class="form-control form-control-sm select2 custom-select"> <option selected=""> Please select the Debit Account</option> @foreach ($dropDownData['accounts'] as $key => $value) <option value="{{ $key }}" {{ (old('debit_account') == $key ? 'selected' : '') || (!empty($bpv->debit_account) ? collect($bpv->debit_account)->contains($key) : '') ? 'selected' : '' }}> {{ $value }} </option> @endforeach </select><textarea id="description" type="text" name="description[]" value="{{ old('description', !empty($bpv->description) ? $bpv->description : '') }}" placeholder="Please Enter Description" class="form-control form-control-sm mt-3"></textarea> </td>' +
-                '<td class="title"> <select name="credit_account[]" id="bank" class="form-control select2 custom-select form-control-sm"> <option selected=""> Please select the Credit Account</option> @foreach ($dropDownData['accounts'] as $key => $value) <option value="{{ $key }}" {{ (old('credit_account') == $key ? 'selected' : '') || (!empty($bpv->credit_account) ? collect($bpv->credit_account)->contains($key) : '') ? 'selected' : '' }}> {{ $value }} </option> @endforeach </select> </td>' +
+                '<td class="description"><select id="account_title" name="debit_account[]" class="form-control select2 custom-select mr-0 mb-0 form-control-sm"> <option selected=""> Please select the Debit Account</option> @foreach ($dropDownData['accounts'] as $key => $value) <option value="{{ $key }}" {{ (old('debit_account') == $key ? 'selected' : '') || (!empty($bpv->debit_account) ? collect($bpv->debit_account)->contains($key) : '') ? 'selected' : '' }}> {{ $value }} </option> @endforeach </select></td>' +
+
                 '<td class="text-right qty"> <input id="debit" type="number" name="debit[]" value="{{ old('debit', !empty($jv->debit) ? $jv->debit : '') }}" placeholder="Debit " class="form-control form-control-sm debit"></td>' +
+
+                '<tr>' +
+                '<td>' +
+                '</td>' +
+                '<td class="title"> <select name="credit_account[]" id="bank" class="form-control select2 custom-select mr-0 mb-0 form-control-sm"> <option selected=""> Please select the Credit Account</option> @foreach ($dropDownData['accounts'] as $key => $value) <option value="{{ $key }}" {{ (old('credit_account') == $key ? 'selected' : '') || (!empty($bpv->credit_account) ? collect($bpv->credit_account)->contains($key) : '') ? 'selected' : '' }}> {{ $value }} </option> @endforeach </select> <textarea id="description" type="text" name="description[]" value="{{ old('description', !empty($bpv->description) ? $bpv->description : '') }}" placeholder="Please Enter Description" class="form-control form-control-sm mt-3"></textarea> </td>' +
+                '<td>' +
+                '</td>' +
                 '<td class="text-right qty"> <input id="credit" type="number" name="credit[]" value="{{ old('credit', !empty($jv->credit) ? $jv->credit : '') }}" placeholder="Credit " class="form-control form-control-sm credit"></td>' +
+                '</tr>' +
                 '<div class="form-check form-check-primary form-check-inline me-0 mb-0">' +
                 '</div>' +
                 '</div>' +
