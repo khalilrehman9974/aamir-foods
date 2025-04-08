@@ -474,7 +474,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('create', ['as' => 'co-inventory-detail-account.create', 'uses' => 'App\Http\Controllers\ChartOfInvDetailAccountController@create']);
         Route::get('edit/{id}', ['as' => 'co-inventory-detail-account.edit', 'uses' => 'App\Http\Controllers\ChartOfInvDetailAccountController@edit']);
         Route::post('save', ['as' => 'co-inventory-detail-account.save', 'uses' => 'App\Http\Controllers\ChartOfInvDetailAccountController@store']);
-        Route::post('update', ['as' => 'co-inventory-detail-account.update', 'uses' => 'App\Http\Controllers\ChartOfInvDetailAccountController@store']);
+        Route::post('update', ['as' => 'co-inventory-detail-account.update', 'uses' => 'App\Http\Controllers\ChartOfInvDetailAccountController@update']);
         Route::delete('delete/{id}', ['as' => 'co-inventory-detail-account.delete', 'uses' => 'App\Http\Controllers\ChartOfInvDetailAccountController@destroy']);
         Route::get('get-detail-account-code/{code}', ['as' => 'detail-account', 'uses' => 'App\Http\Controllers\ChartOfInvDetailAccountController@getMaxDetailAccountCode']);
         Route::get('get-sub-head-accounts/{id}', ['as' => 'sub-head-accounts-by-main-head', 'uses' => 'App\Http\Controllers\ChartOfInvDetailAccountController@getSubHeadAccountsByMainHead']);

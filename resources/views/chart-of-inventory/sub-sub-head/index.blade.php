@@ -29,7 +29,7 @@
                         <nav class="breadcrumb-style-one" aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                                <li class="breadcrumb-item"><a href="{{ route('co-inventory-sub-sub-head.list') }}">Inventory Sub Heads List</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('co-inventory-sub-sub-head.list') }}">Inventory Sub Sub Heads List</a></li>
                             </ol>
                         </nav>
                     </div>
@@ -86,7 +86,7 @@
                 <div class="widget-header">
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4>List Of Sub Heads</h4>
+                            <h4>List Of Sub Sub Heads</h4>
                         </div>
                     </div>
                 </div>

@@ -87,20 +87,6 @@ class SaleService
      * */
     public function searchSale($request)
     {
-        // $q = SaleMaster::query();
-        // if (!empty($request['param'])) {
-        //     $q = SaleMaster::with('party','SaleMan')->where('date', 'like', '%' . $request['param'] . '%')
-        //     ->orWhere('sale_order_number', 'like', '%' . $request['param'] . '%')
-        //     ->orWhere('party_id', 'like', '%' . $request['param'] . '%')
-        //     ->orWhere('saleman', 'like', '%' . $request['param'] . '%')
-        //     ->orWhere('area', 'like', '%' . $request['param'] . '%')
-        //     ->orWhere('vehicle_no', 'like', '%' . $request['param'] . '%')
-        //     ->orWhere('bility_no', 'like', '%' . $request['param'] . '%')
-        //     ->orWhere('driver_name', 'like', '%' . $request['param'] . '%')
-        //     ->orWhere('total_boray', 'like', '%' . $request['param'] . '%')
-        //     ->orWhere('total_carton', 'like', '%' . $request['param'] . '%')
-        //     ->orWhere('sector', 'like', '%' . $request['param'] . '%');
-        // }
 
         $q = SaleMaster::query();
         if (!empty($request['date'])) {
@@ -275,7 +261,7 @@ class SaleService
         return [
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'invoice_id' => $saleParentId,
-            'party_id' =>  $party,
+            'party_id' =>   $request['party_id'],
             'document_number' => 'S/I' . '-' . $saleParentId,
             'rate' => config('constants.ZERO'),
             'bilty_no' => null,
@@ -297,11 +283,12 @@ class SaleService
         $description = 'Entry Through Product';
         $productArray = $request['product_id'];
         $product = CoaInventoryDetailAccount::whereIn('id', $productArray)->pluck('name')->toarray();
+        $party = CoaDetailAccount::whereIn('account_name', $product)->pluck('id');
         // $description = $request['quantity'].$request['packing_type'].$request['product_id'].$request['rate'].$request['measurement_type'].['Sold To'].[$party].['@'].$request['amount'];
         return [
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'invoice_id' => $saleParentId,
-            'party_id' =>  $product,
+            'party_id' =>  $party,
             'document_number' => 'S/I' . '-' . $saleParentId,
             'rate' =>$request['rate'],
             'bilty_no' => $request['bilty_no'],
@@ -316,8 +303,6 @@ class SaleService
             'updated_at' => now(),
         ];
     }
-
-
 
     public function saveCreditAccountData($data)
     {
@@ -346,11 +331,10 @@ class SaleService
     public function prepareCommissionAccountCreditData($request, $saleParentId)
     {
         $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
-        $commissionParty = '';
         return [
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'invoice_id' => $saleParentId,
-            'party_id' =>  $party,
+            'party_id' =>  $request['party_id'],
             'document_number' => 'S/I' . '-' . $saleParentId,
             'rate' => config('constants.ZERO'),
             'bilty_no' => null,
@@ -368,12 +352,15 @@ class SaleService
 
     public function prepareCommissionAccountDebitData($request, $saleParentId)
     {
-        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
-        $commissionParty = 'Commission Account';
+
+        $partyName = 'Commission On Sales.';
+        $party = CoaDetailAccount::where('account_name', $partyName)->value('id');
+        $mainPartyName = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+
         return [
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'invoice_id' => $saleParentId,
-            'party_id' =>  $commissionParty,
+            'party_id' =>  $party,
             'document_number' => 'S/I' . '-' . $saleParentId,
             'rate' => config('constants.ZERO'),
             'bilty_no' => null,
@@ -381,7 +368,7 @@ class SaleService
             'total_quantity' => config('constants.ZERO'),
             'measurementType' => config('constants.ZERO'),
             'bags' => config('constants.ZERO'),
-            'description' => 'Commission Of'. ' ' . $party . '<br>' .  $request['remarks'],
+            'description' => 'Commission Of'. ' ' . $mainPartyName . '<br>' .  $request['remarks'],
             'debit' => $request['commission'],
             'credit' => config('constants.ZERO'),
             'created_at' => now(),
@@ -392,11 +379,10 @@ class SaleService
     public function prepareCarriageAccountCreditData($request, $saleParentId)
     {
         $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
-        $commissionParty = '';
         return [
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'invoice_id' => $saleParentId,
-            'party_id' =>  $party,
+            'party_id' => $request['party_id'],
             'document_number' => 'S/I' . '-' . $saleParentId,
             'rate' => config('constants.ZERO'),
             'bilty_no' => null,
@@ -414,31 +400,9 @@ class SaleService
 
     public function prepareCarriageAccountDebitData($request, $saleParentId)
     {
-        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
-        $commissionParty = 'Carriage Account';
-        return [
-            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
-            'invoice_id' => $saleParentId,
-            'party_id' =>  $commissionParty,
-            'document_number' => 'S/I' . '-' . $saleParentId,
-            'rate' => config('constants.ZERO'),
-            'bilty_no' => null,
-            'transporter_id' => null,
-            'total_quantity' => config('constants.ZERO'),
-            'measurementType' => config('constants.ZERO'),
-            'bags' => config('constants.ZERO'),
-            'description' => 'Carriage Of'. ' ' . $party . '<br>' .  $request['remarks'],
-            'debit' => $request['carriage'],
-            'credit' => config('constants.ZERO'),
-            'created_at' => now(),
-            'updated_at' => now() ,
-        ];
-    }
-
-    public function prepareDiscountAccountCreditData($request, $saleParentId)
-    {
-        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
-        $commissionParty = '';
+        $mainPartyName = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        $partyName = 'Carriage Outward.';
+        $party = CoaDetailAccount::where('account_name', $partyName)->value('id');
         return [
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'invoice_id' => $saleParentId,
@@ -450,7 +414,29 @@ class SaleService
             'total_quantity' => config('constants.ZERO'),
             'measurementType' => config('constants.ZERO'),
             'bags' => config('constants.ZERO'),
-            'description' => 'Discount '. ' ' . $party . '<br>' .  $request['remarks'],
+            'description' => 'Carriage Of'. ' ' . $mainPartyName . '<br>' .  $request['remarks'],
+            'debit' => $request['carriage'],
+            'credit' => config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+    public function prepareDiscountAccountCreditData($request, $saleParentId)
+    {
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'party_id' =>   $request['party_id'],
+            'document_number' => 'S/I' . '-' . $saleParentId,
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => 'Discount  to '. ' ' . $party . '<br>' .  $request['remarks'],
             'debit' => config('constants.ZERO'),
             'credit' => $request['totaldiscount'],
             'created_at' => now(),
@@ -460,12 +446,14 @@ class SaleService
 
     public function prepareDiscountAccountDebitData($request, $saleParentId)
     {
-        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
-        $commissionParty = 'Discount Account';
+        $mainPartyName = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        $partyName = 'Discounts on Sales.';
+        $party = CoaDetailAccount::where('account_name', $partyName)->value('id');
+
         return [
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'invoice_id' => $saleParentId,
-            'party_id' =>  $commissionParty,
+            'party_id' =>  $party,
             'document_number' => 'S/I' . '-' . $saleParentId,
             'rate' => config('constants.ZERO'),
             'bilty_no' => null,
@@ -473,7 +461,7 @@ class SaleService
             'total_quantity' => config('constants.ZERO'),
             'measurementType' => config('constants.ZERO'),
             'bags' => config('constants.ZERO'),
-            'description' => 'Discount '. ' ' . $party . '<br>' .  $request['remarks'],
+            'description' => 'Discount To'. ' ' . $mainPartyName . '<br>' .  $request['remarks'],
             'debit' => $request['totaldiscount'],
             'credit' => config('constants.ZERO'),
             'created_at' => now(),

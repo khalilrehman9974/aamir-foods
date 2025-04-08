@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
 use Carbon\Carbon;
 use App\Models\Area;
 use App\Models\User;
@@ -17,7 +16,6 @@ use App\Models\AccountLedger;
 use App\Services\SaleService;
 use App\Services\CommonService;
 use App\Models\CoaDetailAccount;
-use App\Models\SalePurchaseType;
 use App\Models\DeliveredToParties;
 use App\Models\DispatchNoteDetail;
 use App\Models\DispatchNoteMaster;
@@ -30,13 +28,10 @@ use App\Models\CoaInventoryDetailAccount;
 
 class SalesController extends Controller
 {
-
     protected $commonService;
     protected $saleService;
     protected $stockLedgerService;
     protected $accountLedgerService;
-
-
 
     public function __construct(
         CommonService $commonService,

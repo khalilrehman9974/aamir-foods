@@ -49,7 +49,7 @@
                 <form method="get" action="{{ route('control-head.list') }}" class="form-inline my-2 my-lg-0 justify-content-center">
                     <div class="w-100">
                         <input type="text" name="search" class="w-100 form-control product-search br-30" id="input-search"
-                               placeholder="Search Dispatch Note...">
+                               placeholder="Search Account...">
                         <button class="btn btn-primary" type="submit">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"

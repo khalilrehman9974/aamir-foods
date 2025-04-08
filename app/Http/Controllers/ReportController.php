@@ -100,7 +100,9 @@ class ReportController extends Controller
                 ->orwhere('party_id', $request->party_id) // Adjust if `party_id` is a separate column
                 ->orderBy('date', 'asc')
                 ->get();
-        } else {
+        }
+        else
+        {
 
             $fromDate = date('Y-m-d', strtotime($request['from_date']));
             $toDate = date('Y-m-d', strtotime($request['to_date']));
@@ -123,8 +125,8 @@ class ReportController extends Controller
 
         $fetchAreas =CoaDetailAccountArea::where('master_account_id',$party->id )->pluck('area_id');
         $areas = Area::whereIn('id',$fetchAreas )->pluck('name');
-        $searchParty = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
-        $accountLedgers = AccountLedger::where('party_id' ,$searchParty)->get();
+        // $searchParty = CoaDetailAccount::where('id', $request['party_id'])->value('id');
+        $accountLedgers = AccountLedger::where('party_id' ,$request['party_id'])->get();
         $transporterArray = $accountLedgers->pluck('transporter_id');
         $transporters = Transporter::whereIn('id',$transporterArray )->pluck('name','id');
 

@@ -249,10 +249,12 @@ class PurchaseService
         $description = 'Entry Through Product';
         $productArray = $request['product_id'];
         $product = CoaInventoryDetailAccount::whereIn('id', $productArray)->pluck('name')->toarray();
+
+        $partyId = CoaDetailAccount::whereIn('account_name', $product)->pluck('id');
         return [
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'invoice_id' => $purchaseParentId,
-            'party_id' =>  $product,
+            'party_id' =>  $partyId,
             'document_number' => 'P/I' . '-' . $purchaseParentId,
             'rate' =>$request['price'],
             'bilty_no' => $request['supplier_bill_no'],

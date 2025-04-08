@@ -115,12 +115,40 @@ class CoaInventoryDetailAccountService
 
     public function prepareCoaDetailAccountDetailData($request)
     {
+
         $openingStock = $request['opening_stock'];
         $stockRate = $request['stock_rate'];
-        $openingBalance = $openingStock * $stockRate;
         $openingBalance = ($openingStock > 0 && $stockRate > 0) ? $openingStock * $stockRate : 0;
 
         $maxid = CoaDetailAccount::max('id');
+
+        return [
+            'det_account_code' => $maxid,
+            'address' => null,
+            'email' => null,
+            'cnic' => null,
+            'contact_no_1' => null,
+            'remarks' => null,
+            'opening_balance' => $openingBalance,
+            'credit_limit' => null,
+            'credit_days' => null,
+            'contact_no_2' => null,
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function prepareUpdatedCoaDetailAccountDetailData($request, $party)
+    {
+
+        $openingStock = $request['opening_stock'];
+        $stockRate = $request['stock_rate'];
+        $openingBalance = ($openingStock > 0 && $stockRate > 0) ? $openingStock * $stockRate : 0;
+
+        // $maxid = $party->id;
+        $maxid = $party->value('id');
 
         return [
             'det_account_code' => $maxid,
