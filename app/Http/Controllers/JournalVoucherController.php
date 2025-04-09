@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\StockLedger;
 use Illuminate\Http\Request;
 use App\Models\AccountLedger;
 use App\Services\CommonService;
@@ -24,7 +25,6 @@ class JournalVoucherController extends Controller
     {
         $this->commonService = $commonService;
         $this->journalVoucherService = $journalVoucherService;
-
     }
     /**
      * Display a listing of the resource.
@@ -38,7 +38,7 @@ class JournalVoucherController extends Controller
         $vouchers = $this->journalVoucherService->searchVoucher($request);
         $param = request()->param;
 
-        return view('vouchers.jv.index', compact('vouchers','param', 'pageTitle'));
+        return view('vouchers.jv.index', compact('vouchers', 'param', 'pageTitle'));
     }
 
     /**
@@ -51,7 +51,7 @@ class JournalVoucherController extends Controller
         $pageTitle = 'Create Voucher';
         $maxid = JournalVoucherMaster::max('id') + 1;
         $dropDownData = $this->journalVoucherService->DropDownData();
-        return view('vouchers.jv.create', compact('dropDownData','maxid','pageTitle'));
+        return view('vouchers.jv.create', compact('dropDownData', 'maxid', 'pageTitle'));
     }
 
     /**
@@ -66,16 +66,18 @@ class JournalVoucherController extends Controller
 
         // DB::beginTransaction();
         // try {
-            //Insert data into Voucher tables.
+        //Insert data into Voucher tables.
 
-            $voucherMasterData = $this->journalVoucherService->prepareVoucherMasterData($request);
-            $voucherMasterInsert = $this->commonService->findUpdateOrCreate(JournalVoucherMaster::class, ['id' => ''], $voucherMasterData);
-            $voucherDetailData = $this->journalVoucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
-            $this->journalVoucherService->saveVoucher($voucherDetailData);
+        $voucherMasterData = $this->journalVoucherService->prepareVoucherMasterData($request);
+        $voucherMasterInsert = $this->commonService->findUpdateOrCreate(JournalVoucherMaster::class, ['id' => ''], $voucherMasterData);
+        $voucherDetailData = $this->journalVoucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
+        $this->journalVoucherService->saveVoucher($voucherDetailData);
 
+        $debitAccountData = $this->journalVoucherService->prepareAccountDebitData($request, $voucherMasterInsert->id);
+        $this->journalVoucherService->saveDebitData($debitAccountData);
 
-            // $AccountData = $this->journalVoucherService->prepareAccountData($request, $voucherDetailData, config('contants.JV'),config('contants.Jv_transaction') );
-            // AccountLedger::insert($AccountData);
+        $creditAccountData = $this->journalVoucherService->prepareAccountCreditData($request, $voucherMasterInsert->id);
+        $this->journalVoucherService->saveCreditData($creditAccountData);
 
         //     DB::commit();
         // } catch (\Exception $e) {
@@ -95,7 +97,7 @@ class JournalVoucherController extends Controller
     public function edit($id)
     {
         $pageTitle = 'Update JV';
-        $currentid= $id;
+        $currentid = $id;
         $jv = JournalVoucherMaster::find($id);
         $date = Carbon::parse($jv->date)->format('d-m-Y');
         $jvDetails = JournalVoucherDetail::where('voucher_master_id', $id)->get();
@@ -105,7 +107,7 @@ class JournalVoucherController extends Controller
         }
 
 
-        return view('vouchers.jv.edit', compact('jv','date','pageTitle', 'jvDetails','dropDownData','currentid'));
+        return view('vouchers.jv.edit', compact('jv', 'date', 'pageTitle', 'jvDetails', 'dropDownData', 'currentid'));
     }
 
     public function update(Request $request)
@@ -113,16 +115,22 @@ class JournalVoucherController extends Controller
 
         // DB::beginTransaction();
         // try {
-            //Insert data into Voucher tables.
-            JournalVoucherDetail::where('voucher_master_id', $request['id'])->delete();
-            $voucherMasterData = $this->journalVoucherService->prepareVoucherMasterData($request);
-            $voucherMasterInsert = $this->commonService->findUpdateOrCreate(JournalVoucherMaster::class, ['id' => request('id')], $voucherMasterData);
-            $voucherDetailData = $this->journalVoucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
-            $this->journalVoucherService->saveVoucher($voucherDetailData);
+        //Insert data into Voucher tables.
+        JournalVoucherDetail::where('voucher_master_id', $request['id'])->delete();
+        $documentNo = 'JV' . '-' . $request['id'];
+        AccountLedger::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
 
+        $voucherMasterData = $this->journalVoucherService->prepareVoucherMasterData($request);
+        $voucherMasterInsert = $this->commonService->findUpdateOrCreate(JournalVoucherMaster::class, ['id' => request('id')], $voucherMasterData);
+        $voucherDetailData = $this->journalVoucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
+        $this->journalVoucherService->saveVoucher($voucherDetailData);
 
-            // $AccountData = $this->journalVoucherService->prepareAccountData($request, $voucherDetailData, config('contants.JV'),config('contants.Jv_transaction') );
-            // AccountLedger::insert($AccountData);
+        //Insert data into accounts ledger table.
+        $debitAccountData = $this->journalVoucherService->prepareAccountDebitData($request, $voucherMasterInsert->id);
+        $this->journalVoucherService->saveDebitData($debitAccountData);
+
+        $creditAccountData = $this->journalVoucherService->prepareAccountCreditData($request, $voucherMasterInsert->id);
+        $this->journalVoucherService->saveCreditData($creditAccountData);
 
         //     DB::commit();
         // } catch (\Exception $e) {
@@ -146,7 +154,7 @@ class JournalVoucherController extends Controller
 
         $user = User::where('id', $jvMaster->created_by)->value('name');
 
-        return view('vouchers.jv.print', compact('title','user', 'jvMaster','jvDetails','creditParty', 'date', 'debitParty'));
+        return view('vouchers.jv.print', compact('title', 'user', 'jvMaster', 'jvDetails', 'creditParty', 'date', 'debitParty'));
     }
 
     public function view($id)
@@ -159,6 +167,4 @@ class JournalVoucherController extends Controller
 
         return view('vouchers.jv.view', compact('voucherMaster', 'voucherDetail'));
     }
-
 }
-

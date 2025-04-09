@@ -227,7 +227,7 @@ class PurchaseService
         return [
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'invoice_id' => $purchaseParentId,
-            'party_id' =>  $party,
+            'party_id' =>  $request['party_id'],
             'document_number' => 'P/I' . '-' . $purchaseParentId,
             'rate' => config('constants.ZERO'),
             'bilty_no' => null,
@@ -272,7 +272,7 @@ class PurchaseService
 
 
 
-    public function saveCreditAccountData($data)
+    public function saveDebitAccountData($data)
     {
         foreach ($data['party_id'] as $key => $value) {
             if (!empty($data['party_id'][$key])) {
@@ -304,7 +304,7 @@ class PurchaseService
         return [
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'invoice_id' => $purchaseParentId,
-            'party_id' =>  $party,
+            'party_id' =>  $request['party_id'],
             'document_number' => 'P/I' . '-' . $purchaseParentId,
             'rate' => config('constants.ZERO'),
             'bilty_no' => null,
@@ -322,12 +322,16 @@ class PurchaseService
 
     public function prepareCarriageAccountCreditData($request, $purchaseParentId)
     {
-        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
-        $commissionParty = 'Carriage Account';
+
+        $partyName = 'Carriage Inwards / Builty Exp';
+        $party = CoaDetailAccount::where('account_name', $partyName)->value('id');
+        $mainPartyName = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+
+
         return [
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'invoice_id' => $purchaseParentId,
-            'party_id' =>  $commissionParty,
+            'party_id' =>  $party,
             'document_number' => 'P/I' . '-' . $purchaseParentId,
             'rate' => config('constants.ZERO'),
             'bilty_no' => null,
@@ -335,7 +339,7 @@ class PurchaseService
             'total_quantity' => config('constants.ZERO'),
             'measurementType' => config('constants.ZERO'),
             'bags' => config('constants.ZERO'),
-            'description' => 'Carriage Of'. ' ' . $party . '<br>' .  $request['remarks'],
+            'description' => 'Carriage Of'. ' ' . $mainPartyName . '<br>' .  $request['remarks'],
             'debit' => config('constants.ZERO'),
             'credit' => $request['carriage'],
             'created_at' => now(),
@@ -346,11 +350,11 @@ class PurchaseService
     public function prepareTaxAccountDebitData($request, $purchaseParentId)
     {
         $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
-        $commissionParty = '';
+
         return [
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'invoice_id' => $purchaseParentId,
-            'party_id' =>  $party,
+            'party_id' =>  $request['party_id'],
             'document_number' => 'P/I' . '-' . $purchaseParentId,
             'rate' => config('constants.ZERO'),
             'bilty_no' => null,
@@ -368,12 +372,15 @@ class PurchaseService
 
     public function prepareTaxAccountCreditData($request, $purchaseParentId)
     {
-        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
-        $commissionParty = 'Tax Account';
+
+        $partyName = 'Tax Paid .';
+        $party = CoaDetailAccount::where('account_name', $partyName)->value('id');
+        $mainPartyName = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+
         return [
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'invoice_id' => $purchaseParentId,
-            'party_id' =>  $commissionParty,
+            'party_id' =>  $party,
             'document_number' => 'P/I' . '-' . $purchaseParentId,
             'rate' => config('constants.ZERO'),
             'bilty_no' => null,
@@ -381,7 +388,7 @@ class PurchaseService
             'total_quantity' => config('constants.ZERO'),
             'measurementType' => config('constants.ZERO'),
             'bags' => config('constants.ZERO'),
-            'description' => 'Tax '. ' ' . $party . '<br>' .  $request['remarks'],
+            'description' => 'Tax of'. ' ' . $mainPartyName . '<br>' .  $request['remarks'],
 
             'debit' => config('constants.ZERO'),
             'credit' => $request['tax'],

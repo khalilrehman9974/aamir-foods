@@ -236,7 +236,7 @@
             }
 
             $entries = $accountLedgers;
-            $openingBalance = 12000;
+            $openingBalance =  $partyDetailAccount->opening_balance ?? 0 ;
             $result = calculateStockBalance($openingBalance, $entries);
 
     ?>

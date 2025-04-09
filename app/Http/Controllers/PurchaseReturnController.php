@@ -86,7 +86,6 @@ class PurchaseReturnController extends Controller
      * */
     public function store(Request $request)
     {
-        // dd($request);
 
         // $request = $request->except('_token', 'id');
         // DB::beginTransaction();
@@ -101,12 +100,33 @@ class PurchaseReturnController extends Controller
         //Insert data into stock table.
         $stockLedgers = $this->purchaseReturnService->prepareStockLedgerData($request, $purchaseReturnMasterInsert->id);
         $this->purchaseReturnService->saveStockLedger($stockLedgers);
-        // $this->stockLedgerService->prepareAndSaveData($request, $purchaseReturnMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'));
-        // //Insert data into accounts ledger table.
-        // $debitAccountData = $this->purchaseReturnService->prepareAccountCreditData($request, $purchaseReturnMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'), config('contants.PURCHASE_RETURN_DESCRIPTION'));
-        // $creditAccountData = $this->purchaseReturnService->prepareAccountDebitData($request, $purchaseReturnMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'), config('contants.PURCHASE_RETURN_DESCRIPTION'));
-        // AccountLedger::insert($debitAccountData);
-        // AccountLedger::insert($creditAccountData);
+
+        $debitAccountData = $this->purchaseReturnService->prepareAccountDebitData($request, $purchaseReturnMasterInsert->id);
+        AccountLedger::insert($debitAccountData);
+
+        $creditAccountData = $this->purchaseReturnService->prepareAccountCreditData($request, $purchaseReturnMasterInsert->id);
+        $this->purchaseReturnService->saveCreditAccountData($creditAccountData);
+
+        if ($request['tax'] > 0) {
+            $taxAccountData = $this->purchaseReturnService->prepareTaxAccountCreditData($request, $purchaseReturnMasterInsert->id);
+            AccountLedger::insert($taxAccountData);
+        }
+
+        if ($request['tax'] > 0) {
+            $taxAccountDebitData = $this->purchaseReturnService->prepareTaxAccountDebitData($request, $purchaseReturnMasterInsert->id);
+            AccountLedger::insert($taxAccountDebitData);
+        }
+
+
+        if ($request['carriage'] > 0) {
+            $carriageAccountData = $this->purchaseReturnService->prepareCarriageAccountCreditData($request, $purchaseReturnMasterInsert->id);
+            AccountLedger::insert($carriageAccountData);
+        }
+
+        if ($request['carriage'] > 0) {
+            $carriageAccountDebitData = $this->purchaseReturnService->prepareCarriageAccountDebitData($request, $purchaseReturnMasterInsert->id);
+            AccountLedger::insert($carriageAccountDebitData);
+        }
 
         //     DB::commit();
         // } catch (\Exception $e) {
@@ -152,7 +172,7 @@ class PurchaseReturnController extends Controller
         PurchaseReturnDetail::where('purchase_return_master_id', $request['id'])->delete();
         $documentNo = 'P/R/I' . '-' . $request['id'];
         StockLedger::where('document_no', $documentNo)->where('invoice_id', $request['id'])->delete();
-
+        AccountLedger::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
         //Save data into relevant tables.
 
         $purchaseReturnMasterData = $this->purchaseReturnService->preparePurchaseReturnMasterData($request);
@@ -162,11 +182,33 @@ class PurchaseReturnController extends Controller
 
         $stockLedgers = $this->purchaseReturnService->prepareStockLedgerData($request, $purchaseReturnMasterInsert->id);
         $this->purchaseReturnService->saveStockLedger($stockLedgers);
-        // $this->stockLedgerService->prepareAndSaveData($request, $purchaseMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'));
-        // $debitAccountData = $this->purchaseReturnService->prepareAccountCreditData($request, $purchaseMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'), config('contants.PURCHASE_RETURN_DESCRIPTION'));
-        // $creditAccountData = $this->purchaseReturnService->prepareAccountDebitData($request, $purchaseMasterInsert->id, config('contants.PURCHASE_RETURN_TRANSACTION_TYPE'), config('contants.PURCHASE_RETURN_DESCRIPTION'));
-        // AccountLedger::insert($debitAccountData);
-        // AccountLedger::insert($creditAccountData);
+
+        $debitAccountData = $this->purchaseReturnService->prepareAccountDebitData($request, $purchaseReturnMasterInsert->id);
+        AccountLedger::insert($debitAccountData);
+
+        $creditAccountData = $this->purchaseReturnService->prepareAccountCreditData($request, $purchaseReturnMasterInsert->id);
+        $this->purchaseReturnService->saveCreditAccountData($creditAccountData);
+
+        if ($request['tax'] > 0) {
+            $taxAccountData = $this->purchaseReturnService->prepareTaxAccountCreditData($request, $purchaseReturnMasterInsert->id);
+            AccountLedger::insert($taxAccountData);
+        }
+
+        if ($request['tax'] > 0) {
+            $taxAccountDebitData = $this->purchaseReturnService->prepareTaxAccountDebitData($request, $purchaseReturnMasterInsert->id);
+            AccountLedger::insert($taxAccountDebitData);
+        }
+
+
+        if ($request['carriage'] > 0) {
+            $carriageAccountData = $this->purchaseReturnService->prepareCarriageAccountCreditData($request, $purchaseReturnMasterInsert->id);
+            AccountLedger::insert($carriageAccountData);
+        }
+
+        if ($request['carriage'] > 0) {
+            $carriageAccountDebitData = $this->purchaseReturnService->prepareCarriageAccountDebitData($request, $purchaseReturnMasterInsert->id);
+            AccountLedger::insert($carriageAccountDebitData);
+        }
 
         //     DB::commit();
         // } catch (\Exception $e) {

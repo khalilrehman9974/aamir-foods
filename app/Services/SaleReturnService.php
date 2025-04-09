@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\Models\SaleMan;
 use App\Models\StockLedger;
 use App\Models\Transporter;
+use App\Models\AccountLedger;
 use App\Models\CoaDetailAccount;
 use App\Models\SaleReturnDetail;
 use App\Models\SaleReturnMaster;
@@ -87,7 +88,25 @@ class SaleReturnService
      * @queries: $queries
      * @return: object
      * */
-    public function searchSaleReturn($request)
+
+     public function searchSaleReturn($request)
+     {
+
+         $q = SaleReturnMaster::query();
+
+         if (!empty($request['date'])) {
+             $formattedDate = date('Y-m-d', strtotime($request['date']));
+             $q->where('date', $formattedDate);
+         } elseif (!empty($request['party_id'])) {
+             $q->where('party_id', $request['party_id']);
+         }
+
+         $saleInvoices = $q->with( 'party','SaleMan')->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
+
+         return $saleInvoices;
+     }
+
+    public function searchSaleReturn2($request)
     {
         $q = SaleReturnMaster::query();
         if (!empty($request['param'])) {
@@ -108,50 +127,6 @@ class SaleReturnService
         return $saleInvoices;
     }
 
-    /*
-     * Search sale record.
-     * @queries: $queries
-     * @return: object
-     * */
-    // public function searchSaleReturn($request)
-    // {
-    //     $query = SaleReturnMaster::groupBy(
-    //         'sale_return_masters.id',
-    //         'sale_return_masters.date',
-    //         'sale_return_masters.dispatch_note',
-    //         'sale_return_masters.type_id',
-    //         'sale_return_masters.party_id',
-    //         'sale_return_masters.bilty_no',
-    //         'sale_return_masters.remarks',
-    //         'sale_return_masters.created_at',
-    //         'sale_return_masters.deliverd_to',
-    //         'sale_return_masters.updated_at',
-    //         'sale_return_masters.saleman_id',
-    //         'sale_return_masters.transporter_id',
-    //         'sale_return_masters.total_amount',
-    //         'sale_return_masters.freight',
-    //         'sale_return_masters.scheme',
-    //         'sale_return_masters.commission',
-    //     );
-    //     if (!empty($request['param'])) {
-    //         $query = $query->where('sale_return_masters.id', "=", $request['param']);
-    //         //            $query = $query->orwhere('parties.name', "% like %", $request['param']);
-    //     }
-    //     //        $query->select('sale_return_masters.id','sale_return_masters.date','sale_return_masters.amount','sale_return_masters.quantity');
-    //     $sales = $query->orderBy('id', 'DESC')->get();
-
-    //     return $this->commonService->paginate($sales, Self::PER_PAGE);
-    // }
-
-    // /*
-    //  * Get list of products for selected category and brand.
-    //  * @param: $request
-    //  * @return Array
-    //  * */
-    // public function getProductsByCategoryBrand($request)
-    // {
-    //     return Product::where('brand_id', $request['brandCode'])->get();
-    // }
 
     /*
      * Prepare sale master data.
@@ -280,25 +255,229 @@ class SaleReturnService
         }
     }
 
-    public function prepareAccountCreditData($request, $saleParentId, $dataType, $description)
+
+
+
+    public function prepareAccountDebitData($request, $saleParentId)
     {
+
+        $remarks = $request['remarks'];
+        $description = 'Entry Through Product';
+        $productArray = $request['product_id'];
+        $product = CoaInventoryDetailAccount::whereIn('id', $productArray)->pluck('name')->toarray();
+        $party = CoaDetailAccount::whereIn('account_name', $product)->pluck('id');
+
         return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'invoice_id' => $saleParentId,
-            'account_id' => 'S-00000001',
-            'description' => $description . ' '. $saleParentId, $dataType,
-            'debit' => 0,
-            'credit' => $request['totalAmount'],
+            'party_id' =>  $party,
+            'document_number' => 'S/R' . '-' . $saleParentId,
+            'rate' =>$request['rate'],
+            'bilty_no' => $request['bilty_no'],
+            'transporter_id' => $request['transporter_id'],
+            'total_quantity' => $request['total_dzns'],
+            'measurementType' => $request['dzns'],
+            'bags' => $request['quantity'],
+            'description' => $description . '<br>' .$remarks ,
+            'credit' => config('constants.ZERO'),
+            'debit' => $request['amount'],
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 
-    public function prepareAccountDebitData($request, $saleParentId, $dataType, $description)
+    public function saveDebitAccountData($data)
     {
+        foreach ($data['party_id'] as $key => $value) {
+            if (!empty($data['party_id'][$key])) {
+                $rec['party_id'] = $data['party_id'][$key];
+                $rec['date'] = $data['date'];
+                $rec['invoice_id'] = $data['invoice_id'];
+                $rec['document_number'] = $data['document_number'];
+                $rec['rate'] = $data['rate'][$key];
+                $rec['bilty_no'] = $data['bilty_no'];
+                $rec['transporter_id'] = $data['transporter_id'];
+                $rec['total_quantity'] = $data['total_quantity'][$key];
+                $rec['measurementType'] = $data['measurementType'][$key];
+                $rec['bags'] = $data['bags'][$key];
+                $rec['description'] = $data['description'];
+                $rec['debit'] = $data['debit'][$key];
+                $rec['credit'] = $data['credit'];
+                $rec['created_at'] = now();
+                $rec['updated_at'] = now();
+                AccountLedger::create($rec);
+            }
+        }
+    }
+
+
+    public function prepareAccountCreditData($request, $saleParentId)
+    {
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+
         return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'invoice_id' => $saleParentId,
-            'account_id' => $request['customer_id'],
-            'description' => $description . ' '. $saleParentId, $dataType,
-            'debit' => $request['totalAmount'],
+            'party_id' =>   $request['party_id'],
+            'document_number' => 'S/R' . '-' . $saleParentId,
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => 'Sales Return From'. ' ' . $party . '<br>' .  $request['remarks'],
+            'debit' => $request['net_amount'],
             'credit' => 0,
+            'created_at' => now(),
+            'updated_at' => now() ,
         ];
     }
+
+    // public function saveCreditAccountData($data)
+    // {
+    //     foreach ($data['party_id'] as $key => $value) {
+    //         if (!empty($data['party_id'][$key])) {
+    //             $rec['party_id'] = $data['party_id'][$key];
+    //             $rec['date'] = $data['date'];
+    //             $rec['invoice_id'] = $data['invoice_id'];
+    //             $rec['document_number'] = $data['document_number'];
+    //             $rec['rate'] = $data['rate'][$key];
+    //             $rec['bilty_no'] = $data['bilty_no'];
+    //             $rec['transporter_id'] = $data['transporter_id'];
+    //             $rec['total_quantity'] = $data['total_quantity'][$key];
+    //             $rec['measurementType'] = $data['measurementType'][$key];
+    //             $rec['bags'] = $data['bags'][$key];
+    //             $rec['description'] = $data['description'];
+    //             $rec['debit'] = $data['debit'];
+    //             $rec['credit'] = $data['credit'][$key];
+    //             $rec['created_at'] = now();
+    //             $rec['updated_at'] = now();
+    //             AccountLedger::create($rec);
+    //         }
+    //     }
+    // }
+
+    public function prepareCommissionAccountCreditData($request, $saleParentId)
+    {
+
+        $partyName = 'Commission On Sales.';
+        $party = CoaDetailAccount::where('account_name', $partyName)->value('id');
+        $mainPartyName = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+
+
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'party_id' =>  $party,
+            'document_number' => 'S/R' . '-' . $saleParentId,
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => 'Commission Of'. ' ' . $mainPartyName . '<br>' .  $request['remarks'],
+            'debit' => config('constants.ZERO'),
+            'credit' => $request['commission'],
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+    public function prepareCommissionAccountDebitData($request, $saleParentId)
+    {
+
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'party_id' =>  $request['party_id'],
+            'document_number' => 'S/R' . '-' . $saleParentId,
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => 'Commission Of'. ' ' . $party . '<br>' .  $request['remarks'],
+            'debit' => $request['commission'],
+            'credit' => config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+    public function prepareDiscountAccountCreditData($request, $saleParentId)
+    {
+
+        $mainPartyName = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        $partyName = 'Discounts on Sales.';
+        $party = CoaDetailAccount::where('account_name', $partyName)->value('id');
+
+
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'party_id' =>   $party,
+            'document_number' => 'S/R' . '-' . $saleParentId,
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => 'Discount  to '. ' ' . $mainPartyName . '<br>' .  $request['remarks'],
+            'debit' => config('constants.ZERO'),
+            'credit' => $request['scheme'],
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+    public function prepareDiscountAccountDebitData($request, $saleParentId)
+    {
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'party_id' =>  $request['party_id'],
+            'document_number' => 'S/R' . '-' . $saleParentId,
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => 'Discount To'. ' ' . $party . '<br>' .  $request['remarks'],
+            'debit' => $request['scheme'],
+            'credit' => config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+    // public function prepareAccountCreditData($request, $saleParentId, $dataType, $description)
+    // {
+    //     return [
+    //         'invoice_id' => $saleParentId,
+    //         'account_id' => 'S-00000001',
+    //         'description' => $description . ' '. $saleParentId, $dataType,
+    //         'debit' => 0,
+    //         'credit' => $request['totalAmount'],
+    //     ];
+    // }
+
+    // public function prepareAccountDebitData($request, $saleParentId, $dataType, $description)
+    // {
+    //     return [
+    //         'invoice_id' => $saleParentId,
+    //         'account_id' => $request['customer_id'],
+    //         'description' => $description . ' '. $saleParentId, $dataType,
+    //         'debit' => $request['totalAmount'],
+    //         'credit' => 0,
+    //     ];
+    // }
 }

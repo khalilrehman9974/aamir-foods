@@ -2,15 +2,16 @@
 
 namespace App\Services;
 
-use App\Models\AccountLedger;
-use App\Models\BankPaymentVoucher;
 use App\Models\BPVDetails;
+use App\Models\AccountLedger;
 use App\Models\VoucherDetail;
 use App\Models\VoucherMaster;
 use Illuminate\Support\Carbon;
 use App\Models\CoaDetailAccount;
 use App\Models\VoucherDetailTemp;
+use App\Models\BankPaymentVoucher;
 use Illuminate\Support\Facades\Auth;
+use App\Models\CoaInventoryDetailAccount;
 
 class BankPaymentVoucherService
 {
@@ -132,37 +133,6 @@ class BankPaymentVoucherService
         ];
     }
 
-    // public function prepareVoucherDetailTempData($request, $voucherParentId)
-    // {
-    //     // dd($request);
-    //     return [
-    //         'account_id' => $request['account_id'],
-    //         'bank_id' => $request['bank_id'],
-    //         'description' => $request['description'],
-    //         'amount' => $request['amount'],
-    //         'created_by' => Auth::user()->id,
-    //         'updated_by' => Auth::user()->id,
-    //         'voucher_master_id' => $voucherParentId,
-    //     ];
-    // }
-
-    /*
-     * Prepare Purchase detail data.
-     * @param: $request
-     * @return Array
-     * */
-    // public function prepareVoucherDetailCreditData($request, $voucherParentId)
-    // {
-    //     return [
-    //         'account_id' => $request['bank_id'],
-    //         'description' => $request['description'],
-    //         'debit' => 0,
-    //         'credit' => $request['amount'],
-    //         'created_by' => Auth::user()->id,
-    //         'updated_by' => Auth::user()->id,
-    //         'voucher_master_id' => $voucherParentId,
-    //     ];
-    // }
 
     /*
      * Save Voucher data.
@@ -182,66 +152,47 @@ class BankPaymentVoucherService
         }
     }
 
-
-    // public function saveVoucherTempData($data)
-    // {
-    //     foreach ($data['account_id'] as $key => $value) {
-    //         if (!empty($data['account_id'][$key])) {
-    //             $rec['account_id'] = $data['account_id'][$key];
-    //             $rec['description'] = $data['description'][$key];
-    //             $rec['bank_id'] = $data['bank_id'][$key];
-    //             $rec['amount'] = $data['amount'][$key];
-    //             $rec['created_by'] = Auth::user()->id;
-    //             $rec['updated_by'] = Auth::user()->id;
-    //             $rec['voucher_master_id'] = $data['voucher_master_id'];
-    //             VoucherDetailTemp::create($rec);
-    //         }
-    //     }
-    // }
-
-    // public function saveVoucherCreditData($data)
-    // {
-    //     foreach ($data['account_id'] as $key => $value) {
-    //         if (!empty($data['account_id'][$key])) {
-    //             $rec['account_id'] = $data['account_id'][$key];
-    //             $rec['description'] = $data['description'][$key];
-    //             $rec['debit'] = config('constants.ZERO');
-    //             $rec['credit'] = $data['credit'][$key];
-    //             $rec['created_by'] = Auth::user()->id;
-    //             $rec['updated_by'] = Auth::user()->id;
-    //             $rec['voucher_master_id'] = $data['voucher_master_id'];
-    //             VoucherDetail::create($rec);
-    //         }
-    //     }
-    // }
-
-
-    // public function getPartyCode()
-    // {
-    //     // $voucher = VoucherMaster::find($id);; ? CoaDetailAccount::max('account_code') + 1 : 1
-    //     return CoaDetailAccount::find($code);
-    // }
-
     public function prepareAccountCreditData($request, $voucherParentId)
     {
         return [
-            'account_id' => $request['account_id'],
-            'description' => $request['description'],
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $voucherParentId,
+            'party_id' =>  $request['bank_id'],
+            'document_number' => 'BPV' . '-' . $voucherParentId,
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => $request['description']  ,
             'debit' => config('constants.ZERO'),
             'credit' => $request['amount'],
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 
     public function saveCreditData($data)
     {
-        // dd($data);
-        foreach ($data['account_id'] as $key => $value) {
-            // dd($key,$value);
-            if (!empty($data['account_id'][$key])) {
-                $rec['account_id'] = $data['account_id'][$key];
+
+        foreach ($data['party_id'] as $key => $value) {
+            if (!empty($data['party_id'][$key])) {
+                $rec['party_id'] = $data['party_id'][$key];
+                $rec['date'] = $data['date'];
+                $rec['invoice_id'] = $data['invoice_id'];
+                $rec['document_number'] = $data['document_number'];
+                $rec['rate'] = $data['rate'];
+                $rec['bilty_no'] = $data['bilty_no'];
+                $rec['transporter_id'] = $data['transporter_id'];
+                $rec['total_quantity'] = $data['total_quantity'];
+                $rec['measurementType'] = $data['measurementType'];
+                $rec['bags'] = $data['bags'];
                 $rec['description'] = $data['description'][$key];
-                $rec['debit'] = config('constants.ZERO');
+                $rec['debit'] = $data['debit'];
                 $rec['credit'] = $data['credit'][$key];
+                $rec['created_at'] = now();
+                $rec['updated_at'] = now();
                 AccountLedger::create($rec);
             }
         }
@@ -249,22 +200,45 @@ class BankPaymentVoucherService
 
     public function prepareAccountDebitData($request, $voucherParentId)
     {
+
         return [
-            'account_id' => $request['account_id'],
-            'description' => $request['description'] ,
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $voucherParentId,
+            'party_id' =>  $request['account_id'],
+            'document_number' => 'BPV' . '-' . $voucherParentId,
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => $request['description']  ,
             'debit' => $request['amount'],
             'credit' => config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 
     public function saveDebitData($data)
     {
-        foreach ($data['account_id'] as $key => $value) {
-            if (!empty($data['account_id'][$key])) {
-                $rec['account_id'] = $data['account_id'][$key];
+        foreach ($data['party_id'] as $key => $value) {
+            if (!empty($data['party_id'][$key])) {
+                $rec['party_id'] = $data['party_id'][$key];
+                $rec['date'] = $data['date'];
+                $rec['invoice_id'] = $data['invoice_id'];
+                $rec['document_number'] = $data['document_number'];
+                $rec['rate'] = $data['rate'];
+                $rec['bilty_no'] = $data['bilty_no'];
+                $rec['transporter_id'] = $data['transporter_id'];
+                $rec['total_quantity'] = $data['total_quantity'];
+                $rec['measurementType'] = $data['measurementType'];
+                $rec['bags'] = $data['bags'];
                 $rec['description'] = $data['description'][$key];
                 $rec['debit'] = $data['debit'][$key];
-                $rec['credit'] = config('constants.ZERO');
+                $rec['credit'] = $data['credit'];
+                $rec['created_at'] = now();
+                $rec['updated_at'] = now();
                 AccountLedger::create($rec);
             }
         }

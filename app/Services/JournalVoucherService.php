@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Carbon\Carbon;
+use App\Models\AccountLedger;
 use App\Models\CoaDetailAccount;
 use App\Models\JournalVoucherDetail;
 use App\Models\JournalVoucherMaster;
@@ -159,6 +160,98 @@ class JournalVoucherService
                 $rec['credit'] = $data['credit'][$key];
                 $rec['voucher_master_id'] = $data['voucher_master_id'];
                 JournalVoucherDetail::create($rec);
+            }
+        }
+    }
+
+    public function prepareAccountCreditData($request, $voucherParentId)
+    {
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $voucherParentId,
+            'party_id' =>  $request['credit_account'],
+            'document_number' => 'JV' . '-' . $voucherParentId,
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => $request['description']  ,
+            'debit' => config('constants.ZERO'),
+            'credit' => $request['credit'],
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function saveCreditData($data)
+    {
+
+        foreach ($data['party_id'] as $key => $value) {
+            if (!empty($data['party_id'][$key])) {
+                $rec['party_id'] = $data['party_id'][$key];
+                $rec['date'] = $data['date'];
+                $rec['invoice_id'] = $data['invoice_id'];
+                $rec['document_number'] = $data['document_number'];
+                $rec['rate'] = $data['rate'];
+                $rec['bilty_no'] = $data['bilty_no'];
+                $rec['transporter_id'] = $data['transporter_id'];
+                $rec['total_quantity'] = $data['total_quantity'];
+                $rec['measurementType'] = $data['measurementType'];
+                $rec['bags'] = $data['bags'];
+                $rec['description'] = $data['description'][$key];
+                $rec['debit'] = $data['debit'];
+                $rec['credit'] = $data['credit'][$key];
+                $rec['created_at'] = now();
+                $rec['updated_at'] = now();
+                AccountLedger::create($rec);
+            }
+        }
+    }
+
+    public function prepareAccountDebitData($request, $voucherParentId)
+    {
+
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $voucherParentId,
+            'party_id' =>  $request['debit_account'],
+            'document_number' => 'JV' . '-' . $voucherParentId,
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => $request['description']  ,
+            'debit' => $request['debit'],
+            'credit' => config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function saveDebitData($data)
+    {
+        foreach ($data['party_id'] as $key => $value) {
+            if (!empty($data['party_id'][$key])) {
+                $rec['party_id'] = $data['party_id'][$key];
+                $rec['date'] = $data['date'];
+                $rec['invoice_id'] = $data['invoice_id'];
+                $rec['document_number'] = $data['document_number'];
+                $rec['rate'] = $data['rate'];
+                $rec['bilty_no'] = $data['bilty_no'];
+                $rec['transporter_id'] = $data['transporter_id'];
+                $rec['total_quantity'] = $data['total_quantity'];
+                $rec['measurementType'] = $data['measurementType'];
+                $rec['bags'] = $data['bags'];
+                $rec['description'] = $data['description'][$key];
+                $rec['debit'] = $data['debit'][$key];
+                $rec['credit'] = $data['credit'];
+                $rec['created_at'] = now();
+                $rec['updated_at'] = now();
+                AccountLedger::create($rec);
             }
         }
     }

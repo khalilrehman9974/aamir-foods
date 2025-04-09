@@ -7,17 +7,13 @@ use App\Models\Area;
 use App\Models\User;
 use App\Models\Sector;
 use App\Models\SaleMan;
-use App\Models\SaleDetail;
-use App\Models\SaleMaster;
 use App\Models\StockLedger;
 use App\Models\Transporter;
 use Illuminate\Http\Request;
 use App\Models\AccountLedger;
 use App\Models\GRNotesDetail;
-use App\Models\SaleManSector;
 use App\Services\CommonService;
 use App\Models\CoaDetailAccount;
-use App\Models\SalePurchaseType;
 use App\Models\SaleReturnDetail;
 use App\Models\SaleReturnMaster;
 use App\Models\GoodsReceivedNote;
@@ -30,7 +26,6 @@ use App\Models\DetailAccountProducts;
 use App\Services\AccountLedgerService;
 use App\Models\CoaDetailAccountSectors;
 use App\Models\CoaInventoryDetailAccount;
-use App\Http\Requests\StoreSaleReturnRequest;
 
 class SalesReturnController extends Controller
 {
@@ -39,8 +34,6 @@ class SalesReturnController extends Controller
     protected $salereturnService;
     protected $stockLedgerService;
     protected $accountLedgerService;
-
-
 
     public function __construct(
         CommonService $commonService,
@@ -61,9 +54,11 @@ class SalesReturnController extends Controller
     {
         $pageTitle = 'List Of Sale Returns';
         $request = request()->all();
+        $param = request()->param;
         $saleReturns = $this->salereturnService->searchSaleReturn($request);
+        $dropDownData = $this->salereturnService->DropDownData();
 
-        return view('sale-return.index', compact('saleReturns', 'request', 'pageTitle'));
+        return view('sale-return.index', compact('saleReturns', 'dropDownData', 'param', 'request', 'pageTitle'));
     }
 
     public function generate()
@@ -80,37 +75,24 @@ class SalesReturnController extends Controller
         $dropDownData = $this->salereturnService->DropDownData();
         $invoiceNo = SaleReturnMaster::max('id') + 1;
         $grnMaster = GoodsReceivedNote::where('id', $request->id)->first();
-
         $grnDetails = GRNotesDetail::where('master_id', $request->id)->get();
-        // dd($grnDetails);
         $getParties = CoaDetailAccount::where('id', $grnMaster->party_id)->get();
         $parties = $getParties->pluck('account_name', 'id');
         $fetchSaleMan = $getParties->pluck('saleMan_id');
-
         $saleMans = SaleMan::where('id', $fetchSaleMan)->pluck('name', 'id');
-
         $partySectors = CoaDetailAccountSectors::where('master_account_id', $grnMaster->party_id)->pluck('sector_id');
         $sectors = Sector::whereIn('id', $partySectors)->pluck('name', 'id');
-
         $getSectorId = $sectors->pluck('id');
-
         $getCommission = CoaDetailAccount::where('id', $grnMaster->party_id)->get();
         $commissionArray = $getCommission->pluck('commision')->toArray();
-
         $areas = Area::whereIn('sector_id', $getSectorId)->pluck('name', 'id');
-
         $getProducts = DetailAccountProducts::where('detail_account_id', $grnMaster->party_id)->get();
         $productsArray = $getProducts->pluck('product_id')->toArray();
         $products = CoaInventoryDetailAccount::whereIn('id', $productsArray)->pluck('name', 'id');
-
         $getPrice = DetailAccountProducts::where('detail_account_id', $grnMaster->party_id)->whereIn('product_id', $productsArray)->get();
-
         $pricesArray = $getPrice->pluck('price', 'product_id')->toArray();
         $discountsArray = $getPrice->pluck('discount', 'product_id')->toArray();
-
         $deliveredToParties = DeliveredToParties::where('detail_account_id', $grnMaster->party_id)->pluck('party_name', 'id');
-
-
 
         if (empty($grnMaster)) {
             abort(404);
@@ -127,35 +109,52 @@ class SalesReturnController extends Controller
      * */
     public function store(Request $request)
     {
-        // dd($request);
 
         $request = $request->except('_token', 'id');
-        // DB::beginTransaction();
-        // try {
+        DB::beginTransaction();
+        try {
 
-        //Insert data into sale tables.
-        $saleReturnMasterData = $this->salereturnService->prepareSaleReturnMasterData($request);
-        $saleReturnMasterInsert = $this->commonService->findUpdateOrCreate(SaleReturnMaster::class, ['id' => ''], $saleReturnMasterData);
-        $saleReturnDetailData = $this->salereturnService->prepareSaleReturnDetailData($request, $saleReturnMasterInsert->id);
-        $this->salereturnService->saveSaleReturn($saleReturnDetailData);
+            //Insert data into sale Return tables.
+            $saleReturnMasterData = $this->salereturnService->prepareSaleReturnMasterData($request);
+            $saleReturnMasterInsert = $this->commonService->findUpdateOrCreate(SaleReturnMaster::class, ['id' => ''], $saleReturnMasterData);
+            $saleReturnDetailData = $this->salereturnService->prepareSaleReturnDetailData($request, $saleReturnMasterInsert->id);
+            $this->salereturnService->saveSaleReturn($saleReturnDetailData);
 
-        // Insert data into stock table.
+            // Insert data into stock table.
+            $stockLedgers = $this->salereturnService->prepareStockLedgerData($request, $saleReturnMasterInsert->id);
+            $this->salereturnService->saveStockLedger($stockLedgers);
 
-        $stockLedgers = $this->salereturnService->prepareStockLedgerData($request, $saleReturnMasterInsert->id);
-        $this->salereturnService->saveStockLedger($stockLedgers);
+            // Insert data into Account Ledger table.
+            $debitAccountData = $this->salereturnService->prepareAccountDebitData($request, $saleReturnMasterInsert->id);
+            $this->salereturnService->saveDebitAccountData($debitAccountData);
 
-        // $this->stockLedgerService->prepareAndSaveData($request, $saleReturnMasterInsert->id, config('constants.SALE_RETURN_TRANSACTION_TYPE'));
+            $creditAccountData = $this->salereturnService->prepareAccountCreditData($request, $saleReturnMasterInsert->id);
+            AccountLedger::insert($creditAccountData);
 
-        // Insert data into accounts ledger table.
-        // $debitAccountData = $this->salereturnService->prepareAccountDebitData($request, $saleReturnMasterInsert->id, config('constants.SALE_RETURN_TRANSACTION_TYPE'), config('constants.SALE_RETURN_DESCRIPTION'));
-        // $creditAccountData = $this->salereturnService->prepareAccountCreditData($request, $saleReturnMasterInsert->id, config('constants.SALE_RETURN_TRANSACTION_TYPE'), config('constants.SALE_RETURN_DESCRIPTION'));
-        // AccountLedger::insert($debitAccountData);
-        // AccountLedger::insert($creditAccountData);
-        //     DB::commit();
-        // } catch (\Exception $e) {
-        //     DB::rollback();
-        //     return redirect('sale-return/create')->with('error', $e->getMessage());
-        // }
+            if ($request['commission'] > 0) {
+                $commissionAccountData = $this->salereturnService->prepareCommissionAccountCreditData($request, $saleReturnMasterInsert->id);
+                AccountLedger::insert($commissionAccountData);
+            }
+            if ($request['commission'] > 0) {
+                $commissionAccountDebitData = $this->salereturnService->prepareCommissionAccountDebitData($request, $saleReturnMasterInsert->id);
+                AccountLedger::insert($commissionAccountDebitData);
+            }
+
+            if ($request['scheme'] > 0) {
+                $discountAccountData = $this->salereturnService->prepareDiscountAccountCreditData($request, $saleReturnMasterInsert->id);
+                AccountLedger::insert($discountAccountData);
+            }
+
+            if ($request['scheme'] > 0) {
+                $discountAccountDebitData = $this->salereturnService->prepareDiscountAccountDebitData($request, $saleReturnMasterInsert->id);
+                AccountLedger::insert($discountAccountDebitData);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect('sale-return/create')->with('error', $e->getMessage());
+        }
         return redirect('sale-return/sales-return-list')->with('message', config('constants.add'));
     }
 
@@ -197,13 +196,11 @@ class SalesReturnController extends Controller
 
         $deliveredToParties = DeliveredToParties::where('id', $saleReturn->delivered_to)->pluck('party_name', 'id');
 
-
-
         if (empty($saleReturn)) {
             $message = config('constants.wrong');
         }
 
-        return view('sale-return.edit', compact('saleReturn', 'currentInvoice', 'date', 'saleReturnDetails', 'parties', 'saleMans', 'sectors', 'areas', 'products', 'deliveredToParties', 'discountsArray', 'pricesArray', 'commissionArray', 'transporters', 'pageTitle', 'dropDownData'));
+        return view('sale-return.edit' , compact('saleReturn', 'currentInvoice', 'date', 'saleReturnDetails', 'parties', 'saleMans', 'sectors', 'areas', 'products', 'deliveredToParties', 'discountsArray', 'pricesArray', 'commissionArray', 'transporters', 'pageTitle', 'dropDownData'));
     }
 
     /*
@@ -213,34 +210,53 @@ class SalesReturnController extends Controller
     public function update(Request $request)
     {
 
-        // DB::beginTransaction();
-        // try {
-        $request = request()->all();
-        SaleReturnDetail::where('sale_return_master_id', $request['id'])->delete();
-        $documentNo = 'S/R' . '-' . $request['id'];
-        StockLedger::where('document_no', $documentNo)->where('invoice_id', $request['id'])->delete();
-        // AccountLedger::where('invoice_id', $request['id'])->delete();
+        DB::beginTransaction();
+        try {
+            $request = request()->all();
+            SaleReturnDetail::where('sale_return_master_id', $request['id'])->delete();
+            $documentNo = 'S/R' . '-' . $request['id'];
+            StockLedger::where('document_no', $documentNo)->where('invoice_id', $request['id'])->delete();
+            AccountLedger::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
 
-        //Save data into relevant tables.
-        $saleReturnMasterData = $this->salereturnService->prepareSaleReturnMasterData($request);
-        $saleReturnMasterInsert = $this->commonService->findUpdateOrCreate(SaleReturnMaster::class, ['id' => request('id')], $saleReturnMasterData);
-        $saleReturnDetailData = $this->salereturnService->prepareSaleReturnDetailData($request, $saleReturnMasterInsert->id);
-        $this->salereturnService->saveSaleReturn($saleReturnDetailData);
+            //Update data into relevant tables.
+            $saleReturnMasterData = $this->salereturnService->prepareSaleReturnMasterData($request);
+            $saleReturnMasterInsert = $this->commonService->findUpdateOrCreate(SaleReturnMaster::class, ['id' => request('id')], $saleReturnMasterData);
+            $saleReturnDetailData = $this->salereturnService->prepareSaleReturnDetailData($request, $saleReturnMasterInsert->id);
+            $this->salereturnService->saveSaleReturn($saleReturnDetailData);
 
-        //Save data into stock table.
+            // Update data into stock table.
 
-        $stockLedgers = $this->salereturnService->prepareStockLedgerData($request, $saleReturnMasterInsert->id);
-        $this->salereturnService->saveStockLedger($stockLedgers);
-        // $this->stockLedgerService->prepareAndSaveData($request, $saleReturnMasterInsert->id, config('constants.SALE_RETURN_TRANSACTION_TYPE'));
-        // $debitAccountData = $this->salereturnService->prepareAccountDebitData($request, $saleReturnMasterInsert->id, config('constants.SALE_RETURN_TRANSACTION_TYPE'), config('constants.SALE_RETURN_DESCRIPTION'));
-        // $creditAccountData = $this->salereturnService->prepareAccountCreditData($request, $saleReturnMasterInsert->id, config('constants.SALE_RETURN_TRANSACTION_TYPE'), config('constants.SALE_RETURN_DESCRIPTION'));
-        // AccountLedger::insert($debitAccountData);
-        // AccountLedger::insert($creditAccountData);
-        // DB::commit();
-        // } catch (\Exception $e) {
-        //     DB::rollback();
-        //     return redirect('sale-return/create')->with('error', $e->getMessage());
-        // }
+            $stockLedgers = $this->salereturnService->prepareStockLedgerData($request, $saleReturnMasterInsert->id);
+            $this->salereturnService->saveStockLedger($stockLedgers);
+
+            // Update data into Account Ledger table.
+            $debitAccountData = $this->salereturnService->prepareAccountDebitData($request, $saleReturnMasterInsert->id);
+            $this->salereturnService->saveDebitAccountData($debitAccountData);
+
+            $creditAccountData = $this->salereturnService->prepareAccountCreditData($request, $saleReturnMasterInsert->id);
+            AccountLedger::insert($creditAccountData);
+
+            if ($request['commission'] > 0) {
+                $commissionAccountData = $this->salereturnService->prepareCommissionAccountCreditData($request, $saleReturnMasterInsert->id);
+                AccountLedger::insert($commissionAccountData);
+
+                $commissionAccountDebitData = $this->salereturnService->prepareCommissionAccountDebitData($request, $saleReturnMasterInsert->id);
+                AccountLedger::insert($commissionAccountDebitData);
+            }
+
+            if ($request['scheme'] > 0) {
+                $discountAccountData = $this->salereturnService->prepareDiscountAccountCreditData($request, $saleReturnMasterInsert->id);
+                AccountLedger::insert($discountAccountData);
+
+                $discountAccountDebitData = $this->salereturnService->prepareDiscountAccountDebitData($request, $saleReturnMasterInsert->id);
+                AccountLedger::insert($discountAccountDebitData);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect('sale-return/create')->with('error', $e->getMessage());
+        }
 
         return redirect('sale-return/sales-return-list')->with('message', config('constants.update'));
     }
@@ -255,7 +271,6 @@ class SalesReturnController extends Controller
         $belt = Sector::where('id', $saleReturnMaster->sector)->value('name');
         $area = Area::where('id', $saleReturnMaster->area)->value('name');
         $saleReturnDetails = SaleReturnDetail::where('sale_return_master_id', $saleReturnMaster->id)->get();
-        // dd($saleReturnDetails);
         $productsArray = $saleReturnDetails->pluck('product_id')->toArray();
         $products = CoaInventoryDetailAccount::whereIn('id', $productsArray)->pluck('name', 'id');
         $user = User::where('id', $saleReturnMaster->created_by)->value('name');
@@ -263,29 +278,6 @@ class SalesReturnController extends Controller
         $transporters = Transporter::where('id', $saleReturnMaster->transporter_id)->value('name');
 
         return view('sale-return.print', compact('title', 'products', 'transporters', 'user', 'deliverdToParties', 'saleReturnMaster', 'date', 'saleReturnDetails', 'party', 'saleMan', 'belt', 'area'));
-    }
-
-    /*
-     * Delete existing resource.
-     * @param: request()->id
-     * */
-    public function delete()
-    {
-        try {
-            DB::beginTransaction();
-            $deleteMaster = SaleReturnMaster::where('id', request()->id)->delete();
-            $deleteDetail = SaleReturnDetail::where('sale_master_id', request()->id)->delete();
-            $deleteStock = StockLedger::where('invoice_id', request()->id)->delete();
-            $accountEntryDetail = AccountLedger::where('invoice_id', request()->id)->delete();
-            DB::commit();
-            //
-            if ($deleteMaster && $deleteDetail && $deleteStock && $accountEntryDetail) {
-                return $this->commonService->deleteResource(SaleReturnMaster::class, SaleReturnDetail::class);
-            }
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('sale-return/sale-return-list')->with('error', $e->getMessage());
-        }
     }
 
     /*
@@ -302,7 +294,6 @@ class SalesReturnController extends Controller
 
         return view('sale-return.view', compact('saleMaster', 'saleDetail'));
     }
-
 
     public function getSaleManAreaDetail(Request $request)
     {

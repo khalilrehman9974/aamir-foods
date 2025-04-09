@@ -59,7 +59,7 @@ class CRVoucherController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request);
+   
         $request = $request->except('_token', 'id');
         // DB::beginTransaction();
         // try {
@@ -70,11 +70,12 @@ class CRVoucherController extends Controller
         $voucherDetailData = $this->cashReceiptVoucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
         $this->cashReceiptVoucherService->saveVoucherDetailData($voucherDetailData);
 
+        //Insert data into accounts ledger table.
+        $debitAccountData = $this->cashReceiptVoucherService->prepareAccountDebitData($request, $voucherMasterInsert->id);
+        $this->cashReceiptVoucherService->saveDebitData($debitAccountData);
 
-        // $debitAccountData = $this->cashReceiptVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData, config('contants.CRV'),config('contants.Crv_cash_in_hand') );
-        // $creditAccountData = $this->cashReceiptVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData, config('contants.CRV'), config('contants.Crv_party_transaction'));
-        // AccountLedger::insert($debitAccountData);
-        // AccountLedger::insert($creditAccountData);
+        $creditAccountData = $this->cashReceiptVoucherService->prepareAccountCreditData($request, $voucherMasterInsert->id);
+        $this->cashReceiptVoucherService->saveCreditData($creditAccountData);
 
         //     DB::commit();
         // } catch (\Exception $e) {
@@ -119,11 +120,13 @@ class CRVoucherController extends Controller
     public function update(Request $request)
     {
 
-
         // DB::beginTransaction();
         // try {
 
         CRVDetails::where('voucher_master_id', $request['id'])->delete();
+        $documentNo = 'CRV' . '-' . $request['id'];
+        AccountLedger::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
+
         //Insert data into purchase tables.
         $voucherMasterData = $this->cashReceiptVoucherService->prepareVoucherMasterData($request);
         $voucherMasterInsert = $this->cashReceiptVoucherService->findUpdateOrCreate(CashReceiptVoucher::class, ['id' => request('id')], $voucherMasterData);
@@ -131,11 +134,12 @@ class CRVoucherController extends Controller
         $voucherDetailData = $this->cashReceiptVoucherService->prepareVoucherDetailData($request, $voucherMasterInsert->id);
         $this->cashReceiptVoucherService->saveVoucherDetailData($voucherDetailData);
 
+        //Insert data into accounts ledger table.
+        $debitAccountData = $this->cashReceiptVoucherService->prepareAccountDebitData($request, $voucherMasterInsert->id);
+        $this->cashReceiptVoucherService->saveDebitData($debitAccountData);
 
-        // $debitAccountData = $this->cashReceiptVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData, config('contants.CRV'),config('contants.Crv_cash_in_hand') );
-        // $creditAccountData = $this->cashReceiptVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData, config('contants.CRV'), config('contants.Crv_party_transaction'));
-        // AccountLedger::insert($debitAccountData);
-        // AccountLedger::insert($creditAccountData);
+        $creditAccountData = $this->cashReceiptVoucherService->prepareAccountCreditData($request, $voucherMasterInsert->id);
+        $this->cashReceiptVoucherService->saveCreditData($creditAccountData);
 
         //     DB::commit();
         // } catch (\Exception $e) {
@@ -158,7 +162,7 @@ class CRVoucherController extends Controller
 
         $user = User::where('id', $crvMaster->created_by)->value('name');
 
-        return view('vouchers.crv.print', compact('title','user', 'crvMaster','crvDetails','cashAccounts', 'date', 'party'));
+        return view('vouchers.crv.print', compact('title', 'user', 'crvMaster', 'crvDetails', 'cashAccounts', 'date', 'party'));
     }
 
     public function view($id)

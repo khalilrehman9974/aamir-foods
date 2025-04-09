@@ -67,10 +67,10 @@ class BPVoucherController extends Controller
      */
     public function store(Request $request)
     {
-       
+
         $request = $request->except('_token', 'id');
-        // DB::beginTransaction();
-        // try {
+        DB::beginTransaction();
+        try {
 
             //Insert data into Vouchers tables.
             $voucherMasterData = $this->bankPaymentVoucherService->prepareVoucherMasterData($request);
@@ -80,21 +80,19 @@ class BPVoucherController extends Controller
             $this->bankPaymentVoucherService->saveVoucherDetailData($voucherDetailData);
 
             //Insert data into accounts ledger table.
-            // $debitAccountData = $this->bankPaymentVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData);
-            // $creditAccountData = $this->bankPaymentVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData);
-            // $this->bankPaymentVoucherService->saveCreditData($creditAccountData);
-            // $this->bankPaymentVoucherService->saveDebitData($debitAccountData);
+            $debitAccountData = $this->bankPaymentVoucherService->prepareAccountDebitData($request, $voucherMasterInsert->id);
+            $this->bankPaymentVoucherService->saveDebitData($debitAccountData);
 
-            // AccountLedger::insert($debitAccountData);
-            // AccountLedger::insert($creditAccountData);
+            $creditAccountData = $this->bankPaymentVoucherService->prepareAccountCreditData($request, $voucherMasterInsert->id);
+            $this->bankPaymentVoucherService->saveCreditData($creditAccountData);
 
 
-        // DB::commit();
-        // }
-        // catch (\Exception $e) {
-        //     DB::rollback();
-        //     return redirect('bpv/create')->with('error', $e->getMessage());
-        // }
+        DB::commit();
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return redirect('bpv/create')->with('error', $e->getMessage());
+        }
         return redirect('bpv/list')->with('message', config('constants.add'));
     }
 
@@ -132,12 +130,13 @@ class BPVoucherController extends Controller
 
     public function update(Request $request)
     {
-        // dd($request);
-        // DB::beginTransaction();
-        // try {
 
+        DB::beginTransaction();
+        try {
             //Insert data into Vouchers tables.
             BPVDetails::where('voucher_master_id', $request['id'])->delete();
+            $documentNo = 'BPV' . '-' . $request['id'];
+            AccountLedger::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
             $voucherMasterData = $this->bankPaymentVoucherService->prepareVoucherMasterData($request);
             $voucherMasterInsert = $this->bankPaymentVoucherService->findUpdateOrCreate(BankPaymentVoucher::class, ['id' => request('id')], $voucherMasterData);
 
@@ -145,21 +144,18 @@ class BPVoucherController extends Controller
             $this->bankPaymentVoucherService->saveVoucherDetailData($voucherDetailData);
 
             //Insert data into accounts ledger table.
-            // $debitAccountData = $this->bankPaymentVoucherService->prepareAccountDebitData($request, $voucherDetailDebitData);
-            // $creditAccountData = $this->bankPaymentVoucherService->prepareAccountCreditData($request, $voucherDetailCreditData);
-            // $this->bankPaymentVoucherService->saveCreditData($creditAccountData);
-            // $this->bankPaymentVoucherService->saveDebitData($debitAccountData);
+            $debitAccountData = $this->bankPaymentVoucherService->prepareAccountDebitData($request, $voucherMasterInsert->id);
+            $this->bankPaymentVoucherService->saveDebitData($debitAccountData);
 
-            // AccountLedger::insert($debitAccountData);
-            // AccountLedger::insert($creditAccountData);
+            $creditAccountData = $this->bankPaymentVoucherService->prepareAccountCreditData($request, $voucherMasterInsert->id);
+            $this->bankPaymentVoucherService->saveCreditData($creditAccountData);
 
-
-        // DB::commit();
-        // }
-        // catch (\Exception $e) {
-        //     DB::rollback();
-        //     return redirect('bpv/create')->with('error', $e->getMessage());
-        // }
+        DB::commit();
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return redirect('bpv/create')->with('error', $e->getMessage());
+        }
         return redirect('bpv/list')->with('message', config('constants.update'));
     }
 

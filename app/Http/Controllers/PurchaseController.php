@@ -102,7 +102,7 @@ class PurchaseController extends Controller
         $this->purchaseService->saveStockLedger($stockLedgers);
 
         $debitAccountData = $this->purchaseService->prepareAccountDebitData($request, $purchaseMasterInsert->id);
-        $this->purchaseService->saveCreditAccountData($debitAccountData);
+        $this->purchaseService->saveDebitAccountData($debitAccountData);
 
         $creditAccountData = $this->purchaseService->prepareAccountCreditData($request, $purchaseMasterInsert->id);
         AccountLedger::insert($creditAccountData);
@@ -156,7 +156,7 @@ class PurchaseController extends Controller
         PurchaseDetail::where('purchase_master_id', $request['id'])->delete();
         $documentNo = 'P/I' . '-' . $request['id'];
         StockLedger::where('document_no', $documentNo)->where('invoice_id', $request['id'])->delete();
-        AccountLedger::where('document_no', $documentNo)->where('invoice_id', $request['id'])->delete();
+        AccountLedger::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
 
         //Save data into relevant tables.
         $purchaseMasterData = $this->purchaseService->preparePurchaseMasterData($request);
@@ -169,7 +169,7 @@ class PurchaseController extends Controller
         $this->purchaseService->saveStockLedger($stockLedgers);
 
         $debitAccountData = $this->purchaseService->prepareAccountDebitData($request, $purchaseMasterInsert->id);
-        $this->purchaseService->saveCreditAccountData($debitAccountData);
+        $this->purchaseService->saveDebitAccountData($debitAccountData);
 
         $creditAccountData = $this->purchaseService->prepareAccountCreditData($request, $purchaseMasterInsert->id);
         AccountLedger::insert($creditAccountData);
