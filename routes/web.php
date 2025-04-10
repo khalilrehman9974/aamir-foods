@@ -424,6 +424,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('search', ['as' => 'jv.search', 'uses' => 'App\Http\Controllers\JournalVoucherController@search']);
     });
 
+    Route::group(['prefix' => 'generalJournals'], function () {
+        Route::get('list', ['as' => 'generalJournals.list', 'uses' => 'App\Http\Controllers\GeneralJournalController@index']);
+        Route::get('print', ['as' => 'generalJournals.print', 'uses' => 'App\Http\Controllers\GeneralJournalController@print']);
+    });
+
     Route::group(['prefix' => 'grn', 'middleware' => 'auth'], function () {
         Route::get('list', ['as' => 'grn.list', 'uses' => 'App\Http\Controllers\GRNotesController@index']);
         Route::get('generate', ['as' => 'grn.generate', 'uses' => 'App\Http\Controllers\GRNotesController@generate']);
@@ -585,6 +590,11 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/stock-ledger', [App\Http\Controllers\ReportController::class, 'viewStockLedger'])->name('stock.ledger');
     Route::get('/stock-ledger-report', [App\Http\Controllers\ReportController::class, 'getStockLedger'])->name('stock.ledger.report');
+
+    // Route::get('list', ['as' => 'generalJournals.list', 'uses' => 'App\Http\Controllers\GeneralJournalController@index']);
+    //     Route::get('print/{id}', ['as' => 'generalJournals.print', 'uses' => 'App\Http\Controllers\GeneralJournalController@print']);
+    // Route::get('/generalJournals', [App\Http\Controllers\GeneralJournalController::class, 'viewPartyAccountLedger'])->name('generalJournals.list');
+    // Route::get('/generalJournals-report', [App\Http\Controllers\GeneralJournalController::class, 'getPartyAccountLedger'])->name('generalJournals.print');
 
     Route::get('/partyAccount-ledger', [App\Http\Controllers\ReportController::class, 'viewPartyAccountLedger'])->name('partyAccount.ledger');
     Route::get('/partyAccount-ledger-report', [App\Http\Controllers\ReportController::class, 'getPartyAccountLedger'])->name('partyAccount.ledger.report');

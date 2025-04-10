@@ -13,6 +13,7 @@ use App\Models\Transporter;
 use App\Models\CoaDetailAccount;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\GeneralJournal;
 
 class SaleService
 {
@@ -275,6 +276,70 @@ class SaleService
             'created_at' => now(),
             'updated_at' => now() ,
         ];
+    }
+
+    public function prepareGeneralJournalDebitData($request, $saleParentId)
+    {
+
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'document_number' => 'S/I' . '-' . $saleParentId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $party,
+            'narration' => 'Credit Sale Of:'. ' ' . $party,
+            'debit' => $request['gross_bill'],
+            'credit' => 0,
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+    public function prepareGeneralJournalCreditData($request, $saleParentId)
+    {
+
+        $productArray = $request['product_id'];
+        $product = CoaInventoryDetailAccount::whereIn('id', $productArray)->pluck('name')->toarray();
+        $party = CoaDetailAccount::whereIn('account_name', $product)->pluck('id');
+        $session = $this->commonService->getSession();
+        $partyName = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        // $description = $request['quantity'].$request['packing_type'].$request['product_id'].$request['rate'].$request['measurement_type'].['Sold To'].[$party].['@'].$request['amount'];
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'document_number' => 'S/I' . '-' . $saleParentId,
+           'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+           'description' => $product,
+            'narration' => 'Credit Sale Of:'. ' ' . $partyName,
+            'debit' => config('constants.ZERO'),
+            'credit' => $request['amount'],
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function saveGeneralJournalCreditData($data)
+    {
+        foreach ($data['description'] as $key => $value) {
+            if (!empty($data['description'][$key])) {
+                $rec['description'] = $data['description'][$key];
+                $rec['date'] = $data['date'];
+                $rec['invoice_id'] = $data['invoice_id'];
+                $rec['document_number'] = $data['document_number'];
+                $rec['business_id'] = $data['business_id'];
+                $rec['f_year_id'] = $data['f_year_id'];
+                $rec['narration'] = $data['narration'];
+                $rec['debit'] = $data['debit'];
+                $rec['credit'] = $data['credit'][$key];
+                $rec['created_at'] = now();
+                $rec['updated_at'] = now();
+                GeneralJournal::create($rec);
+            }
+        }
     }
 
     public function prepareAccountCreditData($request, $saleParentId)

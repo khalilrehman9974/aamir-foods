@@ -25,6 +25,7 @@ use App\Models\DetailAccountProducts;
 use App\Services\AccountLedgerService;
 use App\Http\Requests\StoreSaleRequest;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\GeneralJournal;
 
 class SalesController extends Controller
 {
@@ -128,6 +129,12 @@ class SalesController extends Controller
         $creditAccountData = $this->saleService->prepareAccountCreditData($request, $saleMasterInsert->id);
         $this->saleService->saveCreditAccountData($creditAccountData);
 
+        $generalJournalDebitData = $this->saleService->prepareGeneralJournalDebitData($request, $saleMasterInsert->id);
+        GeneralJournal::insert($generalJournalDebitData);
+
+        $generalJournalCreditData = $this->saleService->prepareGeneralJournalCreditData($request, $saleMasterInsert->id);
+        $this->saleService->saveGeneralJournalCreditData($generalJournalCreditData);
+
         $commissionAccountData = $this->saleService->prepareCommissionAccountCreditData($request, $saleMasterInsert->id);
         AccountLedger::insert($commissionAccountData);
 
@@ -199,6 +206,7 @@ class SalesController extends Controller
         $documentNo = 'S/I' . '-' . $request['id'];
         StockLedger::where('document_no', $documentNo)->where('invoice_id', $request['id'])->delete();
         AccountLedger::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
+        GeneralJournal::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
 
         //Save data into relevant tables.
         $saleMasterData = $this->saleService->prepareSaleMasterData($request);
@@ -212,6 +220,12 @@ class SalesController extends Controller
 
         $debitAccountData = $this->saleService->prepareAccountDebitData($request, $saleMasterInsert->id);
         AccountLedger::insert($debitAccountData);
+
+        $generalJournalDebitData = $this->saleService->prepareGeneralJournalDebitData($request, $saleMasterInsert->id);
+        GeneralJournal::insert($generalJournalDebitData);
+
+        $generalJournalCreditData = $this->saleService->prepareGeneralJournalCreditData($request, $saleMasterInsert->id);
+        $this->saleService->saveGeneralJournalCreditData($generalJournalCreditData);
 
         $creditAccountData = $this->saleService->prepareAccountCreditData($request, $saleMasterInsert->id);
         $this->saleService->saveCreditAccountData($creditAccountData);

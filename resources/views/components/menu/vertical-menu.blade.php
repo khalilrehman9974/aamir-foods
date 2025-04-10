@@ -522,6 +522,8 @@
                 </li>
 
 
+
+                </li>
                 <li class="menu {{ Request::is('*/app/invoice/ledgers/*') ? 'active' : '' }}">
                     <a href="#reportView" data-bs-toggle="collapse"
                         aria-expanded="{{ Request::is('*/app/invoice/*') ? 'true' : 'false' }}"
@@ -551,6 +553,8 @@
                         <li class="{{ Request::routeIs('invoice-preview') ? 'active' : '' }}">
                             <a href="{{ route('partyAccount.ledger') }}">Party Ledger</a>
                         </li>
+                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                            <a href="{{ route('generalJournals.list') }}">General Journal</a>
                     </ul>
                 </li>
             </ul>

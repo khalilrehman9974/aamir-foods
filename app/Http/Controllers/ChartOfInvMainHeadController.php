@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CoaDetailAccount;
 use App\Models\CoaInventoryMainHead;
 use App\Services\CoaInventoryMainHeadService;
 use App\Services\CommonService;
