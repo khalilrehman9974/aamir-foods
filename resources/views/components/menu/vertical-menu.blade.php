@@ -17,7 +17,9 @@
     $jvPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '5');
     $chartofAccountPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '6');
     $userRegistrationPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '7');
-    $companyRegistrationPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id,'8',
+    $companyRegistrationPermission = $permissionObj->getUserPermission(
+        \Illuminate\Support\Facades\Auth::user()->id,
+        '8',
     );
     $projectPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '9');
     $donorPermission = $permissionObj->getUserPermission(\Illuminate\Support\Facades\Auth::user()->id, '10');
@@ -555,6 +557,8 @@
                         </li>
                         <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('generalJournals.list') }}">General Journal</a>
+                        {{-- <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                            <a href="{{ route('trialBalance.list') }}">Trial Balance</a> --}}
                     </ul>
                 </li>
             </ul>

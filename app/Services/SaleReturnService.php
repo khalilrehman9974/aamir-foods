@@ -8,6 +8,7 @@ use App\Models\SaleMan;
 use App\Models\StockLedger;
 use App\Models\Transporter;
 use App\Models\AccountLedger;
+use App\Models\GeneralJournal;
 use App\Models\CoaDetailAccount;
 use App\Models\SaleReturnDetail;
 use App\Models\SaleReturnMaster;
@@ -61,11 +62,11 @@ class SaleReturnService
     public function DropDownData()
     {
         $result = [
-            'saleMans' => SaleMan::pluck('name','id'),
-            'parties' => CoaDetailAccount::pluck('account_name','id'),
-            'DeliveredToParties' => DeliveredToParties::pluck('party_name','id'),
-            'Transporters' => Transporter::pluck('name','id'),
-            'products' => CoaInventoryDetailAccount::pluck('name','id'),
+            'saleMans' => SaleMan::pluck('name', 'id'),
+            'parties' => CoaDetailAccount::pluck('account_name', 'id'),
+            'DeliveredToParties' => DeliveredToParties::pluck('party_name', 'id'),
+            'Transporters' => Transporter::pluck('name', 'id'),
+            'products' => CoaInventoryDetailAccount::pluck('name', 'id'),
         ];
 
         return $result;
@@ -83,44 +84,44 @@ class SaleReturnService
             ->get();
     }
 
-     /*
+    /*
      * Search sale record.
      * @queries: $queries
      * @return: object
      * */
 
-     public function searchSaleReturn($request)
-     {
+    public function searchSaleReturn($request)
+    {
 
-         $q = SaleReturnMaster::query();
+        $q = SaleReturnMaster::query();
 
-         if (!empty($request['date'])) {
-             $formattedDate = date('Y-m-d', strtotime($request['date']));
-             $q->where('date', $formattedDate);
-         } elseif (!empty($request['party_id'])) {
-             $q->where('party_id', $request['party_id']);
-         }
+        if (!empty($request['date'])) {
+            $formattedDate = date('Y-m-d', strtotime($request['date']));
+            $q->where('date', $formattedDate);
+        } elseif (!empty($request['party_id'])) {
+            $q->where('party_id', $request['party_id']);
+        }
 
-         $saleInvoices = $q->with( 'party','SaleMan')->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
+        $saleInvoices = $q->with('party', 'SaleMan')->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
 
-         return $saleInvoices;
-     }
+        return $saleInvoices;
+    }
 
     public function searchSaleReturn2($request)
     {
         $q = SaleReturnMaster::query();
         if (!empty($request['param'])) {
-            $q = SaleReturnMaster::with('party','SaleMan')->where('date', 'like', '%' . $request['param'] . '%')
-            ->orWhere('sale_order_number', 'like', '%' . $request['param'] . '%')
-            ->orWhere('party_id', 'like', '%' . $request['param'] . '%')
-            ->orWhere('saleman', 'like', '%' . $request['param'] . '%')
-            ->orWhere('area', 'like', '%' . $request['param'] . '%')
-            ->orWhere('vehicle_no', 'like', '%' . $request['param'] . '%')
-            ->orWhere('bility_no', 'like', '%' . $request['param'] . '%')
-            ->orWhere('driver_name', 'like', '%' . $request['param'] . '%')
-            ->orWhere('total_boray', 'like', '%' . $request['param'] . '%')
-            ->orWhere('total_carton', 'like', '%' . $request['param'] . '%')
-            ->orWhere('sector', 'like', '%' . $request['param'] . '%');
+            $q = SaleReturnMaster::with('party', 'SaleMan')->where('date', 'like', '%' . $request['param'] . '%')
+                ->orWhere('sale_order_number', 'like', '%' . $request['param'] . '%')
+                ->orWhere('party_id', 'like', '%' . $request['param'] . '%')
+                ->orWhere('saleman', 'like', '%' . $request['param'] . '%')
+                ->orWhere('area', 'like', '%' . $request['param'] . '%')
+                ->orWhere('vehicle_no', 'like', '%' . $request['param'] . '%')
+                ->orWhere('bility_no', 'like', '%' . $request['param'] . '%')
+                ->orWhere('driver_name', 'like', '%' . $request['param'] . '%')
+                ->orWhere('total_boray', 'like', '%' . $request['param'] . '%')
+                ->orWhere('total_carton', 'like', '%' . $request['param'] . '%')
+                ->orWhere('sector', 'like', '%' . $request['param'] . '%');
         }
         $saleInvoices = $q->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
 
@@ -159,7 +160,7 @@ class SaleReturnService
             'scheme' => $request['scheme'],
             'commission' => $request['commission'],
             'net_amount' => $request['net_amount'],
-            'created_by'=> Auth::user()->id,
+            'created_by' => Auth::user()->id,
             'updated_by' => Auth::user()->id
         ];
     }
@@ -272,13 +273,13 @@ class SaleReturnService
             'invoice_id' => $saleParentId,
             'party_id' =>  $party,
             'document_number' => 'S/R' . '-' . $saleParentId,
-            'rate' =>$request['rate'],
+            'rate' => $request['rate'],
             'bilty_no' => $request['bilty_no'],
             'transporter_id' => $request['transporter_id'],
             'total_quantity' => $request['total_dzns'],
             'measurementType' => $request['dzns'],
             'bags' => $request['quantity'],
-            'description' => $description . '<br>' .$remarks ,
+            'description' => $description . '<br>' . $remarks,
             'credit' => config('constants.ZERO'),
             'debit' => $request['amount'],
             'created_at' => now(),
@@ -326,11 +327,11 @@ class SaleReturnService
             'total_quantity' => config('constants.ZERO'),
             'measurementType' => config('constants.ZERO'),
             'bags' => config('constants.ZERO'),
-            'description' => 'Sales Return From'. ' ' . $party . '<br>' .  $request['remarks'],
+            'description' => 'Sales Return From' . ' ' . $party . '<br>' .  $request['remarks'],
             'debit' => $request['net_amount'],
             'credit' => 0,
             'created_at' => now(),
-            'updated_at' => now() ,
+            'updated_at' => now(),
         ];
     }
 
@@ -377,11 +378,93 @@ class SaleReturnService
             'total_quantity' => config('constants.ZERO'),
             'measurementType' => config('constants.ZERO'),
             'bags' => config('constants.ZERO'),
-            'description' => 'Commission Of'. ' ' . $mainPartyName . '<br>' .  $request['remarks'],
+            'description' => 'Commission Of' . ' ' . $mainPartyName . '<br>' .  $request['remarks'],
             'debit' => config('constants.ZERO'),
             'credit' => $request['commission'],
             'created_at' => now(),
-            'updated_at' => now() ,
+            'updated_at' => now(),
+        ];
+    }
+
+    public function prepareGeneralJournalCommissionCreditData($request, $saleParentId)
+    {
+
+        $partyName = 'Commission On Sales.';
+        // $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'document_number' => 'S/R' . '-' . $saleParentId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $partyName,
+            'narration' => 'Credit :' . ' ' . $partyName,
+            'debit' => config('constants.ZERO'),
+            'credit' => $request['commission'],
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function prepareGeneralJournalCommissionDebitData($request, $saleParentId)
+    {
+
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'document_number' => 'S/R' . '-' . $saleParentId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $party,
+            'narration' => 'Credit Commission of:' . ' ' . $party,
+            'debit' =>  $request['commission'],
+            'credit' => config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function prepareGeneralJournalDiscountCreditData($request, $saleParentId)
+    {
+
+        $partyName = 'Discounts on Sales.';
+        // $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'document_number' => 'S/R' . '-' . $saleParentId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $partyName,
+            'narration' => 'Credit :' . ' ' . $partyName,
+            'debit' => config('constants.ZERO'),
+            'credit' => $request['scheme'],
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function prepareGeneralJournalDiscountDebitData($request, $saleParentId)
+    {
+
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'document_number' => 'S/R' . '-' . $saleParentId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $party,
+            'narration' => 'Credit Commission of:' . ' ' . $party,
+            'debit' =>  $request['scheme'],
+            'credit' => config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 
@@ -401,11 +484,11 @@ class SaleReturnService
             'total_quantity' => config('constants.ZERO'),
             'measurementType' => config('constants.ZERO'),
             'bags' => config('constants.ZERO'),
-            'description' => 'Commission Of'. ' ' . $party . '<br>' .  $request['remarks'],
+            'description' => 'Commission Of' . ' ' . $party . '<br>' .  $request['remarks'],
             'debit' => $request['commission'],
             'credit' => config('constants.ZERO'),
             'created_at' => now(),
-            'updated_at' => now() ,
+            'updated_at' => now(),
         ];
     }
 
@@ -428,11 +511,11 @@ class SaleReturnService
             'total_quantity' => config('constants.ZERO'),
             'measurementType' => config('constants.ZERO'),
             'bags' => config('constants.ZERO'),
-            'description' => 'Discount  to '. ' ' . $mainPartyName . '<br>' .  $request['remarks'],
+            'description' => 'Discount  to ' . ' ' . $mainPartyName . '<br>' .  $request['remarks'],
             'debit' => config('constants.ZERO'),
             'credit' => $request['scheme'],
             'created_at' => now(),
-            'updated_at' => now() ,
+            'updated_at' => now(),
         ];
     }
 
@@ -451,33 +534,76 @@ class SaleReturnService
             'total_quantity' => config('constants.ZERO'),
             'measurementType' => config('constants.ZERO'),
             'bags' => config('constants.ZERO'),
-            'description' => 'Discount To'. ' ' . $party . '<br>' .  $request['remarks'],
+            'description' => 'Discount To' . ' ' . $party . '<br>' .  $request['remarks'],
             'debit' => $request['scheme'],
             'credit' => config('constants.ZERO'),
             'created_at' => now(),
-            'updated_at' => now() ,
+            'updated_at' => now(),
         ];
     }
 
-    // public function prepareAccountCreditData($request, $saleParentId, $dataType, $description)
-    // {
-    //     return [
-    //         'invoice_id' => $saleParentId,
-    //         'account_id' => 'S-00000001',
-    //         'description' => $description . ' '. $saleParentId, $dataType,
-    //         'debit' => 0,
-    //         'credit' => $request['totalAmount'],
-    //     ];
-    // }
 
-    // public function prepareAccountDebitData($request, $saleParentId, $dataType, $description)
-    // {
-    //     return [
-    //         'invoice_id' => $saleParentId,
-    //         'account_id' => $request['customer_id'],
-    //         'description' => $description . ' '. $saleParentId, $dataType,
-    //         'debit' => $request['totalAmount'],
-    //         'credit' => 0,
-    //     ];
-    // }
+
+    public function prepareGeneralJournalCreditData($request, $saleParentId)
+    {
+
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'document_number' => 'S/R' . '-' . $saleParentId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $party,
+            'narration' => 'Credit Sale Of:' . ' ' . $party,
+            'debit' => config('constants.ZERO'),
+            'credit' => $request['gross_amount'],
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function prepareGeneralJournalDebitData($request, $saleParentId)
+    {
+
+        $productArray = $request['product_id'];
+        $product = CoaInventoryDetailAccount::whereIn('id', $productArray)->pluck('name')->toarray();
+        $party = CoaDetailAccount::whereIn('account_name', $product)->pluck('id');
+        $session = $this->commonService->getSession();
+        $partyName = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'document_number' => 'S/R' . '-' . $saleParentId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $product,
+            'narration' => 'Debit Sale Of:' . ' ' . $partyName,
+            'debit' => $request['amount'],
+            'credit' =>  config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function saveGeneralJournalDebitData($data)
+    {
+        foreach ($data['description'] as $key => $value) {
+            if (!empty($data['description'][$key])) {
+                $rec['description'] = $data['description'][$key];
+                $rec['date'] = $data['date'];
+                $rec['invoice_id'] = $data['invoice_id'];
+                $rec['document_number'] = $data['document_number'];
+                $rec['business_id'] = $data['business_id'];
+                $rec['f_year_id'] = $data['f_year_id'];
+                $rec['narration'] = $data['narration'];
+                $rec['debit'] = $data['debit'][$key];
+                $rec['credit'] = $data['credit'];
+                $rec['created_at'] = now();
+                $rec['updated_at'] = now();
+                GeneralJournal::create($rec);
+            }
+        }
+    }
 }

@@ -290,7 +290,7 @@ class SaleService
             'business_id' => $session->business_id,
             'f_year_id' => $session->financial_year,
             'description' => $party,
-            'narration' => 'Credit Sale Of:'. ' ' . $party,
+            'narration' => 'Debit Sale Of:'. ' ' . $party,
             'debit' => $request['gross_bill'],
             'credit' => 0,
             'created_at' => now(),
@@ -349,7 +349,6 @@ class SaleService
         $productArray = $request['product_id'];
         $product = CoaInventoryDetailAccount::whereIn('id', $productArray)->pluck('name')->toarray();
         $party = CoaDetailAccount::whereIn('account_name', $product)->pluck('id');
-        // $description = $request['quantity'].$request['packing_type'].$request['product_id'].$request['rate'].$request['measurement_type'].['Sold To'].[$party].['@'].$request['amount'];
         return [
             'date' => Carbon::parse($request['date'])->format('Y-m-d'),
             'invoice_id' => $saleParentId,
@@ -414,6 +413,124 @@ class SaleService
             'updated_at' => now() ,
         ];
     }
+
+    public function prepareGeneralJournalCommissionCreditData($request, $saleParentId)
+    {
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'document_number' => 'S/I' . '-' . $saleParentId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $party ,
+            'narration' => 'Commission Of'. ' ' . $party ,
+            'debit' => config('constants.ZERO'),
+            'credit' => $request['commission'],
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+    public function prepareGeneralJournalCommissionDebitData($request, $saleParentId)
+    {
+
+        $partyName = 'Commission On Sales.';
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'document_number' => 'S/I' . '-' . $saleParentId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $partyName ,
+            'narration' => 'Debit'. ' ' . $partyName ,
+            'debit' => $request['commission'],
+            'credit' => config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+    public function prepareGeneralJournalDiscountCreditData($request, $saleParentId)
+    {
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'document_number' => 'S/I' . '-' . $saleParentId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $party ,
+            'narration' => 'Discount Of'. ' ' . $party ,
+            'debit' => config('constants.ZERO'),
+            'credit' => $request['totaldiscount'],
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+    public function prepareGeneralJournalDiscountDebitData($request, $saleParentId)
+    {
+
+        $partyName = 'Discounts on Sales.';
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'document_number' => 'S/I' . '-' . $saleParentId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $partyName ,
+            'narration' => 'Debit'. ' ' . $partyName ,
+            'debit' => $request['totaldiscount'],
+            'credit' => config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+    public function prepareGeneralJournalCarriageCreditData($request, $saleParentId)
+    {
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'document_number' => 'S/I' . '-' . $saleParentId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $party ,
+            'narration' => 'Carriage Of'. ' ' . $party ,
+            'debit' => config('constants.ZERO'),
+            'credit' => $request['carriage'],
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+    public function prepareGeneralJournalCarriageDebitData($request, $saleParentId)
+    {
+
+        $partyName = 'Carriage Outward.';
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'document_number' => 'S/I' . '-' . $saleParentId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $partyName ,
+            'narration' => 'Debit'. ' ' . $partyName ,
+            'debit' => $request['carriage'],
+            'credit' => config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
 
     public function prepareCommissionAccountDebitData($request, $saleParentId)
     {

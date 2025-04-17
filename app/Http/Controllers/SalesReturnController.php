@@ -12,6 +12,7 @@ use App\Models\Transporter;
 use Illuminate\Http\Request;
 use App\Models\AccountLedger;
 use App\Models\GRNotesDetail;
+use App\Models\GeneralJournal;
 use App\Services\CommonService;
 use App\Models\CoaDetailAccount;
 use App\Models\SaleReturnDetail;
@@ -134,21 +135,31 @@ class SalesReturnController extends Controller
             if ($request['commission'] > 0) {
                 $commissionAccountData = $this->salereturnService->prepareCommissionAccountCreditData($request, $saleReturnMasterInsert->id);
                 AccountLedger::insert($commissionAccountData);
-            }
-            if ($request['commission'] > 0) {
+
                 $commissionAccountDebitData = $this->salereturnService->prepareCommissionAccountDebitData($request, $saleReturnMasterInsert->id);
                 AccountLedger::insert($commissionAccountDebitData);
+
+                $generalJournalcommissionAccountData = $this->salereturnService->prepareGeneralJournalCommissionCreditData($request, $saleReturnMasterInsert->id);
+                GeneralJournal::insert($generalJournalcommissionAccountData);
+
+                $generalJournalcommissionAccountDebitData = $this->salereturnService->prepareGeneralJournalCommissionDebitData($request, $saleReturnMasterInsert->id);
+                GeneralJournal::insert($generalJournalcommissionAccountDebitData);
             }
 
             if ($request['scheme'] > 0) {
                 $discountAccountData = $this->salereturnService->prepareDiscountAccountCreditData($request, $saleReturnMasterInsert->id);
                 AccountLedger::insert($discountAccountData);
-            }
 
-            if ($request['scheme'] > 0) {
                 $discountAccountDebitData = $this->salereturnService->prepareDiscountAccountDebitData($request, $saleReturnMasterInsert->id);
                 AccountLedger::insert($discountAccountDebitData);
+
+                $generalJournalDiscountCreditData = $this->salereturnService->prepareGeneralJournalDiscountCreditData($request, $saleReturnMasterInsert->id);
+                GeneralJournal::insert($generalJournalDiscountCreditData);
+
+                $generalJournalDiscountDebitData = $this->salereturnService->prepareGeneralJournalDiscountDebitData($request, $saleReturnMasterInsert->id);
+                GeneralJournal::insert($generalJournalDiscountDebitData);
             }
+
 
             DB::commit();
         } catch (\Exception $e) {
@@ -210,14 +221,15 @@ class SalesReturnController extends Controller
     public function update(Request $request)
     {
 
-        DB::beginTransaction();
-        try {
+        // DB::beginTransaction();
+        // try {
             $request = request()->all();
             SaleReturnDetail::where('sale_return_master_id', $request['id'])->delete();
             $documentNo = 'S/R' . '-' . $request['id'];
             StockLedger::where('document_no', $documentNo)->where('invoice_id', $request['id'])->delete();
             AccountLedger::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
-
+            GeneralJournal::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
+            
             //Update data into relevant tables.
             $saleReturnMasterData = $this->salereturnService->prepareSaleReturnMasterData($request);
             $saleReturnMasterInsert = $this->commonService->findUpdateOrCreate(SaleReturnMaster::class, ['id' => request('id')], $saleReturnMasterData);
@@ -236,12 +248,25 @@ class SalesReturnController extends Controller
             $creditAccountData = $this->salereturnService->prepareAccountCreditData($request, $saleReturnMasterInsert->id);
             AccountLedger::insert($creditAccountData);
 
+            $generalJournalDebitData = $this->salereturnService->prepareGeneralJournalDebitData($request, $saleReturnMasterInsert->id);
+            $this->salereturnService->saveGeneralJournalDebitData($generalJournalDebitData);
+
+            $generalJournalCreditData = $this->salereturnService->prepareGeneralJournalCreditData($request, $saleReturnMasterInsert->id);
+            GeneralJournal::insert($generalJournalCreditData);
+
+
             if ($request['commission'] > 0) {
                 $commissionAccountData = $this->salereturnService->prepareCommissionAccountCreditData($request, $saleReturnMasterInsert->id);
                 AccountLedger::insert($commissionAccountData);
 
                 $commissionAccountDebitData = $this->salereturnService->prepareCommissionAccountDebitData($request, $saleReturnMasterInsert->id);
                 AccountLedger::insert($commissionAccountDebitData);
+
+                $generalJournalcommissionAccountData = $this->salereturnService->prepareGeneralJournalCommissionCreditData($request, $saleReturnMasterInsert->id);
+                GeneralJournal::insert($generalJournalcommissionAccountData);
+
+                $generalJournalcommissionAccountDebitData = $this->salereturnService->prepareGeneralJournalCommissionDebitData($request, $saleReturnMasterInsert->id);
+                GeneralJournal::insert($generalJournalcommissionAccountDebitData);
             }
 
             if ($request['scheme'] > 0) {
@@ -250,13 +275,19 @@ class SalesReturnController extends Controller
 
                 $discountAccountDebitData = $this->salereturnService->prepareDiscountAccountDebitData($request, $saleReturnMasterInsert->id);
                 AccountLedger::insert($discountAccountDebitData);
+
+                $generalJournalDiscountCreditData = $this->salereturnService->prepareGeneralJournalDiscountCreditData($request, $saleReturnMasterInsert->id);
+                GeneralJournal::insert($generalJournalDiscountCreditData);
+
+                $generalJournalDiscountDebitData = $this->salereturnService->prepareGeneralJournalDiscountDebitData($request, $saleReturnMasterInsert->id);
+                GeneralJournal::insert($generalJournalDiscountDebitData);
             }
 
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('sale-return/create')->with('error', $e->getMessage());
-        }
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('sale-return/create')->with('error', $e->getMessage());
+        // }
 
         return redirect('sale-return/sales-return-list')->with('message', config('constants.update'));
     }

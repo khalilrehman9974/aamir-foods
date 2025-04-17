@@ -94,7 +94,7 @@
                                     <div class="input-group">
                                         <label for="inputState" class="form-label">Party</label>
                                         <select class="select2 form-control mb-3 custom-select" name="party_id"
-                                            id="party" style="width: 100%; height:36px;">
+                                            id="party" style="width: 100%; height:36px;" required>
                                             <option value="">Select</option>
                                             @foreach ($dropDownData['parties'] as $key => $value)
                                                 <option value="{{ $key }}"

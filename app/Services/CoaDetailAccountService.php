@@ -7,6 +7,7 @@ namespace App\Services;
  * @package App\Services
  * */
 
+use Carbon\Carbon;
 use App\Models\Area;
 use App\Models\SaleMan;
 use App\Models\PriceTag;
@@ -301,5 +302,51 @@ class CoaDetailAccountService
             }
         }
 
+    }
+
+    public function prepareAccountCreditData($request, $detailAccountMasterId)
+    {
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $detailAccountMasterId,
+            'party_id' =>  $request['party_id'],
+            'document_number' => 'P/I' . '-' . $detailAccountMasterId,
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => 'Purchase From'. ' ' . $party . '<br>' .  $request['remarks'],
+            'debit' => config('constants.ZERO'),
+            'credit' =>  $request['gross_bill'],
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+    public function prepareAccountDebitData($request, $detailAccountMasterId)
+    {
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+
+        return [
+            'date' => Carbon::now()->format('Y-m-d'),
+            'invoice_id' => $detailAccountMasterId,
+            'party_id' =>  $detailAccountMasterId,
+            'document_number' => 'OPENING BALANCE',
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => 'OPENING BALANCE',
+            'debit' => $request['opening_balance'],
+            'credit' =>  config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
     }
 }

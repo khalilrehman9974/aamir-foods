@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use App\Services\StockLedgerService;
 use App\Services\AccountLedgerService;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\GeneralJournal;
 
 class PurchaseController extends Controller
 {
@@ -107,6 +108,11 @@ class PurchaseController extends Controller
         $creditAccountData = $this->purchaseService->prepareAccountCreditData($request, $purchaseMasterInsert->id);
         AccountLedger::insert($creditAccountData);
 
+        $generalJournalDebitData = $this->purchaseService->prepareGeneralJournalDebitData($request, $purchaseMasterInsert->id);
+        $this->purchaseService->saveGeneralJournalDebitData($generalJournalDebitData);
+
+        $generalJournalCreditData = $this->purchaseService->prepareGeneralJournalCreditData($request, $purchaseMasterInsert->id);
+        GeneralJournal::insert($generalJournalCreditData);
 
         $taxAccountData = $this->purchaseService->prepareTaxAccountCreditData($request, $purchaseMasterInsert->id);
         AccountLedger::insert($taxAccountData);
@@ -114,11 +120,24 @@ class PurchaseController extends Controller
         $taxAccountDebitData = $this->purchaseService->prepareTaxAccountDebitData($request, $purchaseMasterInsert->id);
         AccountLedger::insert($taxAccountDebitData);
 
+        $generalJournalTaxCreditData = $this->purchaseService->prepareGeneralJournalTaxCreditData($request, $purchaseMasterInsert->id);
+        GeneralJournal::insert($generalJournalTaxCreditData);
+
+        $generalJournalTaxDebitData = $this->purchaseService->prepareGeneralJournalTaxDebitData($request, $purchaseMasterInsert->id);
+        GeneralJournal::insert($generalJournalTaxDebitData);
+
         $carriageAccountData = $this->purchaseService->prepareCarriageAccountCreditData($request, $purchaseMasterInsert->id);
         AccountLedger::insert($carriageAccountData);
 
         $carriageAccountDebitData = $this->purchaseService->prepareCarriageAccountDebitData($request, $purchaseMasterInsert->id);
         AccountLedger::insert($carriageAccountDebitData);
+
+        $generalJournalCarriageAccountData = $this->purchaseService->prepareGeneralJournalCarriageCreditData($request, $purchaseMasterInsert->id);
+        GeneralJournal::insert($generalJournalCarriageAccountData);
+
+        $generalJournalCarriageAccountDebitData = $this->purchaseService->prepareGeneralJournalCarriageDebitData($request, $purchaseMasterInsert->id);
+        GeneralJournal::insert($generalJournalCarriageAccountDebitData);
+
 
         DB::commit();
         // } catch (\Exception $e) {
@@ -157,6 +176,7 @@ class PurchaseController extends Controller
         $documentNo = 'P/I' . '-' . $request['id'];
         StockLedger::where('document_no', $documentNo)->where('invoice_id', $request['id'])->delete();
         AccountLedger::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
+        GeneralJournal::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
 
         //Save data into relevant tables.
         $purchaseMasterData = $this->purchaseService->preparePurchaseMasterData($request);
@@ -186,6 +206,24 @@ class PurchaseController extends Controller
 
         $carriageAccountDebitData = $this->purchaseService->prepareCarriageAccountDebitData($request, $purchaseMasterInsert->id);
         AccountLedger::insert($carriageAccountDebitData);
+
+        $generalJournalTaxCreditData = $this->purchaseService->prepareGeneralJournalTaxCreditData($request, $purchaseMasterInsert->id);
+        GeneralJournal::insert($generalJournalTaxCreditData);
+
+        $generalJournalTaxDebitData = $this->purchaseService->prepareGeneralJournalTaxDebitData($request, $purchaseMasterInsert->id);
+        GeneralJournal::insert($generalJournalTaxDebitData);
+
+        $generalJournalCarriageAccountData = $this->purchaseService->prepareGeneralJournalCarriageCreditData($request, $purchaseMasterInsert->id);
+        GeneralJournal::insert($generalJournalCarriageAccountData);
+
+        $generalJournalCarriageAccountDebitData = $this->purchaseService->prepareGeneralJournalCarriageDebitData($request, $purchaseMasterInsert->id);
+        GeneralJournal::insert($generalJournalCarriageAccountDebitData);
+
+        $generalJournalDebitData = $this->purchaseService->prepareGeneralJournalDebitData($request, $purchaseMasterInsert->id);
+        $this->purchaseService->saveGeneralJournalDebitData($generalJournalDebitData);
+
+        $generalJournalCreditData = $this->purchaseService->prepareGeneralJournalCreditData($request, $purchaseMasterInsert->id);
+        GeneralJournal::insert($generalJournalCreditData);
 
 
         // DB::commit();

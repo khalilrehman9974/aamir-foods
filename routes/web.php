@@ -429,6 +429,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('print', ['as' => 'generalJournals.print', 'uses' => 'App\Http\Controllers\GeneralJournalController@print']);
     });
 
+    Route::group(['prefix' => 'trialBalance'], function () {
+        Route::get('list', ['as' => 'trialBalance.list', 'uses' => 'App\Http\Controllers\ReportController@view']);
+        Route::get('print', ['as' => 'trialBalance.print', 'uses' => 'App\Http\Controllers\ReportController@trialBalancePrint']);
+    });
+
     Route::group(['prefix' => 'grn', 'middleware' => 'auth'], function () {
         Route::get('list', ['as' => 'grn.list', 'uses' => 'App\Http\Controllers\GRNotesController@index']);
         Route::get('generate', ['as' => 'grn.generate', 'uses' => 'App\Http\Controllers\GRNotesController@generate']);

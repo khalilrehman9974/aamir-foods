@@ -1,0 +1,412 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: black;
+            background-color: white;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 210mm;
+            /* A4 width in portrait */
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+                font-size: 12px;
+                /* Set base font size for printing */
+            }
+
+            .container {
+                width: 100%;
+                max-width: 210mm;
+                /* A4 width */
+                height: auto;
+                /* Allow content to flow naturally */
+                page-break-after: auto;
+            }
+
+            /* Ensure portrait mode */
+            @page {
+                size: A4 portrait;
+                /* Explicitly set portrait mode */
+                margin: 10mm;
+                /* Adjust margin if needed */
+            }
+
+            /* Adjust specific font sizes for better readability */
+            h1 {
+                font-size: 18px;
+            }
+
+            h2 {
+                font-size: 16px;
+            }
+
+            h3 {
+                font-size: 14px;
+            }
+
+            p,
+            td,
+            th {
+                font-size: 12px;
+            }
+        }
+
+        .header,
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .header div,
+        .footer div {
+            text-align: left;
+        }
+
+        .header div,
+        {
+        margin-bottom: 20px;
+        }
+
+        .header div p,
+        .footer div p {
+            margin: 0;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .info,
+        .table-container,
+        .notes,
+        .signatures,
+        .contact,
+        .totals {
+            margin-bottom: 10px;
+        }
+
+        .info div,
+        .signatures div {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .info div p,
+        .signatures div p {
+            margin: 0;
+        }
+
+        .table-container table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-container th,
+        .table-container td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .notes {
+            border: 1px solid black;
+            padding: 10px;
+            margin-right: 10px;
+        }
+
+        .notes div {
+            height: 50px;
+        }
+
+        .signatures div {
+            height: 30px;
+        }
+
+        .contact p {
+            text-align: center;
+            margin: 0;
+        }
+
+        .totals {
+            width: 30%;
+            text-align: left;
+            border-collapse: collapse;
+            margin-right: 5px;
+        }
+
+        .totals table {
+            float: left;
+        }
+
+        .p-4 {
+            padding: 0px !important;
+        }
+
+        .totals th,
+        .totals td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .totals th {
+            font-weight: bold;
+            width: 50%;
+        }
+
+        .header {
+            text-align: center;
+            /* padding: 5px; */
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .line {
+            border-top: 2px solid black;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .line+.line {
+            margin-top: 2px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header flex justify-between items-center p-4 border-b border-black">
+            <div class="flex items-center">
+                <img alt="Amir Foods logo with text 'Since 1996' and 'AMIR Food' in a shield-like shape" class="h-16"
+                    height="80" src="{{ asset('images/logo.png') }}" width="80" />
+                <div class="ml-4">
+                    <p class="font-bold text-lg">AAMIR BROTHERS FOOD PRODUCTS MULTAN</p>
+                    <p>12KM Vehari Road Multan <span class="font-bold">CELL:</span> 0309 6662476</p>
+                    <p><span class="font-bold">EMAIL:</span> info.amirfoods@gmail.com</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="font-bold text-xl">{{ $title }}</p>
+            </div>
+        </div>
+
+        {{-- <header class="header"> --}}
+        <div class="line"></div>
+        {{-- </header> --}}
+        {{-- <div class="info" style="margin-top: 1%;">
+            <div class="row" style="margin-bottom: 3px;">
+                <div style="width: 70%; text-align: left;">
+                    <p><b>Run Period:</b> <span>
+                        <b>From </b>{{ $dateFrom }} <b>To</b> {{ $dateTo }}
+                        </span></p>
+                </div>
+            </div>
+
+
+        </div> --}}
+
+        <div class="table-container" style="margin-top: 1%;">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align: center; padding: 0px 0px 0px 0px !important; width: 30%;"><b>From
+                            </b>{{ $dateFrom }} <b>To</b> {{ $dateTo }}</th>
+                        <th colspan="2"
+                            style="text-align: center; padding: 0px 0px 0px 0px !important; width: 23.3%;">OPENING
+                            BALANCE</th>
+                        <th colspan="2"
+                            style="text-align: center; padding: 0px 0px 0px 0px !important; width: 23.3%;">FOR THE
+                            PERIOD</th>
+                        <th colspan="2"
+                            style="text-align: center; padding: 0px 0px 0px 0px !important; width: 23.3%;">CLOSING
+                            BALANCE</th>
+
+
+                    </tr>
+
+                    <tr>
+                        <th style="text-align: center; padding: 0px 0px 0px 0px !important; width: 30%;">DESCRIPTION
+                        </th>
+                        <th style="text-align: center; padding: 0px 0px 0px 0px !important; width: 11.6%;">DR</th>
+                        <th style="text-align: center; padding: 0px 0px 0px 0px !important; width: 11.6%;">CR</th>
+                        <th style="text-align: center; padding: 0px 0px 0px 0px !important; width: 11.6%;">DR</th>
+                        <th style="text-align: center; padding: 0px 0px 0px 0px !important; width: 11.6%;">CR</th>
+                        <th style="text-align: center; padding: 0px 0px 0px 0px !important; width: 11.6%;">DR</th>
+                        <th style="text-align: center; padding: 0px 0px 0px 0px !important; width: 11.6%;">CR</th>
+
+                    </tr>
+
+                </thead>
+                <tbody>
+                    @foreach ($grouped as $main)
+                        <tr>
+                            <td><strong>{{ $main['name'] }}</strong></td>
+                            <td>{{ $main['totals']['debit_balance'] }}</td>
+                            <td>{{ $main['totals']['credit_balance'] }}</td>
+                            <td>{{ $main['totals']['closing_dr'] }}</td>
+                            <td>{{ $main['totals']['closing_cr'] }}</td>
+                        </tr>
+                        @foreach ($main['control_heads'] as $control)
+                            <tr>
+                                <td>&nbsp;&nbsp;&nbsp;<strong>{{ $control['name'] }}</strong></td>
+                                <td>{{ $control['totals']['debit_balance'] }}</td>
+                                <td>{{ $control['totals']['credit_balance'] }}</td>
+                                <td>{{ $control['totals']['closing_dr'] }}</td>
+                                <td>{{ $control['totals']['closing_cr'] }}</td>
+                            </tr>
+                            @foreach ($control['sub_heads'] as $sub)
+                                <tr>
+                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>{{ $sub['name'] }}</strong></td>
+                                    <td>{{ $sub['totals']['debit_balance'] }}</td>
+                                    <td>{{ $sub['totals']['credit_balance'] }}</td>
+                                    <td>{{ $sub['totals']['closing_dr'] }}</td>
+                                    <td>{{ $sub['totals']['closing_cr'] }}</td>
+                                </tr>
+                                @foreach ($sub['sub_sub_heads'] as $subSub)
+                                    <tr>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>{{ $subSub['name'] }}</strong>
+                                        </td>
+                                        <td>{{ $subSub['totals']['debit_balance'] }}</td>
+                                        <td>{{ $subSub['totals']['credit_balance'] }}</td>
+                                        <td>{{ $subSub['totals']['closing_dr'] }}</td>
+                                        <td>{{ $subSub['totals']['closing_cr'] }}</td>
+                                    </tr>
+                                    @foreach ($subSub['accounts'] as $acc)
+                                        <tr>
+                                            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $acc->account_name }}
+                                            </td>
+                                            <td>{{ $acc->debit_balance }}</td>
+                                            <td>{{ $acc->credit_balance }}</td>
+                                            <td>{{ $acc->closing_dr }}</td>
+                                            <td>{{ $acc->closing_cr }}</td>
+                                        </tr>
+                                    @endforeach
+                                @endforeach
+                            @endforeach
+                        @endforeach
+                    @endforeach
+                    {{-- @foreach ($grouped as $mainHead => $mainData)
+                        <tr class="table-dark">
+                            <td><strong>{{ $mainHead }}</strong></td>
+                            @include('partials.trial_balance_totals', ['t' => $mainData['_totals']])
+                        </tr>
+
+                        @foreach ($mainData['controls'] as $controlHead => $controlData)
+                            <tr class="table-secondary">
+                                <td><strong>&nbsp;&nbsp;&nbsp;{{ $controlHead }}</strong></td>
+                                @include('partials.trial_balance_totals', ['t' => $controlData['_totals']])
+                            </tr>
+
+                            @foreach ($controlData['subs'] as $subHead => $subData)
+                                <tr class="table-light">
+                                    <td><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $subHead }}</strong></td>
+                                    @include('partials.trial_balance_totals', ['t' => $subData['_totals']])
+                                </tr>
+
+                                @foreach ($subData['subsubs'] as $subSubHead => $subSubData)
+                                    <tr class="table-light">
+                                        <td><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $subSubHead }}</strong>
+                                        </td>
+                                        @include('partials.trial_balance_totals', [
+                                            't' => $subSubData['_totals'],
+                                        ])
+                                    </tr>
+
+                                    @foreach ($subSubData['accounts'] as $acc)
+                                        <tr>
+                                            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $acc->account_name }}
+                                            </td>
+                                            @include('partials.trial_balance_totals', ['t' => $acc])
+                                        </tr>
+                                    @endforeach
+                                @endforeach
+                            @endforeach
+                        @endforeach
+                    @endforeach --}}
+
+                    {{-- @foreach ($grouped as $mainHead => $controls)
+                        <tr class="bg-secondary text-white">
+                            <td colspan="7"><strong>{{ $mainHead }}</strong></td>
+                        </tr>
+                        @foreach ($controls as $controlHead => $subs)
+                            <tr class="bg-light">
+                                <td colspan="7"><strong>&nbsp;&nbsp;&nbsp;{{ $controlHead }}</strong></td>
+                            </tr>
+                            @foreach ($subs as $subHead => $subSubs)
+                                <tr class="bg-white text-dark">
+                                    <td colspan="7">
+                                        <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $subHead }}</strong></td>
+                                </tr>
+                                @foreach ($subSubs as $subSubHead => $accounts)
+                                    <tr class="bg-light">
+                                        <td colspan="7">
+                                            <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $subSubHead }}</strong>
+                                        </td>
+                                    </tr>
+                                    @foreach ($accounts as $account)
+                                        <tr>
+                                            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $account->account_name }}
+                                            </td>
+                                            <td>{{ number_format($account->opening_debit, 2) }}</td>
+                                            <td>{{ number_format($account->opening_credit, 2) }}</td>
+                                            <td>{{ number_format($account->period_debit, 2) }}</td>
+                                            <td>{{ number_format($account->period_credit, 2) }}</td>
+                                            <td>{{ number_format($account->closing_debit, 2) }}</td>
+                                            <td>{{ number_format($account->closing_credit, 2) }}</td>
+                                        </tr>
+                                    @endforeach
+                                @endforeach
+                            @endforeach
+                        @endforeach
+                    @endforeach --}}
+
+                    {{-- @foreach ($accountLedgers as $generalJournal)
+                        <tr>
+{{--
+                            <td>{{ \Carbon\Carbon::parse($generalJournal->date)->format('d-m-Y') }}</td>
+                            <td>{{ $generalJournal->document_number }}</td>
+                            <td>{{ $generalJournal->description }}</td>
+                            <td>{{ $generalJournal->narration }}</td>
+                            <td style="text-align: end;">{{ $generalJournal->debit }}</td>
+                            <td style="text-align: end;">{{ $generalJournal->credit }}</td>
+                        </tr>
+                    @endforeach --}}
+                </tbody>
+            </table>
+
+        </div>
+        <header class="header">
+            <div class="line"></div>
+        </header>
+
+
+    </div>
+</body>
+
+</html>

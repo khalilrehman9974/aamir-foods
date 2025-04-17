@@ -15,15 +15,15 @@ return new class extends Migration
     {
         Schema::create('account_ledgers', function (Blueprint $table) {
             $table->increments('id');
-            $table->date('date');
+            $table->date('date')->index();
             $table->integer('invoice_id');
-            $table->integer('party_id');
+            $table->integer('party_id')->index(); 
             $table->string('description');
             $table->string('document_number');
             $table->integer('bags')->nullable();
             $table->integer('measurementType')->nullable();
             $table->integer('total_quantity');
-            $table->integer('transporter_id')->unsigned()->index()->nullable();
+            $table->unsignedInteger('transporter_id')->nullable()->index();
             $table->string('bilty_no')->nullable();
             $table->integer('rate');
             $table->double('debit');
@@ -32,9 +32,7 @@ return new class extends Migration
             $table->timestamp('updated_at');
             $table->timestamp('deleted_at')->nullable();
 
-            $table->foreign('transporter_id')
-                ->references('id')->on('transporters')
-                ->onSoftDelete('cascade');
+
 
         });
     }

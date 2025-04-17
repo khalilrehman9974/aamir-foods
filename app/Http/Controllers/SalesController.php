@@ -109,54 +109,72 @@ class SalesController extends Controller
     {
 
         $request = $request->except('_token', 'id');
-        //     DB::beginTransaction();
-        //    try {
+        DB::beginTransaction();
+        try {
 
-        //Insert data into sale tables.
-        $saleMasterData = $this->saleService->prepareSaleMasterData($request);
+            //Insert data into sale tables.
+            $saleMasterData = $this->saleService->prepareSaleMasterData($request);
 
-        $saleMasterInsert = $this->saleService->findUpdateOrCreate(SaleMaster::class, ['id' => ''], $saleMasterData);
-        $saleDetailData = $this->saleService->prepareSaleDetailData($request, $saleMasterInsert->id);
-        $this->saleService->saveSale($saleDetailData);
+            $saleMasterInsert = $this->saleService->findUpdateOrCreate(SaleMaster::class, ['id' => ''], $saleMasterData);
+            $saleDetailData = $this->saleService->prepareSaleDetailData($request, $saleMasterInsert->id);
+            $this->saleService->saveSale($saleDetailData);
 
-        //Insert data into stock table.
-        $stockLedgers = $this->saleService->prepareStockLedgerData($request, $saleMasterInsert->id);
-        $this->saleService->saveStockLedger($stockLedgers);
+            //Insert data into stock table.
+            $stockLedgers = $this->saleService->prepareStockLedgerData($request, $saleMasterInsert->id);
+            $this->saleService->saveStockLedger($stockLedgers);
 
-        $debitAccountData = $this->saleService->prepareAccountDebitData($request, $saleMasterInsert->id);
-        AccountLedger::insert($debitAccountData);
+            $debitAccountData = $this->saleService->prepareAccountDebitData($request, $saleMasterInsert->id);
+            AccountLedger::insert($debitAccountData);
 
-        $creditAccountData = $this->saleService->prepareAccountCreditData($request, $saleMasterInsert->id);
-        $this->saleService->saveCreditAccountData($creditAccountData);
+            $creditAccountData = $this->saleService->prepareAccountCreditData($request, $saleMasterInsert->id);
+            $this->saleService->saveCreditAccountData($creditAccountData);
 
-        $generalJournalDebitData = $this->saleService->prepareGeneralJournalDebitData($request, $saleMasterInsert->id);
-        GeneralJournal::insert($generalJournalDebitData);
+            $generalJournalDebitData = $this->saleService->prepareGeneralJournalDebitData($request, $saleMasterInsert->id);
+            GeneralJournal::insert($generalJournalDebitData);
 
-        $generalJournalCreditData = $this->saleService->prepareGeneralJournalCreditData($request, $saleMasterInsert->id);
-        $this->saleService->saveGeneralJournalCreditData($generalJournalCreditData);
+            $generalJournalCreditData = $this->saleService->prepareGeneralJournalCreditData($request, $saleMasterInsert->id);
+            $this->saleService->saveGeneralJournalCreditData($generalJournalCreditData);
 
-        $commissionAccountData = $this->saleService->prepareCommissionAccountCreditData($request, $saleMasterInsert->id);
-        AccountLedger::insert($commissionAccountData);
+            $commissionAccountData = $this->saleService->prepareCommissionAccountCreditData($request, $saleMasterInsert->id);
+            AccountLedger::insert($commissionAccountData);
 
-        $commissionAccountDebitData = $this->saleService->prepareCommissionAccountDebitData($request, $saleMasterInsert->id);
-        AccountLedger::insert($commissionAccountDebitData);
+            $commissionAccountDebitData = $this->saleService->prepareCommissionAccountDebitData($request, $saleMasterInsert->id);
+            AccountLedger::insert($commissionAccountDebitData);
 
-        $discountAccountData = $this->saleService->prepareDiscountAccountCreditData($request, $saleMasterInsert->id);
-        AccountLedger::insert($discountAccountData);
+            $generalJournalcommissionCreditEntry = $this->saleService->prepareGeneralJournalCommissionCreditData($request, $saleMasterInsert->id);
+            GeneralJournal::insert($generalJournalcommissionCreditEntry);
 
-        $discountAccountDebitData = $this->saleService->prepareDiscountAccountDebitData($request, $saleMasterInsert->id);
-        AccountLedger::insert($discountAccountDebitData);
+            $generalJournalcommissionDebitEntry = $this->saleService->prepareGeneralJournalCommissionDebitData($request, $saleMasterInsert->id);
+            GeneralJournal::insert($generalJournalcommissionDebitEntry);
 
-        $carriageAccountData = $this->saleService->prepareCarriageAccountCreditData($request, $saleMasterInsert->id);
-        AccountLedger::insert($carriageAccountData);
+            $generalJournalDiscountCreditEntry = $this->saleService->prepareGeneralJournalDiscountCreditData($request, $saleMasterInsert->id);
+            GeneralJournal::insert($generalJournalDiscountCreditEntry);
 
-        $carriageAccountDebitData = $this->saleService->prepareCarriageAccountDebitData($request, $saleMasterInsert->id);
-        AccountLedger::insert($carriageAccountDebitData);
-        // DB::commit();
-        // } catch (\Exception $e) {
-        //     DB::rollback();
-        //     return redirect('sale/create')->with('error', $e->getMessage());
-        // }
+            $generalJournalDiscountDebitEntry = $this->saleService->prepareGeneralJournalDiscountDebitData($request, $saleMasterInsert->id);
+            GeneralJournal::insert($generalJournalDiscountDebitEntry);
+
+            $generalJournalCarriageCreditEntry = $this->saleService->prepareGeneralJournalCarriageCreditData($request, $saleMasterInsert->id);
+            GeneralJournal::insert($generalJournalCarriageCreditEntry);
+
+            $generalJournalCarriageDebitEntry = $this->saleService->prepareGeneralJournalCarriageDebitData($request, $saleMasterInsert->id);
+            GeneralJournal::insert($generalJournalCarriageDebitEntry);
+
+            $discountAccountData = $this->saleService->prepareDiscountAccountCreditData($request, $saleMasterInsert->id);
+            AccountLedger::insert($discountAccountData);
+
+            $discountAccountDebitData = $this->saleService->prepareDiscountAccountDebitData($request, $saleMasterInsert->id);
+            AccountLedger::insert($discountAccountDebitData);
+
+            $carriageAccountData = $this->saleService->prepareCarriageAccountCreditData($request, $saleMasterInsert->id);
+            AccountLedger::insert($carriageAccountData);
+
+            $carriageAccountDebitData = $this->saleService->prepareCarriageAccountDebitData($request, $saleMasterInsert->id);
+            AccountLedger::insert($carriageAccountDebitData);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect('sale/create')->with('error', $e->getMessage());
+        }
         return redirect('sale/sales-list')->with('message', config('constants.add'));
     }
 
@@ -199,60 +217,78 @@ class SalesController extends Controller
      * */
     public function update(Request $request)
     {
-        // try {
-        //     DB::beginTransaction();
-        $request = request()->all();
-        SaleDetail::where('sale_master_id', $request['id'])->delete();
-        $documentNo = 'S/I' . '-' . $request['id'];
-        StockLedger::where('document_no', $documentNo)->where('invoice_id', $request['id'])->delete();
-        AccountLedger::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
-        GeneralJournal::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
+        try {
+            DB::beginTransaction();
+            $request = request()->all();
+            SaleDetail::where('sale_master_id', $request['id'])->delete();
+            $documentNo = 'S/I' . '-' . $request['id'];
+            StockLedger::where('document_no', $documentNo)->where('invoice_id', $request['id'])->delete();
+            AccountLedger::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
+            GeneralJournal::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
 
-        //Save data into relevant tables.
-        $saleMasterData = $this->saleService->prepareSaleMasterData($request);
-        $saleMasterInsert = $this->commonService->findUpdateOrCreate(SaleMaster::class, ['id' => request('id')], $saleMasterData);
-        $saleDetailData = $this->saleService->prepareSaleDetailData($request, $saleMasterInsert->id);
-        $this->saleService->saveSale($saleDetailData);
+            //Save data into relevant tables.
+            $saleMasterData = $this->saleService->prepareSaleMasterData($request);
+            $saleMasterInsert = $this->commonService->findUpdateOrCreate(SaleMaster::class, ['id' => request('id')], $saleMasterData);
+            $saleDetailData = $this->saleService->prepareSaleDetailData($request, $saleMasterInsert->id);
+            $this->saleService->saveSale($saleDetailData);
 
-        //Save data into stock table.
-        $stockLedgers = $this->saleService->prepareStockLedgerData($request, $saleMasterInsert->id);
-        $this->saleService->saveStockLedger($stockLedgers);
+            //Save data into stock table.
+            $stockLedgers = $this->saleService->prepareStockLedgerData($request, $saleMasterInsert->id);
+            $this->saleService->saveStockLedger($stockLedgers);
 
-        $debitAccountData = $this->saleService->prepareAccountDebitData($request, $saleMasterInsert->id);
-        AccountLedger::insert($debitAccountData);
+            $debitAccountData = $this->saleService->prepareAccountDebitData($request, $saleMasterInsert->id);
+            AccountLedger::insert($debitAccountData);
 
-        $generalJournalDebitData = $this->saleService->prepareGeneralJournalDebitData($request, $saleMasterInsert->id);
-        GeneralJournal::insert($generalJournalDebitData);
+            $generalJournalDebitData = $this->saleService->prepareGeneralJournalDebitData($request, $saleMasterInsert->id);
+            GeneralJournal::insert($generalJournalDebitData);
 
-        $generalJournalCreditData = $this->saleService->prepareGeneralJournalCreditData($request, $saleMasterInsert->id);
-        $this->saleService->saveGeneralJournalCreditData($generalJournalCreditData);
+            $generalJournalCreditData = $this->saleService->prepareGeneralJournalCreditData($request, $saleMasterInsert->id);
+            $this->saleService->saveGeneralJournalCreditData($generalJournalCreditData);
 
-        $creditAccountData = $this->saleService->prepareAccountCreditData($request, $saleMasterInsert->id);
-        $this->saleService->saveCreditAccountData($creditAccountData);
+            $creditAccountData = $this->saleService->prepareAccountCreditData($request, $saleMasterInsert->id);
+            $this->saleService->saveCreditAccountData($creditAccountData);
 
-        $commissionAccountData = $this->saleService->prepareCommissionAccountCreditData($request, $saleMasterInsert->id);
-        AccountLedger::insert($commissionAccountData);
+            $generalJournalcommissionCreditEntry = $this->saleService->prepareGeneralJournalCommissionCreditData($request, $saleMasterInsert->id);
+            GeneralJournal::insert($generalJournalcommissionCreditEntry);
 
-        $commissionAccountDebitData = $this->saleService->prepareCommissionAccountDebitData($request, $saleMasterInsert->id);
-        AccountLedger::insert($commissionAccountDebitData);
+            $generalJournalcommissionDebitEntry = $this->saleService->prepareGeneralJournalCommissionDebitData($request, $saleMasterInsert->id);
+            GeneralJournal::insert($generalJournalcommissionDebitEntry);
 
-        $discountAccountData = $this->saleService->prepareDiscountAccountCreditData($request, $saleMasterInsert->id);
-        AccountLedger::insert($discountAccountData);
+            $generalJournalDiscountCreditEntry = $this->saleService->prepareGeneralJournalDiscountCreditData($request, $saleMasterInsert->id);
+            GeneralJournal::insert($generalJournalDiscountCreditEntry);
 
-        $discountAccountDebitData = $this->saleService->prepareDiscountAccountDebitData($request, $saleMasterInsert->id);
-        AccountLedger::insert($discountAccountDebitData);
+            $generalJournalDiscountDebitEntry = $this->saleService->prepareGeneralJournalDiscountDebitData($request, $saleMasterInsert->id);
+            GeneralJournal::insert($generalJournalDiscountDebitEntry);
 
-        $carriageAccountData = $this->saleService->prepareCarriageAccountCreditData($request, $saleMasterInsert->id);
-        AccountLedger::insert($carriageAccountData);
+            $generalJournalCarriageCreditEntry = $this->saleService->prepareGeneralJournalCarriageCreditData($request, $saleMasterInsert->id);
+            GeneralJournal::insert($generalJournalCarriageCreditEntry);
 
-        $carriageAccountDebitData = $this->saleService->prepareCarriageAccountDebitData($request, $saleMasterInsert->id);
-        AccountLedger::insert($carriageAccountDebitData);
+            $generalJournalCarriageDebitEntry = $this->saleService->prepareGeneralJournalCarriageDebitData($request, $saleMasterInsert->id);
+            GeneralJournal::insert($generalJournalCarriageDebitEntry);
 
-        //     DB::commit();
-        // } catch (\Exception $e) {
-        //     DB::rollback();
-        //     return redirect('sale/create')->with('error', $e->getMessage());
-        // }
+            $commissionAccountData = $this->saleService->prepareCommissionAccountCreditData($request, $saleMasterInsert->id);
+            AccountLedger::insert($commissionAccountData);
+
+            $commissionAccountDebitData = $this->saleService->prepareCommissionAccountDebitData($request, $saleMasterInsert->id);
+            AccountLedger::insert($commissionAccountDebitData);
+
+            $discountAccountData = $this->saleService->prepareDiscountAccountCreditData($request, $saleMasterInsert->id);
+            AccountLedger::insert($discountAccountData);
+
+            $discountAccountDebitData = $this->saleService->prepareDiscountAccountDebitData($request, $saleMasterInsert->id);
+            AccountLedger::insert($discountAccountDebitData);
+
+            $carriageAccountData = $this->saleService->prepareCarriageAccountCreditData($request, $saleMasterInsert->id);
+            AccountLedger::insert($carriageAccountData);
+
+            $carriageAccountDebitData = $this->saleService->prepareCarriageAccountDebitData($request, $saleMasterInsert->id);
+            AccountLedger::insert($carriageAccountDebitData);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect('sale/create')->with('error', $e->getMessage());
+        }
 
         return redirect('sale/sales-list')->with('message', config('constants.update'));
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AccountLedger;
 use App\Models\Area;
 use App\Models\Sector;
 use App\Models\SaleMan;
@@ -103,6 +104,11 @@ class CoaDetailAccountController extends Controller
             $detailAccountProductsData = $this->coaDetailAccountService->prepareDetailAccountProductData($request, $detailAccountMasterInsert->id);
             $this->coaDetailAccountService->saveDetailAccountProducts($detailAccountProductsData);
 
+            $debitAccountData = $this->coaDetailAccountService->prepareAccountDebitData($request, $detailAccountMasterInsert->id);
+            AccountLedger::insert($debitAccountData);
+
+            $creditAccountData = $this->coaDetailAccountService->prepareAccountCreditData($request, $detailAccountMasterInsert->id);
+            AccountLedger::insert($creditAccountData);
 
             DB::commit();
         } catch (\Exception $e) {
@@ -126,20 +132,20 @@ class CoaDetailAccountController extends Controller
         $detailAccount = CoaDetailAccount::find($id);
         $detailAccountSectors = CoaDetailAccountSectors::where('master_account_id', $id)->get();
         $detailAccountAreas = CoaDetailAccountArea::where('master_account_id', $id)->get();
-        $detailAccountSaleManSectors =SaleManSector::where("master_id", $detailAccount->saleMan_id)->get();
+        $detailAccountSaleManSectors = SaleManSector::where("master_id", $detailAccount->saleMan_id)->get();
         $sectorsArray = $detailAccountSaleManSectors->pluck('sector_id')->toArray();
-        $fetchSectors = Sector::whereIn('id',$sectorsArray)->get();
-        $sectors = $fetchSectors->pluck('name','id')->toArray();
+        $fetchSectors = Sector::whereIn('id', $sectorsArray)->get();
+        $sectors = $fetchSectors->pluck('name', 'id')->toArray();
 
-        $detailAccountSaleManAreas =CoaDetailAccountArea::where("sector_id", $sectorsArray)->get();
+        $detailAccountSaleManAreas = CoaDetailAccountArea::where("sector_id", $sectorsArray)->get();
         $areasArray = $detailAccountSaleManAreas->pluck('area_id')->toArray();
-        $fetchAreas = Area::whereIn('id',$areasArray)->get();
-        $areas = $fetchAreas->pluck('name','id')->toArray();
+        $fetchAreas = Area::whereIn('id', $areasArray)->get();
+        $areas = $fetchAreas->pluck('name', 'id')->toArray();
 
         $detailAccountRecords = DetailAccountPrices::where('coa_detail_account_code', $id)->get();
         $masterPriceTag = $detailAccountRecords->pluck('price_tag_id')->toArray();
         $invThirdLevel = $detailAccountRecords->pluck('inventory_third_level')->toArray();
-        $detailAccountProducts = DetailAccountProducts::where('detail_account_id', $id)->whereIn('master_price_tag', $masterPriceTag)->whereIn('master_third_level',$invThirdLevel)->get();
+        $detailAccountProducts = DetailAccountProducts::where('detail_account_id', $id)->whereIn('master_price_tag', $masterPriceTag)->whereIn('master_third_level', $invThirdLevel)->get();
 
         $products = CoaInventoryDetailAccount::whereIn("sub_sub_head", $invThirdLevel)->whereIn("priceTag_id", $masterPriceTag)->pluck('name', 'id');
 
@@ -153,7 +159,7 @@ class CoaDetailAccountController extends Controller
         $subSubHeads = $this->chartOfAccountService->getSubSubHeadsBySubHead($detailAccount->sub_head);
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
 
-        return view('chart-of-accounts.detail-account.edit', compact('detailAccount','sectors','areas' ,'detailAccountDetails', 'detailAccountAreas', 'detailAccountRecords','products','detailAccountSectors','detailAccountProducts','subSubHeads', 'dropDownData', 'subHeads', 'controlHeads', 'mainHeads', 'permission', 'pageTitle'));
+        return view('chart-of-accounts.detail-account.edit', compact('detailAccount', 'sectors', 'areas', 'detailAccountDetails', 'detailAccountAreas', 'detailAccountRecords', 'products', 'detailAccountSectors', 'detailAccountProducts', 'subSubHeads', 'dropDownData', 'subHeads', 'controlHeads', 'mainHeads', 'permission', 'pageTitle'));
     }
 
 
@@ -237,7 +243,6 @@ class CoaDetailAccountController extends Controller
             return response()->json(['status' => 'success', 'data' => $subSubAccounts]);
         }
         return response()->json(['status' => 'fail', 'data' => []]);
-
     }
 
     public function getSaleManDetail(Request $request)
@@ -286,7 +291,7 @@ class CoaDetailAccountController extends Controller
 
     public function getProducts(Request $request)
     {
-        $PriceTagId= $request->priceTag_id;
+        $PriceTagId = $request->priceTag_id;
         $productId = $request->product_id;
         $fetchInvDetailLevel = CoaInventoryDetailAccount::where("sub_sub_head", $productId)->where("priceTag_id", $PriceTagId)->get();
         $thirdLevelId = $fetchInvDetailLevel->pluck('id')->toArray();

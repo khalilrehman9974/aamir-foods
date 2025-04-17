@@ -200,44 +200,33 @@
 
 <body>
     <?php
-         if (!function_exists('calculateStockBalance')) {
-                function calculateStockBalance($openingBalance, $entries) {
-
-            $balance = (float)$openingBalance;
+    if (!function_exists('calculateStockBalance')) {
+        function calculateStockBalance($openingBalance, $entries)
+        {
+            $balance = (float) $openingBalance;
 
             foreach ($entries as $key => $entry) {
-                // Handle stock in and out
-                if (!empty($entry['stock_in_quantity'])) {
-                    $balance += (float)$entry['stock_in_quantity'];
-                }
-
-                if (!empty($entry['stock_out_quantity'])) {
-                    $balance -= (float)$entry['stock_out_quantity'];
-                }
-
                 // Handle credit and debit values
-                if (!empty($entry['credit'])) {
-                    $balance -= (float)$entry['credit'];
+                if (!empty($entry->credit)) {
+                    $balance -= (float) $entry->credit;
                 }
 
-                if (!empty($entry['debit'])) {
-                    $balance += (float)$entry['debit'];
+                if (!empty($entry->debit)) {
+                    $balance += (float) $entry->debit;
                 }
-
-
 
                 // Format values for readability
-                $entries[$key]['Balance'] = number_format($balance, 2);
+                $entries[$key]->Balance = number_format($balance, 2);
                 // $entries[$key]['Val_of_Stock'] = number_format($valOfStock, 2);
-                }
-
-                return $entries;
-            }
             }
 
-            $entries = $accountLedgers;
-            $openingBalance =  $partyDetailAccount->opening_balance ?? 0 ;
-            $result = calculateStockBalance($openingBalance, $entries);
+            return $entries;
+        }
+    }
+
+    $entries = $accountLedgers;
+    $openingBalance = $partyDetailAccount->opening_balance ?? 0;
+    $result = calculateStockBalance($openingBalance, $entries);
 
     ?>
 
@@ -320,7 +309,7 @@
                 <div style="width: 30%; text-align: right;">
 
                     <p><b>Belt:</b> <span>
-                            {{ $sectors->isNotEmpty() ? $sectors->implode(', ') : '' }}
+                            {{ !empty($sectors) ? $sectors->implode(', ') : '' }}
                         </span></p>
                 </div>
             </div>
@@ -334,7 +323,7 @@
                 <div style="width: 30%; text-align: right;">
 
                     <p><b>Area:</b> <span>
-                            {{ $areas->isNotEmpty() ? $areas->implode(', ') : '' }}
+                            {{ !empty($areas) ? $areas->implode(', ') : '' }}
                         </span></p>
                 </div>
 
@@ -400,9 +389,9 @@
                         <td style="text-align: end;">0</td>
                         <td style="text-align: end;">0</td>
                         <td style="text-align: end;"></td>
-                        <td style="text-align: end;">{{$partyDetailAccount->opening_balance ?? 0}}</td>
+                        <td style="text-align: end;">{{ $partyDetailAccount->opening_balance ?? 0 }}</td>
                         <td style="text-align: end;">0</td>
-                        <td style="text-align: end;">{{$partyDetailAccount->opening_balance ?? 0}}</td>
+                        <td style="text-align: end;">{{ $partyDetailAccount->opening_balance ?? 0 }}</td>
                         <td
                             style="text-align: center; padding: 0px 0px 0px 0px !important; width: 3%; border-color: white; border-right: black;">
                         </td>
@@ -426,7 +415,8 @@
                             <td
                                 style="text-align: center; padding: 0px 0px 0px 0px !important; width: 3%; border-color: white; border-right: black;">
                             </td>
-                            <td style="text-align: start;">{{ $transporters[$accountLedger->transporter_id ?? ''] ?? '-' }}</td>
+                            <td style="text-align: start;">
+                                {{ $transporters[$accountLedger->transporter_id ?? ''] ?? '-' }}</td>
                             <td style="text-align: center;">{{ $accountLedger->bilty_no ?? '-' }}</td>
 
                         </tr>

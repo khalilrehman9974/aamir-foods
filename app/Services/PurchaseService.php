@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\StockLedger;
 use App\Models\Transporter;
 use App\Models\AccountLedger;
+use App\Models\GeneralJournal;
 use App\Models\PurchaseDetail;
 use App\Models\PurchaseMaster;
 use App\Models\CoaDetailAccount;
@@ -392,6 +393,149 @@ class PurchaseService
 
             'debit' => config('constants.ZERO'),
             'credit' => $request['tax'],
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+    public function prepareGeneralJournalCreditData($request, $saleParentId)
+    {
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'document_number' => 'P/I' . '-' . $saleParentId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $party ,
+            'narration' => 'Credit Sale Of'. ' ' . $party ,
+            'debit' => config('constants.ZERO'),
+            'credit' => $request['gross_bill'],
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+    public function prepareGeneralJournalDebitData($request, $saleParentId)
+    {
+
+        $productArray = $request['product_id'];
+        $product = CoaInventoryDetailAccount::whereIn('id', $productArray)->pluck('name')->toarray();
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'document_number' => 'P/I' . '-' . $saleParentId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $product ,
+            'narration' => 'Debit Sale of:'. ' ' . $party ,
+            'debit' => $request['amount'],
+            'credit' => config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+
+    public function saveGeneralJournalDebitData($data)
+    {
+        foreach ($data['description'] as $key => $value) {
+            if (!empty($data['description'][$key])) {
+                $rec['description'] = $data['description'][$key];
+                $rec['date'] = $data['date'];
+                $rec['invoice_id'] = $data['invoice_id'];
+                $rec['document_number'] = $data['document_number'];
+                $rec['business_id'] = $data['business_id'];
+                $rec['f_year_id'] = $data['f_year_id'];
+                $rec['narration'] = $data['narration'];
+                $rec['debit'] = $data['debit'][$key];
+                $rec['credit'] = $data['credit'];
+                $rec['created_at'] = now();
+                $rec['updated_at'] = now();
+                GeneralJournal::create($rec);
+            }
+        }
+    }
+
+    public function prepareGeneralJournalTaxCreditData($request, $saleParentId)
+    {
+
+        $partyName = 'Tax Paid .';
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'document_number' => 'P/I' . '-' . $saleParentId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $partyName ,
+            'narration' => 'Credit'. ' ' . $partyName ,
+            'debit' => config('constants.ZERO'),
+            'credit' => $request['tax'],
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+
+    public function prepareGeneralJournalTaxDebitData($request, $saleParentId)
+    {
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'document_number' => 'P/I' . '-' . $saleParentId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $party ,
+            'narration' => 'Tax Of'. ' ' . $party ,
+            'debit' => $request['tax'],
+            'credit' => config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+    public function prepareGeneralJournalCarriageCreditData($request, $saleParentId)
+    {
+
+        $partyName = 'Carriage Inwards / Builty Exp';
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'document_number' => 'P/I' . '-' . $saleParentId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $partyName ,
+            'narration' => 'Credit'. ' ' . $partyName ,
+            'debit' => config('constants.ZERO'),
+            'credit' => $request['carriage'],
+            'created_at' => now(),
+            'updated_at' => now() ,
+        ];
+    }
+
+
+    public function prepareGeneralJournalCarriageDebitData($request, $saleParentId)
+    {
+        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $saleParentId,
+            'document_number' => 'P/I' . '-' . $saleParentId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $party ,
+            'narration' => 'Carriage Of'. ' ' . $party ,
+            'debit' => $request['carriage'],
+            'credit' => config('constants.ZERO'),
             'created_at' => now(),
             'updated_at' => now() ,
         ];
