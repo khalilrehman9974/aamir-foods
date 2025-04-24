@@ -127,25 +127,32 @@ class ChartOfInvDetailAccountController extends Controller
         $pageTitle = 'Update Inventory Sub Head';
         $dropDownData = $this->coInventoryDetailAccountService->DropDownData();
         $detailAccount = CoaInventoryDetailAccount::find($id);
-        $mainHeads = $this->coInvSubHeadService->getMainHeads();
-        $subHeads = $this->commonService->getInventorySubHeads($detailAccount->main_head);
-        $subSubHeads = $this->commonService->getInventorySubSubHeads($detailAccount->sub_head);
+        $mainHeads = $this->commonService->getInventoryMainHeads();
+        $controlHeads = $this->coInventoryDetailAccountService->getControlHeadsForMainHead($detailAccount->coa_main_head);
+        $subHeads = $this->coInventoryDetailAccountService->getSubHeadsForControlHead($detailAccount->control_head);
+        $subSubHeads = $this->coInventoryDetailAccountService->getSubSubHeadsBySubHead($detailAccount->sub_head);
+
+        // $subHeads = $this->commonService->getInventorySubHeads($detailAccount->main_head);
+        // $subSubHeads = $this->commonService->getInventorySubSubHeads($detailAccount->sub_head);
         $fetchPriceTags = InventorySubSubHeadPriceTagModel::where("sub_sub_head_id", $detailAccount->sub_sub_head)->get();
         $priceTagId = $fetchPriceTags->pluck('priceTag')->toArray();
         $priceTag = PriceTag::whereIn("id", $priceTagId)->get();
         $priceTags = $priceTag->pluck('name', 'id')->toArray();
-        $accountArray = [4, 6];
-        $coaMainHeadAccounts = CoaMainHead::whereIn('id', $accountArray)->pluck('account_name', 'id');
+        // $accountArray = [4, 6];
+        // $coaMainHeadAccounts = CoaMainHead::whereIn('id', $accountArray)->pluck('account_name', 'id');
+
+
+
 
         if (!$detailAccount) {
             return abort(404);
         }
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
 
-        return view('chart-of-inventory.detail-account.create', compact('detailAccount', 'coaMainHeadAccounts', 'subSubHeads', 'priceTags', 'dropDownData', 'subHeads', 'mainHeads', 'permission', 'pageTitle'));
+        return view('chart-of-inventory.detail-account.create', compact('detailAccount', 'controlHeads',  'subSubHeads', 'priceTags', 'dropDownData', 'subHeads', 'mainHeads', 'permission', 'pageTitle'));
     }
 
-    public function update(CoInvDetailAccountRequest $request)
+    public function update(Request $request)
     {
         $session = $this->commonService->getSession();
         $inventoryAccount = CoaInventoryDetailAccount::where('id', $request['id'])->value('name');
@@ -236,4 +243,6 @@ class ChartOfInvDetailAccountController extends Controller
 
         return response()->json($data);
     }
+
+
 }

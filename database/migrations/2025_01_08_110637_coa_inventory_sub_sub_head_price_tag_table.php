@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('coa_inventory_sub_sub_head_price_tag', function (Blueprint $table) {
             $table->Increments('id');
-            $table->foreignId('sub_sub_head_id')->constrained('coa_inventory_sub_sub_heads')->onDelete('cascade');
+            $table->foreignId('sub_sub_head_id')->constrained('coa_sub_sub_heads')->onDelete('cascade');
             $table->integer('priceTag')->unsigned()->index();
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();

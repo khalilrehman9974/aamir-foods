@@ -12,22 +12,27 @@ class CoaInventoryDetailAccount extends Model
 
     use HasFactory;
 
-    protected $fillable = ['main_head', 'sub_head','sub_sub_head', 'code', 'priceTag_id', 'name',
+    protected $fillable = ['coa_main_head','control_head', 'sub_head','sub_sub_head', 'code', 'priceTag_id', 'name',
     'remarks','danger_level','opening_stock','stock_rate','use_in', 'image','measurement_type_id','packing_type_id','size','max_limit','min_limit'];
 
     public function getMainHead()
     {
-        return $this->hasOne(CoaInventoryMainHead::class, 'id', 'main_head');
+        return $this->hasOne(CoaMainHead::class, 'id', 'coa_main_head');
+    }
+
+    public function getControlHead()
+    {
+        return $this->hasOne(CoaControlHead::class, 'id', 'control_head');
     }
 
     public function getSubHead()
     {
-        return $this->hasOne(CoaInventorySubHead::class, 'id', 'sub_head');
+        return $this->hasOne(CoaSubHead::class, 'id', 'sub_head');
     }
 
     public function getSubSubHead()
     {
-        return $this->hasOne(CoaInventorySubSubHead::class, 'id', 'sub_sub_head');
+        return $this->hasOne(CoaSubSubHead::class, 'id', 'sub_sub_head');
     }
 
     public function measurementType()

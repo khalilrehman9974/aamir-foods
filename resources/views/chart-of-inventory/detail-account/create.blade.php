@@ -79,13 +79,11 @@
                                                     <input type="hidden" name="id" id="id"
                                                         value="{{ isset($detailAccount->id) ? $detailAccount->id : '' }}" />
                                                     <div class="form-group input-group ">
-                                                        <div class="col-md-12 mt-2">
-                                                            <label for="party"
-                                                                class="form-label">Coa Main Head</label>
-                                                            <select id="party" type="text"
-                                                                name="coa_main_head"
-                                                                class=" form-select"
-                                                                required>
+                                                        {{-- <div class="col-md-12 mt-2">
+                                                            <label for="party" class="form-label">Coa Main
+                                                                Head</label>
+                                                            <select id="party" type="text" name="coa_main_head"
+                                                                class=" form-select" required>
                                                                 <option value="">Select Coa Main Head
                                                                 </option>
                                                                 @foreach ($coaMainHeadAccounts as $key => $value)
@@ -96,19 +94,154 @@
                                                                 @endforeach
                                                             </select>
                                                             @error('coa_main_head')
-                                                                <span style="color:red".
-                                                                    class="invalid-feedback">
+                                                                <span style="color:red". class="invalid-feedback">
                                                                     <strong>{{ $message }}</strong>
                                                                 </span>
                                                             @enderror
                                                         </div>
-                                                        <br>
+                                                        <br> --}}
 
                                                         <div class="col-lg-0 col-12 form-group mb-4">
                                                             <label for="inputState" class="form-label">Main
                                                                 Head</label>
-                                                            <select id="main-head" name="main_head" class="form-select"
+                                                            <select id="main-head" name="coa_main_head"
+                                                                class="form-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
                                                                 required>
+                                                                <option selected>Please select main head
+                                                                </option>
+                                                                @foreach ($mainHeads as $index => $value)
+                                                                    <option value="{{ $index }}"
+                                                                        {{ (old('coa_main_head') == $index ? 'selected' : '') || (!empty($detailAccount->coa_main_head) ? collect($detailAccount->coa_main_head)->contains($index) : '') ? 'selected' : '' }}>
+                                                                        {{ $value }}</option>
+                                                                @endforeach
+                                                            </select>
+
+                                                            @if ($errors->has('coa_main_head'))
+                                                                <div class="invalid-feedback">
+                                                                    {{ $errors->first('coa_main_head') }}
+                                                                </div>
+                                                            @endif
+
+                                                        </div>
+                                                        <br>
+                                                        <div class="col-lg-0 col-12 form-group mb-4">
+                                                            <label for="inputState" class="form-label">Control
+                                                                Head</label>
+                                                            @if (!empty($detailAccount))
+                                                                <select id="control-head" name="control_head"
+                                                                    class="form-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                    required>
+
+                                                                    @foreach ($controlHeads as $key => $value)
+                                                                        <option value="{{ $key }}"
+                                                                            {{ !empty($detailAccount) && $detailAccount->control_head == $key ? 'selected' : '' }}
+                                                                            {{ $key == old('control_head') ? 'selected' : '' }}>
+                                                                            {{ $value }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            @else
+                                                                {{-- <select id="control-head" name="control_head"
+                                                                        class="form-select" required>
+                                                                        @foreach ($controlHeads as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                {{ $key == old('control_head') ? 'selected' : '' }}>
+                                                                                {{ $value }}</option>
+                                                                        @endforeach
+                                                                    </select> --}}
+
+                                                                <select id="control-head" name="control_head"
+                                                                    class="form-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                    required>
+                                                                    <option></option>
+                                                                </select>
+
+                                                            @endif
+                                                            @if ($errors->has('control_head'))
+                                                                <div class="invalid-feedback">
+                                                                    {{ $errors->first('control_head') }}
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                        <br>
+                                                        <div class="col-lg-0 col-12 form-group mb-4">
+                                                            <label for="inputState" class="form-label">Sub
+                                                                Head</label>
+                                                            @if (!empty($detailAccount))
+                                                                <select id="sub-head" name="sub_head"
+                                                                    class="form-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                    required>
+
+                                                                    @foreach ($subHeads as $key => $value)
+                                                                        <option value="{{ $key }}"
+                                                                            {{ !empty($detailAccount) && $detailAccount->sub_head == $key ? 'selected' : '' }}
+                                                                            {{ $key == old('sub') ? 'selected' : '' }}>
+                                                                            {{ $value }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            @else
+                                                                {{-- <select id="sub-head" name="sub_head"
+                                                                        class="form-select" required>
+                                                                        @foreach ($subHeads as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                {{ $key == old('sub_head') ? 'selected' : '' }}>
+                                                                                {{ $value }}</option>
+                                                                        @endforeach
+                                                                    </select> --}}
+                                                                <select id="sub-head" name="sub_head"
+                                                                    class="form-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                                    required>
+                                                                    <option></option>
+                                                                </select>
+                                                            @endif
+                                                            @if ($errors->has('sub_head'))
+                                                                <div class="invalid-feedback">
+                                                                    {{ $errors->first('sub_head') }}
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                        <br>
+                                                        <div class="col-lg-0 col-12 form-group mb-4">
+                                                            <label for="inputState" class="form-label">Sub-Sub
+                                                                Head</label>
+                                                            @if (!empty($detailAccount))
+                                                                <select id="sub-sub-head" name="sub_sub_head"
+                                                                    class="form-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sub-sub-head"
+                                                                    required>
+
+                                                                    @foreach ($subSubHeads as $key => $value)
+                                                                        <option value="{{ $key }}"
+                                                                            {{ !empty($detailAccount) && $detailAccount->sub_sub_head == $key ? 'selected' : '' }}
+                                                                            {{ $key == old('sub_sub_head') ? 'selected' : '' }}>
+                                                                            {{ $value }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            @else
+                                                                {{-- <select id="sub-sub-head" name="sub_sub_head"
+                                                                        class="form-select" required>
+                                                                        @foreach ($subSubHeads as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                {{ $key == old('sub_sub_head') ? 'selected' : '' }}>
+                                                                                {{ $value }}</option>
+                                                                        @endforeach
+                                                                    </select> --}}
+                                                                <select id="sub-sub-head" name="sub_sub_head"
+                                                                    class="form-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sub-sub-head"
+                                                                    required>
+                                                                    <option></option>
+                                                                </select>
+                                                            @endif
+                                                            @if ($errors->has('sub_sub_head'))
+                                                                <div class="invalid-feedback">
+                                                                    {{ $errors->first('sub_sub_head') }}
+                                                                </div>
+                                                            @endif
+                                                        </div>
+
+                                                        {{-- <div class="col-lg-0 col-12 form-group mb-4">
+                                                            <label for="inputState" class="form-label">Main
+                                                                Head</label>
+                                                            <select id="main-head" name="main_head"
+                                                                class="form-select" required>
                                                                 <option selected>Please select main head
                                                                 </option>
                                                                 @foreach ($mainHeads as $index => $value)
@@ -128,7 +261,8 @@
 
                                                         <br>
                                                         <div class="col-lg-0 col-12 form-group mb-4">
-                                                            <label for="inputState" class="form-label">Sub Head</label>
+                                                            <label for="inputState" class="form-label">Sub
+                                                                Head</label>
                                                             @if (!empty($detailAccount))
                                                                 <select id="sub-head" name="sub_head"
                                                                     class="form-select" required>
@@ -186,7 +320,7 @@
                                                                     {{ $errors->first('sub_sub_head') }}
                                                                 </div>
                                                             @endif
-                                                        </div>
+                                                        </div>--}}
 
 
                                                         <div class="col-xl-12 col-lg-12">
@@ -214,13 +348,23 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-lg- 0 col-12 form-group mb-2">
+                                                    {{-- <div class="col-lg- 0 col-12 form-group mb-2">
                                                         <label for="code" class="form-label">
                                                             Account Code</label>
                                                         <input id="code" type="text" name="code"
                                                             style="color: black;"
                                                             value="{{ old('code', !empty($detailAccount->code) ? $detailAccount->code : '') }}"
                                                             class="form-control" readonly>
+                                                    </div> --}}
+
+                                                    <div class="col-lg- 0 col-12 form-group mb-2">
+                                                        <label for="account_code" class="form-label">
+                                                            Account Code</label>
+                                                        <input id="account_code" type="text" name="code"
+                                                            style="color: black"
+                                                            value="{{ old('code', !empty($detailAccount->code) ? $detailAccount->code : '') }}"
+                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
+                                                            readonly>
                                                     </div>
                                                     <br>
                                                     <div class="col-lg-0 col-12 form-group mb-4">
@@ -387,8 +531,7 @@
                                                                 Use In</label>
                                                             <input id="use_in" type="text" name="use_in"
                                                                 value="{{ old('use_in', !empty($detailAccount->use_in) ? $detailAccount->use_in : '') }}"
-                                                                placeholder="Use In" class="form-control"
-                                                                required>
+                                                                placeholder="Use In" class="form-control" required>
                                                             @if ($errors->has('use_in'))
                                                                 <div class="invalid-feedback">
                                                                     {{ $errors->first('use_in') }}
@@ -504,7 +647,7 @@
     <script>
         $('.sub-sub-head').on('change', function() {
             var idProduct = this.value;
-            console.log(idProduct);
+
             $('.priceTag-dropdown').html('');
             $.ajax({
                 url: config.routes.getProductPriceTags,
@@ -540,7 +683,8 @@
         <script src="{{ asset('plugins/filepond/FilePondPluginImageResize.min.js') }}"></script>
         <script src="{{ asset('plugins/filepond/FilePondPluginImageTransform.min.js') }}"></script>
         <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>
-        <script src="{{ asset('js/inventory-detail-account.js') }}"></script>
+        {{-- <script src="{{ asset('js/inventory-detail-account.js') }}"></script> --}}
+        <script src="{{ asset('js/detail-account.js') }}"></script>
 
         <script>
             {{-- singleFile.addFiles("{{Vite::asset('resources/images/drag-1.jpeg')}}"); --}}
@@ -548,10 +692,21 @@
 
             var config = {
                 routes: {
-                    getSubHeads: "{{ url('co-inv-detail-account/get-sub-head-accounts') }}",
-                    getSubSubHeads: "{{ url('co-inv-detail-account/get-sub-sub-head-accounts') }}",
-                    getDetailAccountCode: "{{ url('co-inv-detail-account/get-detail-account-code') }}",
+                    // getSubHeads: "{{ url('co-inv-detail-account/get-sub-head-accounts') }}",
+                    // getSubSubHeads: "{{ url('co-inv-detail-account/get-sub-sub-head-accounts') }}",
+                    // getDetailAccountCode: "{{ url('co-inv-detail-account/get-detail-account-code') }}",
                     getProductPriceTags: "{{ url('co-inv-detail-account/get-product-price-tags') }}",
+
+
+                    getControlHeads: "{{ url('sub-head/get-control-head-account') }}",
+                    getSubSubHeads: "{{ url('detail-account/get-sub-sub-account') }}",
+                    getSubHeads: "{{ url('sub-sub-head/get-sub-heads') }}",
+                    getDetailAccountCode: "{{ url('detail-account/get-detail-account-code') }}",
+                    getSaleManDetail: "{{ url('detail-account/get-saleMan-detail') }}",
+                    getSaleManAreaDetail: "{{ url('detail-account/get-saleMan-area-detail') }}",
+                    getProductPrice: "{{ url('detail-account/get-product-price') }}",
+                    // getProductPriceTags: "{{ url('detail-account/get-product-price-tags') }}",
+                    getProducts: "{{ url('detail-account/get-products') }}"
                 },
             }
 

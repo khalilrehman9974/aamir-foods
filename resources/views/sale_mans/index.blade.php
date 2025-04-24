@@ -89,7 +89,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col" style="width: 5%"> <b>Id </b> </th>
-                                    <th scope="col" style="width: 20%"> <b>Name </b> </th>
+                                    <th scope="col" style="width: 30%"> <b>Name </b> </th>
                                     <th scope="col" > <b>Mobile No </b> </th>
                                     <th scope="col" > <b>Designation </b> </th>
                                     <th class="text-center" scope="col"></th>
@@ -202,3 +202,7 @@
     </x-slot>
 
 </x-base-layout>
+
+
+
+

@@ -93,7 +93,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('create', ['as' => 'sub-sub-head.create', 'uses' => 'App\Http\Controllers\CoaSubSubHeadController@create']);
         Route::post('save', ['as' => 'sub-sub-head.save', 'uses' => 'App\Http\Controllers\CoaSubSubHeadController@store']);
         Route::get('edit/{id}', ['as' => 'sub-sub-head.edit', 'uses' => 'App\Http\Controllers\CoaSubSubHeadController@edit']);
-        Route::post('update', ['as' => 'sub-sub-head.update', 'uses' => 'App\Http\Controllers\CoaSubSubHeadController@store']);
+        Route::post('update', ['as' => 'sub-sub-head.update', 'uses' => 'App\Http\Controllers\CoaSubSubHeadController@update']);
         Route::delete('delete/{id}', ['as' => 'sub-sub-head.delete', 'uses' => 'App\Http\Controllers\CoaSubSubHeadController@destroy']);
         Route::get('search', ['as' => 'sub-sub-head.search', 'uses' => 'App\Http\Controllers\CoaSubSubHeadController@search']);
         Route::get('get-sub-sub-head-account/{code}', ['as' => 'sub-sub-head-account', 'uses' => 'App\Http\Controllers\CoaSubSubHeadController@getMaxSubSubHeadCode']);
@@ -103,6 +103,7 @@ Route::group(['middleware' => ['auth']], function () {
     //Detail account routes
     Route::group(['prefix' => 'detail-account', 'middleware' => 'auth'], function () {
         Route::get('list', ['as' => 'detail-account.list', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@index']);
+        Route::get('treeView', ['as' => 'detail-account.treeView', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@treeView']);
         Route::get('create', ['as' => 'detail-account.create', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@create']);
         Route::post('save', ['as' => 'detail-account.save', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@store']);
         Route::get('edit/{id}', ['as' => 'detail-account.edit', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@edit']);

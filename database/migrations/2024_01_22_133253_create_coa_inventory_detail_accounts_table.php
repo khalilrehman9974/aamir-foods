@@ -15,10 +15,11 @@ return new class extends Migration
     {
         Schema::create('coa_inventory_detail_accounts', function (Blueprint $table) {
             $table->id();
-            $table->integer('coa_main_head');
-            $table->foreignId('main_head')->nullable()->constrained('coa_inventory_main_heads')->onDelete('cascade');
-            $table->foreignId('sub_head')->nullable()->constrained('coa_inventory_sub_heads')->onDelete('cascade');
-            $table->foreignId('sub_sub_head')->nullable()->constrained('coa_inventory_sub_sub_heads')->onDelete('cascade');
+            // $table->integer('coa_main_head');
+            $table->foreignId('coa_main_head')->nullable()->constrained('coa_main_heads')->onDelete('cascade');
+            $table->foreignId('control_head')->nullable()->constrained('coa_control_heads')->onDelete('cascade');
+            $table->foreignId('sub_head')->nullable()->constrained('coa_sub_heads')->onDelete('cascade');
+            $table->foreignId('sub_sub_head')->nullable()->constrained('coa_sub_sub_heads')->onDelete('cascade');
             $table->integer('code');
             $table->integer('priceTag_id');
             $table->string('name');

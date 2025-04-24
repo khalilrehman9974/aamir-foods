@@ -100,8 +100,8 @@
                                         <label for="validationCustom01" class="form-label">Mobile
                                             Number</label>
                                         <input type="text" name="mobile_no"
-                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                            id="mobile_no"
+                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mobile_no"
+                                            id="mobile_no" maxlength="12"
                                             value="{{ isset($saleMan->mobile_no) ? $saleMan->mobile_no : '' }}"
                                             placeholder="Enter The Mobile Number" required>
                                         @error('mobile_no')
@@ -114,8 +114,8 @@
                                         <label for="validationCustom01" class="form-label">WhatsApp
                                             Number</label>
                                         <input type="text" name="whatsapp_no"
-                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                            id="whatsapp_no"
+                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} whatsapp_no"
+                                            id="whatsapp_no" maxlength="12"
                                             value="{{ isset($saleMan->whatsapp_no) ? $saleMan->whatsapp_no : '' }}"
                                             placeholder="Enter The WhatsApp Number">
                                         @error('whatsapp_no')
@@ -300,6 +300,43 @@
     </script>
 
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const input = document.getElementById('mobile_no');
+
+            input.addEventListener('input', function() {
+                // Remove all non-digit characters
+                let raw = this.value.replace(/\D/g, '');
+
+                // Limit to 11 digits max
+                if (raw.length > 11) raw = raw.slice(0, 11);
+
+                // Auto-format: insert dash after 4 digits
+                if (raw.length > 4) {
+                    this.value = raw.slice(0, 4) + '-' + raw.slice(4);
+                } else {
+                    this.value = raw;
+                }
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const input = document.getElementById('whatsapp_no');
+
+            input.addEventListener('input', function() {
+                // Remove all non-digit characters
+                let raw = this.value.replace(/\D/g, '');
+
+                // Limit to 11 digits max
+                if (raw.length > 11) raw = raw.slice(0, 11);
+
+                // Auto-format: insert dash after 4 digits
+                if (raw.length > 4) {
+                    this.value = raw.slice(0, 4) + '-' + raw.slice(4);
+                } else {
+                    this.value = raw;
+                }
+            });
+        });
 
         $(document).ready(function() {
             // Initialize select2
@@ -327,27 +364,27 @@
                 });
             });
 
-            // Zone Dropdown Change Event
             $('#zone-dropdown').on('change', function() {
+                var $this = $(this);
                 var selectedValues = Array.from(this.selectedOptions).map(option => option.value);
 
-                // If "Select All" is selected, select all other options except "Select All"
+                // If "Select All" is selected
                 if (selectedValues.includes("select-all")) {
-                    // Select all options except "Select All"
-                    $(this).find('option').not('[value="select-all"]').prop('selected', true);
+                    // Deselect "Select All" option
+                    $this.find('option[value="select-all"]').prop('selected', false);
+
+                    // Select all other options
+                    $this.find('option').not('[value="select-all"]').prop('selected', true);
+
+                    // Update Select2 to reflect changes
+                    $this.trigger('change.select2');
+
+                    // Refresh selected values
+                    selectedValues = Array.from($this[0].selectedOptions).map(option => option.value);
                 }
 
-                // If "Select All" is deselected, deselect all options
-                if (selectedValues.length === 0) {
-                    $(this).find('option').prop('selected', false);
-                }
-
-                // Make sure to update select2
-                $(this).trigger('change.select2');
-
-                // Make sure that if "Select All" is checked, we pass all available zone ids
+                // Filter out "select-all" from selected values
                 var zoneIds = selectedValues.filter(value => value !== "select-all");
-                // console.log(zoneIds);
 
                 if (zoneIds.length > 0) {
                     // Proceed with fetching sectors based on selected zones
@@ -371,24 +408,28 @@
                 }
             });
 
+
             // Sector Dropdown Change Event
             $('#sector-dropdown').on('change', function() {
+                var $this = $(this);
                 var selectedValues = Array.from(this.selectedOptions).map(option => option.value);
 
-                // If "Select All" is selected, select all other options except "Select All"
+                // If "Select All" is selected
                 if (selectedValues.includes("select-all")) {
-                    // Select all options except "Select All"
-                    $(this).find('option').not('[value="select-all"]').prop('selected', true);
+                    // Deselect "Select All" option
+                    $this.find('option[value="select-all"]').prop('selected', false);
+
+                    // Select all other options
+                    $this.find('option').not('[value="select-all"]').prop('selected', true);
+
+                    // Update Select2 to reflect changes
+                    $this.trigger('change.select2');
+
+                    // Refresh selected values
+                    selectedValues = Array.from($this[0].selectedOptions).map(option => option.value);
                 }
 
-                // If "Select All" is deselected, deselect all options
-                if (selectedValues.length === 0) {
-                    $(this).find('option').prop('selected', false);
-                }
-
-                // Make sure to update select2
-                $(this).trigger('change.select2');
-
+                // Filter out "select-all" from the actual request
                 var sectorIds = selectedValues.filter(value => value !== "select-all");
 
                 if (sectorIds.length > 0) {
@@ -412,23 +453,35 @@
                     });
                 }
             });
+
+
             $('#area-dropdown').on('change', function() {
+                var $this = $(this);
                 var selectedValues = Array.from(this.selectedOptions).map(option => option.value);
 
-                // If "Select All" is selected, select all other options except "Select All"
+                // If "Select All" is selected
                 if (selectedValues.includes("select-all")) {
-                    // Select all options except "Select All"
-                    $(this).find('option').not('[value="select-all"]').prop('selected', true);
+                    // Deselect "Select All" itself
+                    $this.find('option[value="select-all"]').prop('selected', false);
+
+                    // Select all other options
+                    $this.find('option').not('[value="select-all"]').prop('selected', true);
+
+                    // Update Select2 UI
+                    $this.trigger('change.select2');
+
+                    // Refresh selected values after selecting all
+                    selectedValues = Array.from($this[0].selectedOptions).map(option => option.value);
                 }
 
-                // If "Select All" is deselected, deselect all options
+                // If nothing is selected, deselect all
                 if (selectedValues.length === 0) {
-                    $(this).find('option').prop('selected', false);
+                    $this.find('option').prop('selected', false);
+                    $this.trigger('change.select2');
                 }
-
-                // Make sure to update select2
-                $(this).trigger('change.select2');
             });
+
+
         });
     </script>
 

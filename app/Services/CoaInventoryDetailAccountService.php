@@ -2,11 +2,14 @@
 
 namespace App\Services;
 
-use App\Models\CoaDetailAccount;
 use App\Models\PriceTag;
+use App\Models\CoaSubHead;
 use App\Models\CoaMainHead;
 use App\Models\PackingType;
+use App\Models\CoaSubSubHead;
+use App\Models\CoaControlHead;
 use App\Models\MeasurementType;
+use App\Models\CoaDetailAccount;
 use App\Models\CoaInventorySubHead;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CoaInventorySubSubHead;
@@ -73,7 +76,7 @@ class CoaInventoryDetailAccountService
 
     public function getListOfDetailAccounts($param = null)
     {
-        $q = CoaInventoryDetailAccount::with('getMainHead', 'getSubHead','getSubSubHead','priceTag');
+        $q = CoaInventoryDetailAccount::with('getMainHead','getControlHead', 'getSubHead','getSubSubHead','priceTag');
         if (!empty($param)) {
             $q->where('name', 'LIKE', '%' . $param . '%');
         }
@@ -87,10 +90,10 @@ class CoaInventoryDetailAccountService
         return CoaInventorySubHead::where('main_head', $mainHead)->pluck('name', 'id');
     }
 
-    public function getSubSubHeadsBySubHead($subHead)
-    {
-        return CoaInventorySubSubHead::where('sub_head_id', $subHead)->pluck('name', 'id');
-    }
+    // public function getSubSubHeadsBySubHead($subHead)
+    // {
+    //     return CoaInventorySubSubHead::where('sub_head_id', $subHead)->pluck('name', 'id');
+    // }
 
 
     public function prepareCoaDetailAccountData($request)
@@ -99,7 +102,7 @@ class CoaInventoryDetailAccountService
 
         return [
             'main_head' => $request['coa_main_head'],
-            'control_head' => $request['main_head'],
+            'control_head' => $request['control_head'],
             'sub_head' => $request['sub_head'],
             'sub_sub_head' => $request['sub_sub_head'],
             'account_code' => $request['code'],
@@ -167,6 +170,22 @@ class CoaInventoryDetailAccountService
             'updated_at' => now(),
         ];
     }
+
+    public function getControlHeadsForMainHead($mainHead)
+    {
+        return CoaControlHead::where('main_head', $mainHead)->pluck('account_name', 'id');//change here
+    }
+
+    public function getSubHeadsForControlHead($controlHead)
+    {
+        return CoaSubHead::where('control_head', $controlHead)->pluck('account_name', 'id');//change here
+    }
+
+    public function getSubSubHeadsBySubHead($subHead)
+    {
+        return CoaSubSubHead::where('sub_head', $subHead)->pluck('account_name', 'id'); //change here
+    }
+
 }
 
 

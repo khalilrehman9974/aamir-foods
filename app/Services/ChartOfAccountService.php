@@ -7,15 +7,17 @@ namespace App\Services;
  * @package App\Services
  * */
 
+use App\Models\PriceTag;
+use App\Models\CoaSubHead;
+use App\Models\CoaMainHead;
+use App\Models\CoaSubSubHead;
 use App\Models\ChartOfAccount;
 use App\Models\CoaControlHead;
-use App\Models\CoaDetAccountDetail;
 use App\Models\CoaDetailAccount;
-use App\Models\CoaMainHead;
-use App\Models\CoaSubHead;
-use App\Models\CoaSubSubHead;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\CoaDetAccountDetail;
+use Illuminate\Support\Facades\Auth;
+use App\Models\InventorySubSubHeadPriceTagModel;
 
 class ChartOfAccountService
 {
@@ -62,6 +64,18 @@ class ChartOfAccountService
         return CoaControlHead::pluck('account_name', 'account_code');
     }
 
+    public function DropDownData()
+    {
+        $result = [
+            'priceTag' => PriceTag::pluck('name','id'),
+            'mainHeads' => CoaMainHead::pluck('account_name', 'id'),
+            'controlHeads' => CoaControlHead::pluck('account_name', 'id'),
+            'subHeads' => CoaSubHead::pluck('account_name', 'id'),
+        ];
+
+        return $result;
+    }
+
     public function getSubHeads()
     {
         return CoaSubHead::pluck('account_name', 'account_code');
@@ -83,37 +97,96 @@ class ChartOfAccountService
         }
     }
 
-    public function getListOfControlHeads($param = null)
+    public function getListOfControlHeads($request)
     {
-        $q = CoaControlHead::with('getMainAccountHead');
-        if (!empty($param)) {
-            $q->where('account_name', 'LIKE', '%' . $param . '%');
-        }
-        $controlHeads = $q->orderBy('account_name', 'ASC')->paginate(config('constants.PER_PAGE'));
 
+        $q = CoaControlHead::query();
+
+        if (!empty($request['mainHead_id'])) {
+            $q->where('main_head', $request['mainHead_id']);
+        } elseif (!empty($request['account_name'])) {
+            $q->where('account_name', $request['account_name']);
+        }
+
+        $controlHeads = $q->with('getMainAccountHead')->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
         return $controlHeads;
+
+
+
     }
 
-    public function getListOfSubHeads($param = null)
+    public function prepareAccountMasterData($request)
     {
-        $q = CoaSubHead::with('getMainHead', 'getControlHead');
-        if (!empty($param)) {
-            $q->where('account_name', 'LIKE', '%' . $param . '%');
-        }
-        $subHeads = $q->orderBy('account_name', 'ASC')->paginate(config('constants.PER_PAGE'));
+        return [
+            'account_code' => $request['account_code'],
+            'account_name' => $request['account_name'],
+            'main_head' => $request['main_head'],
+            'control_head' => $request['control_head'],
+            'sub_head' => $request['sub_head'],
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id
+        ];
+    }
 
+    public function prepareAccountDetailData($request, $detailAccountMasterInsert)
+    {
+
+        return [
+            'priceTag' => $request['priceTag'],
+            'sub_sub_head_id' => $detailAccountMasterInsert,
+        ];
+    }
+
+
+    /*
+     * Save sale data.
+     * @param: $data
+     * */
+    public function savePriceTags($data)
+    {
+        foreach ($data['priceTag'] as $key => $value) {
+            if (!empty($data['priceTag'][$key])) {
+                $rec['priceTag'] = $data['priceTag'][$key];
+                $rec['sub_sub_head_id'] = $data['sub_sub_head_id'];
+                InventorySubSubHeadPriceTagModel::create($rec);
+            }
+        }
+    }
+
+
+    public function getListOfSubHeads($request)
+    {
+
+        $q = CoaSubHead::query();
+
+        if (!empty($request['mainHead_id'])) {
+            $q->where('main_head', $request['mainHead_id']);
+        } elseif (!empty($request['controlHead_id'])) {
+            $q->where('control_head', $request['controlHead_id']);
+        } elseif (!empty($request['account_name'])) {
+            $q->where('account_name', $request['account_name']);
+        }
+        $subHeads = $q->with('getMainHead', 'getControlHead')->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
         return $subHeads;
+
     }
 
-    public function getListOfSubSubHeads($param = null)
+    public function getListOfSubSubHeads($request)
     {
-        $q = CoaSubSubHead::with('getMainHead', 'getControlHead', 'getSubHead');
-        if (!empty($param)) {
-            $q->where('account_name', 'LIKE', '%' . $param . '%');
-        }
-        $subSubHeads = $q->orderBy('account_name', 'ASC')->paginate(config('constants.PER_PAGE'));
+        $q = CoaSubSubHead::query();
 
+        if (!empty($request['mainHead_id'])) {
+            $q->where('main_head', $request['mainHead_id']);
+        } elseif (!empty($request['controlHead_id'])) {
+            $q->where('control_head', $request['controlHead_id']);
+        } elseif (!empty($request['subHead_id'])) {
+            $q->where('sub_head', $request['subHead_id']);
+        } elseif (!empty($request['account_name'])) {
+            $q->where('account_name', $request['account_name']);
+        }
+        $subSubHeads = $q->with('getMainHead', 'getControlHead', 'getSubHead')->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
         return $subSubHeads;
+
     }
 
     public function generateSubHeadAccountCode($controlHeadCode)

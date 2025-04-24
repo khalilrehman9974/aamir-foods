@@ -145,6 +145,9 @@
                             <li class="{{ Request::routeIs('chart-of-account-detail-account') ? 'active' : '' }}">
                                 <a href="{{ route('detail-account.list') }}"> Detail Account </a>
                             </li>
+                            <li class="{{ Request::routeIs('chart-of-account-detail-account') ? 'active' : '' }}">
+                                <a href="{{ route('detail-account.treeView') }}"> Tree View</a>
+                            </li>
                         </ul>
                     </li>
                 @endif
@@ -173,7 +176,7 @@
                     </a>
                     <ul class="collapse submenu list-unstyled {{ Request::is('*/app/chart-of-inventory/*') ? 'show' : '' }}"
                         id="chart-of-inventory" data-bs-parent="#accordionExample">
-                        <li class="{{ Request::routeIs('chart-of-account-main-head') ? 'active' : '' }}">
+                        {{-- <li class="{{ Request::routeIs('chart-of-account-main-head') ? 'active' : '' }}">
                             <a href="{{ route('co-inventory-main-head.list') }}"> Main Head </a>
                         </li>
                         <li class="{{ Request::routeIs('chart-of-account-control-head') ? 'active' : '' }}">
@@ -181,7 +184,7 @@
                         </li>
                         <li class="{{ Request::routeIs('chart-of-account-control-head') ? 'active' : '' }}">
                             <a href="{{ route('co-inventory-sub-sub-head.list') }}">Sub Sub Head </a>
-                        </li>
+                        </li> --}}
                         <li class="{{ Request::routeIs('chart-of-account-detail-account') ? 'active' : '' }}">
                             <a href="{{ route('co-inventory-detail-account.list') }}"> Detail Account </a>
                         </li>
@@ -406,10 +409,10 @@
 
                         </li>
 
-                        {{-- <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('transporter.list') }}">Transporters</a>
 
-                        </li> --}}
+                        </li>
 
                         {{-- <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('distributer.list') }}">Distributer</a>
@@ -557,8 +560,11 @@
                         </li>
                         <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('generalJournals.list') }}">General Journal</a>
-                        {{-- <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
-                            <a href="{{ route('trialBalance.list') }}">Trial Balance</a> --}}
+                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                            <a href="{{ route('trialBalance.list') }}">Trial Balance</a>
+
+                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                            <a href="{{ route('trialBalance.list') }}">Bill Aging</a>
                     </ul>
                 </li>
             </ul>

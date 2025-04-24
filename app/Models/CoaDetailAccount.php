@@ -18,31 +18,45 @@ class CoaDetailAccount extends Model
         'saleMan_id','commision', 'mode', 'status'
     ];
 
-    public function getMainHead()
-    {
-        return $this->hasOne(CoaMainHead::class, 'id', 'main_head');
+    // public function getMainHead()
+    // {
+    //     return $this->hasOne(CoaMainHead::class, 'id', 'main_head');
+    // }
+
+    public function getMainHead() {
+        return $this->belongsTo(CoaMainHead::class, 'main_head');
     }
 
     public function saleOrder(){
         return $this->belongsTo(SaleOrder::class);
     }
 
-    public function getControlHead()
-    {
-        return $this->hasOne(CoaControlHead::class, 'id', 'control_head');
+    // public function getControlHead()
+    // {
+    //     return $this->hasOne(CoaControlHead::class, 'id', 'control_head');
+    // }
+
+    public function getControlHead() {
+        return $this->belongsTo(CoaControlHead::class, 'control_head');
     }
 
-    public function getSubHead()
-    {
-        return $this->hasOne(CoaSubHead::class, 'id', 'sub_head');
+    // public function getSubHead()
+    // {
+    //     return $this->hasOne(CoaSubHead::class, 'id', 'sub_head');
+    // }
+
+    public function getSubHead() {
+        return $this->belongsTo(CoaSubHead::class, 'sub_head');
     }
 
-    public function getSubSubHead()
-    {
-        return $this->hasOne(CoaSubSubHead::class, 'id', 'sub_sub_head');
+    // public function getSubSubHead()
+    // {
+    //     return $this->hasOne(CoaSubSubHead::class, 'id', 'sub_sub_head');
+    // }
+
+    public function getSubSubHead() {
+        return $this->belongsTo(CoaSubSubHead::class, 'sub_sub_head');
     }
-
-
 
     public function SaleMan()
     {

@@ -9,6 +9,7 @@ namespace App\Services;
 
 use Carbon\Carbon;
 use App\Models\Area;
+use App\Models\CoaControlHead;
 use App\Models\SaleMan;
 use App\Models\PriceTag;
 use App\Models\CoaSubHead;
@@ -23,6 +24,7 @@ use App\Models\DetailAccountProducts;
 use App\Models\CoaInventorySubSubHead;
 use App\Models\CoaDetailAccountSectors;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\CoaMainHead;
 
 class CoaDetailAccountService
 {
@@ -34,7 +36,7 @@ class CoaDetailAccountService
         $this->commonService = $commonService;
     }
 
-    public function getListOfDetailAccounts($param = null)
+    public function getListOfDetailAccountsOld($param = null)
     {
         $q = CoaDetailAccount::with('getMainHead', 'getControlHead', 'getSubHead', 'getSubSubHead', 'SaleMan');
         if (!empty($param)) {
@@ -44,6 +46,32 @@ class CoaDetailAccountService
 
         return $detailAccounts;
     }
+
+
+    public function getListOfDetailAccounts($request)
+    {
+        $q = CoaDetailAccount::query();
+
+        if (!empty($request['mainHead_id'])) {
+            $q->where('main_head', $request['mainHead_id']);
+        } elseif (!empty($request['controlHead_id'])) {
+            $q->where('control_head', $request['controlHead_id']);
+        } elseif (!empty($request['subHead_id'])) {
+            $q->where('sub_head', $request['subHead_id']);
+        } elseif (!empty($request['subSubHead_id'])) {
+            $q->where('sub_sub_head', $request['subSubHead_id']);
+        } elseif (!empty($request['account_name'])) {
+            $q->where('account_name', $request['account_name']);
+        }
+
+        $detailAccounts = $q->with('getMainHead', 'getControlHead', 'getSubHead', 'getSubSubHead', 'SaleMan')->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
+        return $detailAccounts;
+    }
+
+
+
+
+
 
     public function getSubSubHeadsBySubHead($subHead)
     {
@@ -67,6 +95,11 @@ class CoaDetailAccountService
             'invetoryThirdLevel' => CoaInventorySubSubHead::pluck('name', 'id'),
             'products' => CoaInventoryDetailAccount::pluck('name', 'id'),
             'priceTags' => PriceTag::pluck('name', 'id'),
+            'mainHeads' => CoaMainHead::pluck('account_name', 'id'),
+            'controlHeads' => CoaControlHead::pluck('account_name', 'id'),
+            'subHeads' => CoaSubHead::pluck('account_name', 'id'),
+            'subSubHeads' => CoaSubSubHead::pluck('account_name', 'id'),
+
         ];
 
         return $result;
@@ -183,8 +216,6 @@ class CoaDetailAccountService
                 }
             }
         }
-
-
     }
 
     public function prepareDetailAccountAreasData($request, $detailAccountMasterInsert)
@@ -202,14 +233,12 @@ class CoaDetailAccountService
     public function saveDetailAccountAreas($data)
     {
 
-        if (empty($data['area_id'])){
+        if (empty($data['area_id'])) {
             $rec['area_id'] = null;
             $rec['sector_id'] = null;
             $rec['master_account_id'] = $data['master_account_id'];
             CoaDetailAccountArea::create($rec);
-        }
-        else
-        {
+        } else {
             foreach ($data['area_id'] as $key => $value) {
                 if (!empty($data['area_id'][$key])) {
                     $rec['area_id'] = $data['area_id'][$key];
@@ -301,7 +330,6 @@ class CoaDetailAccountService
                 }
             }
         }
-
     }
 
     public function prepareAccountCreditData($request, $detailAccountMasterId)
@@ -319,17 +347,17 @@ class CoaDetailAccountService
             'total_quantity' => config('constants.ZERO'),
             'measurementType' => config('constants.ZERO'),
             'bags' => config('constants.ZERO'),
-            'description' => 'Purchase From'. ' ' . $party . '<br>' .  $request['remarks'],
+            'description' => 'Purchase From' . ' ' . $party . '<br>' .  $request['remarks'],
             'debit' => config('constants.ZERO'),
             'credit' =>  $request['gross_bill'],
             'created_at' => now(),
-            'updated_at' => now() ,
+            'updated_at' => now(),
         ];
     }
 
     public function prepareAccountDebitData($request, $detailAccountMasterId)
     {
-        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
+
 
         return [
             'date' => Carbon::now()->format('Y-m-d'),
@@ -343,10 +371,10 @@ class CoaDetailAccountService
             'measurementType' => config('constants.ZERO'),
             'bags' => config('constants.ZERO'),
             'description' => 'OPENING BALANCE',
-            'debit' => $request['opening_balance'],
+            'debit' => $request['opening_balance'] ?? 0,
             'credit' =>  config('constants.ZERO'),
             'created_at' => now(),
-            'updated_at' => now() ,
+            'updated_at' => now(),
         ];
     }
 }

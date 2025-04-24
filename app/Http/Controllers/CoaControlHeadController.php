@@ -29,12 +29,15 @@ class CoaControlHeadController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $controlHeads = $this->chartOfAccountService->getListOfControlHeads($request->search);
+
+        $request = request()->all();
+        $dropDownData = $this->chartOfAccountService->DropDownData();
+        $controlHeads = $this->chartOfAccountService->getListOfControlHeads($request);
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '24');
         $pageTitle = 'List of Control Account Heads';
-        return view('chart-of-accounts.control-head.index', compact('controlHeads', 'permission', 'pageTitle'));
+        return view('chart-of-accounts.control-head.index', compact('controlHeads','dropDownData', 'permission', 'pageTitle'));
     }
 
     /**

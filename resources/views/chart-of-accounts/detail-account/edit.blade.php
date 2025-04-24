@@ -14,7 +14,7 @@
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
         <link rel="stylesheet" href="{{ asset('plugins/sweetalerts2/sweetalerts2.css') }}">
         {{-- @vite(['resources/scss/light/plugins/sweetalerts2/custom-sweetalert.scss'])
-        @vite(['resources/scss/dark/plugins/sweetalerts2/custom-sweetalert.scss']) --}}
+        @vite(['resources/scss/dark/plugins/sweetalerts2/custom-sweetalert.scss'])--}}
         @vite(['resources/scss/light/assets/components/accordions.scss'])
         @vite(['resources/scss/dark/assets/components/accordions.scss'])
         @vite(['resources/scss/light/assets/elements/alert.scss'])
@@ -44,7 +44,7 @@
             crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
 
 
-        {{-- <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" /> --}}
+        {{-- <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />--}}
 
 
 
@@ -53,6 +53,7 @@
 
 
     </x-slot>
+
     <x-slot:scrollspyConfig>
         data-bs-spy="scroll" data-bs-target="#navSection" data-bs-offset="100"
     </x-slot>
@@ -389,6 +390,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                 {{ $value }}
                                                                             </option>
                                                                         @endforeach
+
                                                                         {{-- @foreach ($zones as $key => $value)
                                                                             <option value="{{ $key }}"
                                                                                 {{ !empty($saleManZones) && $saleManZones->zone_id == $key ? 'selected' : '' }}
@@ -409,10 +411,17 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div class="col-lg-0 col-12 form-group mb-2">
+                                                        <label for="account_name"
+                                                            class="form-label">
+                                                            Remarks </label>
+                                                        <textarea name="remarks" id="remarks" placeholder="Please Enter Remarks "
+                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" type="text" cols="30"
+                                                            rows="5">{{ @$detailAccountDetails->remarks }}</textarea>
+                                                    </div>
 
 
-
-                                                    <div class="invoice-detail-terms"
+                                                    {{-- <div class="invoice-detail-terms"
                                                         style="padding: 0px 0px 0px 0px !important;">
                                                         <div class="tab-content mt-5" id="pills-tabContent">
                                                             <div class="invoice-detail-items"
@@ -613,7 +622,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                                             {{ (old('product_id') == $key ? 'selected' : '') || (!empty($detailAccountProduct->product_id) ? collect($detailAccountProduct->product_id)->contains($key) : '') ? 'selected' : '' }}>
                                                                                                             {{ $value }}
                                                                                                         </option>
-                                                                                                    @endforeach --}}
+                                                                                                    @endforeach /////
                                                                                                     @foreach ($products as $key => $value)
                                                                                                         <option
                                                                                                             value="{{ $key }}"
@@ -714,14 +723,9 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                             </div>
 
                                                         </div>
-                                                    </div>
+                                                    </div> --}}
 
 
-
-
-                                                    <div class="col-lg-0 col-12 form-group mb-4">
-
-                                                    </div>
                                                     <div class="col-lg-0 col-12 form-group mb-4">
                                                         <div class="row">
                                                             {{-- <div class="col-md-6">
@@ -980,14 +984,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                 class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" type="text" cols="30"
                                                                                 rows="5">{{ @$detailAccountDetails->address }}</textarea>
                                                                         </div>
-                                                                        <div class="col-lg-0 col-12 form-group mb-2">
-                                                                            <label for="account_name"
-                                                                                class="form-label">
-                                                                                Remarks </label>
-                                                                            <textarea name="remarks" id="remarks" placeholder="Please Enter Remarks "
-                                                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" type="text" cols="30"
-                                                                                rows="5">{{ @$detailAccountDetails->remarks }}</textarea>
-                                                                        </div>
+
                                                                         <div class="col-lg-0 col-12 form-group mb-2">
                                                                             <div class="row">
                                                                                 <div
@@ -997,10 +994,10 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                         Contact No 1 </label>
                                                                                     <input id="contact_no_1"
                                                                                         type="text"
-                                                                                        name="contact_no_1"
+                                                                                        name="contact_no_1" maxlength="12"
                                                                                         value="{{ old('contact_no_1', !empty($detailAccountDetails->contact_no_1) ? $detailAccountDetails->contact_no_1 : '') }}"
                                                                                         placeholder="Please Enter Contact No 1"
-                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} contact_no_1">
                                                                                 </div>
 
                                                                                 <div
@@ -1011,10 +1008,10 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                         WhatsApp</label>
                                                                                     <input id="contact_no_2"
                                                                                         type="text"
-                                                                                        name="contact_no_2"
+                                                                                        name="contact_no_2" maxlength="12"
                                                                                         value="{{ old('contact_no_2', !empty($detailAccountDetails->contact_no_2) ? $detailAccountDetails->contact_no_2 : '') }}"
                                                                                         placeholder="Please Enter Contact No 2 "
-                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} contact_no_2">
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -1039,8 +1036,8 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                     <input id="cnic"
                                                                                         type="text" name="cnic"
                                                                                         value="{{ old('cnic', !empty($detailAccountDetails->cnic) ? $detailAccountDetails->cnic : '') }}"
-                                                                                        placeholder="Please Enter the CNIC "
-                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                                        placeholder="Please Enter the CNIC " maxlength="15"
+                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} cnic">
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -1124,6 +1121,64 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
             if (event.key === "Enter") {
                 event.preventDefault();
             }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const input = document.getElementById('contact_no_1');
+
+            input.addEventListener('input', function () {
+                // Remove all non-digit characters
+                let raw = this.value.replace(/\D/g, '');
+
+                // Limit to 11 digits max
+                if (raw.length > 11) raw = raw.slice(0, 11);
+
+                // Auto-format: insert dash after 4 digits
+                if (raw.length > 4) {
+                    this.value = raw.slice(0, 4) + '-' + raw.slice(4);
+                } else {
+                    this.value = raw;
+                }
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const input = document.getElementById('contact_no_2');
+
+            input.addEventListener('input', function () {
+                // Remove all non-digit characters
+                let raw = this.value.replace(/\D/g, '');
+
+                // Limit to 11 digits max
+                if (raw.length > 11) raw = raw.slice(0, 11);
+
+                // Auto-format: insert dash after 4 digits
+                if (raw.length > 4) {
+                    this.value = raw.slice(0, 4) + '-' + raw.slice(4);
+                } else {
+                    this.value = raw;
+                }
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const cnicInput = document.getElementById('cnic');
+
+            cnicInput.addEventListener('input', function () {
+            let raw = this.value.replace(/\D/g, ''); // Only digits
+
+            if (raw.length > 13) raw = raw.slice(0, 13); // Limit to 13 digits
+
+            let formatted = raw;
+            if (raw.length > 5 && raw.length <= 12) {
+                formatted = raw.slice(0, 5) + '-' + raw.slice(5);
+            }
+            if (raw.length > 12) {
+                formatted = raw.slice(0, 5) + '-' + raw.slice(5, 12) + '-' + raw.slice(12);
+            }
+
+            this.value = formatted;
+            });
         });
     </script>
 
@@ -1813,12 +1868,6 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
         // });
     </script>
 
-
-
-
-
-
-
     <script>
         const saveRouteUrl = "{{ route('detail-account.save') }}";
         var config = {
@@ -1841,13 +1890,11 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         {{-- <script src="{{ asset('plugins/sweetalerts2/sweetalerts2.min.js') }}"></script>
-<script src="{{ asset('plugins/sweetalerts2/custom-sweetalert.js') }}"></script> --}}
+        <script src="{{ asset('plugins/sweetalerts2/custom-sweetalert.js') }}"></script> --}}
         <script src="{{ asset('js/common.js') }}"></script>
 
         <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])
-
-
 
         <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
 
@@ -1862,16 +1909,8 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
             integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-
-
-        <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
-        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
-            integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
         <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])
+
     </x-slot>
 </x-base-layout>

@@ -20,6 +20,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CoaInventorySubSubHead;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\CoaMainHead;
 use App\Models\PriceTag;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -157,7 +158,8 @@ class CommonService
 
     public function getInventoryMainHeads()
     {
-        return CoaInventoryMainHead::pluck('name', 'id');
+        $accountArray = [4, 6];
+        return CoaMainHead::whereIn('id', $accountArray)->pluck('account_name', 'id');
     }
 
     public function uploadFile($request, $path, $fileName)

@@ -100,9 +100,9 @@
                                         <label for="validationCustom01" class="form-label">Mobile
                                             Number</label>
                                         <input type="text" name="mobile_no"
-                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                            id="mobile_no"
-                                            value="{{ isset($saleMan->mobile_no) ? $saleMan->mobile_no : '' }}"
+                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mobile_no"
+                                            id="mobile_no" maxlength="12"
+                                            value="{{ isset($saleMan->mobile_no) ? $saleMan->mobile_no : '' }} "
                                             placeholder="Enter The Mobile Number" required>
                                         @error('mobile_no')
                                             <span class="invalid-feedback">
@@ -114,9 +114,9 @@
                                         <label for="validationCustom01" class="form-label">WhatsApp
                                             Number</label>
                                         <input type="text" name="whatsapp_no"
-                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                            id="whatsapp_no"
-                                            value="{{ isset($saleMan->whatsapp_no) ? $saleMan->whatsapp_no : '' }}"
+                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} whatsapp_no"
+                                            id="whatsapp_no" maxlength="12"
+                                            value="{{ isset($saleMan->whatsapp_no) ? $saleMan->whatsapp_no : '' }} "
                                             placeholder="Enter The WhatsApp Number">
                                         @error('whatsapp_no')
                                             <span class="invalid-feedback">
@@ -245,7 +245,7 @@ $isSelected = old('zone_id') == $key || $saleManZones->pluck('zone_id')->contain
                                                 @foreach ($sectors as $key => $value)
                                                     <option value="{{ $key }}"
                                                         @php
-                                                        $isSelected = old('sector_id') == $key || $saleManSectors->pluck('sector_id')->contains($key); @endphp
+$isSelected = old('sector_id') == $key || $saleManSectors->pluck('sector_id')->contains($key); @endphp
                                                         {{ $isSelected ? 'selected' : '' }}>
                                                         {{ $value }}
                                                     </option>
@@ -263,7 +263,7 @@ $isSelected = old('zone_id') == $key || $saleManZones->pluck('zone_id')->contain
                                                 @foreach ($areas as $key => $value)
                                                     <option value="{{ $key }}"
                                                         @php
-                                                        $isSelected = old('area_id') == $key || $saleManAreas->pluck('area_id')->contains($key); @endphp
+$isSelected = old('area_id') == $key || $saleManAreas->pluck('area_id')->contains($key); @endphp
                                                         {{ $isSelected ? 'selected' : '' }}>
                                                         {{ $value }}
                                                     </option>
@@ -346,138 +346,321 @@ $isSelected = old('zone_id') == $key || $saleManZones->pluck('zone_id')->contain
         }, false);
     </script>
 
-<script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const input = document.getElementById('mobile_no');
 
-    $(document).ready(function() {
-        // Initialize select2
-        $('.select2').select2();
+            input.addEventListener('input', function() {
+                // Remove all non-digit characters
+                let raw = this.value.replace(/\D/g, '');
 
-        // Fetch and populate zones based on country
-        $('#country-dropdown').on('change', function() {
-            var idCountry = this.value;
-            $("#zone-dropdown").html(
-                '<option value="select-all">Select All</option>'); // Add Select All option
-            $.ajax({
-                url: "{{ url('api/fetch-zones') }}",
-                type: "POST",
-                data: {
-                    country_id: idCountry,
-                    _token: '{{ csrf_token() }}'
-                },
-                dataType: 'json',
-                success: function(result) {
-                    $.each(result.zones, function(key, data) {
-                        $("#zone-dropdown").append('<option value="' + data.id +
-                            '">' + data.name + '</option>');
-                    });
+                // Limit to 11 digits max
+                if (raw.length > 11) raw = raw.slice(0, 11);
+
+                // Auto-format: insert dash after 4 digits
+                if (raw.length > 4) {
+                    this.value = raw.slice(0, 4) + '-' + raw.slice(4);
+                } else {
+                    this.value = raw;
                 }
             });
         });
 
-        // Zone Dropdown Change Event
-        $('#zone-dropdown').on('change', function() {
-            var selectedValues = Array.from(this.selectedOptions).map(option => option.value);
+        document.addEventListener("DOMContentLoaded", function() {
+            const input = document.getElementById('whatsapp_no');
 
-            // If "Select All" is selected, select all other options except "Select All"
-            if (selectedValues.includes("select-all")) {
-                // Select all options except "Select All"
-                $(this).find('option').not('[value="select-all"]').prop('selected', true);
-            }
+            input.addEventListener('input', function() {
+                // Remove all non-digit characters
+                let raw = this.value.replace(/\D/g, '');
 
-            // If "Select All" is deselected, deselect all options
-            if (selectedValues.length === 0) {
-                $(this).find('option').prop('selected', false);
-            }
+                // Limit to 11 digits max
+                if (raw.length > 11) raw = raw.slice(0, 11);
 
-            // Make sure to update select2
-            $(this).trigger('change.select2');
+                // Auto-format: insert dash after 4 digits
+                if (raw.length > 4) {
+                    this.value = raw.slice(0, 4) + '-' + raw.slice(4);
+                } else {
+                    this.value = raw;
+                }
+            });
+        });
 
-            // Make sure that if "Select All" is checked, we pass all available zone ids
-            var zoneIds = selectedValues.filter(value => value !== "select-all");
-            console.log(zoneIds);
 
-            if (zoneIds.length > 0) {
-                // Proceed with fetching sectors based on selected zones
+        // $(document).ready(function() {
+        //     // Initialize select2
+        //     $('.select2').select2();
+
+        //     // Fetch and populate zones based on country
+        //     $('#country-dropdown').on('change', function() {
+        //         var idCountry = this.value;
+        //         $("#zone-dropdown").html(
+        //             '<option value="select-all">Select All</option>'); // Add Select All option
+        //         $.ajax({
+        //             url: "{{ url('api/fetch-zones') }}",
+        //             type: "POST",
+        //             data: {
+        //                 country_id: idCountry,
+        //                 _token: '{{ csrf_token() }}'
+        //             },
+        //             dataType: 'json',
+        //             success: function(result) {
+        //                 $.each(result.zones, function(key, data) {
+        //                     $("#zone-dropdown").append('<option value="' + data.id +
+        //                         '">' + data.name + '</option>');
+        //                 });
+        //             }
+        //         });
+        //     });
+
+        //     // Zone Dropdown Change Event
+        //     $('#zone-dropdown').on('change', function() {
+        //         var selectedValues = Array.from(this.selectedOptions).map(option => option.value);
+
+        //         // If "Select All" is selected, select all other options except "Select All"
+        //         if (selectedValues.includes("select-all")) {
+        //             // Select all options except "Select All"
+        //             $(this).find('option').not('[value="select-all"]').prop('selected', true);
+        //         }
+
+        //         // If "Select All" is deselected, deselect all options
+        //         if (selectedValues.length === 0) {
+        //             $(this).find('option').prop('selected', false);
+        //         }
+
+        //         // Make sure to update select2
+        //         $(this).trigger('change.select2');
+
+        //         // Make sure that if "Select All" is checked, we pass all available zone ids
+        //         var zoneIds = selectedValues.filter(value => value !== "select-all");
+        //         console.log(zoneIds);
+
+        //         if (zoneIds.length > 0) {
+        //             // Proceed with fetching sectors based on selected zones
+        //             $.ajax({
+        //                 url: "{{ url('api/fetch-sectors') }}",
+        //                 type: "POST",
+        //                 data: {
+        //                     zone_id: zoneIds,
+        //                     _token: '{{ csrf_token() }}'
+        //                 },
+        //                 dataType: 'json',
+        //                 success: function(res) {
+        //                     $('#sector-dropdown').html(
+        //                         '<option value="select-all">Select All</option>');
+        //                     $.each(res.sectors, function(key, value) {
+        //                         $("#sector-dropdown").append('<option value="' + value
+        //                             .id + '">' + value.name + '</option>');
+        //                     });
+        //                 }
+        //             });
+        //         }
+        //     });
+
+        //     // Sector Dropdown Change Event
+        //     $('#sector-dropdown').on('change', function() {
+        //         var selectedValues = Array.from(this.selectedOptions).map(option => option.value);
+
+        //         // If "Select All" is selected, select all other options except "Select All"
+        //         if (selectedValues.includes("select-all")) {
+        //             // Select all options except "Select All"
+        //             $(this).find('option').not('[value="select-all"]').prop('selected', true);
+        //         }
+
+        //         // If "Select All" is deselected, deselect all options
+        //         if (selectedValues.length === 0) {
+        //             $(this).find('option').prop('selected', false);
+        //         }
+
+        //         // Make sure to update select2
+        //         $(this).trigger('change.select2');
+
+        //         var sectorIds = selectedValues.filter(value => value !== "select-all");
+
+        //         if (sectorIds.length > 0) {
+        //             // Fetch areas based on selected sectors
+        //             $.ajax({
+        //                 url: "{{ url('api/fetch-areas') }}",
+        //                 type: "POST",
+        //                 data: {
+        //                     sector_id: sectorIds,
+        //                     _token: '{{ csrf_token() }}'
+        //                 },
+        //                 dataType: 'json',
+        //                 success: function(resul) {
+        //                     $('#area-dropdown').html(
+        //                         '<option value="select-all">Select All</option>');
+        //                     $.each(resul.areas, function(key, value) {
+        //                         $("#area-dropdown").append('<option value="' + value
+        //                             .id + '">' + value.name + '</option>');
+        //                     });
+        //                 }
+        //             });
+        //         }
+        //     });
+        //     $('#area-dropdown').on('change', function() {
+        //         var selectedValues = Array.from(this.selectedOptions).map(option => option.value);
+
+        //         // If "Select All" is selected, select all other options except "Select All"
+        //         if (selectedValues.includes("select-all")) {
+        //             // Select all options except "Select All"
+        //             $(this).find('option').not('[value="select-all"]').prop('selected', true);
+        //         }
+
+        //         // If "Select All" is deselected, deselect all options
+        //         if (selectedValues.length === 0) {
+        //             $(this).find('option').prop('selected', false);
+        //         }
+
+        //         // Make sure to update select2
+        //         $(this).trigger('change.select2');
+        //     });
+        // });
+
+        $(document).ready(function() {
+            // Initialize select2
+            $('.select2').select2();
+
+            // Fetch and populate zones based on country
+            $('#country-dropdown').on('change', function() {
+                var idCountry = this.value;
+                $("#zone-dropdown").html(
+                    '<option value="select-all">Select All</option>'); // Add Select All option
                 $.ajax({
-                    url: "{{ url('api/fetch-sectors') }}",
+                    url: "{{ url('api/fetch-zones') }}",
                     type: "POST",
                     data: {
-                        zone_id: zoneIds,
+                        country_id: idCountry,
                         _token: '{{ csrf_token() }}'
                     },
                     dataType: 'json',
-                    success: function(res) {
-                        $('#sector-dropdown').html(
-                            '<option value="select-all">Select All</option>');
-                        $.each(res.sectors, function(key, value) {
-                            $("#sector-dropdown").append('<option value="' + value
-                                .id + '">' + value.name + '</option>');
+                    success: function(result) {
+                        $.each(result.zones, function(key, data) {
+                            $("#zone-dropdown").append('<option value="' + data.id +
+                                '">' + data.name + '</option>');
                         });
                     }
                 });
-            }
+            });
+
+            $('#zone-dropdown').on('change', function() {
+                var $this = $(this);
+                var selectedValues = Array.from(this.selectedOptions).map(option => option.value);
+
+                // If "Select All" is selected
+                if (selectedValues.includes("select-all")) {
+                    // Deselect "Select All" option
+                    $this.find('option[value="select-all"]').prop('selected', false);
+
+                    // Select all other options
+                    $this.find('option').not('[value="select-all"]').prop('selected', true);
+
+                    // Update Select2 to reflect changes
+                    $this.trigger('change.select2');
+
+                    // Refresh selected values
+                    selectedValues = Array.from($this[0].selectedOptions).map(option => option.value);
+                }
+
+                // Filter out "select-all" from selected values
+                var zoneIds = selectedValues.filter(value => value !== "select-all");
+
+                if (zoneIds.length > 0) {
+                    // Proceed with fetching sectors based on selected zones
+                    $.ajax({
+                        url: "{{ url('api/fetch-sectors') }}",
+                        type: "POST",
+                        data: {
+                            zone_id: zoneIds,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        dataType: 'json',
+                        success: function(res) {
+                            $('#sector-dropdown').html(
+                                '<option value="select-all">Select All</option>');
+                            $.each(res.sectors, function(key, value) {
+                                $("#sector-dropdown").append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                        }
+                    });
+                }
+            });
+
+
+            // Sector Dropdown Change Event
+            $('#sector-dropdown').on('change', function() {
+                var $this = $(this);
+                var selectedValues = Array.from(this.selectedOptions).map(option => option.value);
+
+                // If "Select All" is selected
+                if (selectedValues.includes("select-all")) {
+                    // Deselect "Select All" option
+                    $this.find('option[value="select-all"]').prop('selected', false);
+
+                    // Select all other options
+                    $this.find('option').not('[value="select-all"]').prop('selected', true);
+
+                    // Update Select2 to reflect changes
+                    $this.trigger('change.select2');
+
+                    // Refresh selected values
+                    selectedValues = Array.from($this[0].selectedOptions).map(option => option.value);
+                }
+
+                // Filter out "select-all" from the actual request
+                var sectorIds = selectedValues.filter(value => value !== "select-all");
+
+                if (sectorIds.length > 0) {
+                    // Fetch areas based on selected sectors
+                    $.ajax({
+                        url: "{{ url('api/fetch-areas') }}",
+                        type: "POST",
+                        data: {
+                            sector_id: sectorIds,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        dataType: 'json',
+                        success: function(resul) {
+                            $('#area-dropdown').html(
+                                '<option value="select-all">Select All</option>');
+                            $.each(resul.areas, function(key, value) {
+                                $("#area-dropdown").append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                        }
+                    });
+                }
+            });
+
+            $('#area-dropdown').on('change', function() {
+                var $this = $(this);
+                var selectedValues = Array.from(this.selectedOptions).map(option => option.value);
+
+                // If "Select All" is selected
+                if (selectedValues.includes("select-all")) {
+                    // Deselect "Select All" itself
+                    $this.find('option[value="select-all"]').prop('selected', false);
+
+                    // Select all other options
+                    $this.find('option').not('[value="select-all"]').prop('selected', true);
+
+                    // Update Select2 UI
+                    $this.trigger('change.select2');
+
+                    // Refresh selected values after selecting all
+                    selectedValues = Array.from($this[0].selectedOptions).map(option => option.value);
+                }
+
+                // If nothing is selected, deselect all
+                if (selectedValues.length === 0) {
+                    $this.find('option').prop('selected', false);
+                    $this.trigger('change.select2');
+                }
+            });
+
+
         });
-
-        // Sector Dropdown Change Event
-        $('#sector-dropdown').on('change', function() {
-            var selectedValues = Array.from(this.selectedOptions).map(option => option.value);
-
-            // If "Select All" is selected, select all other options except "Select All"
-            if (selectedValues.includes("select-all")) {
-                // Select all options except "Select All"
-                $(this).find('option').not('[value="select-all"]').prop('selected', true);
-            }
-
-            // If "Select All" is deselected, deselect all options
-            if (selectedValues.length === 0) {
-                $(this).find('option').prop('selected', false);
-            }
-
-            // Make sure to update select2
-            $(this).trigger('change.select2');
-
-            var sectorIds = selectedValues.filter(value => value !== "select-all");
-
-            if (sectorIds.length > 0) {
-                // Fetch areas based on selected sectors
-                $.ajax({
-                    url: "{{ url('api/fetch-areas') }}",
-                    type: "POST",
-                    data: {
-                        sector_id: sectorIds,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    dataType: 'json',
-                    success: function(resul) {
-                        $('#area-dropdown').html(
-                            '<option value="select-all">Select All</option>');
-                        $.each(resul.areas, function(key, value) {
-                            $("#area-dropdown").append('<option value="' + value
-                                .id + '">' + value.name + '</option>');
-                        });
-                    }
-                });
-            }
-        });
-        $('#area-dropdown').on('change', function() {
-            var selectedValues = Array.from(this.selectedOptions).map(option => option.value);
-
-            // If "Select All" is selected, select all other options except "Select All"
-            if (selectedValues.includes("select-all")) {
-                // Select all options except "Select All"
-                $(this).find('option').not('[value="select-all"]').prop('selected', true);
-            }
-
-            // If "Select All" is deselected, deselect all options
-            if (selectedValues.length === 0) {
-                $(this).find('option').prop('selected', false);
-            }
-
-            // Make sure to update select2
-            $(this).trigger('change.select2');
-        });
-    });
-</script>
+    </script>
 
     <x-slot:footerFiles>
         <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>

@@ -30,12 +30,14 @@ class CoaSubHeadController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $subHeads = $this->chartOfAccountService->getListOfSubHeads($request->search);
+        $request = request()->all();
+        $dropDownData = $this->chartOfAccountService->DropDownData();
+        $subHeads = $this->chartOfAccountService->getListOfSubHeads($request);
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '24');
         $pageTitle = 'List of Sub Heads';
-        return view('chart-of-accounts.sub-head.index', compact('subHeads', 'permission', 'pageTitle'));
+        return view('chart-of-accounts.sub-head.index', compact('subHeads', 'dropDownData', 'permission', 'pageTitle'));
     }
 
     /**

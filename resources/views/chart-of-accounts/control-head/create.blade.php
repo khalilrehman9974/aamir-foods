@@ -55,7 +55,7 @@
                                             <div class="col-lg-6 col-12 ">
                                                 <form
                                                     action="{{ !empty($controlHead) ? route('control-head.update') : route('control-head.save') }}"
-                                                    method="POST" class="row g-3 needs-validation" novalidate>
+                                                    method="POST" class="row g-3 needs-validation" autocomplete="off" novalidate>
                                                     @csrf
                                                     <input type="hidden" name="id" id="id"
                                                         value="{{ isset($controlHead->id) ? $controlHead->id : '' }}" />
