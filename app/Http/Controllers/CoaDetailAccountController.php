@@ -61,7 +61,7 @@ class CoaDetailAccountController extends Controller
     public function treeView()
     {
         $pageTitle = 'Tree View';
-        
+
         $accounts = CoaDetailAccount::with([
             'getMainHead:id,account_name',
             'getControlHead:id,account_name',
@@ -141,12 +141,7 @@ class CoaDetailAccountController extends Controller
         return redirect('detail-account/list')->with('message', $message);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit($id)
     {
         $pageTitle = 'Update Detail Account';
@@ -228,18 +223,7 @@ class CoaDetailAccountController extends Controller
         return redirect('detail-account/list')->with('message', $message);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param \App\Models\coa_sub_head $coa_control_head
-     * @return \Illuminate\Http\Response
-     */
+    
     public function destroy()
     {
         return $this->commonService->deleteResource(CoaDetailAccount::class);
