@@ -526,18 +526,48 @@
 
 
                                                         </div>
-                                                        <div class="col-md-6">
-                                                            <label for="use_in" class="form-label">
-                                                                Use In</label>
-                                                            <input id="use_in" type="text" name="use_in"
-                                                                value="{{ old('use_in', !empty($detailAccount->use_in) ? $detailAccount->use_in : '') }}"
-                                                                placeholder="Use In" class="form-control" required>
-                                                            @if ($errors->has('use_in'))
-                                                                <div class="invalid-feedback">
-                                                                    {{ $errors->first('use_in') }}
-                                                                </div>
-                                                            @endif
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <label for="use_in" class="form-label">
+                                                                    Use In</label>
+                                                                <input id="use_in" type="text" name="use_in"
+                                                                    value="{{ old('use_in', !empty($detailAccount->use_in) ? $detailAccount->use_in : '') }}"
+                                                                    placeholder="Use In" class="form-control" required>
+                                                                @if ($errors->has('use_in'))
+                                                                    <div class="invalid-feedback">
+                                                                        {{ $errors->first('use_in') }}
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label for="rate" class="form-label">
+                                                                    Rate</label>
+                                                                <input id="rate" type="text" name="rate"
+                                                                    value="{{ old('rate', !empty($detailAccount->rate) ? $detailAccount->rate : '') }}"
+                                                                    placeholder="Rate" class="form-control" required>
+                                                                @if ($errors->has('rate'))
+                                                                    <div class="invalid-feedback">
+                                                                        {{ $errors->first('use_in') }}
+                                                                    </div>
+                                                                @endif
+                                                            </div>
                                                         </div>
+
+                                                        <div class="col-md-6 mt-4">
+
+                                                            <label for="rate" class="form-label">
+                                                                <b>For Update</b></label>
+
+                                                            <div class="custom-radio2">
+                                                                <input type="checkbox" id="update"
+                                                                    name="update" value="1">
+                                                                <label for="update">
+                                                                    <span class="radio-btn"></span>
+                                                                    Update
+                                                                </label>
+                                                            </div>
+                                                        </div>
+
                                                     </div>
                                                     <div class="col-lg-0 col-12 form-group mb-2">
                                                         <label for="account_name" class="form-label">

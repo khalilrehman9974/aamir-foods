@@ -95,39 +95,49 @@ class ReportController extends Controller
 
         $accountLedgers = DB::table('account_ledgers')
             ->where('party_id', $request->party_id)
+            ->whereNull('deleted_at')
             ->when($fromDate && $toDate, function ($query) use ($fromDate, $toDate) {
                 return $query->whereBetween('date', [$fromDate, $toDate]);
             })
+            ->orderByRaw("CASE WHEN document_number = 'OPENING BALANCE' THEN 0 ELSE 1 END")
             ->orderBy('date', 'asc')
             ->get();
 
-        $party = DB::selectOne("SELECT * FROM detail_accounts WHERE id = ?", [$request['party_id']]);
+        $party = DB::selectOne("SELECT * FROM detail_accounts WHERE id = ?  AND deleted_at IS NULL", [$request['party_id']]);
 
-        $partyDetailAccount = DB::selectOne("SELECT * FROM coa_det_account_details WHERE det_account_code = ?", [$party->id]);
+        $partyDetailAccount = DB::selectOne(
+            "SELECT * FROM coa_det_account_details WHERE det_account_code = ? AND deleted_at IS NULL",
+            [$party->id]
+        );
 
-        // $subSubHead = CoaSubSubHead::where('id', $party->sub_sub_head)->value('account_name');
-        // $subHead = CoaSubHead::where('id', $party->sub_head)->value('account_name');
-        // $controlHead = CoaControlHead::where('id', $party->control_head)->value('account_name');
-        // $mainHead = CoaMainHead::where('id', $party->main_head)->value('account_name');
-        // $saleMan = SaleMan::where('id', $party->saleMan_id)->value('name');
 
-        $subSubHead = DB::selectOne("SELECT account_name FROM coa_sub_sub_heads WHERE id = ?", [$party->sub_sub_head])->account_name ?? null;
+        $subSubHead = DB::selectOne(
+            "SELECT account_name FROM coa_sub_sub_heads WHERE id = ? AND deleted_at IS NULL",
+            [$party->sub_sub_head]
+        )?->account_name ?? null;
 
-        $subHead = DB::selectOne("SELECT account_name FROM coa_sub_heads WHERE id = ?", [$party->sub_head])->account_name ?? null;
+        $subHead = DB::selectOne(
+            "SELECT account_name FROM coa_sub_heads WHERE id = ? AND deleted_at IS NULL",
+            [$party->sub_head]
+        )?->account_name ?? null;
 
-        $controlHead = DB::selectOne("SELECT account_name FROM coa_control_heads WHERE id = ?", [$party->control_head])->account_name ?? null;
+        $controlHead = DB::selectOne(
+            "SELECT account_name FROM coa_control_heads WHERE id = ? AND deleted_at IS NULL",
+            [$party->control_head]
+        )?->account_name ?? null;
 
-        $mainHead = DB::selectOne("SELECT account_name FROM coa_main_heads WHERE id = ?", [$party->main_head])->account_name ?? null;
+        $mainHead = DB::selectOne(
+            "SELECT account_name FROM coa_main_heads WHERE id = ? AND deleted_at IS NULL",
+            [$party->main_head]
+        )?->account_name ?? null;
 
-        $saleMan = DB::selectOne("SELECT name FROM sale_mans WHERE id = ?", [$party->saleMan_id])->name ?? null;
+        $saleMan = DB::selectOne(
+            "SELECT name FROM sale_mans WHERE id = ? AND deleted_at IS NULL",
+            [$party->saleMan_id]
+        )?->name ?? null;
 
-        // $fetchBelts = CoaDetailAccountSectors::where('master_account_id', $party->id)->pluck('sector_id');
-        // $sectors = Sector::whereIn('id', $fetchBelts)->pluck('name');
 
-        // $fetchAreas = CoaDetailAccountArea::where('master_account_id', $party->id)->pluck('area_id');
-        // $areas = Area::whereIn('id', $fetchAreas)->pluck('name');
-
-        $fetchBelts = DB::select("SELECT sector_id FROM coa_detail_account_sectors WHERE master_account_id = ?", [$party->id]);
+        $fetchBelts = DB::select("SELECT sector_id FROM coa_detail_account_sectors WHERE master_account_id = ?  AND deleted_at IS NULL", [$party->id]);
         $beltIds = collect($fetchBelts)->pluck('sector_id');
         $sectors = [];
         if ($beltIds->isNotEmpty()) {
@@ -136,7 +146,7 @@ class ReportController extends Controller
             $sectors = collect($sectorsResult)->pluck('name');
         }
 
-        $fetchAreas = DB::select("SELECT area_id FROM coa_detail_account_areas WHERE master_account_id = ?", [$party->id]);
+        $fetchAreas = DB::select("SELECT area_id FROM coa_detail_account_areas WHERE master_account_id = ?  AND deleted_at IS NULL", [$party->id]);
         $areaIds = collect($fetchAreas)->pluck('area_id');
         $areas = [];
         if ($areaIds->isNotEmpty()) {
@@ -353,8 +363,8 @@ class ReportController extends Controller
             )
             ->get()
             ->map(function ($row) {
-                $debitBalance =$row->opening_balance + $row->total_debit ;
-                $creditBalance =$row->opening_balance - $row->total_credit;
+                $debitBalance = $row->opening_balance + $row->total_debit;
+                $creditBalance = $row->opening_balance - $row->total_credit;
                 $closingBalance = $debitBalance - $creditBalance;
 
                 $row->debit_balance = $debitBalance;

@@ -199,6 +199,8 @@
 </head>
 
 <body>
+
+
     <?php
     if (!function_exists('calculateStockBalance')) {
         function calculateStockBalance($openingBalance, $entries)
@@ -206,18 +208,26 @@
             $balance = (float) $openingBalance;
 
             foreach ($entries as $key => $entry) {
-                // Handle credit and debit values
-                if (!empty($entry->credit)) {
-                    $balance -= (float) $entry->credit;
-                }
+                // For the first entry, set the balance as debit or credit
+                if ($key === 0) {
+                    if (!empty($entry->debit)) {
+                        $balance = (float) $entry->debit; // Set balance to debit for the first entry
+                    } elseif (!empty($entry->credit)) {
+                        $balance = -(float) $entry->credit; // Set balance to negative credit for the first entry
+                    }
+                } else {
+                    // Handle credit and debit values for subsequent entries
+                    if (!empty($entry->credit)) {
+                        $balance -= (float) $entry->credit; // Decrease balance by credit amount
+                    }
 
-                if (!empty($entry->debit)) {
-                    $balance += (float) $entry->debit;
+                    if (!empty($entry->debit)) {
+                        $balance += (float) $entry->debit; // Increase balance by debit amount
+                    }
                 }
 
                 // Format values for readability
                 $entries[$key]->Balance = number_format($balance, 2);
-                // $entries[$key]['Val_of_Stock'] = number_format($valOfStock, 2);
             }
 
             return $entries;
@@ -225,10 +235,11 @@
     }
 
     $entries = $accountLedgers;
-    $openingBalance = $partyDetailAccount->opening_balance ?? 0;
+    $openingBalance = 0;
     $result = calculateStockBalance($openingBalance, $entries);
 
     ?>
+
 
 
 
@@ -280,7 +291,7 @@
                 </div>
                 <div style="width: 30%; text-align: right;">
                     <p><b>Credit Limit:</b> <span>
-                            {{ $partyDetailAccount->credit_limit }}
+                            {{ $partyDetailAccount->credit_limit ?? '' }}
                         </span></p>
                 </div>
 
@@ -294,7 +305,7 @@
                 </div>
                 <div style="width: 30%; text-align: right;">
                     <p><b>Credit Days:</b> <span>
-                            {{ $partyDetailAccount->credit_days }}
+                            {{ $partyDetailAccount->credit_days ?? '' }}
                         </span></p>
 
                 </div>
@@ -338,7 +349,7 @@
                 <div style="width: 30%; text-align: right;">
 
                     <p><b>Email:</b> <span>
-                            {{ $partyDetailAccount->email }}
+                            {{ $partyDetailAccount->email ?? '' }}
                         </span></p>
                 </div>
 
@@ -347,7 +358,7 @@
                 <div style="width: 70%; text-align: left;">
 
                     <p><b>WhatsApp #:</b> <span>
-                            {{ $partyDetailAccount->contact_no_2 }}
+                            {{ $partyDetailAccount->contact_no_2 ?? '' }}
                         </span></p>
                 </div>
 
@@ -381,7 +392,7 @@
                 </thead>
                 <tbody>
 
-                    <tr>
+                    {{-- <tr>
                         <td></td>
                         <td>OPENING BALANCE</td>
                         <td></td>
@@ -397,7 +408,7 @@
                         </td>
                         <td style="text-align: end;"></td>
                         <td style="text-align: end;"></td>
-                    </tr>
+                    </tr> --}}
 
                     @foreach ($result as $accountLedger)
                         <tr>

@@ -15,6 +15,7 @@ use App\Services\CoaInventorySubHeadService;
 use App\Http\Requests\CoInvDetailAccountRequest;
 use App\Models\CoaDetAccountDetail;
 use App\Models\CoaMainHead;
+use App\Models\DetailAccountProducts;
 use App\Models\InventorySubSubHeadPriceTagModel;
 use App\Services\CoaInventoryDetailAccountService;
 
@@ -79,8 +80,9 @@ class ChartOfInvDetailAccountController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CoInvDetailAccountRequest $request)
+    public function store(Request $request)
     {
+
 
         $inventoryAccount = CoaInventoryDetailAccount::where('id', $request['id'])->value('name');
         $party = CoaDetailAccount::where('account_name', $inventoryAccount)->first();
@@ -96,6 +98,10 @@ class ChartOfInvDetailAccountController extends Controller
             $data['image'] = $fileName;
         }
         $saved = $this->coInventoryDetailAccountService->findUpdateOrCreate(CoaInventoryDetailAccount::class, ['id' => !empty(request('id')) ? request('id') : null], $data);
+
+        $partyPriceData = $this->coInventoryDetailAccountService->prepareProductAssingData($request, $saved->id);
+        $this->coInventoryDetailAccountService->ProductAssing($partyPriceData);
+
         if ($saved && $request->file('image')) {
             $this->uploadService->uploadSingleFile($request->image, $fileName, config('constants.file_upload.inventory'));
         }
@@ -115,6 +121,8 @@ class ChartOfInvDetailAccountController extends Controller
             $coaDetailAccountDetail = $this->coInventoryDetailAccountService->prepareCoaDetailAccountDetailData($request);
             CoaDetAccountDetail::insert($coaDetailAccountDetail);
         }
+
+
 
         $message = request('id') ? config('constants.update') : config('constants.add');
         session()->flash('message', $message);
@@ -154,6 +162,7 @@ class ChartOfInvDetailAccountController extends Controller
 
     public function update(Request $request)
     {
+
         $session = $this->commonService->getSession();
         $inventoryAccount = CoaInventoryDetailAccount::where('id', $request['id'])->value('name');
         $party = CoaDetailAccount::where('account_name', $inventoryAccount)->first();
@@ -186,6 +195,13 @@ class ChartOfInvDetailAccountController extends Controller
 
             $coaDetailAccountDetail = $this->coInventoryDetailAccountService->prepareCoaDetailAccountDetailData($request);
             CoaDetAccountDetail::insert($coaDetailAccountDetail);
+        }
+
+        if ($request->update_status === 1) {
+            DetailAccountProducts::where('product_id', $request['id'])->delete();
+            
+            $partyPriceData = $this->coInventoryDetailAccountService->prepareProductAssingData($request, $saved->id);
+            $this->coInventoryDetailAccountService->ProductAssing($partyPriceData);
         }
 
         $message = request('id') ? config('constants.update') : config('constants.add');

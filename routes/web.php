@@ -103,9 +103,12 @@ Route::group(['middleware' => ['auth']], function () {
     //Detail account routes
     Route::group(['prefix' => 'detail-account', 'middleware' => 'auth'], function () {
         Route::get('list', ['as' => 'detail-account.list', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@index']);
+        Route::get('pricelist', ['as' => 'detail-account.pricelist', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@pricelist']);
         Route::get('treeView', ['as' => 'detail-account.treeView', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@treeView']);
+        Route::get('setPrice', ['as' => 'detail-account.setPrice', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@setPrice']);
         Route::get('create', ['as' => 'detail-account.create', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@create']);
         Route::post('save', ['as' => 'detail-account.save', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@store']);
+        Route::post('savePrice', ['as' => 'detail-account.savePrice', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@savePrice']);
         Route::get('edit/{id}', ['as' => 'detail-account.edit', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@edit']);
         Route::post('update', ['as' => 'detail-account.update', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@update']);
         Route::delete('delete/{id}', ['as' => 'detail-account.delete', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@destroy']);

@@ -18,11 +18,21 @@ class DetailAccountProducts extends Model
     ];
 
     public function detailAccountCode(){
-        return $this->hasMany(CoaDetailAccount::class,'account_code', 'detail_account_id');
+        return $this->hasOne(CoaDetailAccount::class, 'id', 'detail_account_id');
     }
 
     public function getProducts()
     {
-        return $this->hasOne(CoaInventoryDetailAccount::class, 'code', 'product_id');
+        return $this->hasOne(CoaInventoryDetailAccount::class, 'id', 'product_id');
+    }
+
+    public function getCoaFourthLevel()
+    {
+        return $this->hasOne(CoaSubSubHead::class, 'id', 'master_third_level');
+    }
+
+    public function priceTag()
+    {
+        return $this->hasOne(PriceTag::class, 'id', 'master_price_tag');
     }
 }

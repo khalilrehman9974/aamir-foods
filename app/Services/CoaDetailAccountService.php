@@ -68,7 +68,23 @@ class CoaDetailAccountService
         return $detailAccounts;
     }
 
+    public function getListOfDetailAccountsPrice($request)
+    {
+        $q = DetailAccountProducts::query();
 
+        if (!empty($request['detail_account_id'])) {
+            $q->where('detail_account_id', $request['detail_account_id']);
+        } elseif (!empty($request['master_third_level'])) {
+            $q->where('master_third_level', $request['master_third_level']);
+        } elseif (!empty($request['master_price_tag'])) {
+            $q->where('master_price_tag', $request['master_price_tag']);
+        }  elseif (!empty($request['product_id'])) {
+            $q->where('product_id', $request['product_id']);
+        }
+
+        $detailAccountsProducts = $q->with('detailAccountCode', 'priceTag', 'getProducts', 'getCoaFourthLevel')->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
+        return $detailAccountsProducts;
+    }
 
 
 
@@ -92,13 +108,14 @@ class CoaDetailAccountService
     {
         $result = [
             'saleMans' => SaleMan::pluck('name', 'id'),
-            'invetoryThirdLevel' => CoaInventorySubSubHead::pluck('name', 'id'),
+            'invetoryThirdLevel' => CoaSubSubHead::pluck('account_name', 'id'),
             'products' => CoaInventoryDetailAccount::pluck('name', 'id'),
             'priceTags' => PriceTag::pluck('name', 'id'),
             'mainHeads' => CoaMainHead::pluck('account_name', 'id'),
             'controlHeads' => CoaControlHead::pluck('account_name', 'id'),
             'subHeads' => CoaSubHead::pluck('account_name', 'id'),
             'subSubHeads' => CoaSubSubHead::pluck('account_name', 'id'),
+            'parties' => CoaDetailAccount::pluck('account_name', 'id'),
 
         ];
 
@@ -334,31 +351,7 @@ class CoaDetailAccountService
 
     public function prepareAccountCreditData($request, $detailAccountMasterId)
     {
-        $party = CoaDetailAccount::where('id', $request['party_id'])->value('account_name');
-
-        return [
-            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
-            'invoice_id' => $detailAccountMasterId,
-            'party_id' =>  $request['party_id'],
-            'document_number' => 'P/I' . '-' . $detailAccountMasterId,
-            'rate' => config('constants.ZERO'),
-            'bilty_no' => null,
-            'transporter_id' => null,
-            'total_quantity' => config('constants.ZERO'),
-            'measurementType' => config('constants.ZERO'),
-            'bags' => config('constants.ZERO'),
-            'description' => 'Purchase From' . ' ' . $party . '<br>' .  $request['remarks'],
-            'debit' => config('constants.ZERO'),
-            'credit' =>  $request['gross_bill'],
-            'created_at' => now(),
-            'updated_at' => now(),
-        ];
-    }
-
-    public function prepareAccountDebitData($request, $detailAccountMasterId)
-    {
-
-
+        $creditValue = abs($request['opening_balance']);
         return [
             'date' => Carbon::now()->format('Y-m-d'),
             'invoice_id' => $detailAccountMasterId,
@@ -371,10 +364,170 @@ class CoaDetailAccountService
             'measurementType' => config('constants.ZERO'),
             'bags' => config('constants.ZERO'),
             'description' => 'OPENING BALANCE',
-            'debit' => $request['opening_balance'] ?? 0,
+            'debit' => config('constants.ZERO'),
+            'credit' =>  $creditValue ?? 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function prepareAccountDebitData($request, $detailAccountMasterId)
+    {
+        $debitValue = abs($request['opening_balance']);
+        return [
+            'date' => Carbon::now()->format('Y-m-d'),
+            'invoice_id' => $detailAccountMasterId,
+            'party_id' =>  '107',
+            'document_number' => 'OPENING BALANCE',
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => 'Opening Balance of ' . $request['account_name'],
+            'debit' => $debitValue ?? 0,
             'credit' =>  config('constants.ZERO'),
             'created_at' => now(),
             'updated_at' => now(),
         ];
+    }
+
+
+    public function prepareDetailAccountCreditData($request, $detailAccountMasterId)
+    {
+        $creditValue = abs($request['opening_balance']);
+
+        return [
+            'date' => Carbon::now()->format('Y-m-d'),
+            'invoice_id' => $detailAccountMasterId,
+            'party_id' =>  '107',
+            'document_number' => 'OPENING BALANCE',
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => 'Opening Balance of ' . $request['account_name'],
+            'debit' => config('constants.ZERO'),
+            'credit' =>  $creditValue ?? 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function prepareDetailAccountDebitData($request, $detailAccountMasterId)
+    {
+        $debitValue = abs($request['opening_balance']);
+        return [
+            'date' => Carbon::now()->format('Y-m-d'),
+            'invoice_id' => $detailAccountMasterId,
+            'party_id' =>  $detailAccountMasterId,
+            'document_number' => 'OPENING BALANCE',
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => 'OPENING BALANCE',
+            'debit' => $debitValue ?? 0,
+            'credit' =>  config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function prepareDetailAccountPricesData($request)
+    {
+        dd($request);
+
+        // $productId = null;
+
+        if ($request['product_id'] === 'select-all') {
+            $inventoryAccounts = CoaInventoryDetailAccount::where('sub_sub_head', $request['master_third_level'])
+                ->where('priceTag_id', $request['master_price_tag'])
+                ->get();
+            dd($inventoryAccounts);
+            $productId = null;
+        } else {
+            $productId = $request['product_id'];
+        }
+
+        return [
+            'detail_account_id' => $request['detail_account_id'],
+            'master_price_tag' => $request['master_price_tag'],
+            'master_third_level' => $request['master_third_level'],
+            'product_id' => $productId,
+            'price' => $request['price'] ?? null,
+            'discount' => $request['discount'] ?? null,
+            'scheme' => $request['scheme'],
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+
+    // public function prepareProductAssingData($request, $masterId)
+    // {
+
+    //     $productIds = CoaInventoryDetailAccount::whereNull('deleted_at')->pluck('id')->toArray();
+
+    //     return [
+    //         'detail_account_id' => $masterId,
+    //         'master_price_tag' => $request['priceTag_id'],
+    //         'master_third_level' => $request['sub_sub_head'],
+    //         'product_id' => $productIds,
+    //         'price' => $request['rate'],
+    //         'discount' => config('constants.ZERO'),
+    //         'scheme' => config('constants.ZERO'),
+    //         'created_at' => now(),
+    //         'updated_at' => now()
+    //     ];
+    // }
+
+    public function prepareProductAssingData($request, $detailAccountId)
+    {
+        // Fetch all products that are not soft-deleted
+        $products = CoaInventoryDetailAccount::whereNull('deleted_at')->get();
+        // dd($products);
+        $entries = [];
+
+        foreach ($products as $product) {
+            $entries[] = [
+                'detail_account_id' => $detailAccountId,
+                'master_price_tag' => $product['priceTag_id'], // assuming a single value
+                'master_third_level' => $product['sub_sub_head'], // assuming a single value
+                'product_id' => $product->id,
+                'price' => $product['rate'], // common rate for all products
+                'discount' => config('constants.ZERO'),
+                'scheme' => config('constants.ZERO'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+
+        // Insert all prepared entries into the database
+        DetailAccountProducts::insert($entries);
+    }
+
+
+    public function ProductAssing($data)
+    {
+        foreach ($data['detail_account_id'] as $key => $value) {
+            if (!empty($data['detail_account_id'][$key])) {
+                $rec['detail_account_id'] = $data['detail_account_id'][$key];
+                $rec['master_price_tag'] = $data['master_price_tag'];
+                $rec['master_third_level'] = $data['master_third_level'];
+                $rec['product_id'] = $data['product_id'];
+                $rec['price'] = $data['price'];
+                $rec['discount'] = $data['discount'];
+                $rec['scheme'] = $data['scheme'];
+
+                DetailAccountProducts::create($rec);
+            }
+        }
     }
 }

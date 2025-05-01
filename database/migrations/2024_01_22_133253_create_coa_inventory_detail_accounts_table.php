@@ -35,6 +35,7 @@ return new class extends Migration
             $table->string('opening_stock');
             $table->integer('stock_rate');
             $table->string('use_in');
+            $table->integer('rate');
             $table->string('remarks');
             $table->integer('created_by');
             $table->integer('updated_by');

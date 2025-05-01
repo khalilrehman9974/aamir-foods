@@ -35,12 +35,12 @@
             <div class="navbar-nav theme-brand flex-row  text-center">
                 <div class="nav-logo">
                     <div class="nav-item theme-logo">
-                        <a href="{{ getRouterValue() }}/home">
+                        <a href="{{ route('home') }}">
                             <img alt="image-404" src="{{ asset('images/logo.png') }}" class="light-element theme-logo">
                         </a>
                     </div>
                     <div class="nav-item theme-text">
-                        <a href="{{ getRouterValue() }}/home" class="nav-link"> Amir Foods </a>
+                        <a href="{{ route('home') }}" class="nav-link"> Amir Foods </a>
                     </div>
                 </div>
                 <div class="nav-item sidebar-toggle">
@@ -71,7 +71,7 @@
             @endif
             <div class="shadow-bottom"></div>
             <ul class="list-unstyled menu-categories" id="accordionExample">
-                <li class="menu {{ Request::is('*/dashboard/*') ? 'active' : '' }}">
+                {{-- <li class="menu {{ Request::is('*/dashboard/*') ? 'active' : '' }}">
                     <a href="#dashboard" data-bs-toggle="collapse"
                         aria-expanded="{{ Request::is('*/dashboard/*') ? 'true' : 'false' }}" class="dropdown-toggle">
                         <div class="">
@@ -100,7 +100,7 @@
                             <a href="{{ getRouterValue() }}/dashboard/sales"> Sales </a>
                         </li>
                     </ul>
-                </li>
+                </li> --}}
                 @if (
                     (!empty($chartofAccountPermission->menu_access) && $chartofAccountPermission->menu_access == 1) ||
                         \Illuminate\Support\Facades\Auth::user()->is_admin == 1)
@@ -146,12 +146,20 @@
                                 <a href="{{ route('detail-account.list') }}"> Detail Account </a>
                             </li>
                             <li class="{{ Request::routeIs('chart-of-account-detail-account') ? 'active' : '' }}">
+                                <a href="{{ route('co-inventory-detail-account.list') }}">Inv Detail Account </a>
+                            </li>
+                            <li class="{{ Request::routeIs('chart-of-account-detail-account') ? 'active' : '' }}">
                                 <a href="{{ route('detail-account.treeView') }}"> Tree View</a>
                             </li>
+
+                            <li class="{{ Request::routeIs('chart-of-account-detail-account') ? 'active' : '' }}">
+                                <a href="{{ route('detail-account.pricelist') }}"> Price Setting</a>
+                            </li>
+
                         </ul>
                     </li>
                 @endif
-                <li class="menu {{ Request::is('*/app/chart-of-inventory/*') ? 'active' : '' }}">
+                {{-- <li class="menu {{ Request::is('*/app/chart-of-inventory/*') ? 'active' : '' }}">
                     <a href="#chart-of-inventory" data-bs-toggle="collapse"
                         aria-expanded="{{ Request::is('*/app/chart-of-inventory/*') ? 'true' : 'false' }}"
                         class="dropdown-toggle">
@@ -184,12 +192,10 @@
                         </li>
                         <li class="{{ Request::routeIs('chart-of-account-control-head') ? 'active' : '' }}">
                             <a href="{{ route('co-inventory-sub-sub-head.list') }}">Sub Sub Head </a>
-                        </li> --}}
-                        <li class="{{ Request::routeIs('chart-of-account-detail-account') ? 'active' : '' }}">
-                            <a href="{{ route('co-inventory-detail-account.list') }}"> Detail Account </a>
                         </li>
+
                     </ul>
-                </li>
+                </li> --}}
                 <li class="menu {{ Request::is('*/app/invoice/*') ? 'active' : '' }}">
                     <a href="#invoice" data-bs-toggle="collapse"
                         aria-expanded="{{ Request::is('*/app/invoice/*') ? 'true' : 'false' }}"

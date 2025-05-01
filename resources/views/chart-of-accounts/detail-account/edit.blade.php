@@ -417,7 +417,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                             Remarks </label>
                                                         <textarea name="remarks" id="remarks" placeholder="Please Enter Remarks "
                                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" type="text" cols="30"
-                                                            rows="5">{{ @$detailAccountDetails->remarks }}</textarea>
+                                                            rows="5">{{ optional($detailAccountDetails->first())->remarks }}</textarea>
                                                     </div>
 
 
@@ -840,6 +840,22 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                             @endif
 
                                                         </div>
+                                                        <div class="row">
+                                                            <div class="col-md-6 mt-4">
+
+                                                                <label for="rate" class="form-label">
+                                                                    <b>For Update</b></label>
+
+                                                                <div class="custom-radio2">
+                                                                    <input type="checkbox" id="update"
+                                                                        name="update" value="1">
+                                                                    <label for="update">
+                                                                        <span class="radio-btn"></span>
+                                                                        Update
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
 
                                                     {{-- <div id="defaultAccordionOne" class="collapse"
@@ -982,7 +998,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                 Address </label>
                                                                             <textarea name="address" id="address" placeholder="Please Enter Address "
                                                                                 class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" type="text" cols="30"
-                                                                                rows="5">{{ @$detailAccountDetails->address }}</textarea>
+                                                                                rows="5">{{ optional($detailAccountDetails->first())->address }}</textarea>
                                                                         </div>
 
                                                                         <div class="col-lg-0 col-12 form-group mb-2">
@@ -995,7 +1011,8 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                     <input id="contact_no_1"
                                                                                         type="text"
                                                                                         name="contact_no_1" maxlength="12"
-                                                                                        value="{{ old('contact_no_1', !empty($detailAccountDetails->contact_no_1) ? $detailAccountDetails->contact_no_1 : '') }}"
+                                                                                        {{-- value="{{ old('contact_no_1', !empty($detailAccountDetails->contact_no_1) ? $detailAccountDetails->contact_no_1 : '') }}" --}}
+                                                                                        value="{{ old('contact_no_1', optional($detailAccountDetails->first())->contact_no_1) }}"
                                                                                         placeholder="Please Enter Contact No 1"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} contact_no_1">
                                                                                 </div>
@@ -1009,7 +1026,8 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                     <input id="contact_no_2"
                                                                                         type="text"
                                                                                         name="contact_no_2" maxlength="12"
-                                                                                        value="{{ old('contact_no_2', !empty($detailAccountDetails->contact_no_2) ? $detailAccountDetails->contact_no_2 : '') }}"
+                                                                                        {{-- value="{{ old('contact_no_2', !empty($detailAccountDetails->contact_no_2) ? $detailAccountDetails->contact_no_2 : '') }}" --}}
+                                                                                        value="{{ old('contact_no_2', optional($detailAccountDetails->first())->contact_no_2) }}"
                                                                                         placeholder="Please Enter Contact No 2 "
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} contact_no_2">
                                                                                 </div>
@@ -1024,7 +1042,8 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                         Email </label>
                                                                                     <input id="email"
                                                                                         type="text" name="email"
-                                                                                        value="{{ old('email', !empty($detailAccountDetails->email) ? $detailAccountDetails->email : '') }}"
+                                                                                        {{-- value="{{ old('email', !empty($detailAccountDetails->email) ? $detailAccountDetails->email : '') }}" --}}
+                                                                                        value="{{ old('email', optional($detailAccountDetails->first())->email) }}"
                                                                                         placeholder="Please Enter the email "
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
                                                                                 </div>
@@ -1035,7 +1054,8 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                         CNIC </label>
                                                                                     <input id="cnic"
                                                                                         type="text" name="cnic"
-                                                                                        value="{{ old('cnic', !empty($detailAccountDetails->cnic) ? $detailAccountDetails->cnic : '') }}"
+                                                                                        {{-- value="{{ old('cnic', !empty($detailAccountDetails->cnic) ? $detailAccountDetails->cnic : '') }}" --}}
+                                                                                        value="{{ old('cnic', optional($detailAccountDetails->first())->cnic) }}"
                                                                                         placeholder="Please Enter the CNIC " maxlength="15"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} cnic">
                                                                                 </div>
@@ -1049,7 +1069,8 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                     Limit </label>
                                                                                 <input id="credit-limit"
                                                                                     type="text" name="credit_limit"
-                                                                                    value="{{ old('credit_limit', !empty($detailAccountDetails->credit_limit) ? $detailAccountDetails->credit_limit : '') }}"
+                                                                                    {{-- value="{{ old('credit_limit', !empty($detailAccountDetails->credit_limit) ? $detailAccountDetails->credit_limit : '') }}" --}}
+                                                                                    value="{{ old('credit_limit', optional($detailAccountDetails->first())->credit_limit) }}"
                                                                                     placeholder="Please Enter Detail Account "
                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
                                                                             </div>
@@ -1061,7 +1082,8 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                 <input id="opening-balance"
                                                                                     type="text"
                                                                                     name="opening_balance"
-                                                                                    value="{{ old('opening_balance', !empty($detailAccountDetails->opening_balance) ? $detailAccountDetails->opening_balance : '') }}"
+                                                                                    {{-- value="{{ old('opening_balance', !empty($detailAccountDetails->opening_balance) ? $detailAccountDetails->opening_balance : '') }}" --}}
+                                                                                    value="{{ old('opening_balance', optional($detailAccountDetails->first())->opening_balance) }}"
                                                                                     placeholder="Please Enter Opening Balance "
                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
                                                                             </div>
@@ -1074,7 +1096,8 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                     Days </label>
                                                                                 <input id="credit-days"
                                                                                     type="text" name="credit_days"
-                                                                                    value="{{ old('credit_days', !empty($detailAccountDetails->credit_days) ? $detailAccountDetails->credit_days : '') }}"
+                                                                                    {{-- value="{{ old('credit_days', !empty($detailAccountDetails->credit_days) ? $detailAccountDetails->credit_days : '') }}" --}}
+                                                                                    value="{{ old('credit_days', optional($detailAccountDetails->first())->credit_days) }}"
                                                                                     placeholder="Please Enter credit Days "
                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
                                                                             </div>

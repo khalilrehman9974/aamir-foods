@@ -14,6 +14,7 @@ use App\Models\CoaInventorySubHead;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CoaInventorySubSubHead;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\DetailAccountProducts;
 
 /*
  * Class BankService
@@ -186,6 +187,40 @@ class CoaInventoryDetailAccountService
         return CoaSubSubHead::where('sub_head', $subHead)->pluck('account_name', 'id'); //change here
     }
 
+    public function prepareProductAssingData($request, $masterId)
+    {
+
+        $partyIds = CoaDetailAccount::whereNull('deleted_at')->pluck('id')->toArray();
+
+        return [
+            'detail_account_id' => $partyIds,
+            'master_price_tag' => $request['priceTag_id'],
+            'master_third_level' => $request['sub_sub_head'],
+            'product_id' => $masterId,
+            'price' => $request['rate'],
+            'discount' => config('constants.ZERO'),
+            'scheme' => config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now()
+        ];
+    }
+
+    public function ProductAssing($data)
+    {
+        foreach ($data['detail_account_id'] as $key => $value) {
+            if (!empty($data['detail_account_id'][$key])) {
+                $rec['detail_account_id'] = $data['detail_account_id'][$key];
+                $rec['master_price_tag'] = $data['master_price_tag'];
+                $rec['master_third_level'] = $data['master_third_level'];
+                $rec['product_id'] = $data['product_id'];
+                $rec['price'] = $data['price'];
+                $rec['discount'] = $data['discount'];
+                $rec['scheme'] = $data['scheme'];
+
+                DetailAccountProducts::create($rec);
+            }
+        }
+    }
 }
 
 
