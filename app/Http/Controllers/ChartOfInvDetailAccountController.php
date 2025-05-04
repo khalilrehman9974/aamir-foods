@@ -3,19 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\PriceTag;
+use App\Models\CoaMainHead;
 use Illuminate\Http\Request;
+use App\Models\AccountLedger;
 use App\Services\CommonService;
 use App\Models\CoaDetailAccount;
+use Illuminate\Support\Facades\DB;
+use App\Models\CoaDetAccountDetail;
 use App\Models\CoaInventorySubHead;
 use App\Services\PermissionService;
 use App\Services\UploadFileService;
 use Illuminate\Support\Facades\Auth;
+use App\Models\DetailAccountProducts;
 use App\Models\CoaInventoryDetailAccount;
 use App\Services\CoaInventorySubHeadService;
 use App\Http\Requests\CoInvDetailAccountRequest;
-use App\Models\CoaDetAccountDetail;
-use App\Models\CoaMainHead;
-use App\Models\DetailAccountProducts;
 use App\Models\InventorySubSubHeadPriceTagModel;
 use App\Services\CoaInventoryDetailAccountService;
 
@@ -83,50 +85,61 @@ class ChartOfInvDetailAccountController extends Controller
     public function store(Request $request)
     {
 
+        // DB::beginTransaction();
+        // try {
 
-        $inventoryAccount = CoaInventoryDetailAccount::where('id', $request['id'])->value('name');
-        $party = CoaDetailAccount::where('account_name', $inventoryAccount)->first();
-        $partyId = $party ? $party->id : null;
-        $session = $this->commonService->getSession();
-        $data = $request->except('_token', 'id');
-        $data['created_by'] = Auth::user()->id;
-        $data['updated_by'] = Auth::user()->id;
-        $data['business_id'] = $session->business_id;
-        $data['f_year_id'] = $session->financial_year;
-        if ($request->image) {
-            $fileName = $request->image->getClientOriginalName();
-            $data['image'] = $fileName;
-        }
-        $saved = $this->coInventoryDetailAccountService->findUpdateOrCreate(CoaInventoryDetailAccount::class, ['id' => !empty(request('id')) ? request('id') : null], $data);
+            $inventoryAccount = CoaInventoryDetailAccount::where('id', $request['id'])->value('name');
+            $party = CoaDetailAccount::where('account_name', $inventoryAccount)->first();
+            $partyId = $party ? $party->id : null;
 
-        $partyPriceData = $this->coInventoryDetailAccountService->prepareProductAssingData($request, $saved->id);
-        $this->coInventoryDetailAccountService->ProductAssing($partyPriceData);
+            $data = $request->except('_token', 'id');
+            if ($request->image) {
+                $fileName = $request->image->getClientOriginalName();
+                $data['image'] = $fileName;
+            }
 
-        if ($saved && $request->file('image')) {
-            $this->uploadService->uploadSingleFile($request->image, $fileName, config('constants.file_upload.inventory'));
-        }
-
-        if ($party != null) {
-
-            $coaDetailAccount = $this->coInventoryDetailAccountService->prepareCoaDetailAccountData($request);
-            CoaDetailAccount::where('id', $partyId)->update($coaDetailAccount);
-
-            $coaDetailAccountDetail = $this->coInventoryDetailAccountService->prepareUpdatedCoaDetailAccountDetailData($request, $party);
-            CoaDetAccountDetail::where('det_account_code', $partyId)->update($coaDetailAccountDetail);
-        } else {
-
-            $coaDetailAccount = $this->coInventoryDetailAccountService->prepareCoaDetailAccountData($request);
-            CoaDetailAccount::insert($coaDetailAccount);
-
-            $coaDetailAccountDetail = $this->coInventoryDetailAccountService->prepareCoaDetailAccountDetailData($request);
-            CoaDetAccountDetail::insert($coaDetailAccountDetail);
-        }
+            $detailAccountMasterData = $this->coInventoryDetailAccountService->prepareDetailAccountMasterData($request);
+            $saved = $this->coInventoryDetailAccountService->findUpdateOrCreate(CoaInventoryDetailAccount::class, ['id' => !empty(request('id')) ? request('id') : null], $detailAccountMasterData);
 
 
+            $partyPriceData = $this->coInventoryDetailAccountService->prepareProductAssingData($request, $saved->id);
+            $this->coInventoryDetailAccountService->ProductAssing($partyPriceData);
+
+            if ($saved && $request->file('image')) {
+                $this->uploadService->uploadSingleFile($request->image, $fileName, config('constants.file_upload.inventory'));
+            }
+
+            if ($party != null) {
+
+                $coaDetailAccount = $this->coInventoryDetailAccountService->prepareCoaDetailAccountData($request);
+                CoaDetailAccount::where('id', $partyId)->update($coaDetailAccount);
+
+                $coaDetailAccountDetail = $this->coInventoryDetailAccountService->prepareUpdatedCoaDetailAccountDetailData($request, $party);
+                CoaDetAccountDetail::where('det_account_code', $partyId)->update($coaDetailAccountDetail);
+            } else {
+
+                $coaDetailAccount = $this->coInventoryDetailAccountService->prepareCoaDetailAccountData($request);
+                CoaDetailAccount::insert($coaDetailAccount);
+
+                $coaDetailAccountDetail = $this->coInventoryDetailAccountService->prepareCoaDetailAccountDetailData($request);
+                CoaDetAccountDetail::insert($coaDetailAccountDetail);
+            }
+
+            $debitAccountData = $this->coInventoryDetailAccountService->prepareDetailAccountDebitData($request, $saved->id);
+            AccountLedger::insert($debitAccountData);
+
+            $creditAccountData = $this->coInventoryDetailAccountService->prepareDetailAccountCreditData($request, $saved->id);
+            AccountLedger::insert($creditAccountData);
+
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('co-inv-detail-account/create')->with('error', $e->getMessage());
+        // }
 
         $message = request('id') ? config('constants.update') : config('constants.add');
         session()->flash('message', $message);
-        return redirect('co-inv-detail-account/list');
+        return redirect('co-inv-detail-account/list')->with('message', $message);
     }
 
     public function edit($id)
@@ -163,20 +176,31 @@ class ChartOfInvDetailAccountController extends Controller
     public function update(Request $request)
     {
 
-        $session = $this->commonService->getSession();
+        // DB::beginTransaction();
+        // try {
+
         $inventoryAccount = CoaInventoryDetailAccount::where('id', $request['id'])->value('name');
         $party = CoaDetailAccount::where('account_name', $inventoryAccount)->first();
-        $partyId = $party ? $party->id : null;
+        $partyId = $party->id ? $party->id : null;
+
         $data = $request->except('_token');
-        $data['created_by'] = Auth::user()->id;
-        $data['updated_by'] = Auth::user()->id;
-        $data['business_id'] = $session->business_id;
-        $data['f_year_id'] = $session->financial_year;
         if ($request->image) {
             $fileName = $request->image->getClientOriginalName();
             $data['image'] = $fileName;
         }
-        $saved = $this->coInventoryDetailAccountService->findUpdateOrCreate(CoaInventoryDetailAccount::class, ['id' => !empty(request('id')) ? request('id') : null], $data);
+
+        $detailAccountMasterData = $this->coInventoryDetailAccountService->prepareDetailAccountMasterData($request);
+        $saved = $this->coInventoryDetailAccountService->findUpdateOrCreate(CoaInventoryDetailAccount::class, ['id' => !empty(request('id')) ? request('id') : null], $detailAccountMasterData);
+
+
+        if ($request->update == 1) {
+            DetailAccountProducts::where('product_id', $request['id'])->delete();
+
+            $partyPriceData = $this->coInventoryDetailAccountService->prepareProductAssingData($request, $saved->id);
+            $this->coInventoryDetailAccountService->ProductAssing($partyPriceData);
+        }
+
+
         if ($saved && $request->file('image')) {
             $this->uploadService->uploadSingleFile($request->image, $fileName, config('constants.file_upload.inventory'));
         }
@@ -196,13 +220,20 @@ class ChartOfInvDetailAccountController extends Controller
             $coaDetailAccountDetail = $this->coInventoryDetailAccountService->prepareCoaDetailAccountDetailData($request);
             CoaDetAccountDetail::insert($coaDetailAccountDetail);
         }
+        $documentNo = 'OPENING BALANCE';
+        AccountLedger::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
+        
+        $debitAccountData = $this->coInventoryDetailAccountService->updateDetailAccountDebitData($request, $partyId);
+        AccountLedger::insert($debitAccountData);
 
-        if ($request->update_status === 1) {
-            DetailAccountProducts::where('product_id', $request['id'])->delete();
-            
-            $partyPriceData = $this->coInventoryDetailAccountService->prepareProductAssingData($request, $saved->id);
-            $this->coInventoryDetailAccountService->ProductAssing($partyPriceData);
-        }
+        $creditAccountData = $this->coInventoryDetailAccountService->updateDetailAccountCreditData($request, $partyId);
+        AccountLedger::insert($creditAccountData);
+
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('co-inv-detail-account/create')->with('error', $e->getMessage());
+        // }
 
         $message = request('id') ? config('constants.update') : config('constants.add');
         session()->flash('message', $message);
@@ -259,6 +290,4 @@ class ChartOfInvDetailAccountController extends Controller
 
         return response()->json($data);
     }
-
-
 }

@@ -2,27 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AccountLedger;
 use App\Models\Area;
 use App\Models\Sector;
-use Illuminate\Http\Request;
-use App\Services\CommonService;
-use App\Models\CoaDetailAccount;
-use App\Models\CoaDetAccountDetail;
-use App\Models\CoaDetailAccountArea;
-use App\Models\CoaDetailAccountSectors;
-use App\Models\CoaInventoryDetailAccount;
-use App\Models\DetailAccountPrices;
-use App\Services\PermissionService;
-use Illuminate\Support\Facades\Auth;
-use App\Models\CoaInventorySubSubHead;
-use App\Models\DetailAccountProducts;
-use App\Models\InventorySubSubHeadPriceTagModel;
 use App\Models\PriceTag;
 use App\Models\SaleManArea;
+use Illuminate\Http\Request;
+use App\Models\AccountLedger;
 use App\Models\SaleManSector;
+use App\Services\CommonService;
+use App\Models\CoaDetailAccount;
+use Illuminate\Support\Facades\DB;
+use App\Models\CoaDetAccountDetail;
+use App\Models\DetailAccountPrices;
+use App\Services\PermissionService;
+use App\Models\CoaDetailAccountArea;
+use Illuminate\Support\Facades\Auth;
+use App\Models\DetailAccountProducts;
+use App\Models\CoaInventorySubSubHead;
+use App\Models\CoaDetailAccountSectors;
 use App\Services\ChartOfAccountService;
+use App\Models\CoaInventoryDetailAccount;
 use App\Services\CoaDetailAccountService;
+use App\Models\InventorySubSubHeadPriceTagModel;
 
 class CoaDetailAccountController extends Controller
 {
@@ -110,7 +111,7 @@ class CoaDetailAccountController extends Controller
         $title = 'Set Detail Account Price';
         $dropDownData = $this->coaDetailAccountService->DropDownData();
 
-        return view('chart-of-accounts.detail-account.prices.create', compact( 'dropDownData', 'pageTitle', 'title'));
+        return view('chart-of-accounts.detail-account.prices.create', compact('dropDownData', 'pageTitle', 'title'));
     }
 
     /**
@@ -121,63 +122,49 @@ class CoaDetailAccountController extends Controller
      */
     public function store(Request $request)
     {
-        $request = $request->except('_token', 'id');
-        // DB::beginTransaction();
-        // try {
 
-        $detailAccountMasterData = $this->coaDetailAccountService->prepareDetailAccountMasterData($request);
-        $detailAccountMasterInsert = $this->coaDetailAccountService->findUpdateOrCreate(CoaDetailAccount::class, ['id' => !empty(request('id')) ? request('id') : null], $detailAccountMasterData);
+        DB::beginTransaction();
+        try {
 
-        $this->coaDetailAccountService->prepareProductAssingData($request, $detailAccountMasterInsert->id);
+            $request = $request->except('_token', 'id');
+            $detailAccountMasterData = $this->coaDetailAccountService->prepareDetailAccountMasterData($request);
+            $detailAccountMasterInsert = $this->coaDetailAccountService->findUpdateOrCreate(CoaDetailAccount::class, ['id' => !empty(request('id')) ? request('id') : null], $detailAccountMasterData);
 
-        // $detailAccountProductData = $this->coaDetailAccountService->prepareDetailAccountDetailData($request, $detailAccountMasterInsert->id);
-        // $this->coaDetailAccountService->saveDetailAccount($detailAccountProductData);
+            $this->coaDetailAccountService->prepareProductAssingData($request, $detailAccountMasterInsert->id);
 
-        $detailData = $this->coaDetailAccountService->prepareAdditionalInformationData($request, $detailAccountMasterInsert->id);
-        $this->coaDetailAccountService->findUpdateOrCreate(CoaDetAccountDetail::class, ['id' => !empty(request('id')) ? request('id') : null], $detailData);
+            $detailData = $this->coaDetailAccountService->prepareAdditionalInformationData($request, $detailAccountMasterInsert->id);
+            $this->coaDetailAccountService->findUpdateOrCreate(CoaDetAccountDetail::class, ['id' => !empty(request('id')) ? request('id') : null], $detailData);
 
-        $detailAccountSectorData = $this->coaDetailAccountService->prepareDetailAccountSectorsData($request, $detailAccountMasterInsert->id);
-        $this->coaDetailAccountService->saveDetailAccountSectors($detailAccountSectorData);
+            $detailAccountSectorData = $this->coaDetailAccountService->prepareDetailAccountSectorsData($request, $detailAccountMasterInsert->id);
+            $this->coaDetailAccountService->saveDetailAccountSectors($detailAccountSectorData);
 
-        $detailAccountSectorData = $this->coaDetailAccountService->prepareDetailAccountSectorsData($request, $detailAccountMasterInsert->id);
-        $this->coaDetailAccountService->saveDetailAccountSectors($detailAccountSectorData);
+            $detailAccountSectorData = $this->coaDetailAccountService->prepareDetailAccountSectorsData($request, $detailAccountMasterInsert->id);
+            $this->coaDetailAccountService->saveDetailAccountSectors($detailAccountSectorData);
 
-        $detailAccountAreasData = $this->coaDetailAccountService->prepareDetailAccountAreasData($request, $detailAccountMasterInsert->id);
-        $this->coaDetailAccountService->saveDetailAccountAreas($detailAccountAreasData);
+            $detailAccountAreasData = $this->coaDetailAccountService->prepareDetailAccountAreasData($request, $detailAccountMasterInsert->id);
+            $this->coaDetailAccountService->saveDetailAccountAreas($detailAccountAreasData);
 
-        if (isset($request['opening_balance']) && $request['opening_balance'] < 0) {
+            if (isset($request['opening_balance']) && $request['opening_balance'] < 0) {
 
-            $debitAccountData = $this->coaDetailAccountService->prepareAccountDebitData($request, $detailAccountMasterInsert->id);
-            AccountLedger::insert($debitAccountData);
+                $debitAccountData = $this->coaDetailAccountService->prepareAccountDebitData($request, $detailAccountMasterInsert->id);
+                AccountLedger::insert($debitAccountData);
 
-            $creditAccountData = $this->coaDetailAccountService->prepareAccountCreditData($request, $detailAccountMasterInsert->id);
-            AccountLedger::insert($creditAccountData);
-        } else {
+                $creditAccountData = $this->coaDetailAccountService->prepareAccountCreditData($request, $detailAccountMasterInsert->id);
+                AccountLedger::insert($creditAccountData);
+            } else {
 
-            $debitAccountData = $this->coaDetailAccountService->prepareDetailAccountDebitData($request, $detailAccountMasterInsert->id);
-            AccountLedger::insert($debitAccountData);
+                $debitAccountData = $this->coaDetailAccountService->prepareDetailAccountDebitData($request, $detailAccountMasterInsert->id);
+                AccountLedger::insert($debitAccountData);
 
-            $creditAccountData = $this->coaDetailAccountService->prepareDetailAccountCreditData($request, $detailAccountMasterInsert->id);
-            AccountLedger::insert($creditAccountData);
+                $creditAccountData = $this->coaDetailAccountService->prepareDetailAccountCreditData($request, $detailAccountMasterInsert->id);
+                AccountLedger::insert($creditAccountData);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect('detail-account/create')->with('error', $e->getMessage());
         }
-
-
-
-
-        // $detailAccountProductsData = $this->coaDetailAccountService->prepareDetailAccountProductData($request, $detailAccountMasterInsert->id);
-        // $this->coaDetailAccountService->saveDetailAccountProducts($detailAccountProductsData);
-
-        // $debitAccountData = $this->coaDetailAccountService->prepareAccountDebitData($request, $detailAccountMasterInsert->id);
-        // AccountLedger::insert($debitAccountData);
-
-        // $creditAccountData = $this->coaDetailAccountService->prepareAccountCreditData($request, $detailAccountMasterInsert->id);
-        // AccountLedger::insert($creditAccountData);
-
-        //     DB::commit();
-        // } catch (\Exception $e) {
-        //     DB::rollback();
-        //     return redirect('detail-account/create')->with('error', $e->getMessage());
-        // }
         $message = config('constants.add');
         return redirect('detail-account/list')->with('message', $message);
     }
@@ -224,68 +211,54 @@ class CoaDetailAccountController extends Controller
 
     public function update(Request $request)
     {
-        // dd($request);
 
-        // DB::beginTransaction();
-        // try {
+        DB::beginTransaction();
+        try {
+            CoaDetailAccountSectors::where('master_account_id', $request['id'])->delete();
+            CoaDetailAccountArea::where('master_account_id', $request['id'])->delete();
+            CoaDetAccountDetail::where('det_account_code', $request['id'])->delete();
 
-        // $request = request()->all();
-        DetailAccountPrices::where('coa_detail_account_code', $request['id'])->delete();
-        DetailAccountProducts::where('detail_account_id', $request['id'])->delete();
-        CoaDetailAccountSectors::where('master_account_id', $request['id'])->delete();
-        CoaDetailAccountArea::where('master_account_id', $request['id'])->delete();
-        CoaDetAccountDetail::where('det_account_code', $request['id'])->delete();
+            $documentNo = 'OPENING BALANCE';
+            AccountLedger::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
 
+            $detailAccountMasterData = $this->coaDetailAccountService->prepareDetailAccountMasterData($request);
+            $detailAccountMasterInsert = $this->coaDetailAccountService->findUpdateOrCreate(CoaDetailAccount::class, ['id' => !empty(request('id')) ? request('id') : null], $detailAccountMasterData);
 
-        $documentNo = 'OPENING BALANCE';
-        AccountLedger::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
+            if ($request->update == 1) {
+                DetailAccountProducts::where('detail_account_id', $request['id'])->delete();
+                $this->coaDetailAccountService->prepareProductAssingData($request, $detailAccountMasterInsert->id);
+            }
 
-        $detailAccountMasterData = $this->coaDetailAccountService->prepareDetailAccountMasterData($request);
-        $detailAccountMasterInsert = $this->coaDetailAccountService->findUpdateOrCreate(CoaDetailAccount::class, ['id' => !empty(request('id')) ? request('id') : null], $detailAccountMasterData);
+            $detailData = $this->coaDetailAccountService->prepareAdditionalInformationData($request, $detailAccountMasterInsert->id);
+            $this->coaDetailAccountService->findUpdateOrCreate(CoaDetAccountDetail::class, ['id' => !empty(request('id')) ? request('id') : null], $detailData);
 
-        
+            $detailAccountSectorData = $this->coaDetailAccountService->prepareDetailAccountSectorsData($request, $detailAccountMasterInsert->id);
+            $this->coaDetailAccountService->saveDetailAccountSectors($detailAccountSectorData);
 
+            $detailAccountAreasData = $this->coaDetailAccountService->prepareDetailAccountAreasData($request, $detailAccountMasterInsert->id);
+            $this->coaDetailAccountService->saveDetailAccountAreas($detailAccountAreasData);
 
-        if ($request->update_status === 1) {
-            DetailAccountProducts::where('detail_account_id', $request['id'])->delete();
+            if (isset($request['opening_balance']) && $request['opening_balance'] < 0) {
 
-            $this->coaDetailAccountService->prepareProductAssingData($request, $detailAccountMasterInsert->id);
+                $debitAccountData = $this->coaDetailAccountService->prepareAccountDebitData($request, $detailAccountMasterInsert->id);
+                AccountLedger::insert($debitAccountData);
+
+                $creditAccountData = $this->coaDetailAccountService->prepareAccountCreditData($request, $detailAccountMasterInsert->id);
+                AccountLedger::insert($creditAccountData);
+            } else {
+
+                $debitAccountData = $this->coaDetailAccountService->prepareDetailAccountDebitData($request, $detailAccountMasterInsert->id);
+                AccountLedger::insert($debitAccountData);
+
+                $creditAccountData = $this->coaDetailAccountService->prepareDetailAccountCreditData($request, $detailAccountMasterInsert->id);
+                AccountLedger::insert($creditAccountData);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect('detail-account/create')->with('error', $e->getMessage());
         }
-
-
-        $detailData = $this->coaDetailAccountService->prepareAdditionalInformationData($request, $detailAccountMasterInsert->id);
-        $this->coaDetailAccountService->findUpdateOrCreate(CoaDetAccountDetail::class, ['id' => !empty(request('id')) ? request('id') : null], $detailData);
-
-        $detailAccountSectorData = $this->coaDetailAccountService->prepareDetailAccountSectorsData($request, $detailAccountMasterInsert->id);
-        $this->coaDetailAccountService->saveDetailAccountSectors($detailAccountSectorData);
-
-        $detailAccountAreasData = $this->coaDetailAccountService->prepareDetailAccountAreasData($request, $detailAccountMasterInsert->id);
-        $this->coaDetailAccountService->saveDetailAccountAreas($detailAccountAreasData);
-
-        // $detailAccountProductsData = $this->coaDetailAccountService->prepareDetailAccountProductData($request, $detailAccountMasterInsert->id);
-        // $this->coaDetailAccountService->saveDetailAccountProducts($detailAccountProductsData);
-
-        if (isset($request['opening_balance']) && $request['opening_balance'] < 0) {
-
-            $debitAccountData = $this->coaDetailAccountService->prepareAccountDebitData($request, $detailAccountMasterInsert->id);
-            AccountLedger::insert($debitAccountData);
-
-            $creditAccountData = $this->coaDetailAccountService->prepareAccountCreditData($request, $detailAccountMasterInsert->id);
-            AccountLedger::insert($creditAccountData);
-        } else {
-
-            $debitAccountData = $this->coaDetailAccountService->prepareDetailAccountDebitData($request, $detailAccountMasterInsert->id);
-            AccountLedger::insert($debitAccountData);
-
-            $creditAccountData = $this->coaDetailAccountService->prepareDetailAccountCreditData($request, $detailAccountMasterInsert->id);
-            AccountLedger::insert($creditAccountData);
-        }
-
-        //     DB::commit();
-        // } catch (\Exception $e) {
-        //     DB::rollback();
-        //     return redirect('detail-account/create')->with('error', $e->getMessage());
-        // }
         if (request('id')) {
             $message = config('constants.update');
         }

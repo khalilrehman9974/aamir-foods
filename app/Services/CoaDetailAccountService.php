@@ -277,6 +277,8 @@ class CoaDetailAccountService
         ];
     }
 
+
+
     /*
      * Save sale data.
      * @param: $data
@@ -501,8 +503,8 @@ class CoaDetailAccountService
                 'master_third_level' => $product['sub_sub_head'], // assuming a single value
                 'product_id' => $product->id,
                 'price' => $product['rate'], // common rate for all products
-                'discount' => config('constants.ZERO'),
-                'scheme' => config('constants.ZERO'),
+                'discount' => $product['discount'],
+                'scheme' => $product['scheme'],
                 'created_at' => now(),
                 'updated_at' => now(),
             ];

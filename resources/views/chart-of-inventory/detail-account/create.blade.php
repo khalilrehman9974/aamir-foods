@@ -553,6 +553,33 @@
                                                             </div>
                                                         </div>
 
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <label for="discount" class="form-label">
+                                                                    Discount</label>
+                                                                <input id="discount" type="text" name="discount"
+                                                                    value="{{ old('discount', !empty($detailAccount->discount) ? $detailAccount->discount : '') }}"
+                                                                    placeholder="Discount" class="form-control">
+                                                                @if ($errors->has('discount'))
+                                                                    <div class="invalid-feedback">
+                                                                        {{ $errors->first('use_in') }}
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label for="scheme" class="form-label">
+                                                                    Scheme</label>
+                                                                <input id="scheme" type="text" name="scheme"
+                                                                    value="{{ old('scheme', !empty($detailAccount->scheme) ? $detailAccount->scheme : '') }}"
+                                                                    placeholder="Scheme" class="form-control">
+                                                                @if ($errors->has('scheme'))
+                                                                    <div class="invalid-feedback">
+                                                                        {{ $errors->first('use_in') }}
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+
                                                         <div class="col-md-6 mt-4">
 
                                                             <label for="rate" class="form-label">

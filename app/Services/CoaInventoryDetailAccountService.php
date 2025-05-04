@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use App\Models\PriceTag;
 use App\Models\CoaSubHead;
 use App\Models\CoaMainHead;
@@ -12,9 +13,9 @@ use App\Models\MeasurementType;
 use App\Models\CoaDetailAccount;
 use App\Models\CoaInventorySubHead;
 use Illuminate\Support\Facades\Auth;
+use App\Models\DetailAccountProducts;
 use App\Models\CoaInventorySubSubHead;
 use App\Models\CoaInventoryDetailAccount;
-use App\Models\DetailAccountProducts;
 
 /*
  * Class BankService
@@ -198,8 +199,43 @@ class CoaInventoryDetailAccountService
             'master_third_level' => $request['sub_sub_head'],
             'product_id' => $masterId,
             'price' => $request['rate'],
-            'discount' => config('constants.ZERO'),
-            'scheme' => config('constants.ZERO'),
+            'discount' => $request['discount'] ?? 0,
+            'scheme' => $request['scheme'] ?? 0,
+            'created_at' => now(),
+            'updated_at' => now()
+        ];
+    }
+
+    public function prepareDetailAccountMasterData($request)
+    {
+
+        $session = $this->commonService->getSession();
+        return [
+            'coa_main_head' => $request['coa_main_head'],
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'control_head' => $request['control_head'],
+            'sub_head' => $request['sub_head'],
+            'sub_sub_head' => $request['sub_sub_head'],
+            'code' => $request['code'],
+            'priceTag_id' => $request['priceTag_id'],
+            'name' => $request['name'],
+            'remarks' => $request['remarks'],
+            'danger_level' => $request['danger_level'],
+            'opening_stock' => $request['opening_stock'],
+            'stock_rate' => $request['stock_rate'],
+            'use_in' => $request['use_in'],
+            'image' => $request['image'],
+            'measurement_type_id' => $request['measurement_type_id'],
+            'packing_type_id' => $request['packing_type_id'],
+            'size' => $request['size'],
+            'max_limit' => $request['max_limit'],
+            'min_limit' => $request['min_limit'],
+            'rate' => $request['rate'],
+            'discount' => $request['discount'] ?? null,
+            'scheme' => $request['scheme'] ?? null,
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id,
             'created_at' => now(),
             'updated_at' => now()
         ];
@@ -220,6 +256,107 @@ class CoaInventoryDetailAccountService
                 DetailAccountProducts::create($rec);
             }
         }
+    }
+
+    public function prepareDetailAccountCreditData($request, $detailAccountMasterId)
+    {
+        $openingStock = $request['opening_stock'];
+        $stockRate = $request['stock_rate'];
+        $creditValue = ($openingStock > 0 && $stockRate > 0) ? $openingStock * $stockRate : 0;
+
+        return [
+            'date' => Carbon::now()->format('Y-m-d'),
+            'invoice_id' => $detailAccountMasterId,
+            'party_id' =>  '108',
+            'document_number' => 'OPENING BALANCE',
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => 'Opening Balance of ' . $request['name'],
+            'debit' => config('constants.ZERO'),
+            'credit' =>  $creditValue ?? 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function prepareDetailAccountDebitData($request, $detailAccountMasterId)
+    {
+        $openingStock = $request['opening_stock'];
+        $stockRate = $request['stock_rate'];
+        $debitValue = ($openingStock > 0 && $stockRate > 0) ? $openingStock * $stockRate : 0;
+        $maxid = CoaDetailAccount::max('id');
+
+        return [
+            'date' => Carbon::now()->format('Y-m-d'),
+            'invoice_id' => $detailAccountMasterId,
+            'party_id' =>  $maxid,
+            'document_number' => 'OPENING BALANCE',
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => 'OPENING BALANCE',
+            'debit' => $debitValue ?? 0,
+            'credit' =>  config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function updateDetailAccountCreditData($request )
+    {
+        $openingStock = $request['opening_stock'];
+        $stockRate = $request['stock_rate'];
+        $creditValue = ($openingStock > 0 && $stockRate > 0) ? $openingStock * $stockRate : 0;
+
+        return [
+            'date' => Carbon::now()->format('Y-m-d'),
+            'invoice_id' => $request->id,
+            'party_id' =>  '108',
+            'document_number' => 'OPENING BALANCE',
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => 'Opening Balance of ' . $request['name'],
+            'debit' => config('constants.ZERO'),
+            'credit' =>  $creditValue ?? 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function updateDetailAccountDebitData($request, $partyId)
+    {
+        $openingStock = $request['opening_stock'];
+        $stockRate = $request['stock_rate'];
+        $debitValue = ($openingStock > 0 && $stockRate > 0) ? $openingStock * $stockRate : 0;
+
+        return [
+            'date' => Carbon::now()->format('Y-m-d'),
+            'invoice_id' => $request->id,
+            'party_id' =>  $partyId,
+            'document_number' => 'OPENING BALANCE',
+            'rate' => config('constants.ZERO'),
+            'bilty_no' => null,
+            'transporter_id' => null,
+            'total_quantity' => config('constants.ZERO'),
+            'measurementType' => config('constants.ZERO'),
+            'bags' => config('constants.ZERO'),
+            'description' => 'OPENING BALANCE',
+            'debit' => $debitValue ?? 0,
+            'credit' =>  config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
     }
 }
 

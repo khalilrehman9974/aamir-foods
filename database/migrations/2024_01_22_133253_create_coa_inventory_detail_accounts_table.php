@@ -36,6 +36,8 @@ return new class extends Migration
             $table->integer('stock_rate');
             $table->string('use_in');
             $table->integer('rate');
+            $table->integer('discount')->nullable();
+            $table->integer('scheme')->nullable();
             $table->string('remarks');
             $table->integer('created_by');
             $table->integer('updated_by');
