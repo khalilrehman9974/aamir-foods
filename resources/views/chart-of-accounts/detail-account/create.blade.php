@@ -39,12 +39,14 @@
         <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
         <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
 
-        {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
             integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-
-        {{-- <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" /> --}}
+        @vite(['resources/scss/light/plugins/filepond/custom-filepond.scss'])
+        @vite(['resources/scss/dark/plugins/filepond/custom-filepond.scss'])
 
 
 
@@ -109,8 +111,8 @@
                                             <div class="col-lg-12 col-12 ">
                                                 <form
                                                     action="{{ !empty($detailAccount) ? route('detail-account.update') : route('detail-account.save') }}"
-                                                    method="POST" class="row g-3 needs-validation" autocomplete="off"
-                                                    novalidate>
+                                                    method="POST" class="row g-3 needs-validation"
+                                                    enctype="multipart/form-data" autocomplete="off" novalidate>
                                                     @csrf
                                                     <input type="hidden" name="id" id="id"
                                                         value="{{ isset($detailAccount->id) ? $detailAccount->id : '' }}" />
@@ -411,343 +413,29 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
 
                                                     </div>
                                                     <div class="col-lg-0 col-12 form-group mb-2">
-                                                        <label for="account_name"
-                                                            class="form-label">
+                                                        <label for="account_name" class="form-label">
                                                             Remarks </label>
                                                         <textarea name="remarks" id="remarks" placeholder="Please Enter Remarks "
                                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" type="text" cols="30"
                                                             rows="5">{{ @$detailAccountDetails->remarks }}</textarea>
                                                     </div>
 
+                                                    <div class="col-lg-6 col-12 form-group mb-4">
+                                                        <label for="image" class="form-label">Upload Account
+                                                            Image</label>
 
+                                                        <input id="image" name="image" type="file"
+                                                            class="form-control" accept="image/*">
 
-                                                    {{-- <div class="invoice-detail-terms"
-                                                        style="padding: 0px 0px 0px 0px !important;">
-                                                        <div class="tab-content mt-5" id="pills-tabContent">
-                                                            <div class="invoice-detail-items"
-                                                                style="padding:0px 0px 0px 0px !important;">
-
-                                                                <div class="table-responsive">
-                                                                    <table class="table item-table">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th>
-                                                                                </th>
-                                                                                <th></th>
-                                                                                <th scope="col" style="width: 15%">
-                                                                                    Inventory 3rd Level</th>
-                                                                                <th scope="col" style="width: 15%">
-                                                                                    Price Tag</th>
-                                                                                <th class="col">
-                                                                                    Product</th>
-                                                                                <th class="">
-                                                                                    Price</th>
-                                                                                <th class="">
-                                                                                    Scheme</th>
-                                                                                <th class="">
-                                                                                    Discount</th>
-                                                                                <th></th>
-                                                                            </tr>
-                                                                            <tr aria-hidden="true"
-                                                                                class="mt-3 d-block table-row-hidden">
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-
-                                                                            @if (!empty($detailAccountRecords))
-                                                                                @foreach ($detailAccountRecords as $index => $detailAccountRecord)
-                                                                                    @php
-                                                                                        $selectedPriceTag =
-                                                                                            $detailAccountRecord->price_tag_id;
-                                                                                        $filteredProducts = $detailAccountProducts->where(
-                                                                                            'master_price_tag',
-                                                                                            $selectedPriceTag,
-                                                                                        );
-                                                                                        $rowIndex = $index + 1;
-                                                                                    @endphp
-                                                                                    <tr class="tr_clone validator_0 main_row main_row_{{ $rowIndex }}"
-                                                                                        data-parent-id=parent_row_1>
-                                                                                        <td class="delete-item-row">
-                                                                                            <ul class="table-controls">
-                                                                                                <li>
-                                                                                                    <a href="javascript:void(0);"
-                                                                                                        class="delete-item"
-                                                                                                        data-toggle="tooltip"
-                                                                                                        data-placement="top"
-                                                                                                        title=""
-                                                                                                        data-original-title="Delete">
-                                                                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                                                                            width="24"
-                                                                                                            height="24"
-                                                                                                            viewBox="0 0 24 24"
-                                                                                                            fill="none"
-                                                                                                            stroke="currentColor"
-                                                                                                            stroke-width="2"
-                                                                                                            stroke-linecap="round"
-                                                                                                            stroke-linejoin="round"
-                                                                                                            class="feather feather-x-circle">
-                                                                                                            <circle
-                                                                                                                cx="12"
-                                                                                                                cy="12"
-                                                                                                                r="10">
-                                                                                                            </circle>
-                                                                                                            <line
-                                                                                                                x1="15"
-                                                                                                                y1="9"
-                                                                                                                x2="9"
-                                                                                                                y2="15">
-                                                                                                            </line>
-                                                                                                            <line
-                                                                                                                x1="9"
-                                                                                                                y1="9"
-                                                                                                                x2="15"
-                                                                                                                y2="15">
-                                                                                                            </line>
-                                                                                                        </svg>
-                                                                                                    </a>
-                                                                                                </li>
-                                                                                            </ul>
-                                                                                        </td>
-                                                                                        <td>
-                                                                                            <input type="text"
-                                                                                                style="width: 0%;"
-                                                                                                name="row_id[]"
-                                                                                                class="row_id"
-                                                                                                value="{{ $rowIndex }}"
-                                                                                                hidden>
-                                                                                        </td>
-
-                                                                                        <td
-                                                                                            class="inventoryThirdLevel">
-                                                                                            <select
-                                                                                                id="inventoryThirdLevel"
-                                                                                                type="text"
-                                                                                                name="inventory_third_level[]"
-                                                                                                placeholder="Please Select the Inv Third Level"
-                                                                                                class="{{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} form-control mb-3 inventory_third_level_{{ $rowIndex }} select2 custom-select">
-                                                                                                <option value="">
-                                                                                                    Select
-                                                                                                    the
-                                                                                                    Inv Third Level
-                                                                                                </option>
-                                                                                                @foreach ($dropDownData['invetoryThirdLevel'] as $key => $value)
-                                                                                                    <option
-                                                                                                        value="{{ $key }}"
-                                                                                                        {{ (old('inventory_third_level') == $key ? 'selected' : '') || (!empty($detailAccountRecord->inventory_third_level) ? collect($detailAccountRecord->inventory_third_level)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                                        {{ $value }}
-                                                                                                    </option>
-                                                                                                @endforeach
-                                                                                            </select>
-                                                                                        </td>
-
-                                                                                        <td class="price_tag">
-                                                                                            <select
-                                                                                                id="priceTag_dropdown"
-                                                                                                type="text"
-                                                                                                name="price_tag_id[]"
-                                                                                                placeholder="Please Select the Price Tag"
-                                                                                                class="{{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} form-control  mb-3 priceTag_dropdown priceTag_dropdown_{{ $rowIndex }} select2 custom-select">
-                                                                                                <option value="">
-                                                                                                    Select
-                                                                                                    the
-                                                                                                    Price Tag
-                                                                                                </option>
-                                                                                                @foreach ($dropDownData['priceTags'] as $key => $value)
-                                                                                                    <option
-                                                                                                        value="{{ $key }}"
-                                                                                                        {{ (old('price_tag_id') == $key ? 'selected' : '') || (!empty($detailAccountRecord->price_tag_id) ? collect($detailAccountRecord->price_tag_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                                        {{ $value }}
-                                                                                                    </option>
-                                                                                                @endforeach
-                                                                                            </select>
-                                                                                        </td>
-
-                                                                                        <td><a
-                                                                                                class="btn btn-dark plus-btn plus_btn_{{ $rowIndex }}">+</a>
-                                                                                        </td>
-
-
-
-                                                                                    </tr>
-                                                                                    @foreach ($filteredProducts as $detailAccountProduct)
-
-                                                                                        @php
-                                                                                            $index =
-                                                                                            $loop->index +1; // Starts from 2
-                                                                                            {{dd($index);}}
-                                                                                        @endphp
-                                                                                        <tr class="child_row"
-                                                                                            data-parent-id="parent_row_{{$index}}">
-                                                                                            <td>
-                                                                                                <input type="text"
-                                                                                                    name="sub_row_id[]"
-                                                                                                    class="sub_row_id"
-                                                                                                    value="{{$index}}"
-                                                                                                    hidden>
-                                                                                            </td>
-                                                                                            <td>
-                                                                                            </td>
-
-                                                                                            <td class="quantity">
-                                                                                                <input
-                                                                                                    id= "masterThirdLevel"
-                                                                                                    type = "text"
-                                                                                                    value="{{ $detailAccountProduct->master_third_level }}"
-                                                                                                    name="master_third_level[]"
-                                                                                                    class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} masterThirdLevel_{{$index}}"
-                                                                                                    hidden>
-                                                                                            </td>
-                                                                                            <td class="quantity">
-                                                                                                <input
-                                                                                                    id= "master_price_tag"
-                                                                                                    type = "text"
-                                                                                                    value="{{ $detailAccountProduct->master_price_tag }}"
-                                                                                                    name="master_price_tag[]"
-                                                                                                    class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} master_price_tag_{{$index}}"
-                                                                                                    hidden>
-                                                                                            </td>
-                                                                                            <td class="product">
-                                                                                                <select id="product"
-                                                                                                    type="text"
-                                                                                                    name="product_id[]"
-                                                                                                    placeholder="Please Select the Product"
-                                                                                                    class="{{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} form-control mb-3 product product_{{$index}} select2"
-                                                                                                    multiple>
-                                                                                                    <option
-                                                                                                        value="select-all">
-                                                                                                        Select
-                                                                                                        All
-                                                                                                    </option>
-                                                                                                    {{-- @foreach ($dropDownData['products'] as $key => $value)
-                                                                                                        <option
-                                                                                                            value="{{ $key }}"
-                                                                                                            {{ (old('product_id') == $key ? 'selected' : '') || (!empty($detailAccountProduct->product_id) ? collect($detailAccountProduct->product_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                                            {{ $value }}
-                                                                                                        </option>
-                                                                                                    @endforeach ////
-                                                                                                    @foreach ($products as $key => $value)
-                                                                                                        <option
-                                                                                                            value="{{ $key }}"
-                                                                                                            {{ collect($detailAccountProduct->product_id)->contains($key) ? 'selected' : '' }}>
-                                                                                                            {{ $value }}
-                                                                                                        </option>
-                                                                                                    @endforeach
-                                                                                                </select>
-                                                                                            </td>
-
-
-                                                                                            <td class="quantity">
-                                                                                                <input type="text"
-                                                                                                    id="price"
-                                                                                                    class="price form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} price_{{$index}}"
-                                                                                                    name="price[]"
-                                                                                                    value="{{ old('price', !empty($detailAccountProduct->price) ? $detailAccountProduct->price : '') }}"
-                                                                                                    placeholder="Price">
-                                                                                            </td>
-
-                                                                                            <td class="quantity">
-                                                                                                <input id="scheme"
-                                                                                                    type="text"
-                                                                                                    name="scheme[]"
-                                                                                                    value="{{ old('scheme', !empty($detailAccountProduct->scheme) ? $detailAccountProduct->scheme : '') }}"
-                                                                                                    placeholder="Scheme... "
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} scheme_{{$index}}">
-                                                                                            </td>
-
-                                                                                            <td class="quantity">
-                                                                                                <input id="discount"
-                                                                                                    type="text"
-                                                                                                    name="discount[]"
-                                                                                                    value="{{ old('discount', !empty($detailAccountProduct->discount) ? $detailAccountProduct->discount : '') }}"
-                                                                                                    placeholder="Discount... "
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount_{{$index}}">
-                                                                                            </td>
-
-                                                                                            <td
-                                                                                                class="delete-item-sub-row">
-                                                                                                <ul
-                                                                                                    class="table-controls">
-                                                                                                    <li>
-                                                                                                        <a href="javascript:void(0);"
-                                                                                                            class="delete-sub-item"
-                                                                                                            data-toggle="tooltip"
-                                                                                                            data-placement="top"
-                                                                                                            title=""
-                                                                                                            data-original-title="Delete">
-                                                                                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                                                                                width="24"
-                                                                                                                height="24"
-                                                                                                                viewBox="0 0 24 24"
-                                                                                                                fill="none"
-                                                                                                                stroke="currentColor"
-                                                                                                                stroke-width="2"
-                                                                                                                stroke-linecap="round"
-                                                                                                                stroke-linejoin="round"
-                                                                                                                class="feather feather-x-circle">
-                                                                                                                <circle
-                                                                                                                    cx="12"
-                                                                                                                    cy="12"
-                                                                                                                    r="10">
-                                                                                                                </circle>
-                                                                                                                <line
-                                                                                                                    x1="15"
-                                                                                                                    y1="9"
-                                                                                                                    x2="9"
-                                                                                                                    y2="15">
-                                                                                                                </line>
-                                                                                                                <line
-                                                                                                                    x1="9"
-                                                                                                                    y1="9"
-                                                                                                                    x2="15"
-                                                                                                                    y2="15">
-                                                                                                                </line>
-                                                                                                            </svg>
-                                                                                                        </a>
-                                                                                                    </li>
-                                                                                                </ul>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    @endforeach
-                                                                                @endforeach
-
-                                                                            @endif
-                                                                        </tbody>
-                                                                    </table>
-
-
-
-                                                                </div>
-
-                                                                <a href="javascript:void(0);"
-                                                                    class="btn btn-dark additem" id="add-item">Add
-                                                                    Item</a>
-
+                                                        {{-- Show existing image if editing --}}
+                                                        @if (isset($detailAccount) && !empty($detailAccount->image))
+                                                            <div class="mt-3">
+                                                                <p><strong>Current Image:</strong></p>
+                                                                <img src="{{ asset('resources/images/detailAccount/' . $detailAccount->image) }}"
+                                                                    alt="Account Image" class="img-thumbnail"
+                                                                    style="width: 150px; height: auto;">
                                                             </div>
-
-                                                        </div>
-                                                    </div> --}}
-
-
-
-
-                                                    <div class="col-lg-0 col-12 form-group mb-4">
-
-                                                    </div>
-                                                    <div class="col-lg-0 col-12 form-group mb-4">
-                                                        <div class="row">
-                                                            {{-- <div class="col-md-6">
-                                                                <label for="inputState" class="form-label">Scheme
-                                                                </label>
-                                                                <input id="scheme" type="text" name="scheme"
-                                                                    value="{{ old('scheme', !empty($detailAccount->scheme) ? $detailAccount->scheme : '') }}"
-                                                                    placeholder="Scheme... "
-                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                    >
-                                                            </div> --}}
-
-
-
-                                                        </div>
+                                                        @endif
                                                     </div>
 
                                                     <div class="col-lg-0 col-12 form-group mb-4">
@@ -906,17 +594,19 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
                                                                                 </div> --}}
 
-                                                                                <div class="col col-md-6 form-group mb-2">
-                                                                                    <label for="contact_no_1" class="form-label">
+                                                                                <div
+                                                                                    class="col col-md-6 form-group mb-2">
+                                                                                    <label for="contact_no_1"
+                                                                                        class="form-label">
                                                                                         Contact No 1
                                                                                     </label>
                                                                                     <input id="contact_no_1"
-                                                                                           type="text"
-                                                                                           name="contact_no_1"
-                                                                                           value="{{ old('contact_no_1', !empty($detailAccountDetails->contact_no_1) ? $detailAccountDetails->contact_no_1 : '') }}"
-                                                                                           placeholder="0300-1234567"
-                                                                                           maxlength="12"
-                                                                                           class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                                        type="text"
+                                                                                        name="contact_no_1"
+                                                                                        value="{{ old('contact_no_1', !empty($detailAccountDetails->contact_no_1) ? $detailAccountDetails->contact_no_1 : '') }}"
+                                                                                        placeholder="0300-1234567"
+                                                                                        maxlength="12"
+                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
                                                                                 </div>
 
                                                                                 <div
@@ -929,7 +619,9 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                         type="text"
                                                                                         name="contact_no_2"
                                                                                         value="{{ old('contact_no_2', !empty($detailAccountDetails->contact_no_2) ? $detailAccountDetails->contact_no_2 : '') }}"
-                                                                                        placeholder="Please Enter Contact No 2 " placeholder="0300-1234567" maxlength="12"
+                                                                                        placeholder="Please Enter Contact No 2 "
+                                                                                        placeholder="0300-1234567"
+                                                                                        maxlength="12"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
                                                                                 </div>
                                                                             </div>
@@ -947,17 +639,18 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                         placeholder="Please Enter the email "
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
                                                                                 </div>
-                                                                                <div class="col col-md-6 form-group mb-2">
-                                                                                    <label for="cnic" class="form-label">
+                                                                                <div
+                                                                                    class="col col-md-6 form-group mb-2">
+                                                                                    <label for="cnic"
+                                                                                        class="form-label">
                                                                                         CNIC
                                                                                     </label>
                                                                                     <input id="cnic"
-                                                                                           type="text"
-                                                                                           name="cnic"
-                                                                                           value="{{ old('cnic', !empty($detailAccountDetails->cnic) ? $detailAccountDetails->cnic : '') }}"
-                                                                                           placeholder="12345-1234567-1"
-                                                                                           maxlength="15"
-                                                                                           class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
+                                                                                        type="text" name="cnic"
+                                                                                        value="{{ old('cnic', !empty($detailAccountDetails->cnic) ? $detailAccountDetails->cnic : '') }}"
+                                                                                        placeholder="12345-1234567-1"
+                                                                                        maxlength="15"
+                                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -992,8 +685,8 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                     class="form-label">
                                                                                     Credit
                                                                                     Days </label>
-                                                                                <input id="credit-days"
-                                                                                    type="text" name="credit_days"
+                                                                                <input id="credit-days" type="text"
+                                                                                    name="credit_days"
                                                                                     value="{{ old('credit_days', !empty($detailAccountDetails->credit_days) ? $detailAccountDetails->credit_days : '') }}"
                                                                                     placeholder="Please Enter credit Days "
                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
@@ -1037,10 +730,10 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const input = document.getElementById('contact_no_1');
 
-            input.addEventListener('input', function () {
+            input.addEventListener('input', function() {
                 // Remove all non-digit characters
                 let raw = this.value.replace(/\D/g, '');
 
@@ -1056,10 +749,10 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
             });
         });
 
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const input = document.getElementById('contact_no_2');
 
-            input.addEventListener('input', function () {
+            input.addEventListener('input', function() {
                 // Remove all non-digit characters
                 let raw = this.value.replace(/\D/g, '');
 
@@ -1075,29 +768,28 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
             });
         });
 
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const cnicInput = document.getElementById('cnic');
 
-            cnicInput.addEventListener('input', function () {
-            let raw = this.value.replace(/\D/g, ''); // Only digits
+            cnicInput.addEventListener('input', function() {
+                let raw = this.value.replace(/\D/g, ''); // Only digits
 
-            if (raw.length > 13) raw = raw.slice(0, 13); // Limit to 13 digits
+                if (raw.length > 13) raw = raw.slice(0, 13); // Limit to 13 digits
 
-            let formatted = raw;
-            if (raw.length > 5 && raw.length <= 12) {
-                formatted = raw.slice(0, 5) + '-' + raw.slice(5);
-            }
-            if (raw.length > 12) {
-                formatted = raw.slice(0, 5) + '-' + raw.slice(5, 12) + '-' + raw.slice(12);
-            }
+                let formatted = raw;
+                if (raw.length > 5 && raw.length <= 12) {
+                    formatted = raw.slice(0, 5) + '-' + raw.slice(5);
+                }
+                if (raw.length > 12) {
+                    formatted = raw.slice(0, 5) + '-' + raw.slice(5, 12) + '-' + raw.slice(12);
+                }
 
-            this.value = formatted;
+                this.value = formatted;
             });
         });
     </script>
 
     <script>
-
         document.addEventListener('keydown', function(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
@@ -1183,617 +875,12 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
         });
 
 
-        $(document).ready(function() {
-            // let getTableElement = document.querySelectorAll('.main_row');
-            // let currentIndex = getTableElement.length;
-            // console.log(currentIndex);
-
-            // document.addEventListener("DOMContentLoaded", function() {
-
-            // Add event listener to the table for dynamic row handling
-            $(".plus-btn").on('click', function(event) {
-                var row_id = $(this).closest("tr").find(".row_id").val();
-
-                const subRowIndexes = {};
-                // console.log(currentIndexValue);
-                // Ensure the "+" button was clicked
-                if (event.target.classList.contains("plus-btn")) {
-
-                    var parentRow = event.target.closest(".main_row");
-                    // Ensure that parentRow is found correctly
-                    if (parentRow) {
-                        var parentId = parentRow.getAttribute("data-parent-id");
-                        // var parentValue = parentRow.value();
-                        var parentValue = $(".inventory_third_level_" +
-                            row_id).val();
-                        var parentPriceTagValue = $(".priceTag_dropdown_" +
-                            row_id).val();
-
-
-                        // Check if a sub-table already exists for the parent row
-                        var subTable = parentRow.querySelectorAll(
-                            ".item-sub-table");
-                        // var subTable = event.target.closest(".child_row");
-
-                        if (!subTable) {
-                            subTable = document.createElement("table");
-                            subTable.classList.add(".item-sub-table");
-                            parentRow.insertAdjacentElement('afterend', subTable);
-                        }
-
-                        // Add a new child row to the sub-table
-                        var childRowCount = subTable.length + 1;
-                        var childRow = document.createElement("tr");
-                        childRow.classList.add("child_row");
-                        childRow.setAttribute("data-parent-id", parentId);
-
-                        childRow.innerHTML =
-                            `<td><input type="checkbox" name="row_id[]" class="row_id" value="${childRowCount}" hidden></td>
-                            <td></td>
-                            <td class="quantity"><input id= "masterThirdLevel" type = "text" name="master_third_level[]" value = "${parentValue}" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} masterThirdLevel_${parentId}" hidden></td>
-                            <td class="quantity"><input id= "masterPriceTag" type = "text" name="master_price_tag[]" value = "${parentPriceTagValue}" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} masterPriceTag_${parentId}" hidden></td>
-                            <td class="product" style="width: 20%;"> <select id="product" type = "text" name="product_id[]" class ="form-control form-control-sm product product_${parentId} select2 " placeholder = "Please Select the Product"  ><option value="select-all" >Select All </option> </select></td>
-                            <td class="quantity"> <input type="text" id="price" value="{{ old('price', !empty($detailAccountRecords->price) ? $detailAccountRecord->price : '') }}"name="price[]" placeholder="Price" class="price form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} price_${parentId}" ></td>
-                            <td class="quantity"><input id = "scheme" type = "text" name = "scheme[]" value = "{{ old('scheme', !empty($detailAccount->scheme) ? $detailAccount->scheme : '') }}" placeholder = "Scheme... " class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} scheme_${parentId} "></td>
-                            <td class="quantity"><input id = "discount" type = "text" name = "discount[]" value = "{{ old('discount', !empty($detailAccount->discount) ? $detailAccount->discount : '') }}" placeholder = "Discount... " class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount_${parentId}" ></td>
-                            <td class="delete-item-sub-row">
-                            <ul class="table-controls">
-                            <li><a href="javascript:void(0);" class="delete-sub-item" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></a></li>
-                            </ul>
-                            </td>
-                            </div>
-                            </div>
-                            </td>`;
-                        // $(".item-sub-table tbody").append($childRow);
-
-
-
-
-                        // Append the new child row to the sub-table
-                        parentRow.insertAdjacentElement('afterend', childRow);
-                        deleteItemSubRow();
-                        $('.product_' + parentId).select2();
-
-
-                    }
-
-                    $('.product_' + parentId).on('click', function() {
-                        var productSelected = '.product_' + parentId;
-                        $(productSelected).select2();
-                    });
-
-
-                    $('.priceTag_dropdown_' + row_id).on('change', function() {
-                        $('.product_' + parentId).html('');
-                        $.ajax({
-                            url: config.routes.getProducts,
-                            type: "GET",
-                            data: {
-                                product_id: idProduct,
-                                priceTag_id: idPriceTag,
-                                _token: '{{ csrf_token() }}'
-                            },
-                            dataType: 'json',
-                            success: function(result) {
-                                $.each(result.products,
-                                    function(key,
-                                        data) {
-                                        $('.product_' +
-                                                parentId)
-                                            .append(
-                                                '<option value="' +
-                                                data
-                                                .id + '">' +
-                                                data.name +
-                                                '</option>'
-                                            );
-                                    });
-                            }
-                        });
-                    });
-
-                }
-
-
-
-
-                var idProduct = $(".inventory_third_level_" +
-                    row_id).val();
-                var idPriceTag = $(".priceTag_dropdown_" +
-                    row_id).val();
-                // var idProduct = $(".inventory_third_level_" + currentIndex).find("option:selected").attr('id');
-                var row_id = $(this).closest("tr").find(".row_id")
-                    .val();
-
-                // $('.product_' + parentId).html('');
-                $.ajax({
-                    url: config.routes.getProducts,
-                    type: "GET",
-                    data: {
-                        product_id: idProduct,
-                        priceTag_id: idPriceTag,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    dataType: 'json',
-                    success: function(result) {
-                        // $('.product_' + row_id).html(
-                        //     '<option value="">-- Select Product--</option>');
-
-
-                        $.each(result.products, function(key, data) {
-                            $('.product_' + parentId).append(
-                                '<option value="' + data
-                                .id + '">' +
-                                data.name + '</option>');
-                        });
-                    }
-                });
-                // $(document).ready(function() {
-                // $('.product_' + parentId).on('change', function() {
-                //     var selectedValues = Array.from(this.selectedOptions)
-                //         .map(option =>
-                //             option
-                //             .value);
-
-                //     // If "Select All" is selected, select all other options except "Select All"
-                //     if (selectedValues.includes("select-all")) {
-                //         // Select all options except "Select All"
-                //         $(this).find('option').not('[value="select-all"]')
-                //             .prop(
-                //                 'selected', true);
-                //     }
-
-                //     // If "Select All" is deselected, deselect all options
-                //     if (selectedValues.length === 0) {
-                //         $(this).find('option').prop('selected', false);
-                //     }
-
-                //     // Make sure to update select2
-                //     $(this).trigger('change.select2');
-                // });
-
-
-
-            });
-
-
-        });
-    </script>
-
-    <script>
-        document.getElementsByClassName('additem')[0].addEventListener('click', function(event) {
-
-            let getTableElement = document.querySelectorAll('.main_row');
-            let currentIndex = getTableElement.length + 1;
-
-
-            let $html = '<tr class="main_row" data-parent-id= "parent_row_' + currentIndex +
-                '">' +
-                '<td class="delete-item-row">' +
-                '<ul class="table-controls">' +
-                '<li><a href="javascript:void(0);" class="delete-item" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></a></li>' +
-                '</ul>' +
-                '</td>' +
-                '<td><input type="checkbox" name="row_id[]" class="row_id" value="' + currentIndex +
-                '" hidden></td>' +
-                '<td class="inventoryThirdLevel"> <select id="inventoryThirdLevel" type = "text" name = "inventory_third_level[]" class ="form-control select2 custom-select form-control-sm  inventory_third_level_' +
-                currentIndex +
-                '" placeholder = "Please Select the Inv Third Level"  ><option value = "" >Please Select the Inv Third Level </option> @foreach ($dropDownData['invetoryThirdLevel'] as $key => $value)<option value = "{{ $key }}" {{ (old('inventory_third_level') == $key ? 'selected' : '') || (!empty($detailAccountRecords->inventory_third_level) ? collect($detailAccountRecords->inventory_third_level)->contains($key) : '') ? 'selected' : '' }} >{{ $value }} </option> @endforeach </select></td> ' +
-                '<td class="price_tag"> <select id="priceTag_dropdown" type = "text" name = "price_tag_id[]" class ="form-control select2 custom-select form-control-sm priceTag_dropdown priceTag_dropdown_' +
-                currentIndex +
-                '" placeholder = "Please Select the Price Tag"  ><option value = "" >Select the Price Tag </option>  </select></td> ' +
-                // '<td class="product"> <select id="product" type = "text" name = "product_id[]" class ="form-control select2 custom-select form-control-sm product product_' +
-                // currentIndex +
-                // '" placeholder = "Please Select the Product"  ><option value = "" >Select the Product </option> </select></td> ' +
-
-                // '<td class="quantity"> <input type="text" id="price" value="{{ old('price', !empty($detailAccountRecords->price) ? $detailAccountRecord->price : '') }}"name="price[]" placeholder="Price" class="price form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} price_' +
-                // currentIndex +
-                // '" ></td>' +
-                // '<td class="quantity"><input id = "scheme" type = "text" name = "scheme[]" value = "{{ old('scheme', !empty($detailAccount->scheme) ? $detailAccount->scheme : '') }}" placeholder = "Scheme... " class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} scheme_' +
-                // currentIndex +
-                // '" ></td>' +
-                // '<td class="quantity"><input id = "discount" type = "text" name = "discount[]" value = "{{ old('discount', !empty($detailAccount->discount) ? $detailAccount->discount : '') }}" placeholder = "Discount... " class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount_' +
-                // currentIndex +
-                // '" ></td>' +
-                '<td><a  class="btn btn-dark plus-btn plus_btn_' +
-                currentIndex +
-                '">+</a></td>' +
-
-                '</div>' +
-                '</div>' +
-                '</td>' +
-                '</tr>';
-
-            $(".item-table tbody").append($html);
-            deleteItemRow();
-            // $('.product_' + currentIndex).select2();
-            $('.inventory_third_level_' + currentIndex).select2();
-            $('.priceTag_dropdown' + currentIndex).select2();
-
-            $(document).ready(function() {
-                $(".inventory_third_level_" + currentIndex).on('click', function() {
-                    var inventorySelected = '.inventory_third_level_' + currentIndex;
-                    $(inventorySelected).select2();
-                });
-            });
-            $(document).ready(function() {
-                $('.priceTag_dropdown_' + currentIndex).on('click', function() {
-                    var priceTagSelected = '.priceTag_dropdown_' + currentIndex;
-                    $(priceTagSelected).select2();
-                });
-            });
-
-
-            $(document).ready(function() {
-                $('.inventory_third_level_' + currentIndex).on('change', function() {
-                    var idProduct = this.value;
-
-                    var row_id = $(this).closest("tr").find(".row_id").val();
-
-                    $(".priceTag_dropdown_" + currentIndex).html('');
-                    $.ajax({
-                        url: config.routes.getProductPriceTags,
-                        type: "GET",
-                        data: {
-                            product_id: idProduct,
-                            _token: '{{ csrf_token() }}'
-                        },
-                        dataType: 'json',
-                        success: function(result) {
-                            $('.priceTag_dropdown_' + currentIndex).html(
-                                '<option value="">-- Select Tag --</option>'
-                            );
-
-                            $.each(result.priceTags, function(key, data) {
-                                $('.priceTag_dropdown_' +
-                                    currentIndex).append(
-                                    '<option value="' +
-                                    data.id +
-                                    '">' + data.name +
-                                    '</option>');
-                            });
-
-                        }
-                    });
-                });
-
-
-            });
-
-
-
-
-            $(document).ready(function() {
-                // document.addEventListener("DOMContentLoaded", function() {
-
-                // Add event listener to the table for dynamic row handling
-                $(".plus_btn_" + currentIndex).on('click', function(event) {
-
-
-
-                    const subRowIndexes = {};
-                    // Ensure the "+" button was clicked
-                    if (event.target.classList.contains("plus-btn")) {
-
-                        var parentRow = event.target.closest(".main_row");
-
-                        // Ensure that parentRow is found correctly
-                        if (parentRow) {
-                            var parentId = parentRow.getAttribute("data-parent-id");
-                            console.log(parentId);
-                            // var parentValue = parentRow.value();
-                            var parentValue = $(".inventory_third_level_" +
-                                currentIndex).val();
-                            var parentPriceTagValue = $(".priceTag_dropdown_" +
-                                currentIndex).val();
-
-
-                            // Check if a sub-table already exists for the parent row
-                            var subTable = parentRow.querySelectorAll(".item-sub-table");
-                            // console.log(subTable);
-                            // var subTable = event.target.closest(".child_row");
-
-                            if (!subTable) {
-                                subTable = document.createElement("table");
-                                subTable.classList.add(".item-sub-table");
-                                parentRow.insertAdjacentElement('afterend', subTable);
-                            }
-
-                            // Add a new child row to the sub-table
-                            var childRowCount = subTable.length + 1;
-                            var childRow = document.createElement("tr");
-                            childRow.classList.add("child_row");
-                            childRow.setAttribute("data-parent-id", parentId);
-
-
-
-                            childRow.innerHTML =
-                                `<td><input type="checkbox" name="child_row_id[]" class="child_row_id" value="${childRowCount}" hidden></td>
-                            <td></td>
-                            <td class="quantity"><input id= "masterThirdLevel" type = "text" name="master_third_level[]" value = "${parentValue}" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} masterThirdLevel_${parentId}" hidden></td>
-                            <td class="quantity"><input id= "masterPriceTag" type = "text" name="master_price_tag[]" value = "${parentPriceTagValue}" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} masterPriceTag_${parentId}" hidden></td>
-                            <td class="product" style="width: 20%;"> <select id="product" type = "text" name="product_id[]" class ="form-control form-control-sm product product_${parentId} select2" placeholder = "Please Select the Product"  ><option value="select-all" >Select All </option> </select></td>
-                            <td class="quantity"> <input type="text" id="price" value="{{ old('price', !empty($detailAccountRecords->price) ? $detailAccountRecord->price : '') }}"name="price[]" placeholder="Price" class="price form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} price_${parentId}" ></td>
-                            <td class="quantity"><input id = "scheme" type = "text" name = "scheme[]" value = "{{ old('scheme', !empty($detailAccount->scheme) ? $detailAccount->scheme : '') }}" placeholder = "Scheme... " class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} scheme_${parentId} "></td>
-                            <td class="quantity"><input id = "discount" type = "text" name = "discount[]" value = "{{ old('discount', !empty($detailAccount->discount) ? $detailAccount->discount : '') }}" placeholder = "Discount... " class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount_${parentId}" ></td>
-                            <td class="delete-item-sub-row">
-                            <ul class="table-controls">
-                            <li><a href="javascript:void(0);" class="delete-sub-item" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></a></li>
-                            </ul>
-                            </td>
-                            </div>
-                            </div>
-                            </td>`;
-                            // $(".item-sub-table tbody").append($childRow);
-
-
-
-
-                            // Append the new child row to the sub-table
-                            parentRow.insertAdjacentElement('afterend', childRow);
-                            deleteItemSubRow();
-                            $('.product_' + parentId).select2();
-
-
-                        }
-
-                        $('.product_' + parentId).on('click', function() {
-                            var productSelected = '.product_' + parentId;
-                            $(productSelected).select2();
-                        });
-
-
-                        $('.priceTag_dropdown_' + currentIndex).on('change',
-                            function() {
-                                $('.product_' + parentId).html('');
-                                $.ajax({
-                                    url: config.routes.getProducts,
-                                    type: "GET",
-                                    data: {
-                                        product_id: idProduct,
-                                        priceTag_id: idPriceTag,
-                                        _token: '{{ csrf_token() }}'
-                                    },
-                                    dataType: 'json',
-                                    success: function(result) {
-                                        $.each(result.products,
-                                            function(key,
-                                                data) {
-                                                $('.product_' +
-                                                        parentId)
-                                                    .append(
-                                                        '<option value="' +
-                                                        data
-                                                        .id + '">' +
-                                                        data.name +
-                                                        '</option>'
-                                                    );
-                                            });
-                                    }
-                                });
-                            });
-
-                    }
-
-
-
-
-                    var idProduct = $(".inventory_third_level_" +
-                        currentIndex).val();
-                    var idPriceTag = $(".priceTag_dropdown_" +
-                        currentIndex).val();
-                    // var idProduct = $(".inventory_third_level_" + currentIndex).find("option:selected").attr('id');
-                    var row_id = $(this).closest("tr").find(".row_id")
-                        .val();
-
-                    // $('.product_' + parentId).html('');
-                    $.ajax({
-                        url: config.routes.getProducts,
-                        type: "GET",
-                        data: {
-                            product_id: idProduct,
-                            priceTag_id: idPriceTag,
-                            _token: '{{ csrf_token() }}'
-                        },
-                        dataType: 'json',
-                        success: function(result) {
-                            // $('.product_' + row_id).html(
-                            //     '<option value="">-- Select Product--</option>');
-
-
-                            $.each(result.products, function(key, data) {
-                                $('.product_' + parentId).append(
-                                    '<option value="' + data
-                                    .id + '">' +
-                                    data.name + '</option>');
-                            });
-                        }
-                    });
-                    // $(document).ready(function() {
-                    // $('.product_' + parentId).on('change', function() {
-                    //     var selectedValues = Array.from(this.selectedOptions)
-                    //         .map(option =>
-                    //             option
-                    //             .value);
-
-                    //     // If "Select All" is selected, select all other options except "Select All"
-                    //     if (selectedValues.includes("select-all")) {
-                    //         // Select all options except "Select All"
-                    //         $(this).find('option').not('[value="select-all"]')
-                    //             .prop(
-                    //                 'selected', true);
-                    //     }
-
-                    //     // If "Select All" is deselected, deselect all options
-                    //     if (selectedValues.length === 0) {
-                    //         $(this).find('option').prop('selected', false);
-                    //     }
-
-                    //     // Make sure to update select2
-                    //     $(this).trigger('change.select2');
-                    // });
-
-
-
-                });
-
-
-            });
-
-
-
-
-
-
-            // $('.saleMan').on('change', function() {
-            //     var idSaleMan = this.value;
-
-            //     $(".sector-dropdown").html('');
-            //     $.ajax({
-            //         url: "{{ url('detail-account/get-saleMan-detail') }}",
-            //         type: "GET",
-            //         data: {
-            //             saleMan_id: idSaleMan,
-            //             _token: '{{ csrf_token() }}'
-            //         },
-            //         dataType: 'json',
-            //         success: function(result) {
-            //             $('.sector-dropdown').html(
-            //                 '<option value="">-- Select Belt --</option>');
-            //             $.each(result.sectors, function(key, data) {
-            //                 $("#sector-dropdown").append('<option value="' +
-            //                     data.id +
-            //                     '">' + data.name + '</option>');
-            //             });
-
-            //             // $('.sector-dropdown').html(
-            //             //     '<option value="">-- Select Belt --</option>');
-            //         }
-            //     });
-            // });
-
-
-
-
-        })
-
-        deleteItemRow();
-        // selectableDropdown(document.querySelectorAll('.invoice-select .dropdown-item'));
-        // selectableDropdown(document.querySelectorAll('.invoice-tax-select .dropdown-item'), getTaxValue);
-        // selectableDropdown(document.querySelectorAll('.invoice-discount-select .dropdown-item'), getDiscountValue);
-
-        function deleteItemRow() {
-            let deleteItem = document.querySelectorAll('.delete-item');
-            for (var i = 0; i < deleteItem.length; i++) {
-                deleteItem[i].addEventListener('click', function() {
-                    this.parentElement.parentNode.parentNode.parentNode.remove();
-                })
-            }
-        }
-
-        function deleteItemSubRow() {
-            let deleteItem = document.querySelectorAll('.delete-sub-item');
-            for (var i = 0; i < deleteItem.length; i++) {
-                deleteItem[i].addEventListener('click', function() {
-                    this.parentElement.parentNode.parentNode.parentNode.remove();
-                })
-            }
-        }
-
-        $(document).ready(function() {
-            let getTableElement = document.querySelector('.item-table');
-            let currentIndex = getTableElement.rows.length;
-            $(".product_" + currentIndex).on('click', function() {
-                var productSelected = '.product_' + currentIndex;
-                $(productSelected).select2();
-                // $(document.body).on("change", ".product", function() {
-                //     $('.select2').select2();
-            });
-        });
-
-        $(document).ready(function() {
-            let getTableElement = document.querySelector('.item-table');
-            let currentIndex = getTableElement.rows.length;
-            $(".priceTag_dropdown_" + currentIndex).on('click', function() {
-                var priceTagSelected = '.priceTag_dropdown_' + currentIndex;
-                $(priceTagSelected).select2();
-            });
-        });
     </script>
 
 
-    <script>
-        // document.addEventListener("DOMContentLoaded", function() {
-        //     let currentIndex = 0;
-        //     // Add event listener to the table for dynamic row handling
-        //     document.getElementsByClassName("plus_btn_"+ currentIndex).addEventListener('click', function(event){
-
-        //         // Ensure the "+" button was clicked
-        //         if (event.target.classList.contains("plus-btn")) {
-        //             var parentRow = event.target.closest(".main_row");
-
-        //             // Ensure that parentRow is found correctly
-        //             if (parentRow) {
-        //                 var parentId = parentRow.getAttribute("data-parent-id");
-
-        //                 // Check if a sub-table already exists for the parent row
-        //                 var subTable = parentRow.querySelector(".sub-table");
-
-        //                 // If no sub-table exists, create it
-        //                 if (!subTable) {
-        //                     subTable = document.createElement("table");
-        //                     subTable.classList.add("sub-table");
-        //                     parentRow.insertAdjacentElement('afterend', subTable);
-        //                 }
-
-        //                 // Add a new child row to the sub-table
-        //                 var childRowCount = subTable.rows.length + 1;
-        //                 var childRow = document.createElement("tr");
-        //                 childRow.classList.add("child_row");
-        //                 // let getTableElement = document.querySelector('.item-sub-table');
-        //                 // let currentIndex = getTableElement.rows.length + 1;
-        //                 currentIndex++;
-        //                 // Set the content of the child row
-        //                 // childRow.innerHTML = `
-    //                 //     <td colspan="3">
-    //                 //         <button class="minus-btn">-</button>
-    //                 //     </td>
-    //                 // `;
-        //                 childRow.innerHTML =
-        //                     `<td><input type="checkbox" name="row_id[]" class="row_id" value="${currentIndex}" hidden></td>
-    //                     <td class="product" style="width: 20%;"> <select id="product" type = "text" name = "product_id[]" class ="form-control select2 custom-select form-control-sm  product_${currentIndex} "placeholder = "Please Select the Product"  ><option value = "" >Select the Product </option> </select></td>
-    //                     <td class="quantity"> <input type="text" id="price" value="{{ old('price', !empty($detailAccountRecords->price) ? $detailAccountRecord->price : '') }}"name="price[]" placeholder="Price" class="price form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} price_${currentIndex}" ></td>
-    //                     <td class="quantity"><input id = "scheme" type = "text" name = "scheme[]" value = "{{ old('scheme', !empty($detailAccount->scheme) ? $detailAccount->scheme : '') }}" placeholder = "Scheme... " class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} scheme_${currentIndex} "></td>
-    //                     <td class="quantity"><input id = "discount" type = "text" name = "discount[]" value = "{{ old('discount', !empty($detailAccount->discount) ? $detailAccount->discount : '') }}" placeholder = "Discount... " class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount_${currentIndex}" ></td>
-    //                     <td class="delete-item-sub-row">
-    //                     <ul class="table-controls">
-    //                     <li><a href="javascript:void(0);" class="delete-sub-item" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></a></li>
-    //                     </ul>
-    //                     </td>
-    //                     </div>
-    //                     </div>
-    //                     </td>`;
-        //                 // $(".item-sub-table tbody").append($childRow);
-        //                 deleteItemSubRow();
 
 
-
-        //                 // Append the new child row to the sub-table
-        //                 parentRow.insertAdjacentElement('afterend', childRow);
-        //                 // subTable.appendChild(childRow);
-        //             }
-        //         }
-
-        //         // Check if the "-" button was clicked to remove a child row
-        //         if (event.target.classList.contains("minus-btn")) {
-        //             var childRow = event.target.closest(".child_row");
-        //             if (childRow) {
-        //                 childRow.remove();
-        //             }
-        //         }
-        //     });
-        // });
-    </script>
+    
 
 
 
@@ -1821,11 +908,17 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
 
     <x-slot:footerFiles>
 
+        <script src="{{ asset('plugins/filepond/filepond.min.js') }}"></script>
+        <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
+        <script src="{{ asset('plugins/filepond/FilePondPluginImageExifOrientation.min.js') }}"></script>
+        <script src="{{ asset('plugins/filepond/FilePondPluginImagePreview.min.js') }}"></script>
+        <script src="{{ asset('plugins/filepond/FilePondPluginImageCrop.min.js') }}"></script>
+        <script src="{{ asset('plugins/filepond/FilePondPluginImageResize.min.js') }}"></script>
+        <script src="{{ asset('plugins/filepond/FilePondPluginImageTransform.min.js') }}"></script>
+        <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>
+
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         {{-- <script src="{{ asset('js/common.js') }}"></script> --}}
-
-        <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
-        <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>
 
         <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
         <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>

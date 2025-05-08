@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('saleMan_id')->unsigned()->index()->nullable();
             $table->integer('business_id');
             $table->integer('f_year_id');
+            $table->string('image')->nullable();
             $table->string('commision')->default(0)->nullable();
             $table->string('mode')->nullable();
             $table->string('status')->nullable();

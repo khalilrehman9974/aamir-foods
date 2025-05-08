@@ -430,6 +430,15 @@ $isSelected = old('delivered_to') == $key || $sale_Order->pluck('delivered_to')-
                                                                                                     readonly>
                                                                                             </td>
 
+                                                                                            <td
+                                                                                                class="text-right unit" hidden>
+                                                                                                <input id="soQuantity"
+                                                                                                    type="number"
+                                                                                                    name="soQuantity[]"
+                                                                                                    value="{{ old('quantity', !empty($saleOrderDetail->quantity) ? $saleOrderDetail->quantity : '') }}"
+                                                                                                    placeholder="SO Quantity.... "
+                                                                                                    class="sOQty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sOQty_{{ $index }}" hidden>
+                                                                                            </td>
 
                                                                                             <td
                                                                                                 class="text-right unit">
@@ -641,6 +650,10 @@ $isSelected = old('delivered_to') == $key || $sale_Order->pluck('delivered_to')-
                 '<td class="measurement" >' +
                 '<input type="text" style="color: black; " placeholder="M.T" id="measurement" name="measurement_type[]" class = "measurement form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} measurement_' +
                 currentIndex + '" readonly> </td> ' +
+                '<td class="text-right unit" hidden>' +
+                '<input type="text" name="soQuantity[]" value="0" class="sOQty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sOQty_' +
+                currentIndex + '" placeholder="SO Quantity.... " hidden>' +
+                ' </td>' +
                 '<td class="text-right unit" >' +
                 '<input type="text" name="quantity[]" class="qty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} qty_' +
                 currentIndex + '" placeholder="Quantity.... ">' +

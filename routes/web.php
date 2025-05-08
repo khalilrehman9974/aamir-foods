@@ -110,6 +110,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('save', ['as' => 'detail-account.save', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@store']);
         Route::post('savePrice', ['as' => 'detail-account.savePrice', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@savePrice']);
         Route::get('edit/{id}', ['as' => 'detail-account.edit', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@edit']);
+        Route::get('editPrice/{id}', ['as' => 'detail-account.editPrice', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@editPrice']);
         Route::post('update', ['as' => 'detail-account.update', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@update']);
         Route::delete('delete/{id}', ['as' => 'detail-account.delete', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@destroy']);
         Route::get('search', ['as' => 'detail-account.search', 'uses' => 'App\Http\Controllers\CoaDetailAccountController@search']);
@@ -436,6 +437,18 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'trialBalance'], function () {
         Route::get('list', ['as' => 'trialBalance.list', 'uses' => 'App\Http\Controllers\ReportController@view']);
         Route::get('print', ['as' => 'trialBalance.print', 'uses' => 'App\Http\Controllers\ReportController@trialBalancePrint']);
+    });
+
+    Route::group(['prefix' => 'order-sheet'], function () {
+        Route::get('list', ['as' => 'order-sheet.productOrderSheetlist', 'uses' => 'App\Http\Controllers\ReportController@productOrderSheetView']);
+        Route::get('orderSheetlist', ['as' => 'order-sheet.orderSheetlist', 'uses' => 'App\Http\Controllers\ReportController@orderSheetView']);
+        Route::get('print', ['as' => 'order-sheet.productOrderSheetPrint', 'uses' => 'App\Http\Controllers\ReportController@productOrderSheetPrint']);
+        Route::get('orderSheetPrint', ['as' => 'order-sheet.orderSheetPrint', 'uses' => 'App\Http\Controllers\ReportController@orderSheetPrint']);
+    });
+
+    Route::group(['prefix' => 'dispatch-report'], function () {
+        Route::get('list', ['as' => 'dispatch-report.list', 'uses' => 'App\Http\Controllers\ReportController@dispatchReportView']);
+        Route::get('dispatchReport', ['as' => 'dispatch-report.dispatchReport', 'uses' => 'App\Http\Controllers\ReportController@dispatchReport']);
     });
 
     Route::group(['prefix' => 'grn', 'middleware' => 'auth'], function () {

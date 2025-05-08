@@ -14,7 +14,7 @@
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
         <link rel="stylesheet" href="{{ asset('plugins/sweetalerts2/sweetalerts2.css') }}">
         {{-- @vite(['resources/scss/light/plugins/sweetalerts2/custom-sweetalert.scss'])
-        @vite(['resources/scss/dark/plugins/sweetalerts2/custom-sweetalert.scss'])--}}
+        @vite(['resources/scss/dark/plugins/sweetalerts2/custom-sweetalert.scss']) --}}
         @vite(['resources/scss/light/assets/components/accordions.scss'])
         @vite(['resources/scss/dark/assets/components/accordions.scss'])
         @vite(['resources/scss/light/assets/elements/alert.scss'])
@@ -44,9 +44,14 @@
             crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
 
 
-        {{-- <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />--}}
+        {{-- <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" /> --}}
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+            integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+        @vite(['resources/scss/light/plugins/filepond/custom-filepond.scss'])
+        @vite(['resources/scss/dark/plugins/filepond/custom-filepond.scss'])F
 
         <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
         <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
@@ -110,8 +115,8 @@
                                             <div class="col-lg-12 col-12 ">
                                                 <form
                                                     action="{{ !empty($detailAccount) ? route('detail-account.update') : route('detail-account.save') }}"
-                                                    method="POST" class="row g-3 needs-validation" autocomplete="off"
-                                                    novalidate>
+                                                    method="POST" class="row g-3 needs-validation"
+                                                    enctype="multipart/form-data" autocomplete="off" novalidate>
                                                     @csrf
                                                     <input type="hidden" name="id" id="id"
                                                         value="{{ isset($detailAccount->id) ? $detailAccount->id : '' }}" />
@@ -412,336 +417,30 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-0 col-12 form-group mb-2">
-                                                        <label for="account_name"
-                                                            class="form-label">
+                                                        <label for="account_name" class="form-label">
                                                             Remarks </label>
                                                         <textarea name="remarks" id="remarks" placeholder="Please Enter Remarks "
                                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" type="text" cols="30"
                                                             rows="5">{{ optional($detailAccountDetails->first())->remarks }}</textarea>
                                                     </div>
+                                                    <div class="col-lg-6 col-12 form-group mb-4">
+                                                        <label for="image" class="form-label">Upload Account
+                                                            Image</label>
 
+                                                        <input id="image" name="image" type="file"
+                                                            class="form-control" accept="image/*">
 
-                                                    {{-- <div class="invoice-detail-terms"
-                                                        style="padding: 0px 0px 0px 0px !important;">
-                                                        <div class="tab-content mt-5" id="pills-tabContent">
-                                                            <div class="invoice-detail-items"
-                                                                style="padding:0px 0px 0px 0px !important;">
-
-                                                                <div class="table-responsive">
-                                                                    <table class="table item-table">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th>
-                                                                                </th>
-                                                                                <th></th>
-                                                                                <th scope="col" style="width: 15%">
-                                                                                    Inventory 3rd Level</th>
-                                                                                <th scope="col" style="width: 15%">
-                                                                                    Price Tag</th>
-                                                                                <th class="col">
-                                                                                    Product</th>
-                                                                                <th class="">
-                                                                                    Price</th>
-                                                                                <th class="">
-                                                                                    Scheme</th>
-                                                                                <th class="">
-                                                                                    Discount</th>
-                                                                                <th></th>
-                                                                            </tr>
-                                                                            <tr aria-hidden="true"
-                                                                                class="mt-3 d-block table-row-hidden">
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-
-                                                                            @if (!empty($detailAccountRecords))
-                                                                                @foreach ($detailAccountRecords as $index => $detailAccountRecord)
-                                                                                    @php
-                                                                                        $selectedPriceTag =
-                                                                                            $detailAccountRecord->price_tag_id;
-                                                                                        $filteredProducts = $detailAccountProducts->where(
-                                                                                            'master_price_tag',
-                                                                                            $selectedPriceTag,
-                                                                                        );
-                                                                                        $rowIndex = $index + 1;
-                                                                                    @endphp
-                                                                                    <tr class="tr_clone validator_0 main_row main_row_{{ $rowIndex }}"
-                                                                                        data-parent-id=parent_row_1>
-                                                                                        <td class="delete-item-row">
-                                                                                            <ul class="table-controls">
-                                                                                                <li>
-                                                                                                    <a href="javascript:void(0);"
-                                                                                                        class="delete-item"
-                                                                                                        data-toggle="tooltip"
-                                                                                                        data-placement="top"
-                                                                                                        title=""
-                                                                                                        data-original-title="Delete">
-                                                                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                                                                            width="24"
-                                                                                                            height="24"
-                                                                                                            viewBox="0 0 24 24"
-                                                                                                            fill="none"
-                                                                                                            stroke="currentColor"
-                                                                                                            stroke-width="2"
-                                                                                                            stroke-linecap="round"
-                                                                                                            stroke-linejoin="round"
-                                                                                                            class="feather feather-x-circle">
-                                                                                                            <circle
-                                                                                                                cx="12"
-                                                                                                                cy="12"
-                                                                                                                r="10">
-                                                                                                            </circle>
-                                                                                                            <line
-                                                                                                                x1="15"
-                                                                                                                y1="9"
-                                                                                                                x2="9"
-                                                                                                                y2="15">
-                                                                                                            </line>
-                                                                                                            <line
-                                                                                                                x1="9"
-                                                                                                                y1="9"
-                                                                                                                x2="15"
-                                                                                                                y2="15">
-                                                                                                            </line>
-                                                                                                        </svg>
-                                                                                                    </a>
-                                                                                                </li>
-                                                                                            </ul>
-                                                                                        </td>
-                                                                                        <td>
-                                                                                            <input type="text"
-                                                                                                style="width: 0%;"
-                                                                                                name="row_id[]"
-                                                                                                class="row_id"
-                                                                                                value="{{ $rowIndex }}"
-                                                                                                hidden>
-                                                                                        </td>
-
-                                                                                        <td
-                                                                                            class="inventoryThirdLevel">
-                                                                                            <select
-                                                                                                id="inventoryThirdLevel"
-                                                                                                type="text"
-                                                                                                name="inventory_third_level[]"
-                                                                                                placeholder="Please Select the Inv Third Level"
-                                                                                                class="{{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} form-control mb-3 inventory_third_level_{{ $rowIndex }} select2 custom-select">
-                                                                                                <option value="">
-                                                                                                    Select
-                                                                                                    the
-                                                                                                    Inv Third Level
-                                                                                                </option>
-                                                                                                @foreach ($dropDownData['invetoryThirdLevel'] as $key => $value)
-                                                                                                    <option
-                                                                                                        value="{{ $key }}"
-                                                                                                        {{ (old('inventory_third_level') == $key ? 'selected' : '') || (!empty($detailAccountRecord->inventory_third_level) ? collect($detailAccountRecord->inventory_third_level)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                                        {{ $value }}
-                                                                                                    </option>
-                                                                                                @endforeach
-                                                                                            </select>
-                                                                                        </td>
-
-                                                                                        <td class="price_tag">
-                                                                                            <select
-                                                                                                id="priceTag_dropdown"
-                                                                                                type="text"
-                                                                                                name="price_tag_id[]"
-                                                                                                placeholder="Please Select the Price Tag"
-                                                                                                class="{{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} form-control  mb-3 priceTag_dropdown priceTag_dropdown_{{ $rowIndex }} select2 custom-select">
-                                                                                                <option value="">
-                                                                                                    Select
-                                                                                                    the
-                                                                                                    Price Tag
-                                                                                                </option>
-                                                                                                @foreach ($dropDownData['priceTags'] as $key => $value)
-                                                                                                    <option
-                                                                                                        value="{{ $key }}"
-                                                                                                        {{ (old('price_tag_id') == $key ? 'selected' : '') || (!empty($detailAccountRecord->price_tag_id) ? collect($detailAccountRecord->price_tag_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                                        {{ $value }}
-                                                                                                    </option>
-                                                                                                @endforeach
-                                                                                            </select>
-                                                                                        </td>
-
-                                                                                        <td><a
-                                                                                                class="btn btn-dark plus-btn plus_btn_{{ $rowIndex }}">+</a>
-                                                                                        </td>
-
-
-
-                                                                                    </tr>
-                                                                                    @foreach ($filteredProducts as $detailAccountProduct)
-                                                                                        @php
-                                                                                            $index = $loop->index + 1; // Starts from 2
-
-                                                                                        @endphp
-                                                                                        <tr class="child_row"
-                                                                                            data-parent-id="parent_row_{{ $index }}">
-                                                                                            <td>
-                                                                                                <input type="text"
-                                                                                                    name="sub_row_id[]"
-                                                                                                    class="sub_row_id"
-                                                                                                    value="{{ $index }}"
-                                                                                                    hidden>
-                                                                                            </td>
-                                                                                            <td>
-                                                                                            </td>
-
-                                                                                            <td class="quantity">
-                                                                                                <input
-                                                                                                    id= "masterThirdLevel"
-                                                                                                    type = "text"
-                                                                                                    value="{{ $detailAccountProduct->master_third_level }}"
-                                                                                                    name="master_third_level[]"
-                                                                                                    class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} masterThirdLevel_{{ $index }}"
-                                                                                                    hidden>
-                                                                                            </td>
-                                                                                            <td class="quantity">
-                                                                                                <input
-                                                                                                    id= "master_price_tag"
-                                                                                                    type = "text"
-                                                                                                    value="{{ $detailAccountProduct->master_price_tag }}"
-                                                                                                    name="master_price_tag[]"
-                                                                                                    class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} master_price_tag_{{ $index }}"
-                                                                                                    hidden>
-                                                                                            </td>
-                                                                                            <td class="product">
-                                                                                                <select id="product"
-                                                                                                    type="text"
-                                                                                                    name="product_id[]"
-                                                                                                    placeholder="Please Select the Product"
-                                                                                                    class="{{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} form-control mb-3 product product_{{ $index }} select2"
-                                                                                                    multiple>
-                                                                                                    <option
-                                                                                                        value="select-all">
-                                                                                                        Select
-                                                                                                        All
-                                                                                                    </option>
-                                                                                                    {{-- @foreach ($dropDownData['products'] as $key => $value)
-                                                                                                        <option
-                                                                                                            value="{{ $key }}"
-                                                                                                            {{ (old('product_id') == $key ? 'selected' : '') || (!empty($detailAccountProduct->product_id) ? collect($detailAccountProduct->product_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                                                            {{ $value }}
-                                                                                                        </option>
-                                                                                                    @endforeach /////
-                                                                                                    @foreach ($products as $key => $value)
-                                                                                                        <option
-                                                                                                            value="{{ $key }}"
-                                                                                                            {{ collect($detailAccountProduct->product_id)->contains($key) ? 'selected' : '' }}>
-                                                                                                            {{ $value }}
-                                                                                                        </option>
-                                                                                                    @endforeach
-                                                                                                </select>
-                                                                                            </td>
-
-
-                                                                                            <td class="quantity">
-                                                                                                <input type="text"
-                                                                                                    id="price"
-                                                                                                    class="price form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} price_{{ $index }}"
-                                                                                                    name="price[]"
-                                                                                                    value="{{ old('price', !empty($detailAccountProduct->price) ? $detailAccountProduct->price : '') }}"
-                                                                                                    placeholder="Price">
-                                                                                            </td>
-
-                                                                                            <td class="quantity">
-                                                                                                <input id="scheme"
-                                                                                                    type="text"
-                                                                                                    name="scheme[]"
-                                                                                                    value="{{ old('scheme', !empty($detailAccountProduct->scheme) ? $detailAccountProduct->scheme : '') }}"
-                                                                                                    placeholder="Scheme... "
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} scheme_{{ $index }}">
-                                                                                            </td>
-
-                                                                                            <td class="quantity">
-                                                                                                <input id="discount"
-                                                                                                    type="text"
-                                                                                                    name="discount[]"
-                                                                                                    value="{{ old('discount', !empty($detailAccountProduct->discount) ? $detailAccountProduct->discount : '') }}"
-                                                                                                    placeholder="Discount... "
-                                                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount_{{ $index }}">
-                                                                                            </td>
-
-                                                                                            <td
-                                                                                                class="delete-item-sub-row">
-                                                                                                <ul
-                                                                                                    class="table-controls">
-                                                                                                    <li>
-                                                                                                        <a href="javascript:void(0);"
-                                                                                                            class="delete-sub-item"
-                                                                                                            data-toggle="tooltip"
-                                                                                                            data-placement="top"
-                                                                                                            title=""
-                                                                                                            data-original-title="Delete">
-                                                                                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                                                                                width="24"
-                                                                                                                height="24"
-                                                                                                                viewBox="0 0 24 24"
-                                                                                                                fill="none"
-                                                                                                                stroke="currentColor"
-                                                                                                                stroke-width="2"
-                                                                                                                stroke-linecap="round"
-                                                                                                                stroke-linejoin="round"
-                                                                                                                class="feather feather-x-circle">
-                                                                                                                <circle
-                                                                                                                    cx="12"
-                                                                                                                    cy="12"
-                                                                                                                    r="10">
-                                                                                                                </circle>
-                                                                                                                <line
-                                                                                                                    x1="15"
-                                                                                                                    y1="9"
-                                                                                                                    x2="9"
-                                                                                                                    y2="15">
-                                                                                                                </line>
-                                                                                                                <line
-                                                                                                                    x1="9"
-                                                                                                                    y1="9"
-                                                                                                                    x2="15"
-                                                                                                                    y2="15">
-                                                                                                                </line>
-                                                                                                            </svg>
-                                                                                                        </a>
-                                                                                                    </li>
-                                                                                                </ul>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    @endforeach
-                                                                                @endforeach
-
-                                                                            @endif
-                                                                        </tbody>
-                                                                    </table>
-
-
-
-                                                                </div>
-
-                                                                <a href="javascript:void(0);"
-                                                                    class="btn btn-dark additem" id="add-item">Add
-                                                                    Item</a>
-
+                                                        {{-- Show existing image if editing --}}
+                                                        @if (isset($detailAccount) && !empty($detailAccount->image))
+                                                            <div class="mt-3">
+                                                                <p><strong>Current Image:</strong></p>
+                                                                <img src="{{ asset('resources/images/detailAccount/' . $detailAccount->image) }}"
+                                                                    alt="Account Image" class="img-thumbnail"
+                                                                    style="width: 150px; height: auto;">
                                                             </div>
-
-                                                        </div>
-                                                    </div> --}}
-
-
-                                                    <div class="col-lg-0 col-12 form-group mb-4">
-                                                        <div class="row">
-                                                            {{-- <div class="col-md-6">
-                                                                <label for="inputState" class="form-label">Scheme
-                                                                </label>
-                                                                <input id="scheme" type="text" name="scheme"
-                                                                    value="{{ old('scheme', !empty($detailAccount->scheme) ? $detailAccount->scheme : '') }}"
-                                                                    placeholder="Scheme... "
-                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                    >
-                                                            </div> --}}
-
-
-
-                                                        </div>
+                                                        @endif
                                                     </div>
+
 
                                                     <div class="col-lg-0 col-12 form-group mb-4">
                                                         <div class="row">
@@ -1010,7 +709,8 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                         Contact No 1 </label>
                                                                                     <input id="contact_no_1"
                                                                                         type="text"
-                                                                                        name="contact_no_1" maxlength="12"
+                                                                                        name="contact_no_1"
+                                                                                        maxlength="12"
                                                                                         {{-- value="{{ old('contact_no_1', !empty($detailAccountDetails->contact_no_1) ? $detailAccountDetails->contact_no_1 : '') }}" --}}
                                                                                         value="{{ old('contact_no_1', optional($detailAccountDetails->first())->contact_no_1) }}"
                                                                                         placeholder="Please Enter Contact No 1"
@@ -1025,7 +725,8 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                         WhatsApp</label>
                                                                                     <input id="contact_no_2"
                                                                                         type="text"
-                                                                                        name="contact_no_2" maxlength="12"
+                                                                                        name="contact_no_2"
+                                                                                        maxlength="12"
                                                                                         {{-- value="{{ old('contact_no_2', !empty($detailAccountDetails->contact_no_2) ? $detailAccountDetails->contact_no_2 : '') }}" --}}
                                                                                         value="{{ old('contact_no_2', optional($detailAccountDetails->first())->contact_no_2) }}"
                                                                                         placeholder="Please Enter Contact No 2 "
@@ -1056,7 +757,8 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                         type="text" name="cnic"
                                                                                         {{-- value="{{ old('cnic', !empty($detailAccountDetails->cnic) ? $detailAccountDetails->cnic : '') }}" --}}
                                                                                         value="{{ old('cnic', optional($detailAccountDetails->first())->cnic) }}"
-                                                                                        placeholder="Please Enter the CNIC " maxlength="15"
+                                                                                        placeholder="Please Enter the CNIC "
+                                                                                        maxlength="15"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} cnic">
                                                                                 </div>
                                                                             </div>
@@ -1094,8 +796,8 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                     class="form-label">
                                                                                     Credit
                                                                                     Days </label>
-                                                                                <input id="credit-days"
-                                                                                    type="text" name="credit_days"
+                                                                                <input id="credit-days" type="text"
+                                                                                    name="credit_days"
                                                                                     {{-- value="{{ old('credit_days', !empty($detailAccountDetails->credit_days) ? $detailAccountDetails->credit_days : '') }}" --}}
                                                                                     value="{{ old('credit_days', optional($detailAccountDetails->first())->credit_days) }}"
                                                                                     placeholder="Please Enter credit Days "
@@ -1146,10 +848,10 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
             }
         });
 
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const input = document.getElementById('contact_no_1');
 
-            input.addEventListener('input', function () {
+            input.addEventListener('input', function() {
                 // Remove all non-digit characters
                 let raw = this.value.replace(/\D/g, '');
 
@@ -1165,10 +867,10 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
             });
         });
 
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const input = document.getElementById('contact_no_2');
 
-            input.addEventListener('input', function () {
+            input.addEventListener('input', function() {
                 // Remove all non-digit characters
                 let raw = this.value.replace(/\D/g, '');
 
@@ -1184,23 +886,23 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
             });
         });
 
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const cnicInput = document.getElementById('cnic');
 
-            cnicInput.addEventListener('input', function () {
-            let raw = this.value.replace(/\D/g, ''); // Only digits
+            cnicInput.addEventListener('input', function() {
+                let raw = this.value.replace(/\D/g, ''); // Only digits
 
-            if (raw.length > 13) raw = raw.slice(0, 13); // Limit to 13 digits
+                if (raw.length > 13) raw = raw.slice(0, 13); // Limit to 13 digits
 
-            let formatted = raw;
-            if (raw.length > 5 && raw.length <= 12) {
-                formatted = raw.slice(0, 5) + '-' + raw.slice(5);
-            }
-            if (raw.length > 12) {
-                formatted = raw.slice(0, 5) + '-' + raw.slice(5, 12) + '-' + raw.slice(12);
-            }
+                let formatted = raw;
+                if (raw.length > 5 && raw.length <= 12) {
+                    formatted = raw.slice(0, 5) + '-' + raw.slice(5);
+                }
+                if (raw.length > 12) {
+                    formatted = raw.slice(0, 5) + '-' + raw.slice(5, 12) + '-' + raw.slice(12);
+                }
 
-            this.value = formatted;
+                this.value = formatted;
             });
         });
     </script>
@@ -1910,6 +1612,15 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
 
 
     <x-slot:footerFiles>
+
+        <script src="{{ asset('plugins/filepond/filepond.min.js') }}"></script>
+        <script src="{{ asset('plugins/filepond/FilePondPluginFileValidateType.min.js') }}"></script>
+        <script src="{{ asset('plugins/filepond/FilePondPluginImageExifOrientation.min.js') }}"></script>
+        <script src="{{ asset('plugins/filepond/FilePondPluginImagePreview.min.js') }}"></script>
+        <script src="{{ asset('plugins/filepond/FilePondPluginImageCrop.min.js') }}"></script>
+        <script src="{{ asset('plugins/filepond/FilePondPluginImageResize.min.js') }}"></script>
+        <script src="{{ asset('plugins/filepond/FilePondPluginImageTransform.min.js') }}"></script>
+        <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         {{-- <script src="{{ asset('plugins/sweetalerts2/sweetalerts2.min.js') }}"></script>

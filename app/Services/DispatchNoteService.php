@@ -89,7 +89,7 @@ class DispatchNoteService
             $q->where('party_id', $request['party_id']);
         }
 
-        $dispatchNotes = $q->with('party', 'saleMan', 'Belt', 'Area', 'DeliveredToParty')->orderBy('id', 'ASC')->paginate(config('constants.PER_PAGE'));
+        $dispatchNotes = $q->with('party', 'saleMan', 'Belt', 'Area', 'DeliveredToParty')->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
 
         return $dispatchNotes;
     }
@@ -157,6 +157,7 @@ class DispatchNoteService
             'product_id' => $request['product_id'],
             'packing_type' => $request['packing_type'],
             'measurement_type' => $request['measurement_type'],
+            'soQuantity' => $request['soQuantity'],
             'quantity' => $request['quantity'],
             'dzn' => $request['dzn'],
             'total_dzn' => $request['total_dzn'],
@@ -177,6 +178,7 @@ class DispatchNoteService
                 $rec['product_id'] = $data['product_id'][$key];
                 $rec['packing_type'] = $data['packing_type'][$key];
                 $rec['measurement_type'] = $data['measurement_type'][$key];
+                $rec['soQuantity'] = $data['soQuantity'][$key];
                 $rec['quantity'] = $data['quantity'][$key];
                 $rec['dzn'] = $data['dzn'][$key];
                 $rec['total_dzn'] = $data['total_dzn'][$key];

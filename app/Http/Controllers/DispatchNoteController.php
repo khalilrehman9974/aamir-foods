@@ -98,28 +98,26 @@ class DispatchNoteController extends Controller
     public function store(Request $request)
     {
 
-        $saleOrder = SaleOrder::where('id', $request->sale_order_number)->first();
-        $updateSaleOrderStatus = $this->dispatchNoteService->prepareSOMasterData($saleOrder);
-        $dispatchMasterInsert = $this->commonService->findUpdateOrCreate(SaleOrder::class, ['id' => $saleOrder->id], $updateSaleOrderStatus);
+        DB::beginTransaction();
+        try {
+            $saleOrder = SaleOrder::where('id', $request->sale_order_number)->first();
+            $updateSaleOrderStatus = $this->dispatchNoteService->prepareSOMasterData($saleOrder);
+            $dispatchMasterInsert = $this->commonService->findUpdateOrCreate(SaleOrder::class, ['id' => $saleOrder->id], $updateSaleOrderStatus);
+            $request = $request->except('_token', 'id');
+            //Insert data into Dispatch tables.
+            $dispatchMasterData = $this->dispatchNoteService->prepareDispatchMasterData($request);
+            $dispatchMasterInsert = $this->dispatchNoteService->findUpdateOrCreate(DispatchNoteMaster::class, ['id' => ''], $dispatchMasterData);
+            $dispatchDetailData = $this->dispatchNoteService->prepareDispatchDetailData($request, $dispatchMasterInsert->id);
+            $this->dispatchNoteService->saveDispatch($dispatchDetailData);
 
-        $request = $request->except('_token', 'id');
-        // $data = $request->except('id', 'token');
-        // DB::beginTransaction();
-        // try {
-        //Insert data into Dispatch tables.
-        $dispatchMasterData = $this->dispatchNoteService->prepareDispatchMasterData($request);
-        $dispatchMasterInsert = $this->dispatchNoteService->findUpdateOrCreate(DispatchNoteMaster::class, ['id' => ''], $dispatchMasterData);
-        $dispatchDetailData = $this->dispatchNoteService->prepareDispatchDetailData($request, $dispatchMasterInsert->id);
-        $this->dispatchNoteService->saveDispatch($dispatchDetailData);
+            $dispatchNoteImages = $this->dispatchNoteService->prepareDispatchNoteImagesData($request, $dispatchMasterInsert->id);
+            $this->dispatchNoteService->saveDispatchNoteImages($dispatchNoteImages);
 
-        $dispatchNoteImages = $this->dispatchNoteService->prepareDispatchNoteImagesData($request, $dispatchMasterInsert->id);
-        $this->dispatchNoteService->saveDispatchNoteImages($dispatchNoteImages);
-
-        //     DB::commit();
-        // } catch (\Exception $e) {
-        //     DB::rollback();
-        //     return redirect('dispatch-note/create')->with('error', $e->getMessage());
-        // }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect('dispatch-note/create')->with('error', $e->getMessage());
+        }
         return redirect('dispatch-note/list')->with('message', config('constants.add'));
     }
 
@@ -164,7 +162,7 @@ class DispatchNoteController extends Controller
             $message = config('constants.wrong');
         }
 
-        return view('dispatch-note.edit', compact('pageTitle','date', 'dropDownData', 'products', 'deliveredToParties', 'parties', 'sectors', 'areas', 'images', 'currentid', 'note', 'saleMans', 'dispatchNotes'));
+        return view('dispatch-note.edit', compact('pageTitle', 'date', 'dropDownData', 'products', 'deliveredToParties', 'parties', 'sectors', 'areas', 'images', 'currentid', 'note', 'saleMans', 'dispatchNotes'));
     }
 
     /**
@@ -176,21 +174,20 @@ class DispatchNoteController extends Controller
      */
     public function update(Request $request)
     {
-        // dd($request);
-        // DB::beginTransaction();
 
-        // try {
-        //     $request = request()->all();
+        DB::beginTransaction();
+        try {
+            $request = request()->all();
             $dispatchMasterData = $this->dispatchNoteService->prepareDispatchMasterData($request);
             $dispatchMasterInsert = $this->commonService->findUpdateOrCreate(DispatchNoteMaster::class, ['id' => request('id')], $dispatchMasterData);
             $dispatchDetailData = $this->dispatchNoteService->prepareDispatchDetailData($request, $dispatchMasterInsert->id);
             $this->dispatchNoteService->saveDispatch($dispatchDetailData);
 
-        //     DB::commit();
-        // } catch (\Exception $e) {
-        //     DB::rollback();
-        //     return redirect('dispatch-note/create')->with('error', $e->getMessage());
-        // }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect('dispatch-note/create')->with('error', $e->getMessage());
+        }
 
         return redirect('dispatch-note/list')->with('message', config('constants.update'));
     }
@@ -199,7 +196,6 @@ class DispatchNoteController extends Controller
     {
         $title = 'Dispatch Note';
         $dispatchNote = DispatchNoteMaster::find($id);
-        // dd($dispatchNote);
         $date = Carbon::parse($dispatchNote->date)->format('d-m-Y');
         $party = CoaDetailAccount::where('id', $dispatchNote->party_id)->value('account_name');
         $saleMan = SaleMan::where('id', $dispatchNote->saleman)->value('name');

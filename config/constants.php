@@ -38,8 +38,9 @@ return
             '4th_level' => '401',
             '5th_level' => '501',
         ],
+
         'file_upload' => [
-            'inventory' => 'public/resources/images/inventory/'
+            'inventory' => 'public/resources/images/inventory',
         ],
 
         'css-classes' => [

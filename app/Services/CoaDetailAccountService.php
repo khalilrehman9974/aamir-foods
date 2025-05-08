@@ -15,13 +15,10 @@ use App\Models\PriceTag;
 use App\Models\CoaSubHead;
 use App\Models\CoaSubSubHead;
 use App\Models\CoaDetailAccount;
-use Illuminate\Support\Facades\DB;
-use App\Models\CoaDetAccountDetail;
 use App\Models\DetailAccountPrices;
 use App\Models\CoaDetailAccountArea;
 use Illuminate\Support\Facades\Auth;
 use App\Models\DetailAccountProducts;
-use App\Models\CoaInventorySubSubHead;
 use App\Models\CoaDetailAccountSectors;
 use App\Models\CoaInventoryDetailAccount;
 use App\Models\CoaMainHead;
@@ -74,20 +71,22 @@ class CoaDetailAccountService
 
         if (!empty($request['detail_account_id'])) {
             $q->where('detail_account_id', $request['detail_account_id']);
-        } elseif (!empty($request['master_third_level'])) {
+        }
+
+        if (!empty($request['master_third_level'])) {
             $q->where('master_third_level', $request['master_third_level']);
-        } elseif (!empty($request['master_price_tag'])) {
+        }
+
+        if (!empty($request['master_price_tag'])) {
             $q->where('master_price_tag', $request['master_price_tag']);
-        }  elseif (!empty($request['product_id'])) {
+        }
+
+        if (!empty($request['product_id'])) {
             $q->where('product_id', $request['product_id']);
         }
 
-        $detailAccountsProducts = $q->with('detailAccountCode', 'priceTag', 'getProducts', 'getCoaFourthLevel')->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
-        return $detailAccountsProducts;
+        return $q->with(['detailAccountCode', 'priceTag', 'getProducts', 'getCoaFourthLevel'])->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
     }
-
-
-
 
     public function getSubSubHeadsBySubHead($subHead)
     {

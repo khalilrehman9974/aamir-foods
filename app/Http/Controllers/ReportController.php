@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\StockLedger;
 use Illuminate\Http\Request;
 use App\Services\CommonService;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Services\PermissionService;
 use App\Models\CoaInventoryMainHead;
 use App\Services\StockLedgerService;
+use Illuminate\Support\Facades\Auth;
 use App\Services\ChartOfAccountService;
 use App\Models\CoaInventoryDetailAccount;
 use App\Services\CoaDetailAccountService;
@@ -450,5 +452,506 @@ class ReportController extends Controller
         });
 
         return view('reports.trial-balance.trial_balance_view', compact('grouped', 'param', 'entries', 'dateFrom', 'dateTo', 'dropDownData', 'title'));
+    }
+
+    public function productOrderSheetView()
+    {
+        $pageTitle = 'Product Order Sheet';
+        $dropDownData = $this->stockLedgerService->DropDownData();
+        return view('reports.product-order-sheet.product-order-sheet-view', compact('dropDownData', 'pageTitle'));
+    }
+
+    public function productOrderSheetPrint(Request $request)
+    {
+        $title = 'Product Order Sheet';
+        $dropDownData = $this->stockLedgerService->DropDownData();
+
+        $dateFrom = $request->from_date;
+        $dateTo = $request->to_date;
+        $status = $request->status;
+        $productId = $request->product_id;
+
+        $fromDate = !empty($dateFrom) ? date('Y-m-d', strtotime($dateFrom)) : null;
+        $toDate = !empty($dateTo) ? date('Y-m-d', strtotime($dateTo)) : null;
+
+        // Base query for sale_order_masters
+        $masterQuery = DB::table('sale_order_masters')
+            ->where('status', $status)
+            ->whereNull('deleted_at');
+
+        if (!empty($fromDate) && !empty($toDate)) {
+            $masterQuery->whereBetween('date', [$fromDate, $toDate]);
+        }
+
+        $saleOrderMasterIds = $masterQuery->pluck('id')->toArray();
+
+        // Query for sale_order_details
+        $detailsQuery = DB::table('sale_order_details')
+            ->whereIn('sale_order_master_id', $saleOrderMasterIds)
+            ->whereNull('deleted_at');
+
+        if (!empty($productId)) {
+            $detailsQuery->where('product_id', $productId);
+        }
+
+        $saleOrderDetails = $detailsQuery->get();
+
+        $totalsByPackingType = [
+            'Carton' => 0,
+            'Boray' => 0,
+        ];
+
+        foreach ($saleOrderDetails as $detail) {
+            $type = $detail->packing_type;
+            $qty = $detail->quantity;
+
+            if (isset($totalsByPackingType[$type])) {
+                $totalsByPackingType[$type] += $qty;
+            }
+        }
+
+
+
+        if ($productId) {
+            // If user selected a product
+            $productsRaw = DB::select("
+        SELECT id, name
+        FROM coa_inventory_detail_accounts
+        WHERE deleted_at IS NULL AND id = ?
+    ", [$productId]);
+        } else {
+            // If no specific product is selected — fetch all undeleted
+            $productsRaw = DB::select("
+        SELECT id, name
+        FROM coa_inventory_detail_accounts
+        WHERE deleted_at IS NULL
+    ");
+        }
+
+        $products = collect($productsRaw)->pluck('name', 'id');
+        $createdUser = Auth::user()->id;
+
+        $user = User::where('id', $createdUser)->value('name');
+
+
+        return view('reports.product-order-sheet.product-order-sheet', compact(
+            'fromDate',
+            'toDate',
+            'dropDownData',
+            'status',
+            'title',
+            'productId',
+            'user',
+            'products',
+            'saleOrderDetails',
+            'totalsByPackingType'
+        ));
+    }
+
+    public function orderSheetView()
+    {
+        $pageTitle = 'Order Sheet';
+        $dropDownData = $this->stockLedgerService->DropDownData();
+        return view('reports.order-sheet.order-sheet-view', compact('dropDownData', 'pageTitle'));
+    }
+
+    public function orderSheetPrint(Request $request)
+    {
+        $title = 'Sale Order Sheet';
+        $dropDownData = $this->stockLedgerService->DropDownData();
+
+        $dateFrom = $request->from_date;
+        $dateTo = $request->to_date;
+        $sector = $request->belt;
+        $area = $request->area;
+        $partyId = $request->party_id;
+        $salesmanId = $request->saleMan_id;
+        $status = $request->status;
+
+        $fromDate = !empty($dateFrom) ? date('Y-m-d', strtotime($dateFrom)) : null;
+        $toDate = !empty($dateTo) ? date('Y-m-d', strtotime($dateTo)) : null;
+
+        // Step 1: Get Sale Order Masters based on filters
+        $masterQuery = DB::table('sale_order_masters')
+            ->whereNull('deleted_at');
+
+        if (!empty($fromDate) && !empty($toDate)) {
+            $masterQuery->whereBetween('date', [$fromDate, $toDate]);
+        }
+
+        if (!empty($sector)) {
+            $masterQuery->where('belt', $sector);
+        }
+
+        if (!empty($area)) {
+            $masterQuery->where('area', $area);
+        }
+
+        if (!empty($partyId)) {
+            $masterQuery->where('party_id', $partyId);
+        }
+
+        if (!empty($salesmanId)) {
+            $masterQuery->where('saleman', $salesmanId);
+        }
+
+        if (!empty($status)) {
+            $masterQuery->where('status', $status);
+        }
+
+        $saleOrderMasters = $masterQuery->get();
+
+        // Step 2: Fetch related details for each master
+        $saleOrderMasterIds = $saleOrderMasters->pluck('id')->toArray();
+
+        $saleOrderDetails = DB::table('sale_order_details')
+            ->whereIn('sale_order_master_id', $saleOrderMasterIds)
+            ->whereNull('deleted_at')
+            ->get()
+            ->groupBy('sale_order_master_id');
+
+        $orders = $saleOrderMasters->map(function ($master) use ($saleOrderDetails) {
+            $master->details = $saleOrderDetails[$master->id] ?? collect();
+            return $master;
+        });
+
+        $products = CoaInventoryDetailAccount::pluck('name', 'id');
+        $createdUser = Auth::user()->id;
+        $user = User::where('id', $createdUser)->value('name');
+
+        return view('reports.order-sheet.order-sheet', compact(
+            'title',
+            'fromDate',
+            'toDate',
+            'sector',
+            'area',
+            'products',
+            'partyId',
+            'salesmanId',
+            'dropDownData',
+            'orders',
+            'user'
+        ));
+    }
+
+    public function dispatchReportView()
+    {
+        $pageTitle = 'Dispatch Report';
+        $dropDownData = $this->stockLedgerService->DropDownData();
+        return view('reports.dispatch_report.dispatch-report-list', compact('dropDownData', 'pageTitle'));
+    }
+
+    // public function dispatchReport(Request $request)
+    // {
+    //     $title = 'Dispatch Report';
+    //     $dropDownData = $this->stockLedgerService->DropDownData();
+
+    //     $dateFrom = $request->from_date;
+    //     $dateTo = $request->to_date;
+    //     $sector = $request->sector;
+    //     $area = $request->area;
+    //     $partyId = $request->party_id;
+    //     $salesmanId = $request->saleMan_id;
+    //     $status = $request->status;
+
+    //     $fromDate = !empty($dateFrom) ? date('Y-m-d', strtotime($dateFrom)) : null;
+    //     $toDate = !empty($dateTo) ? date('Y-m-d', strtotime($dateTo)) : null;
+
+    //     // Step 1: Get Dispatch Note Masters based on filters
+    //     $masterQuery = DB::table('dispatch_note_masters')
+    //         ->whereNull('deleted_at');
+
+    //     if (!empty($fromDate) && !empty($toDate)) {
+    //         $masterQuery->whereBetween('date', [$fromDate, $toDate]);
+    //     }
+
+    //     if (!empty($sector)) {
+    //         $masterQuery->where('sector', $sector);
+    //     }
+
+    //     if (!empty($area)) {
+    //         $masterQuery->where('area', $area);
+    //     }
+
+    //     if (!empty($partyId)) {
+    //         $masterQuery->where('party_id', $partyId);
+    //     }
+
+    //     if (!empty($salesmanId)) {
+    //         $masterQuery->where('saleman', $salesmanId);
+    //     }
+
+    //     if (!empty($status)) {
+    //         $masterQuery->where('status', $status);
+    //     }
+
+    //     $dispatchReportMasters = $masterQuery->get();
+
+    //     // Step 2: Fetch related details for each master
+    //     $dispatchNoteMasterIds = $dispatchReportMasters->pluck('id')->toArray();
+
+    //     $dispatchNoteDetails = DB::table('dispatch_note_details')
+    //         ->whereIn('dispatch_note_master_id', $dispatchNoteMasterIds)
+    //         ->whereNull('deleted_at')
+    //         ->get()
+    //         ->groupBy('dispatch_note_master_id');
+
+    //     // Step 3: Attach details to each master and calculate balance
+    //     $orders = $dispatchReportMasters->map(function ($master) use ($dispatchNoteDetails) {
+    //         $details = $dispatchNoteDetails[$master->id] ?? collect();
+
+    //         $details = $details->map(function ($detail) {
+    //             $detail->balance = ($detail->soQuantity ?? 0) - ($detail->quantity ?? 0);
+    //             return $detail;
+    //         });
+
+    //         $master->details = $details;
+    //         return $master;
+    //     });
+
+    //     $products = CoaInventoryDetailAccount::pluck('name', 'id');
+    //     $createdUser = Auth::user()->id;
+    //     $user = User::where('id', $createdUser)->value('name');
+
+    //     return view('reports.dispatch_report.dispatch-report-view', compact(
+    //         'title',
+    //         'fromDate',
+    //         'toDate',
+    //         'sector',
+    //         'area',
+    //         'products',
+    //         'partyId',
+    //         'salesmanId',
+    //         'dropDownData',
+    //         'orders',
+    //         'user'
+    //     ));
+    // }
+
+    // public function dispatchReport(Request $request)
+    // {
+    //     $title = 'Dispatch Report';
+    //     $dropDownData = $this->stockLedgerService->DropDownData();
+
+    //     $dateFrom = $request->from_date;
+    //     $dateTo = $request->to_date;
+    //     $sector = $request->sector;
+    //     $area = $request->area;
+    //     $partyId = $request->party_id;
+    //     $salesmanId = $request->saleMan_id;
+    //     $status = $request->status;
+
+    //     $fromDate = !empty($dateFrom) ? date('Y-m-d', strtotime($dateFrom)) : null;
+    //     $toDate = !empty($dateTo) ? date('Y-m-d', strtotime($dateTo)) : null;
+
+    //     // Step 1: Get Dispatch Note Masters based on filters
+    //     $masterQuery = DB::table('dispatch_note_masters')
+    //         ->whereNull('deleted_at');
+
+    //     if (!empty($fromDate) && !empty($toDate)) {
+    //         $masterQuery->whereBetween('date', [$fromDate, $toDate]);
+    //     }
+
+    //     if (!empty($sector)) {
+    //         $masterQuery->where('sector', $sector);
+    //     }
+
+    //     if (!empty($area)) {
+    //         $masterQuery->where('area', $area);
+    //     }
+
+    //     if (!empty($partyId)) {
+    //         $masterQuery->where('party_id', $partyId);
+    //     }
+
+    //     if (!empty($salesmanId)) {
+    //         $masterQuery->where('saleman', $salesmanId);
+    //     }
+
+    //     if (!empty($status)) {
+    //         $masterQuery->where('status', $status);
+    //     }
+
+    //     $dispatchReportMasters = $masterQuery->get();
+
+    //     // Step 2: Fetch related details for each master
+    //     $dispatchNoteMasterIds = $dispatchReportMasters->pluck('id')->toArray();
+
+    //     $dispatchNoteDetails = DB::table('dispatch_note_details')
+    //         ->whereIn('dispatch_note_master_id', $dispatchNoteMasterIds)
+    //         ->whereNull('deleted_at')
+    //         ->get()
+    //         ->groupBy('dispatch_note_master_id');
+
+    //     // Step 3: Attach details to each master and calculate balances and packing type totals
+    //     $orders = $dispatchReportMasters->map(function ($master) use ($dispatchNoteDetails) {
+    //         $details = $dispatchNoteDetails[$master->id] ?? collect();
+
+    //         // Compute balance and accumulate totals per packing type
+    //         $packingTotals = [];
+
+    //         $details = $details->map(function ($detail) use (&$packingTotals) {
+    //             $soQty = $detail->soQuantity ?? 0;
+    //             $qty = $detail->quantity ?? 0;
+    //             $balance = $soQty - $qty;
+
+    //             $detail->balance = $balance;
+
+    //             $packingType = $detail->packing_type ?? 'Unknown';
+
+    //             if (!isset($packingTotals[$packingType])) {
+    //                 $packingTotals[$packingType] = [
+    //                     'total_so_quantity' => 0,
+    //                     'total_quantity' => 0,
+    //                     'total_balance' => 0,
+    //                 ];
+    //             }
+
+    //             $packingTotals[$packingType]['total_so_quantity'] += $soQty;
+    //             $packingTotals[$packingType]['total_quantity'] += $qty;
+    //             $packingTotals[$packingType]['total_balance'] += $balance;
+
+    //             return $detail;
+    //         });
+
+    //         $master->details = $details;
+    //         $master->packing_totals = $packingTotals;
+
+    //         return $master;
+    //     });
+
+    //     $products = CoaInventoryDetailAccount::pluck('name', 'id');
+    //     $createdUser = Auth::user()->id;
+    //     $user = User::where('id', $createdUser)->value('name');
+
+    //     return view('reports.dispatch_report.dispatch-report-view', compact(
+    //         'title',
+    //         'fromDate',
+    //         'toDate',
+    //         'sector',
+    //         'area',
+    //         'products',
+    //         'partyId',
+    //         'salesmanId',
+    //         'dropDownData',
+    //         'orders',
+    //         'user'
+    //     ));
+    // }
+
+    public function dispatchReport(Request $request)
+    {
+        $title = 'Dispatch Report';
+        $dropDownData = $this->stockLedgerService->DropDownData();
+
+        $dateFrom = $request->from_date;
+        $dateTo = $request->to_date;
+        $sector = $request->sector;
+        $area = $request->area;
+        $partyId = $request->party_id;
+        $salesmanId = $request->saleMan_id;
+        $status = $request->status;
+
+        $fromDate = !empty($dateFrom) ? date('Y-m-d', strtotime($dateFrom)) : null;
+        $toDate = !empty($dateTo) ? date('Y-m-d', strtotime($dateTo)) : null;
+
+        // Step 1: Filter Dispatch Note Masters
+        $masterQuery = DB::table('dispatch_note_masters')->whereNull('deleted_at');
+
+        if ($fromDate && $toDate) {
+            $masterQuery->whereBetween('date', [$fromDate, $toDate]);
+        }
+
+        if (!empty($sector)) {
+            $masterQuery->where('sector', $sector);
+        }
+
+        if (!empty($area)) {
+            $masterQuery->where('area', $area);
+        }
+
+        if (!empty($partyId)) {
+            $masterQuery->where('party_id', $partyId);
+        }
+
+        if (!empty($salesmanId)) {
+            $masterQuery->where('saleman', $salesmanId);
+        }
+
+        if (!empty($status)) {
+            $masterQuery->where('status', $status);
+        }
+
+        $dispatchReportMasters = $masterQuery->get();
+        $dispatchNoteMasterIds = $dispatchReportMasters->pluck('id')->toArray();
+
+        // Step 2: Fetch Dispatch Note Details
+        $dispatchNoteDetails = DB::table('dispatch_note_details')
+            ->whereIn('dispatch_note_master_id', $dispatchNoteMasterIds)
+            ->whereNull('deleted_at')
+            ->get()
+            ->groupBy('dispatch_note_master_id');
+
+        // Initialize grand totals for both packing types
+        $grandTotals = [
+            'Boray' => ['total_so_quantity' => 0, 'total_quantity' => 0, 'total_balance' => 0],
+            'Carton' => ['total_so_quantity' => 0, 'total_quantity' => 0, 'total_balance' => 0],
+        ];
+
+        // Step 3: Attach details to each master
+        $orders = $dispatchReportMasters->map(function ($master) use ($dispatchNoteDetails, &$grandTotals) {
+            $details = $dispatchNoteDetails[$master->id] ?? collect();
+
+            $packingTotals = [
+                'Boray' => ['total_so_quantity' => 0, 'total_quantity' => 0, 'total_balance' => 0],
+                'Carton' => ['total_so_quantity' => 0, 'total_quantity' => 0, 'total_balance' => 0],
+            ];
+
+            $details = $details->map(function ($detail) use (&$packingTotals, &$grandTotals) {
+                $soQty = $detail->soQuantity ?? 0;
+                $qty = $detail->quantity ?? 0;
+                $balance = $soQty - $qty;
+                $packingType = $detail->packing_type ?? 'Unknown';
+
+                $detail->balance = $balance;
+
+                // Only process if known packing type
+                if (in_array($packingType, ['Boray', 'Carton'])) {
+                    $packingTotals[$packingType]['total_so_quantity'] += $soQty;
+                    $packingTotals[$packingType]['total_quantity'] += $qty;
+                    $packingTotals[$packingType]['total_balance'] += $balance;
+
+                    $grandTotals[$packingType]['total_so_quantity'] += $soQty;
+                    $grandTotals[$packingType]['total_quantity'] += $qty;
+                    $grandTotals[$packingType]['total_balance'] += $balance;
+                }
+
+                return $detail;
+            });
+
+            $master->details = $details;
+            $master->packing_totals = $packingTotals;
+
+            return $master;
+        });
+
+        $products = CoaInventoryDetailAccount::pluck('name', 'id');
+        $createdUser = Auth::user()->id;
+        $user = User::where('id', $createdUser)->value('name');
+
+        return view('reports.dispatch_report.dispatch-report-view', compact(
+            'title',
+            'fromDate',
+            'toDate',
+            'sector',
+            'area',
+            'products',
+            'partyId',
+            'salesmanId',
+            'dropDownData',
+            'orders',
+            'user',
+            'grandTotals'
+        ));
     }
 }

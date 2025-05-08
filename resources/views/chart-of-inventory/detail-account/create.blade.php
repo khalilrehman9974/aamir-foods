@@ -603,7 +603,7 @@
                                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" type="text" cols="30"
                                                             rows="5">{{ @$detailAccount->remarks }}</textarea>
                                                     </div>
-                                                    <div class="col-lg-0 col-12 form-group mb-4">
+                                                    {{-- <div class="col-lg-0 col-12 form-group mb-4">
                                                         <label for="name" class="form-label">
                                                             Upload Product Image </label>
 
@@ -611,12 +611,12 @@
                                                             <input id="image" name="image" type="file"
                                                                 value="Upload" onchange="sub(this)" />
                                                         </div>
-                                                    </div>
+                                                    </div> --}}
                                                     <br>
                                                     <br>
                                                     <br>
 
-                                                    @if (@$detailAccount)
+                                                    {{-- @if (@$detailAccount)
                                                         <div class="col-lg-0 col-12 form-group mb-4">
                                                             <div class="media">
                                                                 <div class="avatar me-2">
@@ -632,9 +632,26 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    @endif
+                                                    @endif --}}
 
 
+                                                    <div class="col-lg-6 col-12 form-group mb-4">
+                                                        <label for="image" class="form-label">Upload Product Image</label>
+
+                                                        <input id="image" name="image" type="file" class="form-control" accept="image/*">
+
+                                                        {{-- Show existing image if editing --}}
+                                                        @if(isset($detailAccount) && !empty($detailAccount->image))
+                                                            <div class="mt-3">
+                                                                <p><strong>Current Image:</strong></p>
+                                                                <img
+                                                                    src="{{ asset('resources/images/inventory/' . $detailAccount->image) }}"
+                                                                    alt="Product Image"
+                                                                    class="img-thumbnail"
+                                                                    style="width: 150px; height: auto;">
+                                                            </div>
+                                                        @endif
+                                                    </div>
 
 
 

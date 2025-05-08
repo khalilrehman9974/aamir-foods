@@ -126,9 +126,30 @@ class CoaDetailAccountController extends Controller
         DB::beginTransaction();
         try {
 
-            $request = $request->except('_token', 'id');
+            $data = $request->except('_token', 'id');
+
+            if ($request->hasFile('image')) {
+
+                $image = $request->file('image');
+
+                // Get the original name of the uploaded file
+                $originalName = $image->getClientOriginalName();
+
+                // Generate a new filename with a timestamp to avoid conflicts
+                $fileName = time() . '_' . $originalName;
+
+                // Set the path where the image will be saved
+                $destinationPath = public_path('resources/images/detailAccount');
+
+                // Move the image to the public path
+                $image->move($destinationPath, $fileName);
+
+                // Save only the filename to the database
+                $data['image'] = $fileName;
+            }
+
             $detailAccountMasterData = $this->coaDetailAccountService->prepareDetailAccountMasterData($request);
-            $detailAccountMasterInsert = $this->coaDetailAccountService->findUpdateOrCreate(CoaDetailAccount::class, ['id' => !empty(request('id')) ? request('id') : null], $detailAccountMasterData);
+            $detailAccountMasterInsert = $this->coaDetailAccountService->findUpdateOrCreate(CoaDetailAccount::class, ['id' => !empty(request('id')) ? request('id') : null], array_merge($detailAccountMasterData, ['image' => $data['image'] ?? null]));
 
             $this->coaDetailAccountService->prepareProductAssingData($request, $detailAccountMasterInsert->id);
 
@@ -209,11 +230,62 @@ class CoaDetailAccountController extends Controller
     }
 
 
+    public function editPrice($id)
+    {
+        $pageTitle = 'Update';
+        $dropDownData = $this->coaDetailAccountService->DropDownData();
+        $detailAccountPrices = DetailAccountProducts::find($id);
+
+        if (!$detailAccountPrices) {
+            return abort(404);
+        }
+
+        return view('chart-of-accounts.detail-account.prices.create', compact('detailAccountPrices', 'dropDownData', 'pageTitle'));
+    }
+
+
+    public function savePrice(Request $request)
+    {
+        $data = $request->except('_token');
+        $this->coaDetailAccountService->findUpdateOrCreate(DetailAccountProducts::class, ['id' => !empty(request('id')) ? request('id') : null], $data);
+
+
+        if (request('id')) {
+            $message = config('constants.update');
+        }
+        return redirect('detail-account/pricelist')->with('message', $message);
+    }
+
     public function update(Request $request)
     {
 
         DB::beginTransaction();
         try {
+            $detailAccount = CoaDetailAccount::find($request->id);
+            if (!$detailAccount) {
+                return redirect()->back()->with('error', 'Record not found.');
+            }
+
+            $data = $request->except('_token');
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $fileName = time() . '_' . $image->getClientOriginalName();
+                $data['image'] = $fileName;
+
+                // Move file to inventory folder
+                $image->move(public_path('resources/images/detailAccount'), $fileName);
+
+                // Delete old image if it exists
+                if (!empty($detailAccount->image)) {
+                    $oldPath = public_path('resources/images/detailAccount/' . $detailAccount->image);
+                    if (file_exists($oldPath)) {
+                        unlink($oldPath);
+                    }
+                }
+            } else {
+                // Keep existing image if not replaced
+                $data['image'] = $detailAccount->image;
+            }
             CoaDetailAccountSectors::where('master_account_id', $request['id'])->delete();
             CoaDetailAccountArea::where('master_account_id', $request['id'])->delete();
             CoaDetAccountDetail::where('det_account_code', $request['id'])->delete();
@@ -222,6 +294,7 @@ class CoaDetailAccountController extends Controller
             AccountLedger::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
 
             $detailAccountMasterData = $this->coaDetailAccountService->prepareDetailAccountMasterData($request);
+            $detailAccountMasterData['image'] = $data['image'];
             $detailAccountMasterInsert = $this->coaDetailAccountService->findUpdateOrCreate(CoaDetailAccount::class, ['id' => !empty(request('id')) ? request('id') : null], $detailAccountMasterData);
 
             if ($request->update == 1) {

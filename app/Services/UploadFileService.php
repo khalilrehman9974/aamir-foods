@@ -73,13 +73,31 @@ class UploadFileService
      * @return Response.
      * *
      */
+    // public function uploadSingleFile($file, $fileName, $path)
+    // {
+    //     if(File::exists(base_path('public/resources/images/inventory/' . $fileName))){
+    //         File::delete(base_path('public/resources/images/inventory/' . $fileName));
+    //     }
+    //     $file->move(base_path($path), $fileName);
+    // }
+
     public function uploadSingleFile($file, $fileName, $path)
     {
-        if(File::exists(base_path('public/resources/images/inventory/' . $fileName))){
-            File::delete(base_path('public/resources/images/inventory/' . $fileName));
+        dd($path);
+        $fullPath = base_path($path . '/' . $fileName);
+
+        // Delete if file already exists
+        if (File::exists($fullPath)) {
+            File::delete($fullPath);
         }
-        $file->move(base_path($path), $fileName);
+
+        // Ensure the directory exists
+        $directory = base_path($path);
+        if (!File::exists($directory)) {
+            File::makeDirectory($directory, 0755, true);
+        }
+
+        // Move the uploaded file
+        $file->move($directory, $fileName);
     }
-
 }
-

@@ -11,7 +11,7 @@ class DispatchNoteDetail extends Model
 {
     use SoftDeletes;
     protected $table = 'dispatch_note_details';
-    protected $fillable = ['dispatch_note_master_id','product_id','packing_type','measurement_type','quantity', 'dzn', 'total_dzn','remarks','created_by','updated_by'];
+    protected $fillable = ['dispatch_note_master_id','product_id','packing_type','soQuantity','measurement_type','quantity', 'dzn', 'total_dzn','remarks','created_by','updated_by'];
 
     public function dispatch_note_master_id(){
         return $this->hasMany(DispatchNoteMaster::class, 'id', 'dispatch_note_master_id');

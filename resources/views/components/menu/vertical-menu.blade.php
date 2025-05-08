@@ -201,9 +201,9 @@
                         aria-expanded="{{ Request::is('*/app/invoice/*') ? 'true' : 'false' }}"
                         class="dropdown-toggle">
                         <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" class="feather feather-dollar-sign">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="feather feather-dollar-sign">
                                 <line x1="12" y1="1" x2="12" y2="23"></line>
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                             </svg>
@@ -536,7 +536,7 @@
 
                 </li>
                 <li class="menu {{ Request::is('*/app/invoice/ledgers/*') ? 'active' : '' }}">
-                    <a href="#reportView" data-bs-toggle="collapse"
+                    <a href="#ledgerView" data-bs-toggle="collapse"
                         aria-expanded="{{ Request::is('*/app/invoice/*') ? 'true' : 'false' }}"
                         class="dropdown-toggle">
                         <div class="">
@@ -557,7 +557,7 @@
                         </div>
                     </a>
                     <ul class="collapse submenu list-unstyled {{ Request::is('*/app/invoice/ledgers/*') ? 'show' : '' }}"
-                        id="reportView" data-bs-parent="#accordionExample">
+                        id="ledgerView" data-bs-parent="#accordionExample">
                         <li class="{{ Request::routeIs('invoice-preview') ? 'active' : '' }}">
                             <a href="{{ route('stock.ledger') }}">Stock Ledger</a>
                         </li>
@@ -567,10 +567,43 @@
                         <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('generalJournals.list') }}">General Journal</a>
                         <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
-                            <a href="{{ route('trialBalance.list') }}">Trial Balance</a>
+                            <a href="{{ route('trialBalance.list') }}">Trial
+                                Balance</a>
 
                         <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('trialBalance.list') }}">Bill Aging</a>
+                    </ul>
+                </li>
+
+                <li class="menu {{ Request::is('*/app/invoice/reports/*') ? 'active' : '' }}">
+                    <a href="#reportView" data-bs-toggle="collapse"
+                        aria-expanded="{{ Request::is('*/app/invoice/*') ? 'true' : 'false' }}"
+                        class="dropdown-toggle">
+                        <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" class="feather feather-dollar-sign">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            </svg>
+                            <span>Reports</span>
+                        </div>
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </div>
+                    </a>
+                    <ul class="collapse submenu list-unstyled {{ Request::is('*/app/invoice/reports/*') ? 'show' : '' }}"
+                        id="reportView" data-bs-parent="#accordionExample">
+
+                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                            <a href="{{ route('order-sheet.orderSheetlist') }}">Order Sheet</a>
+
+                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                            <a href="{{ route('dispatch-report.list') }}">Dispatch Report</a>
                     </ul>
                 </li>
             </ul>

@@ -15,7 +15,7 @@ class CoaDetailAccount extends Model
 
     protected $fillable = [
         'main_head', 'control_head', 'sub_head', 'sub_sub_head', 'account_code', 'account_name',
-        'saleMan_id','commision', 'mode', 'status'
+        'saleMan_id','image','commision', 'mode', 'status'
     ];
 
     // public function getMainHead()
