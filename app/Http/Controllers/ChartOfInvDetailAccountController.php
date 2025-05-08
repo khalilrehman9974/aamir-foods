@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\DetailAccountProducts;
 use App\Models\CoaInventoryDetailAccount;
 use App\Services\CoaInventorySubHeadService;
-use App\Http\Requests\CoInvDetailAccountRequest;
 use App\Models\InventorySubSubHeadPriceTagModel;
 use App\Services\CoaInventoryDetailAccountService;
 
