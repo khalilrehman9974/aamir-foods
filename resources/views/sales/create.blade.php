@@ -205,12 +205,11 @@ $isSelected = old('area') == $key || $dispatchNote->pluck('area')->contains($key
 
 
                                                                     <select id="delivered_to" name="delivered_to"
-                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered_to"
-                                                                        >
+                                                                        class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} delivered_to">
                                                                         @foreach ($deliveredToParties as $key => $value)
                                                                             <option value="{{ $key }}"
                                                                                 @php
-                                                                                $isSelected = old('delivered_to') == $key || $dispatchNote->pluck('delivered_to')->contains($key); @endphp
+$isSelected = old('delivered_to') == $key || $dispatchNote->pluck('delivered_to')->contains($key); @endphp
                                                                                 {{ $isSelected ? 'selected' : '' }}>
                                                                                 {{ $value }}
                                                                             </option>
@@ -272,10 +271,11 @@ $isSelected = old('transporter_id') == $key || $dispatchNote->pluck('transporter
                                                                 </div>
                                                             </div>
                                                             <input id="commission" type="text"
-                                                                         style="color:black;"
-                                                                        value="{{ is_array($commissionArray) ? $commissionArray[0] : $commissionArray }}"
-                                                                        placeholder="Commission"
-                                                                        class="form-control form-control-sm commission" readonly hidden>
+                                                                style="color:black;"
+                                                                value="{{ is_array($commissionArray) ? $commissionArray[0] : $commissionArray }}"
+                                                                placeholder="Commission"
+                                                                class="form-control form-control-sm commission"
+                                                                readonly hidden>
                                                         </div>
 
                                                         <div class="invoice-detail-terms"
@@ -440,6 +440,26 @@ $isSelected = old('transporter_id') == $key || $dispatchNote->pluck('transporter
                                                                                                     name="measurement_type[]"
                                                                                                     id="measurement"
                                                                                                     readonly>
+                                                                                            </td>
+                                                                                            <td class="text-right unit"
+                                                                                            hidden>
+                                                                                                <input id="soQuantity"
+                                                                                                    type="number"
+                                                                                                    name="soQuantity[]"
+                                                                                                    value="{{ old('soQuantity', !empty($dispatchNoteDetail->soQuantity) ? $dispatchNoteDetail->soQuantity : '') }}"
+                                                                                                    placeholder="SO Quantity.... "
+                                                                                                    class="sOQty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sOQty_{{ $index }}"
+                                                                                                    hidden>
+                                                                                            </td>
+                                                                                            <td class="text-right unit"
+                                                                                            hidden>
+                                                                                                <input id="dispQuantity"
+                                                                                                    type="number"
+                                                                                                    name="dispQuantity[]"
+                                                                                                    value="{{ old('quantity', !empty($dispatchNoteDetail->quantity) ? $dispatchNoteDetail->quantity : '') }}"
+                                                                                                    placeholder="DIsp Quantity.... "
+                                                                                                    class="dispQty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} dispQty_{{ $index }}"
+                                                                                                    hidden>
                                                                                             </td>
                                                                                             <td class="quantity"
                                                                                                 style="padding: 0 px 0 px !important;">
@@ -643,7 +663,8 @@ $isSelected = old('transporter_id') == $key || $dispatchNote->pluck('transporter
                                                                                         id="discount-amount"
                                                                                         name="totaldiscount"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount_amount"
-                                                                                        placeholder="Tot Discount.Amount" readonly>
+                                                                                        placeholder="Tot Discount.Amount"
+                                                                                        readonly>
                                                                                 </div>
                                                                             </div>
                                                                         </div>

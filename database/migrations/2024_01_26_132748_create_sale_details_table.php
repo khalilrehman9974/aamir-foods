@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('product_id');
             $table->string('packing_type');
             $table->string('measurement_type');
+            $table->double('soQuantity');
+            $table->double('dispQuantity');
             $table->double('quantity');
             $table->double('dzns');
             $table->double('total_dzns');

@@ -5,14 +5,14 @@ namespace App\Services;
 
 use App\Models\Area;
 use App\Models\CoaDetailAccount;
-use App\Stock;
 use App\Models\StockLedger;
-use Illuminate\Support\Facades\DB;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\Country;
 use App\Models\DeliveredToParties;
 use App\Models\SaleMan;
 use App\Models\Sector;
 use App\Models\Transporter;
+use App\Models\Zone;
 
 class StockLedgerService
 {
@@ -49,6 +49,9 @@ class StockLedgerService
             'areas' => Area::pluck('name', 'id'),
             'deliveredToParties' => DeliveredToParties::pluck('party_name', 'id'),
             'transporters' => Transporter::pluck('name', 'id'),
+            'DeliveredToParties' => DeliveredToParties::pluck('party_name', 'id'),
+            'countries' => Country::pluck('name','id'),
+            'zones' => Zone::pluck('name','id'),
         ];
 
         return $result;

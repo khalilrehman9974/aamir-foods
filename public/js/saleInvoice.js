@@ -13,9 +13,10 @@ $(document).ready(function () {
         let price = $(".rate_" + row_id).val();
 
         if (parseFloat(quantity) > 0 && parseFloat(price) > 0) {
+            // alert("hwllwlwijijwi");
             $(".amount_" + row_id).val((quantity * price).toFixed(2)); // Format to 2 decimal places
         } else {
-            $(".amount_" + row_id).val('');
+            $(".amount_" + row_id).val('0');
         }
         doAmountTotal();
         discountTotal();

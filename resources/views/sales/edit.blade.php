@@ -433,6 +433,26 @@ $isSelected = old('transporter_id') == $key || $sale->pluck('transporter_id')->c
                                                                                                     id="measurement"
                                                                                                     readonly>
                                                                                             </td>
+                                                                                            <td class="text-right unit"
+                                                                                                hidden>
+                                                                                                <input id="soQuantity"
+                                                                                                    type="number"
+                                                                                                    name="soQuantity[]"
+                                                                                                     value="{{ $saleDetail->soQuantity }}"
+                                                                                                    placeholder="SO Quantity.... "
+                                                                                                    class="sOQty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sOQty_{{ $index }}"
+                                                                                                    hidden>
+                                                                                            </td>
+                                                                                            <td class="text-right unit"
+                                                                                                hidden>
+                                                                                                <input id="dispQuantity"
+                                                                                                    type="number"
+                                                                                                    name="dispQuantity[]"
+                                                                                                   value="{{ $saleDetail->dispQuantity }}"
+                                                                                                    placeholder="Disp Quantity.... "
+                                                                                                    class="dispQty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} dispQty_{{ $index }}"
+                                                                                                    hidden>
+                                                                                            </td>
                                                                                             <td class="quantity"
                                                                                                 style="padding: 0 px 0 px !important;">
                                                                                                 <input type="text"

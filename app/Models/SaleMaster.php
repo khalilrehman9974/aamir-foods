@@ -12,8 +12,31 @@ class SaleMaster extends Model
     protected $guarded = ['id'];
     protected $table = 'sale_masters';
 
-    protected $fillable = ['dispatch_note_number','sale_order_number','date', 'party_id','sector','area','deliverd_to','saleman','vehicle_no','business_id','f_year_id',
-    'driver_name','bilty_no','remarks','total_boray','total_carton','gross_bill','carriage','totaldiscount','commission','net_amount', 'created_by','updated_by'];
+    protected $fillable = [
+        'dispatch_note_number',
+        'sale_order_number',
+        'date',
+        'party_id',
+        'sector',
+        'area',
+        'deliverd_to',
+        'saleman',
+        'vehicle_no',
+        'business_id',
+        'f_year_id',
+        'driver_name',
+        'bilty_no',
+        'remarks',
+        'total_boray',
+        'total_carton',
+        'gross_bill',
+        'carriage',
+        'totaldiscount',
+        'commission',
+        'net_amount',
+        'created_by',
+        'updated_by'
+    ];
 
     public function party()
     {
@@ -25,4 +48,8 @@ class SaleMaster extends Model
         return $this->hasOne(SaleMan::class, 'id', 'saleman');
     }
 
+    public function details()
+    {
+        return $this->hasMany(SaleDetail::class, 'sale_master_id');
+    }
 }

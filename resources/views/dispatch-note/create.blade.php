@@ -435,7 +435,7 @@ $isSelected = old('delivered_to') == $key || $sale_Order->pluck('delivered_to')-
                                                                                                 <input id="soQuantity"
                                                                                                     type="number"
                                                                                                     name="soQuantity[]"
-                                                                                                    value="{{ old('quantity', !empty($saleOrderDetail->quantity) ? $saleOrderDetail->quantity : '') }}"
+                                                                                                    value="{{ old('soQuantity', !empty($saleOrderDetail->soQuantity) ? $saleOrderDetail->soQuantity : '') }}"
                                                                                                     placeholder="SO Quantity.... "
                                                                                                     class="sOQty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sOQty_{{ $index }}" hidden>
                                                                                             </td>

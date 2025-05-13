@@ -451,6 +451,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('dispatchReport', ['as' => 'dispatch-report.dispatchReport', 'uses' => 'App\Http\Controllers\ReportController@dispatchReport']);
     });
 
+    Route::group(['prefix' => 'sales-report'], function () {
+        Route::get('list', ['as' => 'sales-report.list', 'uses' => 'App\Http\Controllers\ReportController@salesReportView']);
+        Route::get('salesReport', ['as' => 'sales-report.salesReport', 'uses' => 'App\Http\Controllers\ReportController@salesReport']);
+    });
+
     Route::group(['prefix' => 'grn', 'middleware' => 'auth'], function () {
         Route::get('list', ['as' => 'grn.list', 'uses' => 'App\Http\Controllers\GRNotesController@index']);
         Route::get('generate', ['as' => 'grn.generate', 'uses' => 'App\Http\Controllers\GRNotesController@generate']);

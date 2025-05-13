@@ -309,7 +309,7 @@ class CoaInventoryDetailAccountService
         ];
     }
 
-    public function updateDetailAccountCreditData($request )
+    public function updateDetailAccountCreditData($request)
     {
         $openingStock = $request['opening_stock'];
         $stockRate = $request['stock_rate'];
@@ -339,11 +339,12 @@ class CoaInventoryDetailAccountService
         $openingStock = $request['opening_stock'];
         $stockRate = $request['stock_rate'];
         $debitValue = ($openingStock > 0 && $stockRate > 0) ? $openingStock * $stockRate : 0;
+        $maxid = CoaDetailAccount::max('id');
 
         return [
             'date' => Carbon::now()->format('Y-m-d'),
             'invoice_id' => $request->id,
-            'party_id' =>  $partyId,
+            'party_id' =>  $partyId ?? $maxid,
             'document_number' => 'OPENING BALANCE',
             'rate' => config('constants.ZERO'),
             'bilty_no' => null,

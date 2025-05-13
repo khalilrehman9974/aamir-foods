@@ -174,6 +174,8 @@ class SaleService
             'packing_type' => $request['packing_type'],
             'measurement_type' => $request['measurement_type'],
             'quantity' => $request['quantity'],
+            'soQuantity' => $request['soQuantity'],
+            'dispQuantity' => $request['dispQuantity'],
             'dzns' => $request['dzns'],
             'total_dzns' => $request['total_dzns'],
             'rate' => $request['rate'],
@@ -195,6 +197,8 @@ class SaleService
                 $rec['packing_type'] = $data['packing_type'][$key];
                 $rec['measurement_type'] = $data['measurement_type'][$key];
                 $rec['quantity'] = $data['quantity'][$key];
+                $rec['soQuantity'] = $data['soQuantity'][$key];
+                $rec['dispQuantity'] = $data['dispQuantity'][$key];
                 $rec['dzns'] = $data['dzns'][$key];
                 $rec['total_dzns'] = $data['total_dzns'][$key];
                 $rec['rate'] = $data['rate'][$key];

@@ -92,7 +92,7 @@ class ChartOfInvDetailAccountController extends Controller
 
         $data = $request->except('_token', 'id');
 
-        // ✅ Handle image upload
+        // Handle image upload
         if ($request->hasFile('image')) {
             $image = $request->file('image');
 
@@ -187,8 +187,8 @@ class ChartOfInvDetailAccountController extends Controller
 
     public function update(Request $request)
     {
-        DB::beginTransaction();
-        try {
+        // DB::beginTransaction();
+        // try {
             // Get existing inventory detail record
             $detailAccount = CoaInventoryDetailAccount::find($request->id);
             if (!$detailAccount) {
@@ -199,6 +199,10 @@ class ChartOfInvDetailAccountController extends Controller
             $inventoryAccount = CoaInventoryDetailAccount::where('id', $request['id'])->value('name');
             $party = CoaDetailAccount::where('account_name', $inventoryAccount)->first();
             $partyId = $party ? $party->id : null;
+
+
+
+            // dd($partyId);
 
             $data = $request->except('_token');
 
@@ -265,14 +269,14 @@ class ChartOfInvDetailAccountController extends Controller
             $debitAccountData = $this->coInventoryDetailAccountService->updateDetailAccountDebitData($request, $partyId);
             AccountLedger::insert($debitAccountData);
 
-            $creditAccountData = $this->coInventoryDetailAccountService->updateDetailAccountCreditData($request, $partyId);
+            $creditAccountData = $this->coInventoryDetailAccountService->updateDetailAccountCreditData($request);
             AccountLedger::insert($creditAccountData);
 
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('co-inv-detail-account/create')->with('error', $e->getMessage());
-        }
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('co-inv-detail-account/create')->with('error', $e->getMessage());
+        // }
 
         $message = config('constants.update');
         return redirect('co-inv-detail-account/list')->with('message', $message);
