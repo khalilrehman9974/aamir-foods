@@ -51,14 +51,18 @@ class CoaDetailAccountService
 
         if (!empty($request['mainHead_id'])) {
             $q->where('main_head', $request['mainHead_id']);
-        } elseif (!empty($request['controlHead_id'])) {
+        } 
+        if (!empty($request['controlHead_id'])) {
             $q->where('control_head', $request['controlHead_id']);
-        } elseif (!empty($request['subHead_id'])) {
+        } 
+        if (!empty($request['subHead_id'])) {
             $q->where('sub_head', $request['subHead_id']);
-        } elseif (!empty($request['subSubHead_id'])) {
+        } 
+        if (!empty($request['subSubHead_id'])) {
             $q->where('sub_sub_head', $request['subSubHead_id']);
-        } elseif (!empty($request['account_name'])) {
-            $q->where('account_name', $request['account_name']);
+        } 
+        if (!empty($request['account_name'])) {
+            $q->where('account_name', 'like', '%' . $request['account_name'] . '%');
         }
 
         $detailAccounts = $q->with('getMainHead', 'getControlHead', 'getSubHead', 'getSubSubHead', 'SaleMan')->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
@@ -115,7 +119,9 @@ class CoaDetailAccountService
             'subHeads' => CoaSubHead::pluck('account_name', 'id'),
             'subSubHeads' => CoaSubSubHead::pluck('account_name', 'id'),
             'parties' => CoaDetailAccount::pluck('account_name', 'id'),
+            'partiesName' => CoaDetailAccount::select('account_name')->distinct()->orderBy('account_name')->get(),
 
+            
         ];
 
         return $result;

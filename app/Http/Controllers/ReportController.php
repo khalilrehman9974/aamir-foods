@@ -1165,7 +1165,7 @@ class ReportController extends Controller
             ->get()
             ->groupBy('sale_master_id');
 
-        // Step 4: Get related dispatch_note_masters and sale_order_masters
+        // Step 4: Related dispatch_note_masters and sale_order_masters
         $dispatchNoteNumbers = $dispatchReportMasters->pluck('dispatch_note_number')->filter()->unique()->toArray();
         $saleOrderNumbers = $dispatchReportMasters->pluck('sale_order_number')->filter()->unique()->toArray();
 
@@ -1179,23 +1179,75 @@ class ReportController extends Controller
             ->get()
             ->keyBy('id');
 
-        // Step 5: Attach details and related masters to each sale_master
-        $orders = $dispatchReportMasters->map(function ($master) use ($dispatchNoteDetails, $dispatchNoteMasters, $saleOrderMasters) {
-            $details = $dispatchNoteDetails[$master->id] ?? collect();
-            $master->details = $details;
+        // Step 5: Related detail_accounts (party info)
+        $partyIds = $dispatchReportMasters->pluck('party_id')->filter()->unique()->toArray();
 
+        $detailAccounts = DB::table('detail_accounts')
+            ->whereIn('id', $partyIds)
+            ->get()
+            ->keyBy('id');
+
+        // Step 6: Totals + Attach related data
+        $totalBoraySoQuantity = 0;
+        $totalCartonSoQuantity = 0;
+        $totalBorayDispQuantity = 0;
+        $totalCartonDispQuantity = 0;
+        $totalNetAmount = 0;
+
+        $orders = $dispatchReportMasters->map(function ($master) use (
+            $dispatchNoteDetails,
+            $dispatchNoteMasters,
+            $saleOrderMasters,
+            $detailAccounts,
+            &$totalBoraySoQuantity,
+            &$totalCartonSoQuantity,
+            &$totalBorayDispQuantity,
+            &$totalCartonDispQuantity,
+            &$totalNetAmount
+        ) {
+            $details = $dispatchNoteDetails[$master->id] ?? collect();
+            $boraySoQty = 0;
+            $cartonSoQty = 0;
+            $borayDispQty = 0;
+            $cartonDispQty = 0;
+
+            foreach ($details as $detail) {
+                if ($detail->packing_type === 'Boray') {
+                    $boraySoQty += $detail->soQuantity ?? 0;
+                    $borayDispQty += $detail->dispQuantity ?? 0;
+                } elseif ($detail->packing_type === 'Carton') {
+                    $cartonSoQty += $detail->soQuantity ?? 0;
+                    $cartonDispQty += $detail->dispQuantity ?? 0;
+                }
+            }
+
+            // Add to global totals
+            $totalBoraySoQuantity += $boraySoQty;
+            $totalCartonSoQuantity += $cartonSoQty;
+            $totalBorayDispQuantity += $borayDispQty;
+            $totalCartonDispQuantity += $cartonDispQty;
+            $totalNetAmount += $master->net_amount ?? 0;
+
+            // Attach to invoice
+            $master->boray_so_quantity = $boraySoQty;
+            $master->carton_so_quantity = $cartonSoQty;
+            $master->boray_disp_quantity = $borayDispQty;
+            $master->carton_disp_quantity = $cartonDispQty;
+
+            $master->details = $details;
             $master->dispatch_note_master = $dispatchNoteMasters[$master->dispatch_note_number] ?? null;
             $master->sale_order_master = $saleOrderMasters[$master->sale_order_number] ?? null;
+            $master->party = $detailAccounts[$master->party_id] ?? null;
 
             return $master;
         });
 
-        // Step 6: Other data for view
+        // Step 7: Other data for view
         $products = CoaInventoryDetailAccount::pluck('name', 'id');
         $createdUser = Auth::user()->id;
         $user = User::where('id', $createdUser)->value('name');
 
-        // Step 7: Return the view
+        // Step 8: Return the view
         return view('reports.sales_report.sales-report-view', compact(
             'fromDate',
             'toDate',
@@ -1204,7 +1256,118 @@ class ReportController extends Controller
             'title',
             'partyId',
             'orders',
-            'user'
+            'user',
+            'totalBoraySoQuantity',
+            'totalCartonSoQuantity',
+            'totalBorayDispQuantity',
+            'totalCartonDispQuantity',
+            'totalNetAmount'
+        ));
+    }
+
+    public function productSaleReport()
+    {
+        $pageTitle = 'Product Sale Report';
+        $dropDownData = $this->stockLedgerService->DropDownData();
+        return view('reports.product_sales_report.product-sales-report-list', compact('dropDownData', 'pageTitle'));
+    }
+
+    public function productSaleReportPrint(Request $request)
+    {
+        $title = 'Product Sale Report';
+        $dropDownData = $this->stockLedgerService->DropDownData();
+
+        $dateFrom = $request->from_date;
+        $dateTo = $request->to_date;
+        $status = $request->status;
+        $productId = $request->product_id;
+
+        $fromDate = !empty($dateFrom) ? date('Y-m-d', strtotime($dateFrom)) : null;
+        $toDate = !empty($dateTo) ? date('Y-m-d', strtotime($dateTo)) : null;
+
+        // Base query for sale_masters
+        $masterQuery = DB::table('sale_masters')
+            ->whereNull('deleted_at');
+
+        if (!empty($fromDate) && !empty($toDate)) {
+            $masterQuery->whereBetween('date', [$fromDate, $toDate]);
+        }
+
+        $saleMasterIds = $masterQuery->pluck('id')->toArray();
+
+        // Query for sale_details
+        $detailsQuery = DB::table('sale_details')
+            ->whereIn('sale_master_id', $saleMasterIds)
+            ->whereNull('deleted_at');
+
+        if (!empty($productId)) {
+            $detailsQuery->where('product_id', $productId);
+        }
+
+        $saleOrderDetails = $detailsQuery->get();
+
+        // Initialize packing type totals
+        $totalsByPackingType = [
+            'Carton' => 0,
+            'Boray' => 0,
+        ];
+
+        // Load all relevant products (either filtered or all)
+        $productsRaw = DB::table('coa_inventory_detail_accounts')
+            ->whereNull('deleted_at')
+            ->when($productId, function ($query) use ($productId) {
+                $query->where('id', $productId);
+            })
+            ->get();
+
+        $products = $productsRaw->pluck('name', 'id');
+
+        // Product-wise totals
+        $productTotals = [];
+        foreach ($saleOrderDetails as $detail) {
+            $prodId = $detail->product_id;
+            $amount = $detail->amount ?? 0;
+            $qty = $detail->quantity ?? 0;
+
+            // Total by packing type
+            if (!empty($detail->packing_type) && isset($totalsByPackingType[$detail->packing_type])) {
+                $totalsByPackingType[$detail->packing_type] += $qty;
+            }
+
+            if (!isset($productTotals[$prodId])) {
+                $productName = $products[$prodId] ?? 'Unknown';
+                $productTotals[$prodId] = [
+                    'name' => $productName,
+                    'quantity' => 0,
+                    'amount' => 0,
+                ];
+            }
+
+            $productTotals[$prodId]['quantity'] += $qty;
+            $productTotals[$prodId]['amount'] += $amount;
+        }
+
+        // Grand totals
+        $totalQuantity = array_sum(array_column($productTotals, 'quantity'));
+        $totalAmount = array_sum(array_column($productTotals, 'amount'));
+
+        $createdUser = Auth::user()->id;
+        $user = User::where('id', $createdUser)->value('name');
+
+        return view('reports.product_sales_report.product-sales-report-view', compact(
+            'fromDate',
+            'toDate',
+            'dropDownData',
+            'status',
+            'title',
+            'productId',
+            'user',
+            'products',
+            'saleOrderDetails',
+            'totalsByPackingType',
+            'productTotals',
+            'totalQuantity',
+            'totalAmount'
         ));
     }
 }

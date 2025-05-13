@@ -605,8 +605,8 @@
                         <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('dispatch-report.list') }}">Dispatch Report</a>
 
-                        {{-- <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
-                            <a href="{{ route('sales-report.list') }}">Sales Report</a> --}}
+                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                            <a href="{{ route('sales-report.list') }}">Sales Report</a>
                     </ul>
                 </li>
             </ul>

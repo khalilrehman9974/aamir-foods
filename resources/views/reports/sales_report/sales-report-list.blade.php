@@ -49,6 +49,12 @@
                         </nav>
                     </div>
                 </div>
+                <div class="col-lg-0 col-6 ">
+                    <a href="{{ route('sales-report.productSalelist') }}" class="btn btn-primary mt-2 mb-2 me-8"
+                        style="float : right; " style="">Product Wise Report
+                    </a>
+
+                </div>
             </div>
 
         </div>

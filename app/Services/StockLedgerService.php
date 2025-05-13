@@ -7,8 +7,10 @@ use App\Models\Area;
 use App\Models\CoaDetailAccount;
 use App\Models\StockLedger;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\CoaSubSubHead;
 use App\Models\Country;
 use App\Models\DeliveredToParties;
+use App\Models\PriceTag;
 use App\Models\SaleMan;
 use App\Models\Sector;
 use App\Models\Transporter;
@@ -41,6 +43,7 @@ class StockLedgerService
 
     public function DropDownData()
     {
+        $invArray = [4,6];
         $result = [
             'products' => CoaInventoryDetailAccount::pluck('name', 'id'),
             'parties' => CoaDetailAccount::pluck('account_name', 'id'),
@@ -52,6 +55,8 @@ class StockLedgerService
             'DeliveredToParties' => DeliveredToParties::pluck('party_name', 'id'),
             'countries' => Country::pluck('name','id'),
             'zones' => Zone::pluck('name','id'),
+            'priceTags' => PriceTag::pluck('name', 'id'),
+            'fourthHeads' => CoaSubSubHead::whereIn('main_head', $invArray)->pluck('account_name', 'id')
         ];
 
         return $result;

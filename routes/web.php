@@ -454,6 +454,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'sales-report'], function () {
         Route::get('list', ['as' => 'sales-report.list', 'uses' => 'App\Http\Controllers\ReportController@salesReportView']);
         Route::get('salesReport', ['as' => 'sales-report.salesReport', 'uses' => 'App\Http\Controllers\ReportController@salesReport']);
+        Route::get('productWiseSalesReport', ['as' => 'sales-report.productSalelist', 'uses' => 'App\Http\Controllers\ReportController@productSaleReport']);
+        Route::get('print', ['as' => 'sales-report.productSaleReportPrint', 'uses' => 'App\Http\Controllers\ReportController@productSaleReportPrint']);
     });
 
     Route::group(['prefix' => 'grn', 'middleware' => 'auth'], function () {

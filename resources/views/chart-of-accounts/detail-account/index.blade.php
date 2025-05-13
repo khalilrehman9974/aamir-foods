@@ -55,118 +55,98 @@
 
                     <form class="form-inline my-2 my-lg-0 justify-content-center" method="get"
                         action="{{ route('detail-account.list') }}" autocomplete="off">
-
                         <div class="row" style="margin-bottom: 10px !important;">
                             <div class="col-md-3">
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <label for="mainHead" class="form-label">
-                                            Main Head</label>
-                                        <select class="form-control-sm mb-3 select2 custom-select" name="mainHead_id"
-                                            id="mainHead" style="width: 100%;">
-                                            <option value="">Select</option>
-                                            @foreach ($dropDownData['mainHeads'] as $key => $value)
-                                                <option value="{{ $key }}"
-                                                    {{ (old('mainHead') == $key ? 'selected' : '') || (!empty($saleOrder->mainHead) ? collect($saleOrder->mainHead)->contains($key) : '') ? 'selected' : '' }}>
-                                                    {{ $value }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <label for="account_name" class="form-label">
-                                            Control Head</label>
-                                        <select class="form-control-sm mb-3 select2 custom-select" name="controlHead_id"
-                                            id="party_id" style="width: 100%;">
-                                            <option value="">Select</option>
-                                            @foreach ($dropDownData['controlHeads'] as $key => $value)
-                                                <option value="{{ $key }}"
-                                                    {{ (old('party_id') == $key ? 'selected' : '') || (!empty($saleOrder->party_id) ? collect($saleOrder->party_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                    {{ $value }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
+                                <label for="mainHead" class="form-label">Main Head</label>
+                                <select class="form-control-sm mb-3 select2 custom-select" name="mainHead_id"
+                                    id="mainHead" style="width: 100%;">
+                                    <option value="">Select</option>
+                                    @foreach ($dropDownData['mainHeads'] as $key => $value)
+                                        <option value="{{ $key }}"
+                                            {{ request('mainHead_id') == $key ? 'selected' : '' }}>
+                                            {{ $value }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
 
                             <div class="col-md-3">
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <label for="account_name" class="form-label">
-                                            Sub Head</label>
-                                        <select class="form-control-sm mb-3 select2 custom-select" name="subHead_id"
-                                            id="subHead" style="width: 100%;">
-                                            <option value="">Select</option>
-                                            @foreach ($dropDownData['subHeads'] as $key => $value)
-                                                <option value="{{ $key }}"
-                                                    {{ (old('subHead') == $key ? 'selected' : '') || (!empty($saleOrder->subHead) ? collect($saleOrder->subHead)->contains($key) : '') ? 'selected' : '' }}>
-                                                    {{ $value }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
+                                <label for="controlHead" class="form-label">Control Head</label>
+                                <select class="form-control-sm mb-3 select2 custom-select" name="controlHead_id"
+                                    id="controlHead" style="width: 100%;">
+                                    <option value="">Select</option>
+                                    @foreach ($dropDownData['controlHeads'] as $key => $value)
+                                        <option value="{{ $key }}"
+                                            {{ request('controlHead_id') == $key ? 'selected' : '' }}>
+                                            {{ $value }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
 
                             <div class="col-md-3">
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <label for="account_name" class="form-label">
-                                            Sub Sub Head</label>
-                                        <select class="form-control-sm mb-3 select2 custom-select" name="subSubHead_id"
-                                            id="subSubHead" style="width: 100%;">
-                                            <option value="">Select</option>
-                                            @foreach ($dropDownData['subSubHeads'] as $key => $value)
-                                                <option value="{{ $key }}"
-                                                    {{ (old('subSubHead') == $key ? 'selected' : '') || (!empty($saleOrder->subSubHead) ? collect($saleOrder->subSubHead)->contains($key) : '') ? 'selected' : '' }}>
-                                                    {{ $value }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
+                                <label for="subHead" class="form-label">Sub Head</label>
+                                <select class="form-control-sm mb-3 select2 custom-select" name="subHead_id"
+                                    id="subHead" style="width: 100%;">
+                                    <option value="">Select</option>
+                                    @foreach ($dropDownData['subHeads'] as $key => $value)
+                                        <option value="{{ $key }}"
+                                            {{ request('subHead_id') == $key ? 'selected' : '' }}>
+                                            {{ $value }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
 
-
-                        </div>
-                        <div class="row" style="margin-bottom: 10px !important;">
-                            <div class="col-lg-0 col-6 form-group mb-4">
-                                <label for="account_name" class="form-label">
-                                    Account Name </label>
-                                <input id="account_name" type="text" name="account_name"
-                                    value="{{ old('account_name', !empty($detailAccount->account_name) ? $detailAccount->account_name : '') }}"
-                                    placeholder="Please Enter Detail Account "
-                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
-                                @if ($errors->has('account_name'))
-                                    <div class="invalid-feedback">
-                                        {{ $errors->first('account_name') }}
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="col-md-2">
-                                <label for="account_name" class="form-label">
-                                </label>
-                                <span class="input-group-prepend" style="margin-top: 0px; ">
-                                    <button type="submit" class="btn btn-primary" value="Search" id="search-button"
-                                        style="width: 100%;"><i class="fa fa-search"></i>&nbsp;
-                                        Search</button>
-
-                                </span>
-                            </div>
-                            <div class="col-md-2">
-                                <label for="clear-filter" class="form-label">
-                                </label>
-                                <span class="input-group-prepend" style="margin-top: 20px ! important;">
-                                    <a href="{{ route('detail-account.list') }}" class="btn btn-primary"
-                                        value="Search" id="clear-filter" style="width: 100%; margin-left: 6px">Clear
-                                        Filter</a>
-
-                                </span>
+                            <div class="col-md-3">
+                                <label for="subSubHead" class="form-label">Sub Sub Head</label>
+                                <select class="form-control-sm mb-3 select2 custom-select" name="subSubHead_id"
+                                    id="subSubHead" style="width: 100%;">
+                                    <option value="">Select</option>
+                                    @foreach ($dropDownData['subSubHeads'] as $key => $value)
+                                        <option value="{{ $key }}"
+                                            {{ request('subSubHead_id') == $key ? 'selected' : '' }}>
+                                            {{ $value }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
 
+                        <div class="row" style="margin-bottom: 10px !important;">
+                            <div class="col-lg-6 col-6 form-group mb-4">
+                                <label for="account_name" class="form-label">Account Name</label>
+                                <select class="form-control-sm mb-3 select2 custom-select" name="account_name"
+                                    id="account_name" style="width: 100%;">
+                                    <option value="">Select</option>
+                                    @foreach ($dropDownData['partiesName'] as $party)
+                                        <option value="{{ $party->account_name }}"
+                                            {{ request('account_name') == $party->account_name ? 'selected' : '' }}>
+                                            {{ $party->account_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            
+
+                            <div class="col-md-2">
+                                <label class="form-label d-block">&nbsp;</label>
+                                <button type="submit" class="btn btn-primary w-100" id="search-button">
+                                    <i class="fa fa-search"></i> Search
+                                </button>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label d-block">&nbsp;</label>
+                                <a href="{{ route('detail-account.list') }}" class="btn btn-secondary w-100"
+                                    id="clear-filter">
+                                    Clear Filter
+                                </a>
+                            </div>
+                        </div>
                     </form>
+
+
                 </div>
 
             </div>
