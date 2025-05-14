@@ -5,16 +5,11 @@
     </x-slot>
     <x-slot:headerFiles>
 
-        {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
-            integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
         @vite(['resources/scss/light/assets/components/timeline.scss'])
         <meta charset="UTF-8">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
         <link rel="stylesheet" href="{{ asset('plugins/sweetalerts2/sweetalerts2.css') }}">
-        {{-- @vite(['resources/scss/light/plugins/sweetalerts2/custom-sweetalert.scss'])
-        @vite(['resources/scss/dark/plugins/sweetalerts2/custom-sweetalert.scss']) --}}
         @vite(['resources/scss/light/assets/components/accordions.scss'])
         @vite(['resources/scss/dark/assets/components/accordions.scss'])
         @vite(['resources/scss/light/assets/elements/alert.scss'])
@@ -39,19 +34,8 @@
         <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
         <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
 
-
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
-            integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
         @vite(['resources/scss/light/plugins/filepond/custom-filepond.scss'])
         @vite(['resources/scss/dark/plugins/filepond/custom-filepond.scss'])
-
-
-
-        <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
 
 
     </x-slot>

@@ -5,24 +5,40 @@
     </x-slot>
     <x-slot:headerFiles>
 
-    <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
-    <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
-    @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
-    @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
+        @vite(['resources/scss/light/assets/components/timeline.scss'])
+        <meta charset="UTF-8">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        {{-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> --}}
+        <link rel="stylesheet" href="{{ asset('plugins/sweetalerts2/sweetalerts2.css') }}">
+        @vite(['resources/scss/light/assets/components/accordions.scss'])
+        @vite(['resources/scss/dark/assets/components/accordions.scss'])
+        @vite(['resources/scss/light/assets/elements/alert.scss'])
+        @vite(['resources/scss/dark/assets/elements/alert.scss'])
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
-        integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        {{-- <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}"> --}}
+        <link href="{{ asset('plugins/invoice-add/invoice-add.css') }}" rel="stylesheet" type="text/css" />
+        {{-- @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
+        @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss']) --}}
 
-    <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
-    <!--  BEGIN CUSTOM STYLE FILE  -->
-    <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="../src/plugins/src/filepond/filepond.min.css">
-    <link rel="stylesheet" href="../src/plugins/src/filepond/FilePondPluginImagePreview.min.css">
+            {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+                integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
 
-    <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
-    <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css">
+            <script src="{{ asset('plugins/select2/js/jquery.min.js') }}"></script>
+
+        <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+        <!--  BEGIN CUSTOM STYLE FILE  -->
+        {{-- <link href="../src/plugins/src/flatpickr/flatpickr.css" rel="stylesheet" type="text/css"> --}}
+        {{-- <link rel="stylesheet" href="../src/plugins/src/filepond/filepond.min.css">
+        <link rel="stylesheet" href="../src/plugins/src/filepond/FilePondPluginImagePreview.min.css"> --}}
+
+        {{-- <link href="../src/plugins/css/light/filepond/custom-filepond.css" rel="stylesheet" type="text/css" />
+        <link href="../src/plugins/css/light/flatpickr/custom-flatpickr.css" rel="stylesheet" type="text/css"> --}}
+
+        {{-- @vite(['resources/scss/light/plugins/filepond/custom-filepond.scss'])
+        @vite(['resources/scss/dark/plugins/filepond/custom-filepond.scss']) --}}
+
 
     </x-slot>
 
@@ -75,7 +91,6 @@
                                             </button>
                                             <strong>Error!</strong> {{ session('error') }}
                                         </div>
-                                        {{-- <div class="bg-red-500 text-white text-center text-xl m-4 p-4">{{ session('error') }}</div> --}}
                                     @endif
                                     <div class="widget-content widget-content-area">
                                         <div class="row">
@@ -127,15 +142,6 @@
                                                                 @endforeach
                                                             </select>
                                                         @else
-                                                            {{-- <select id="control-head" name="control_head"
-                                                                    class="form-select" required>
-                                                                    @foreach ($controlHeads as $key => $value)
-                                                                        <option value="{{ $key }}"
-                                                                            {{ $key == old('control_head') ? 'selected' : '' }}>
-                                                                            {{ $value }}</option>
-                                                                    @endforeach
-                                                                </select> --}}
-
                                                             <select id="control-head" name="control_head"
                                                                 class="form-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
                                                                 required>
@@ -166,14 +172,6 @@
                                                                 @endforeach
                                                             </select>
                                                         @else
-                                                            {{-- <select id="sub-head" name="sub_head"
-                                                                    class="form-select" required>
-                                                                    @foreach ($subHeads as $key => $value)
-                                                                        <option value="{{ $key }}"
-                                                                            {{ $key == old('sub_head') ? 'selected' : '' }}>
-                                                                            {{ $value }}</option>
-                                                                    @endforeach
-                                                                </select> --}}
                                                             <select id="sub-head" name="sub_head"
                                                                 class="form-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
                                                                 required>
@@ -203,14 +201,6 @@
                                                                 @endforeach
                                                             </select>
                                                         @else
-                                                            {{-- <select id="sub-sub-head" name="sub_sub_head"
-                                                                    class="form-select" required>
-                                                                    @foreach ($subSubHeads as $key => $value)
-                                                                        <option value="{{ $key }}"
-                                                                            {{ $key == old('sub_sub_head') ? 'selected' : '' }}>
-                                                                            {{ $value }}</option>
-                                                                    @endforeach
-                                                                </select> --}}
                                                             <select id="sub-sub-head" name="sub_sub_head"
                                                                 class="form-select {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
                                                                 required>
@@ -274,29 +264,9 @@
                                                                     <select id="sector-dropdown" name="sector_id[]"
                                                                         class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sector-dropdown"
                                                                         multiple>
-                                                                        {{-- <option value="select-all"
-                                                                            class="select-all-option">Select All
-                                                                        </option> --}}
                                                                     </select>
 
-                                                                    {{-- <select id="sector-dropdown" name="zone_id[]" multiple="multiple">
-                                                                        <option value="select-all" class="select-all-option">Select All</option>
-                                                                        @foreach ($zones as $key => $value)
-                                                                            <option value="{{ $key }}"
-                                                                                {{ (old('zone_id') && in_array($key, old('zone_id'))) || (!empty($saleManZones->pluck('zone_id')->toArray()) && in_array($key, $saleManZones->pluck('zone_id')->toArray())) ? 'selected' : '' }}>
-                                                                                {{ $value }}
-                                                                            </option>
-                                                                        @endforeach
-                                                                    </select> --}}
                                                                 @else
-                                                                    {{-- <select id="sector-dropdown" name="sector" class="form-select"
-                                                                        >
-                                                                        @foreach ($sectors as $key => $value)
-                                                                            <option value="{{ $key }}"
-                                                                                {{ $key == old('sector') ? 'selected' : '' }}>
-                                                                                {{ $value }}</option>
-                                                                        @endforeach
-                                                                    </select> --}}
                                                                     <select id="sector-dropdown" name="sector_id[]"
                                                                         class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sector-dropdown"
                                                                         multiple>
@@ -308,26 +278,11 @@ $isSelected = old('sector_id') == $key || $detailAccountSectors->pluck('sector_i
                                                                                 {{ $value }}
                                                                             </option>
                                                                         @endforeach
-                                                                        {{-- @foreach ($zones as $key => $value)
-                                                                            <option value="{{ $key }}"
-                                                                                {{ !empty($saleManZones) && $saleManZones->zone_id == $key ? 'selected' : '' }}
-                                                                                {{ $key == old('zone_id') ? 'selected' : '' }}>
-                                                                                {{ $value }}</option>
-                                                                        @endforeach --}}
+                                                                        
                                                                     </select>
                                                                 @endif
                                                             </div>
 
-
-                                                            {{-- <div class="col-md-6">
-                                                                <label for="inputState" class="form-label">Sector/Belt
-                                                                </label>
-                                                                <input id="sector" type="text" name="sector"
-                                                                    value="{{ old('sector', !empty($detailAccount->sector) ? $detailAccount->sector : '') }}"
-                                                                    placeholder="Belt... "
-                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}"
-                                                                    >
-                                                            </div> --}}
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-0 col-12 form-group mb-4">
@@ -343,14 +298,6 @@ $isSelected = old('sector_id') == $key || $detailAccountSectors->pluck('sector_i
                                                                         </option>
                                                                     </select>
                                                                 @else
-                                                                    {{-- <select id="area-dropdown" name="area" class="form-select"
-                                                                        >
-                                                                        @foreach ($sectors as $key => $value)
-                                                                            <option value="{{ $key }}"
-                                                                                {{ $key == old('sector') ? 'selected' : '' }}>
-                                                                                {{ $value }}</option>
-                                                                        @endforeach
-                                                                    </select> --}}
                                                                     <select id="area-dropdown" name="area_id[]"
                                                                         class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} area-dropdown"
                                                                         multiple>
@@ -362,13 +309,6 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                 {{ $value }}
                                                                             </option>
                                                                         @endforeach
-
-                                                                        {{-- @foreach ($zones as $key => $value)
-                                                                            <option value="{{ $key }}"
-                                                                                {{ !empty($saleManZones) && $saleManZones->zone_id == $key ? 'selected' : '' }}
-                                                                                {{ $key == old('zone_id') ? 'selected' : '' }}>
-                                                                                {{ $value }}</option>
-                                                                        @endforeach --}}
                                                                     </select>
                                                                 @endif
                                                             </div>
@@ -458,12 +398,6 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                 </div>
                                                             @else
                                                                 <div class="col-md-6">
-                                                                    {{-- <input type="radio" id="primary"
-                                                                        name="primary" value="primary">
-                                                                    <label for="primary">Primary</label><br>
-                                                                    <input type="radio" id="secondary"
-                                                                        name="secondary" value="secondary">
-                                                                    <label for="secondary">Secondary</label><br> --}}
 
                                                                     <div class="custom-radio">
                                                                         <input type="radio" id="primary"
@@ -524,107 +458,6 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                         </div>
                                                     </div>
 
-                                                    {{-- <div id="defaultAccordionOne" class="collapse"
-                                                        aria-labelledby="headingOne1"
-                                                        data-bs-parent="#toggleAccordion">
-                                                        <div class="card-body">
-                                                            <div class="col-lg-0 col-12 form-group mb-2">
-                                                                <label for="account_name" class="form-label">
-                                                                    Address </label>
-                                                                <textarea name="address" id="address" placeholder="Please Enter Address "
-                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" type="text" cols="30"
-                                                                    rows="5">{{ @$detailAccountDetails->address }}</textarea>
-                                                            </div>
-                                                            <div class="col-lg-0 col-12 form-group mb-2">
-                                                                <label for="account_name" class="form-label">
-                                                                    Remarks </label>
-                                                                <textarea name="remarks" id="remarks" placeholder="Please Enter Remarks "
-                                                                    class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}" type="text" cols="30"
-                                                                    rows="5">{{ @$detailAccountDetails->remarks }}</textarea>
-                                                            </div>
-                                                            <div class="col-lg-0 col-12 form-group mb-2">
-                                                                <div class="row">
-                                                                    <div class="col col-md-6 form-group mb-2">
-                                                                        <label for="account_name" class="form-label">
-                                                                            Contact No 1 </label>
-                                                                        <input id="contact_no_1" type="text"
-                                                                            name="contact_no_1"
-                                                                            value="{{ old('contact_no_1', !empty($detailAccountDetails->contact_no_1) ? $detailAccountDetails->contact_no_1 : '') }}"
-                                                                            placeholder="Please Enter Contact No 1"
-                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
-                                                                    </div>
-
-                                                                    <div class="col col-md-6 form-group mb-2">
-                                                                        <label for="contact_no_2" class="form-label">
-                                                                            Contact No 2 /
-                                                                            WhatsApp</label>
-                                                                        <input id="contact_no_2" type="text"
-                                                                            name="contact_no_2"
-                                                                            value="{{ old('contact_no_2', !empty($detailAccountDetails->contact_no_2) ? $detailAccountDetails->contact_no_2 : '') }}"
-                                                                            placeholder="Please Enter Contact No 2 "
-                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-lg-0 col-12 form-group mb-2">
-                                                                <div class="row">
-                                                                    <div class="col col-md-6 form-group mb-2">
-                                                                        <label for="cnic" class="form-label">
-                                                                            Email </label>
-                                                                        <input id="email" type="text"
-                                                                            name="email"
-                                                                            value="{{ old('email', !empty($detailAccountDetails->email) ? $detailAccountDetails->email : '') }}"
-                                                                            placeholder="Please Enter the email "
-                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
-                                                                    </div>
-                                                                    <div class="col col-md-6 form-group mb-2">
-                                                                        <label for="cnic" class="form-label">
-                                                                            CNIC </label>
-                                                                        <input id="cnic" type="text"
-                                                                            name="cnic"
-                                                                            value="{{ old('cnic', !empty($detailAccountDetails->cnic) ? $detailAccountDetails->cnic : '') }}"
-                                                                            placeholder="Please Enter the CNIC "
-                                                                            class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col col-md-6 form-group mb-2">
-                                                                    <label for="credit_limit" class="form-label">
-                                                                        Credit
-                                                                        Limit </label>
-                                                                    <input id="credit-limit" type="text"
-                                                                        name="credit_limit"
-                                                                        value="{{ old('credit_limit', !empty($detailAccountDetails->credit_limit) ? $detailAccountDetails->credit_limit : '') }}"
-                                                                        placeholder="Please Enter Detail Account "
-                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
-                                                                </div>
-                                                                <div class="col col-md-6 form-group mb-2">
-                                                                    <label for="opening_balance" class="form-label">
-                                                                        Opening
-                                                                        Balance </label>
-                                                                    <input id="opening-balance" type="text"
-                                                                        name="opening_balance"
-                                                                        value="{{ old('opening_balance', !empty($detailAccountDetails->opening_balance) ? $detailAccountDetails->opening_balance : '') }}"
-                                                                        placeholder="Please Enter Opening Balance "
-                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col col-md-6 form-group mb-2">
-                                                                    <label for="credit_days" class="form-label">
-                                                                        Credit
-                                                                        Days </label>
-                                                                    <input id="credit-days" type="text"
-                                                                        name="credit_days"
-                                                                        value="{{ old('credit_days', !empty($detailAccountDetails->credit_days) ? $detailAccountDetails->credit_days : '') }}"
-                                                                        placeholder="Please Enter credit Days "
-                                                                        class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-                                                    </div> --}}
 
                                                     <div class="col-lg-0 col-12 form-group mb-2">
                                                         <div id="toggleAccordion" class="accordion layout-spacing">
@@ -678,7 +511,6 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                         type="text"
                                                                                         name="contact_no_1"
                                                                                         maxlength="12"
-                                                                                        {{-- value="{{ old('contact_no_1', !empty($detailAccountDetails->contact_no_1) ? $detailAccountDetails->contact_no_1 : '') }}" --}}
                                                                                         value="{{ old('contact_no_1', optional($detailAccountDetails->first())->contact_no_1) }}"
                                                                                         placeholder="Please Enter Contact No 1"
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} contact_no_1">
@@ -694,7 +526,6 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                         type="text"
                                                                                         name="contact_no_2"
                                                                                         maxlength="12"
-                                                                                        {{-- value="{{ old('contact_no_2', !empty($detailAccountDetails->contact_no_2) ? $detailAccountDetails->contact_no_2 : '') }}" --}}
                                                                                         value="{{ old('contact_no_2', optional($detailAccountDetails->first())->contact_no_2) }}"
                                                                                         placeholder="Please Enter Contact No 2 "
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} contact_no_2">
@@ -710,7 +541,6 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                         Email </label>
                                                                                     <input id="email"
                                                                                         type="text" name="email"
-                                                                                        {{-- value="{{ old('email', !empty($detailAccountDetails->email) ? $detailAccountDetails->email : '') }}" --}}
                                                                                         value="{{ old('email', optional($detailAccountDetails->first())->email) }}"
                                                                                         placeholder="Please Enter the email "
                                                                                         class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
@@ -722,7 +552,6 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                         CNIC </label>
                                                                                     <input id="cnic"
                                                                                         type="text" name="cnic"
-                                                                                        {{-- value="{{ old('cnic', !empty($detailAccountDetails->cnic) ? $detailAccountDetails->cnic : '') }}" --}}
                                                                                         value="{{ old('cnic', optional($detailAccountDetails->first())->cnic) }}"
                                                                                         placeholder="Please Enter the CNIC "
                                                                                         maxlength="15"
@@ -738,7 +567,6 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                     Limit </label>
                                                                                 <input id="credit-limit"
                                                                                     type="text" name="credit_limit"
-                                                                                    {{-- value="{{ old('credit_limit', !empty($detailAccountDetails->credit_limit) ? $detailAccountDetails->credit_limit : '') }}" --}}
                                                                                     value="{{ old('credit_limit', optional($detailAccountDetails->first())->credit_limit) }}"
                                                                                     placeholder="Please Enter Detail Account "
                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
@@ -751,7 +579,6 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                 <input id="opening-balance"
                                                                                     type="text"
                                                                                     name="opening_balance"
-                                                                                    {{-- value="{{ old('opening_balance', !empty($detailAccountDetails->opening_balance) ? $detailAccountDetails->opening_balance : '') }}" --}}
                                                                                     value="{{ old('opening_balance', optional($detailAccountDetails->first())->opening_balance) }}"
                                                                                     placeholder="Please Enter Opening Balance "
                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
@@ -765,7 +592,6 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                                                     Days </label>
                                                                                 <input id="credit-days" type="text"
                                                                                     name="credit_days"
-                                                                                    {{-- value="{{ old('credit_days', !empty($detailAccountDetails->credit_days) ? $detailAccountDetails->credit_days : '') }}" --}}
                                                                                     value="{{ old('credit_days', optional($detailAccountDetails->first())->credit_days) }}"
                                                                                     placeholder="Please Enter credit Days "
                                                                                     class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
@@ -777,7 +603,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                             </div>
                                                         </div>
 
-                                                        <br />
+                                                        <br/>
                                                         {{-- @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1) --}}
                                                         @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
                                                             <button type="submit" id="save"
@@ -951,615 +777,8 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
             });
         });
 
-
-        $(document).ready(function() {
-            // let getTableElement = document.querySelectorAll('.main_row');
-            // let currentIndex = getTableElement.length;
-            // console.log(currentIndex);
-
-            // document.addEventListener("DOMContentLoaded", function() {
-
-            // Add event listener to the table for dynamic row handling
-            $(".plus-btn").on('click', function(event) {
-                var row_id = $(this).closest("tr").find(".row_id").val();
-
-                const subRowIndexes = {};
-                // console.log(currentIndexValue);
-                // Ensure the "+" button was clicked
-                if (event.target.classList.contains("plus-btn")) {
-
-                    var parentRow = event.target.closest(".main_row");
-                    // Ensure that parentRow is found correctly
-                    if (parentRow) {
-                        var parentId = parentRow.getAttribute("data-parent-id");
-                        // var parentValue = parentRow.value();
-                        var parentValue = $(".inventory_third_level_" +
-                            row_id).val();
-                        var parentPriceTagValue = $(".priceTag_dropdown_" +
-                            row_id).val();
-
-
-                        // Check if a sub-table already exists for the parent row
-                        var subTable = parentRow.querySelectorAll(
-                            ".item-sub-table");
-                        // var subTable = event.target.closest(".child_row");
-
-                        if (!subTable) {
-                            subTable = document.createElement("table");
-                            subTable.classList.add(".item-sub-table");
-                            parentRow.insertAdjacentElement('afterend', subTable);
-                        }
-
-                        // Add a new child row to the sub-table
-                        var childRowCount = subTable.length + 1;
-                        var childRow = document.createElement("tr");
-                        childRow.classList.add("child_row");
-                        childRow.setAttribute("data-parent-id", parentId);
-
-                        childRow.innerHTML =
-                            `<td><input type="checkbox" name="row_id[]" class="row_id" value="${childRowCount}" hidden></td>
-                            <td></td>
-                            <td class="quantity"><input id= "masterThirdLevel" type = "text" name="master_third_level[]" value = "${parentValue}" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} masterThirdLevel_${parentId}" hidden></td>
-                            <td class="quantity"><input id= "masterPriceTag" type = "text" name="master_price_tag[]" value = "${parentPriceTagValue}" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} masterPriceTag_${parentId}" hidden></td>
-                            <td class="product" style="width: 20%;"> <select id="product" type = "text" name="product_id[]" class ="form-control form-control-sm product product_${parentId} select2" placeholder = "Please Select the Product"  ><option value="select-all" >Select All </option> </select></td>
-                            <td class="quantity"> <input type="text" id="price" value="{{ old('price', !empty($detailAccountRecords->price) ? $detailAccountRecord->price : '') }}"name="price[]" placeholder="Price" class="price form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} price_${parentId}" ></td>
-                            <td class="quantity"><input id = "scheme" type = "text" name = "scheme[]" value = "{{ old('scheme', !empty($detailAccount->scheme) ? $detailAccount->scheme : '') }}" placeholder = "Scheme... " class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} scheme_${parentId} "></td>
-                            <td class="quantity"><input id = "discount" type = "text" name = "discount[]" value = "{{ old('discount', !empty($detailAccount->discount) ? $detailAccount->discount : '') }}" placeholder = "Discount... " class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount_${parentId}" ></td>
-                            <td class="delete-item-sub-row">
-                            <ul class="table-controls">
-                            <li><a href="javascript:void(0);" class="delete-sub-item" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></a></li>
-                            </ul>
-                            </td>
-                            </div>
-                            </div>
-                            </td>`;
-                        // $(".item-sub-table tbody").append($childRow);
-
-
-
-
-                        // Append the new child row to the sub-table
-                        parentRow.insertAdjacentElement('afterend', childRow);
-                        deleteItemSubRow();
-                        $('.product_' + parentId).select2();
-
-
-                    }
-
-                    $('.product_' + parentId).on('click', function() {
-                        var productSelected = '.product_' + parentId;
-                        $(productSelected).select2();
-                    });
-
-
-                    $('.priceTag_dropdown_' + row_id).on('change', function() {
-                        $('.product_' + parentId).html('');
-                        $.ajax({
-                            url: config.routes.getProducts,
-                            type: "GET",
-                            data: {
-                                product_id: idProduct,
-                                priceTag_id: idPriceTag,
-                                _token: '{{ csrf_token() }}'
-                            },
-                            dataType: 'json',
-                            success: function(result) {
-                                $.each(result.products,
-                                    function(key,
-                                        data) {
-                                        $('.product_' +
-                                                parentId)
-                                            .append(
-                                                '<option value="' +
-                                                data
-                                                .id + '">' +
-                                                data.name +
-                                                '</option>'
-                                            );
-                                    });
-                            }
-                        });
-                    });
-
-                }
-
-
-
-
-                var idProduct = $(".inventory_third_level_" +
-                    row_id).val();
-                var idPriceTag = $(".priceTag_dropdown_" +
-                    row_id).val();
-                // var idProduct = $(".inventory_third_level_" + currentIndex).find("option:selected").attr('id');
-                var row_id = $(this).closest("tr").find(".row_id")
-                    .val();
-
-                // $('.product_' + parentId).html('');
-                $.ajax({
-                    url: config.routes.getProducts,
-                    type: "GET",
-                    data: {
-                        product_id: idProduct,
-                        priceTag_id: idPriceTag,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    dataType: 'json',
-                    success: function(result) {
-                        // $('.product_' + row_id).html(
-                        //     '<option value="">-- Select Product--</option>');
-
-
-                        $.each(result.products, function(key, data) {
-                            $('.product_' + parentId).append(
-                                '<option value="' + data
-                                .id + '">' +
-                                data.name + '</option>');
-                        });
-                    }
-                });
-                // $(document).ready(function() {
-                // $('.product_' + parentId).on('change', function() {
-                //     var selectedValues = Array.from(this.selectedOptions)
-                //         .map(option =>
-                //             option
-                //             .value);
-
-                //     // If "Select All" is selected, select all other options except "Select All"
-                //     if (selectedValues.includes("select-all")) {
-                //         // Select all options except "Select All"
-                //         $(this).find('option').not('[value="select-all"]')
-                //             .prop(
-                //                 'selected', true);
-                //     }
-
-                //     // If "Select All" is deselected, deselect all options
-                //     if (selectedValues.length === 0) {
-                //         $(this).find('option').prop('selected', false);
-                //     }
-
-                //     // Make sure to update select2
-                //     $(this).trigger('change.select2');
-                // });
-
-
-
-            });
-
-
-        });
     </script>
-
-    <script>
-        document.getElementsByClassName('additem')[0].addEventListener('click', function(event) {
-
-            let getTableElement = document.querySelectorAll('.main_row');
-            let currentIndex = getTableElement.length + 1;
-
-
-            let $html = '<tr class="main_row" data-parent-id= "parent_row_' + currentIndex +
-                '">' +
-                '<td class="delete-item-row">' +
-                '<ul class="table-controls">' +
-                '<li><a href="javascript:void(0);" class="delete-item" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></a></li>' +
-                '</ul>' +
-                '</td>' +
-                '<td><input type="checkbox" name="row_id[]" class="row_id" value="' + currentIndex +
-                '" hidden></td>' +
-                '<td class="inventoryThirdLevel"> <select id="inventoryThirdLevel" type = "text" name = "inventory_third_level[]" class ="form-control select2 custom-select form-control-sm  inventory_third_level_' +
-                currentIndex +
-                '" placeholder = "Please Select the Inv Third Level"  ><option value = "" >Please Select the Inv Third Level </option> @foreach ($dropDownData['invetoryThirdLevel'] as $key => $value)<option value = "{{ $key }}" {{ (old('inventory_third_level') == $key ? 'selected' : '') || (!empty($detailAccountRecords->inventory_third_level) ? collect($detailAccountRecords->inventory_third_level)->contains($key) : '') ? 'selected' : '' }} >{{ $value }} </option> @endforeach </select></td> ' +
-                '<td class="price_tag"> <select id="priceTag_dropdown" type = "text" name = "price_tag_id[]" class ="form-control select2 custom-select form-control-sm priceTag_dropdown priceTag_dropdown_' +
-                currentIndex +
-                '" placeholder = "Please Select the Price Tag"  ><option value = "" >Select the Price Tag </option>  </select></td> ' +
-                // '<td class="product"> <select id="product" type = "text" name = "product_id[]" class ="form-control select2 custom-select form-control-sm product product_' +
-                // currentIndex +
-                // '" placeholder = "Please Select the Product"  ><option value = "" >Select the Product </option> </select></td> ' +
-
-                // '<td class="quantity"> <input type="text" id="price" value="{{ old('price', !empty($detailAccountRecords->price) ? $detailAccountRecord->price : '') }}"name="price[]" placeholder="Price" class="price form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} price_' +
-                // currentIndex +
-                // '" ></td>' +
-                // '<td class="quantity"><input id = "scheme" type = "text" name = "scheme[]" value = "{{ old('scheme', !empty($detailAccount->scheme) ? $detailAccount->scheme : '') }}" placeholder = "Scheme... " class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} scheme_' +
-                // currentIndex +
-                // '" ></td>' +
-                // '<td class="quantity"><input id = "discount" type = "text" name = "discount[]" value = "{{ old('discount', !empty($detailAccount->discount) ? $detailAccount->discount : '') }}" placeholder = "Discount... " class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount_' +
-                // currentIndex +
-                // '" ></td>' +
-                '<td><a  class="btn btn-dark plus-btn plus_btn_' +
-                currentIndex +
-                '">+</a></td>' +
-
-                '</div>' +
-                '</div>' +
-                '</td>' +
-                '</tr>';
-
-            $(".item-table tbody").append($html);
-            deleteItemRow();
-            // $('.product_' + currentIndex).select2();
-            $('.inventory_third_level_' + currentIndex).select2();
-            $('.priceTag_dropdown' + currentIndex).select2();
-
-            $(document).ready(function() {
-                $(".inventory_third_level_" + currentIndex).on('click', function() {
-                    var inventorySelected = '.inventory_third_level_' + currentIndex;
-                    $(inventorySelected).select2();
-                });
-            });
-            $(document).ready(function() {
-                $('.priceTag_dropdown_' + currentIndex).on('click', function() {
-                    var priceTagSelected = '.priceTag_dropdown_' + currentIndex;
-                    $(priceTagSelected).select2();
-                });
-            });
-
-
-            $(document).ready(function() {
-                $('.inventory_third_level_' + currentIndex).on('change', function() {
-                    var idProduct = this.value;
-
-                    var row_id = $(this).closest("tr").find(".row_id").val();
-
-                    $(".priceTag_dropdown_" + currentIndex).html('');
-                    $.ajax({
-                        url: config.routes.getProductPriceTags,
-                        type: "GET",
-                        data: {
-                            product_id: idProduct,
-                            _token: '{{ csrf_token() }}'
-                        },
-                        dataType: 'json',
-                        success: function(result) {
-                            $('.priceTag_dropdown_' + currentIndex).html(
-                                '<option value="">-- Select Tag --</option>'
-                            );
-
-                            $.each(result.priceTags, function(key, data) {
-                                $('.priceTag_dropdown_' +
-                                    currentIndex).append(
-                                    '<option value="' +
-                                    data.id +
-                                    '">' + data.name +
-                                    '</option>');
-                            });
-
-                        }
-                    });
-                });
-
-
-            });
-
-
-
-
-            $(document).ready(function() {
-                // document.addEventListener("DOMContentLoaded", function() {
-
-                // Add event listener to the table for dynamic row handling
-                $(".plus_btn_" + currentIndex).on('click', function(event) {
-
-
-
-                    const subRowIndexes = {};
-                    // Ensure the "+" button was clicked
-                    if (event.target.classList.contains("plus-btn")) {
-
-                        var parentRow = event.target.closest(".main_row");
-                        // Ensure that parentRow is found correctly
-                        if (parentRow) {
-                            var parentId = parentRow.getAttribute("data-parent-id");
-                            // var parentValue = parentRow.value();
-                            var parentValue = $(".inventory_third_level_" +
-                                currentIndex).val();
-                            var parentPriceTagValue = $(".priceTag_dropdown_" +
-                                currentIndex).val();
-
-
-                            // Check if a sub-table already exists for the parent row
-                            var subTable = parentRow.querySelectorAll(
-                                ".item-sub-table");
-                            // var subTable = event.target.closest(".child_row");
-
-                            if (!subTable) {
-                                subTable = document.createElement("table");
-                                subTable.classList.add(".item-sub-table");
-                                parentRow.insertAdjacentElement('afterend', subTable);
-                            }
-
-                            // Add a new child row to the sub-table
-                            var childRowCount = subTable.length + 1;
-                            var childRow = document.createElement("tr");
-                            childRow.classList.add("child_row");
-                            childRow.setAttribute("data-parent-id", parentId);
-
-                            childRow.innerHTML =
-                                `<td><input type="checkbox" name="row_id[]" class="row_id" value="${childRowCount}" hidden></td>
-                            <td></td>
-                            <td class="quantity"><input id= "masterThirdLevel" type = "text" name="master_third_level[]" value = "${parentValue}" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} masterThirdLevel_${parentId}" hidden></td>
-                            <td class="quantity"><input id= "masterPriceTag" type = "text" name="master_price_tag[]" value = "${parentPriceTagValue}" class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} masterPriceTag_${parentId}" hidden></td>
-                            <td class="product" style="width: 20%;"> <select id="product" type = "text" name="product_id[]" class ="form-control form-control-sm product product_${parentId} select2" placeholder = "Please Select the Product"  ><option value="select-all" >Select All </option> </select></td>
-                            <td class="quantity"> <input type="text" id="price" value="{{ old('price', !empty($detailAccountRecords->price) ? $detailAccountRecord->price : '') }}"name="price[]" placeholder="Price" class="price form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} price_${parentId}" ></td>
-                            <td class="quantity"><input id = "scheme" type = "text" name = "scheme[]" value = "{{ old('scheme', !empty($detailAccount->scheme) ? $detailAccount->scheme : '') }}" placeholder = "Scheme... " class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} scheme_${parentId} "></td>
-                            <td class="quantity"><input id = "discount" type = "text" name = "discount[]" value = "{{ old('discount', !empty($detailAccount->discount) ? $detailAccount->discount : '') }}" placeholder = "Discount... " class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount_${parentId}" ></td>
-                            <td class="delete-item-sub-row">
-                            <ul class="table-controls">
-                            <li><a href="javascript:void(0);" class="delete-sub-item" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></a></li>
-                            </ul>
-                            </td>
-                            </div>
-                            </div>
-                            </td>`;
-                            // $(".item-sub-table tbody").append($childRow);
-
-
-
-
-                            // Append the new child row to the sub-table
-                            parentRow.insertAdjacentElement('afterend', childRow);
-                            deleteItemSubRow();
-                            $('.product_' + parentId).select2();
-
-
-                        }
-
-                        $('.product_' + parentId).on('click', function() {
-                            var productSelected = '.product_' + parentId;
-                            $(productSelected).select2();
-                        });
-
-
-                        $('.priceTag_dropdown_' + currentIndex).on('change',
-                            function() {
-                                $('.product_' + parentId).html('');
-                                $.ajax({
-                                    url: config.routes.getProducts,
-                                    type: "GET",
-                                    data: {
-                                        product_id: idProduct,
-                                        priceTag_id: idPriceTag,
-                                        _token: '{{ csrf_token() }}'
-                                    },
-                                    dataType: 'json',
-                                    success: function(result) {
-                                        $.each(result.products,
-                                            function(key,
-                                                data) {
-                                                $('.product_' +
-                                                        parentId)
-                                                    .append(
-                                                        '<option value="' +
-                                                        data
-                                                        .id + '">' +
-                                                        data.name +
-                                                        '</option>'
-                                                    );
-                                            });
-                                    }
-                                });
-                            });
-
-                    }
-
-
-
-
-                    var idProduct = $(".inventory_third_level_" +
-                        currentIndex).val();
-                    var idPriceTag = $(".priceTag_dropdown_" +
-                        currentIndex).val();
-                    // var idProduct = $(".inventory_third_level_" + currentIndex).find("option:selected").attr('id');
-                    var row_id = $(this).closest("tr").find(".row_id")
-                        .val();
-
-                    // $('.product_' + parentId).html('');
-                    $.ajax({
-                        url: config.routes.getProducts,
-                        type: "GET",
-                        data: {
-                            product_id: idProduct,
-                            priceTag_id: idPriceTag,
-                            _token: '{{ csrf_token() }}'
-                        },
-                        dataType: 'json',
-                        success: function(result) {
-                            // $('.product_' + row_id).html(
-                            //     '<option value="">-- Select Product--</option>');
-
-
-                            $.each(result.products, function(key, data) {
-                                $('.product_' + parentId).append(
-                                    '<option value="' + data
-                                    .id + '">' +
-                                    data.name + '</option>');
-                            });
-                        }
-                    });
-                    // $(document).ready(function() {
-                    // $('.product_' + parentId).on('change', function() {
-                    //     var selectedValues = Array.from(this.selectedOptions)
-                    //         .map(option =>
-                    //             option
-                    //             .value);
-
-                    //     // If "Select All" is selected, select all other options except "Select All"
-                    //     if (selectedValues.includes("select-all")) {
-                    //         // Select all options except "Select All"
-                    //         $(this).find('option').not('[value="select-all"]')
-                    //             .prop(
-                    //                 'selected', true);
-                    //     }
-
-                    //     // If "Select All" is deselected, deselect all options
-                    //     if (selectedValues.length === 0) {
-                    //         $(this).find('option').prop('selected', false);
-                    //     }
-
-                    //     // Make sure to update select2
-                    //     $(this).trigger('change.select2');
-                    // });
-
-
-
-                });
-
-
-            });
-
-
-
-
-
-
-            // $('.saleMan').on('change', function() {
-            //     var idSaleMan = this.value;
-
-            //     $(".sector-dropdown").html('');
-            //     $.ajax({
-            //         url: "{{ url('detail-account/get-saleMan-detail') }}",
-            //         type: "GET",
-            //         data: {
-            //             saleMan_id: idSaleMan,
-            //             _token: '{{ csrf_token() }}'
-            //         },
-            //         dataType: 'json',
-            //         success: function(result) {
-            //             $('.sector-dropdown').html(
-            //                 '<option value="">-- Select Belt --</option>');
-            //             $.each(result.sectors, function(key, data) {
-            //                 $("#sector-dropdown").append('<option value="' +
-            //                     data.id +
-            //                     '">' + data.name + '</option>');
-            //             });
-
-            //             // $('.sector-dropdown').html(
-            //             //     '<option value="">-- Select Belt --</option>');
-            //         }
-            //     });
-            // });
-
-
-
-
-        })
-
-        deleteItemRow();
-        // selectableDropdown(document.querySelectorAll('.invoice-select .dropdown-item'));
-        // selectableDropdown(document.querySelectorAll('.invoice-tax-select .dropdown-item'), getTaxValue);
-        // selectableDropdown(document.querySelectorAll('.invoice-discount-select .dropdown-item'), getDiscountValue);
-
-        function deleteItemRow() {
-            let deleteItem = document.querySelectorAll('.delete-item');
-            for (var i = 0; i < deleteItem.length; i++) {
-                deleteItem[i].addEventListener('click', function() {
-                    this.parentElement.parentNode.parentNode.parentNode.remove();
-                })
-            }
-        }
-
-        function deleteItemSubRow() {
-            let deleteItem = document.querySelectorAll('.delete-sub-item');
-            for (var i = 0; i < deleteItem.length; i++) {
-                deleteItem[i].addEventListener('click', function() {
-                    this.parentElement.parentNode.parentNode.parentNode.remove();
-                })
-            }
-        }
-
-        $(document).ready(function() {
-            let getTableElement = document.querySelector('.item-table');
-            let currentIndex = getTableElement.rows.length;
-            $(".product_" + currentIndex).on('click', function() {
-                var productSelected = '.product_' + currentIndex;
-                $(productSelected).select2();
-                // $(document.body).on("change", ".product", function() {
-                //     $('.select2').select2();
-            });
-        });
-
-        $(document).ready(function() {
-            let getTableElement = document.querySelector('.item-table');
-            let currentIndex = getTableElement.rows.length;
-            $(".priceTag_dropdown_" + currentIndex).on('click', function() {
-                var priceTagSelected = '.priceTag_dropdown_' + currentIndex;
-                $(priceTagSelected).select2();
-            });
-        });
-    </script>
-
-
-    <script>
-        // document.addEventListener("DOMContentLoaded", function() {
-        //     let currentIndex = 0;
-        //     // Add event listener to the table for dynamic row handling
-        //     document.getElementsByClassName("plus_btn_"+ currentIndex).addEventListener('click', function(event){
-
-        //         // Ensure the "+" button was clicked
-        //         if (event.target.classList.contains("plus-btn")) {
-        //             var parentRow = event.target.closest(".main_row");
-
-        //             // Ensure that parentRow is found correctly
-        //             if (parentRow) {
-        //                 var parentId = parentRow.getAttribute("data-parent-id");
-
-        //                 // Check if a sub-table already exists for the parent row
-        //                 var subTable = parentRow.querySelector(".sub-table");
-
-        //                 // If no sub-table exists, create it
-        //                 if (!subTable) {
-        //                     subTable = document.createElement("table");
-        //                     subTable.classList.add("sub-table");
-        //                     parentRow.insertAdjacentElement('afterend', subTable);
-        //                 }
-
-        //                 // Add a new child row to the sub-table
-        //                 var childRowCount = subTable.rows.length + 1;
-        //                 var childRow = document.createElement("tr");
-        //                 childRow.classList.add("child_row");
-        //                 // let getTableElement = document.querySelector('.item-sub-table');
-        //                 // let currentIndex = getTableElement.rows.length + 1;
-        //                 currentIndex++;
-        //                 // Set the content of the child row
-        //                 // childRow.innerHTML = `
-    //                 //     <td colspan="3">
-    //                 //         <button class="minus-btn">-</button>
-    //                 //     </td>
-    //                 // `;
-        //                 childRow.innerHTML =
-        //                     `<td><input type="checkbox" name="row_id[]" class="row_id" value="${currentIndex}" hidden></td>
-    //                     <td class="product" style="width: 20%;"> <select id="product" type = "text" name = "product_id[]" class ="form-control select2 custom-select form-control-sm  product_${currentIndex} "placeholder = "Please Select the Product"  ><option value = "" >Select the Product </option> </select></td>
-    //                     <td class="quantity"> <input type="text" id="price" value="{{ old('price', !empty($detailAccountRecords->price) ? $detailAccountRecord->price : '') }}"name="price[]" placeholder="Price" class="price form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} price_${currentIndex}" ></td>
-    //                     <td class="quantity"><input id = "scheme" type = "text" name = "scheme[]" value = "{{ old('scheme', !empty($detailAccount->scheme) ? $detailAccount->scheme : '') }}" placeholder = "Scheme... " class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} scheme_${currentIndex} "></td>
-    //                     <td class="quantity"><input id = "discount" type = "text" name = "discount[]" value = "{{ old('discount', !empty($detailAccount->discount) ? $detailAccount->discount : '') }}" placeholder = "Discount... " class = "form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} discount_${currentIndex}" ></td>
-    //                     <td class="delete-item-sub-row">
-    //                     <ul class="table-controls">
-    //                     <li><a href="javascript:void(0);" class="delete-sub-item" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></a></li>
-    //                     </ul>
-    //                     </td>
-    //                     </div>
-    //                     </div>
-    //                     </td>`;
-        //                 // $(".item-sub-table tbody").append($childRow);
-        //                 deleteItemSubRow();
-
-
-
-        //                 // Append the new child row to the sub-table
-        //                 parentRow.insertAdjacentElement('afterend', childRow);
-        //                 // subTable.appendChild(childRow);
-        //             }
-        //         }
-
-        //         // Check if the "-" button was clicked to remove a child row
-        //         if (event.target.classList.contains("minus-btn")) {
-        //             var childRow = event.target.closest(".child_row");
-        //             if (childRow) {
-        //                 childRow.remove();
-        //             }
-        //         }
-        //     });
-        // });
-    </script>
-
+   
     <script>
         const saveRouteUrl = "{{ route('detail-account.save') }}";
         var config = {
@@ -1589,9 +808,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
         <script src="{{ asset('plugins/filepond/FilePondPluginImageTransform.min.js') }}"></script>
         <script src="{{ asset('plugins/filepond/filepondPluginFileValidateSize.min.js') }}"></script>
 
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        {{-- <script src="{{ asset('plugins/sweetalerts2/sweetalerts2.min.js') }}"></script>
-        <script src="{{ asset('plugins/sweetalerts2/custom-sweetalert.js') }}"></script> --}}
+        {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
         <script src="{{ asset('js/common.js') }}"></script>
 
         <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
@@ -1602,12 +819,11 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
         <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
         <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
         <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+        <script src="{{ asset('plugins/select2/js/select2.min.js') }}"></script>
+        {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
             integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
-        @vite(['resources/assets/js/elements/custom-search.js'])
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
 
     </x-slot>
 </x-base-layout>

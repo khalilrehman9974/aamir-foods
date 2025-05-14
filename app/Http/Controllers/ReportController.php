@@ -1253,15 +1253,9 @@ class ReportController extends Controller
             'toDate',
             'dropDownData',
             'products',
-            'title',
-            'partyId',
-            'orders',
-            'user',
-            'totalBoraySoQuantity',
-            'totalCartonSoQuantity',
-            'totalBorayDispQuantity',
-            'totalCartonDispQuantity',
-            'totalNetAmount'
+            'title', 'partyId',
+            'orders', 'user', 'totalBoraySoQuantity','totalCartonSoQuantity',
+            'totalBorayDispQuantity', 'totalCartonDispQuantity', 'totalNetAmount'
         ));
     }
 
@@ -1354,20 +1348,7 @@ class ReportController extends Controller
         $createdUser = Auth::user()->id;
         $user = User::where('id', $createdUser)->value('name');
 
-        return view('reports.product_sales_report.product-sales-report-view', compact(
-            'fromDate',
-            'toDate',
-            'dropDownData',
-            'status',
-            'title',
-            'productId',
-            'user',
-            'products',
-            'saleOrderDetails',
-            'totalsByPackingType',
-            'productTotals',
-            'totalQuantity',
-            'totalAmount'
-        ));
+        return view('reports.product_sales_report.product-sales-report-view', compact('fromDate',
+            'toDate', 'dropDownData','status', 'title', 'productId', 'user','products', 'saleOrderDetails','totalsByPackingType', 'productTotals','totalQuantity', 'totalAmount'));
     }
 }
