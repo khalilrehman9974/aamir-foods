@@ -67,7 +67,7 @@
                                             <option value="">Select</option>
                                             @foreach ($dropDownData['mainHeads'] as $key => $value)
                                                 <option value="{{ $key }}"
-                                                    {{ (old('mainHead') == $key ? 'selected' : '') || (!empty($saleOrder->mainHead) ? collect($saleOrder->mainHead)->contains($key) : '') ? 'selected' : '' }}>
+                                                     {{ request('mainHead_id') == $key ? 'selected' : '' }}>
                                                     {{ $value }}</option>
                                             @endforeach
                                         </select>
@@ -84,7 +84,7 @@
                                             <option value="">Select</option>
                                             @foreach ($dropDownData['controlHeads'] as $key => $value)
                                                 <option value="{{ $key }}"
-                                                    {{ (old('party_id') == $key ? 'selected' : '') || (!empty($saleOrder->party_id) ? collect($saleOrder->party_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                     {{ request('controlHead_id') == $key ? 'selected' : '' }}>
                                                     {{ $value }}</option>
                                             @endforeach
                                         </select>
@@ -102,7 +102,7 @@
                                             <option value="">Select</option>
                                             @foreach ($dropDownData['subHeads'] as $key => $value)
                                                 <option value="{{ $key }}"
-                                                    {{ (old('subHead') == $key ? 'selected' : '') || (!empty($saleOrder->subHead) ? collect($saleOrder->subHead)->contains($key) : '') ? 'selected' : '' }}>
+                                                    {{ request('subHead_id') == $key ? 'selected' : '' }}>
                                                     {{ $value }}</option>
                                             @endforeach
                                         </select>
@@ -117,7 +117,7 @@
                                     <div class="input-group">
 
                                         <input id="account_name" type="text" name="account_name"
-                                            placeholder="Please Enter Detail Account "
+                                            placeholder="Please Enter Detail Account " value="{{ request('account_name') }}"
                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
 
                                     </div>

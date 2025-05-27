@@ -11,6 +11,7 @@ use App\Models\CoaSubSubHead;
 use App\Models\Country;
 use App\Models\DeliveredToParties;
 use App\Models\PriceTag;
+use App\Models\PurchaseOrderMaster;
 use App\Models\SaleMan;
 use App\Models\Sector;
 use App\Models\Transporter;
@@ -56,7 +57,9 @@ class StockLedgerService
             'countries' => Country::pluck('name','id'),
             'zones' => Zone::pluck('name','id'),
             'priceTags' => PriceTag::pluck('name', 'id'),
-            'fourthHeads' => CoaSubSubHead::whereIn('main_head', $invArray)->pluck('account_name', 'id')
+            'fourthHeads' => CoaSubSubHead::whereIn('main_head', $invArray)->pluck('account_name', 'id'),
+            'poNos' => PurchaseOrderMaster::pluck('id', 'id'),
+
         ];
 
         return $result;

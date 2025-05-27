@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SaleMaster extends Model
 {
+    use HasFactory;
     use SoftDeletes;
     protected $guarded = ['id'];
     protected $table = 'sale_masters';
@@ -19,7 +20,7 @@ class SaleMaster extends Model
         'party_id',
         'sector',
         'area',
-        'deliverd_to',
+        'delivered_to',
         'saleman',
         'vehicle_no',
         'business_id',
@@ -28,6 +29,7 @@ class SaleMaster extends Model
         'bilty_no',
         'remarks',
         'total_boray',
+        'transporter_id',
         'total_carton',
         'gross_bill',
         'carriage',

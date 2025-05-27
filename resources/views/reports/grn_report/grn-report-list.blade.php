@@ -43,11 +43,19 @@
                         <nav class="breadcrumb-style-one" aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">General Journal</li>
+                                <li class="breadcrumb-item"><a href="#">Reports</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">GRN Report</li>
                             </ol>
                         </nav>
                     </div>
                 </div>
+                {{-- <div class="col-lg-0 col-6 ">
+                    <a href="{{ route('grn-report.productGrnlist') }}" class="btn btn-primary mt-2 mb-2 me-8"
+                        style="float : right; " style="">Product Wise
+                        Report
+                    </a>
+
+                </div> --}}
             </div>
 
         </div>
@@ -57,7 +65,8 @@
         <div id="tableCustomBasic" class="col-lg-12 col-12 layout-spacing">
             <div class="row">
                 <div class="col-lg-12" style="margin-right: 0px !important;">
-                    <form action="{{ route('generalJournals.print') }}" method="get" id="form-search" target="_blank" autocomplete="off">
+                    <form action="{{ route('grn-report.grnReport') }}" method="get" id="form-search" target="_blank"
+                        autocomplete="off">
                         <div class="row">
 
                             <div class="col-md-3">
@@ -70,7 +79,6 @@
                                                 class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} from_date"
                                                 type="text" value="{{ @$request['from_date'] }}"
                                                 placeholder="From Date..">
-
                                         </div>
                                     </div>
                                 </div>
@@ -82,13 +90,72 @@
                                         <label for="inputState" class="form-label">To Date</label>
                                         <div class="input-daterange input-group" id="contract-date">
 
-                                            <input type="text" name="to_date" class="form-control form-control-sm to_date" id="to_date"
+                                            <input type="text" name="to_date"
+                                                class="form-control form-control-sm to_date" id="to_date"
                                                 value="{{ @$request['to_date'] }}" placeholder="To Date" />
+
+                                            {{-- <input type="text" name="to_date" id="to_date"
+                                                class="form-control to_date" placeholder="DD-MM-YYYY"> --}}
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <label for="inputState" class="form-label">Party</label>
+                                        <select class="select2 form-control mb-3 custom-select" name="party_id[]"
+                                            id="party_id" style="width: 100%; height:36px;" multiple>
+                                            <option value="">Select</option>
+                                            @foreach ($dropDownData['parties'] as $key => $value)
+                                                <option value="{{ $key }}"
+                                                    {{ (old('party_id') == $key ? 'selected' : '') || (!empty($contract->party_id) ? collect($contract->party_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                    {{ $value }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <label for="status">
+                                            Transporter</label>
 
+                                        <select class="select2 form-control mb-3 custom-select" name="transporter_id[]"
+                                            id="transporter_id" style="width: 100%; height:36px;" multiple>
+                                            <option value="">Select</option>
+                                            @foreach ($dropDownData['transporters'] as $key => $value)
+                                                <option value="{{ $key }}"
+                                                    {{ (old('transporter_id') == $key ? 'selected' : '') || (!empty($contract->transporter_id) ? collect($contract->transporter_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                    {{ $value }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="inputState">PO#</label>
+                                    <div class="input-group">
+                                        {{-- <input type="text" name="purchase_order_no[]" class="form-control form-control-sm"
+                                            value="{{ @$request['purchase_order_no'] }}" placeholder="PO NO" /> --}}
+
+                                        <select class="select2 form-control mb-3 custom-select"
+                                            name="purchase_order_no[]" id="purchase_order_no"
+                                            style="width: 100%; height:36px;" multiple>
+                                            <option value="">Select</option>
+                                            @foreach ($dropDownData['poNos'] as $key => $value)
+                                                <option value="{{ $key }}"
+                                                    {{ (old('purchase_order_no') == $key ? 'selected' : '') || (!empty($contract->purchase_order_no) ? collect($contract->purchase_order_no)->contains($key) : '') ? 'selected' : '' }}>
+                                                    {{ $value }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
@@ -103,8 +170,8 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
+
                     </form>
                 </div>
 
@@ -113,7 +180,12 @@
         </div>
     </div>
 
+
     <script>
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
+
         document.addEventListener("DOMContentLoaded", function() {
             const input = document.getElementById('from_date'); // Change to your input's actual ID
 
@@ -157,13 +229,17 @@
         });
     </script>
 
-
     <x-slot:footerFiles>
         <script src="{{ asset('plugins/bootstrap/bootstrap.bundle.min.js') }}"></script>
 
         <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
         <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
+
         <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"
+            integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
         <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])

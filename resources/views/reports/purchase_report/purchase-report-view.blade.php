@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Sale Invoice Report</title>
+    <title>Purchase Invoice Report</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Flex container for label-value pair */
@@ -72,7 +72,7 @@
         }
 
         .notes div {
-            height: 85px;
+            height: 60px;
         }
 
 
@@ -191,20 +191,20 @@
     </div>
 
     <div class="pagination-wrapper mt-4">
-        {{ $dispatchReportMasters->links('pagination::tailwind') }}
+        {{ $purchaseMasters->links('pagination::tailwind') }}
     </div>
 
     <div class="header-info-container">
         <div class="mb-1">
             <div class="label-value-pair">
                 <span class="label">From Date:</span>
-                <span class="value">{{ \Carbon\Carbon::parse($fromDate)->format('d-F-Y') }}</span>
+                <span class="value">{{ $fromDate ? \Carbon\Carbon::parse($fromDate)->format('d-F-Y') : '' }}</span>
             </div>
         </div>
         <div class="mb-1">
             <div class="label-value-pair">
                 <span class="label">To Date:</span>
-                <span class="value">{{ \Carbon\Carbon::parse($toDate)->format('d-F-Y') }}</span>
+                <span class="value">{{ $toDate ? \Carbon\Carbon::parse($toDate)->format('d-F-Y') : '' }}</span>
             </div>
         </div>
     </div>
@@ -219,23 +219,23 @@
                         <div class="label-value-pair">
                             <span class="label">Invoice No/Date:</span>
                             <span
-                                class="value">SI-{{ $order->id }}({{ optional($order->date)->format('d-F-Y') }})</span>
+                                class="value">PI-{{ $order->id }}({{ optional($order->date) ? \Carbon\Carbon::parse($order->date)->format('d-F-Y') : '' }})</span>
                         </div>
                     </div>
 
                     <div class="mb-1">
                         <div class="label-value-pair">
-                            <span class="label">SO#/Date:</span>
+                            <span class="label">PO#/Date:</span>
                             <span
-                                class="value">{{ $order->sale_order_number ?? '' }}({{ optional(optional($order->sale_order_master)->date)->format('d-F-Y') }})</span>
+                                class="value">PO-{{ $order->purchase_order_no ?? '' }}({{ optional($order->poMasters)->date ? \Carbon\Carbon::parse($order->poMasters->date)->format('d-F-Y') : '' }})</span>
                         </div>
                     </div>
 
                     <div class="mb-1">
                         <div class="label-value-pair">
-                            <span class="label">Disp#/Date:</span>
+                            <span class="label">GRN#/Date:</span>
                             <span
-                                class="value">{{ $order->dispatch_note_number ?? '' }}({{ optional(optional($order->dispatch_note_master)->date)->format('d-F-Y') }})</span>
+                                class="value">GRN-{{ $order->grn_no ?? '' }}({{ optional($order->grn_master)->date ? \Carbon\Carbon::parse($order->grn_master->date)->format('d-F-Y') : '' }})</span>
                         </div>
                     </div>
 
@@ -248,46 +248,33 @@
 
                     <div class="mb-1">
                         <div class="label-value-pair">
-                            <span class="label">Delivered To:</span>
-                            <span
-                                class="value">{{ $dropDownData['deliveredToParties'][$order->delivered_to] ?? 'Same From Party' }}</span>
-                        </div>
-                    </div>
-
-                    <div class="mb-1">
-                        <div class="label-value-pair">
-                            <span class="label">Sale Man:</span>
-                            <span class="value">{{ $dropDownData['saleMans'][$order->saleman] ?? '' }}</span>
-                        </div>
-                    </div>
-
-                    <div class="mb-1">
-                        <div class="label-value-pair">
-                            <span class="label">Sector:</span>
-                            <span class="value">{{ $dropDownData['belts'][$order->sector] ?? '' }}</span>
-                        </div>
-                    </div>
-                    <div class="mb-1">
-                        <div class="label-value-pair">
                             <span class="label">Transporter:</span>
                             <span
                                 class="value">{{ $dropDownData['transporters'][$order->transporter_id] ?? '' }}</span>
                         </div>
                     </div>
-                    <div class="mb-1">
-                        <div class="label-value-pair">
-                            <span class="label">Area:</span>
-                            <span class="value">{{ $dropDownData['areas'][$order->area] ?? '' }}</span>
-                        </div>
-                    </div>
-
 
                     <div class="mb-1">
                         <div class="label-value-pair">
-                            <span class="label">Bility No:</span>
-                            <span class="value">{{ $order->bilty_no ?? '' }}</span>
+                            <span class="label">Supplier Bill No:</span>
+                            <span class="value">{{ $order->supplier_bill_no ?? 'No Bill' }}</span>
                         </div>
                     </div>
+
+                    <div class="mb-1">
+                        <div class="label-value-pair">
+                            <span class="label">Unloaded By:</span>
+                            <span class="value">{{ $order->unloaded_by ?? '' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-1">
+                        <div class="label-value-pair">
+                            <span class="label">Carriage:</span>
+                            <span class="value">{{ $order->carriage ?? '' }}</span>
+                        </div>
+                    </div>
+
                 </div>
 
                 {{-- Table --}}
@@ -295,13 +282,14 @@
                     <thead class="bg-gray-200">
                         <tr>
                             <th style="width: 5%">Sr #</th>
-                            <th style="width: 30%">Product</th>
+                            <th style="width: 20%">Product</th>
                             <th style="width: 5%">P/T</th>
-                            <th style="width: 7.5%">SO/QTY</th>
-                            <th style="width: 7.5%">Disp/QTY</th>
-                            <th style="width: 10%">T.Dzns</th>
-                            <th style="width: 10%">Rate</th>
-                            <th style="width: 10%">Discount</th>
+                            <th style="width: 5%">M/T</th>
+                            <th style="width: 10%">Size</th>
+                            <th style="width: 10%">Bags</th>
+                            <th style="width: 10%">MT</th>
+                            <th style="width: 10%">QTY</th>
+                            <th style="width: 10%">Price</th>
                             <th style="width: 15%">Amount</th>
                         </tr>
                     </thead>
@@ -311,11 +299,12 @@
                                 <td class="text-center">{{ $index + 1 }}</td>
                                 <td>{{ $dropDownData['products'][$detail->product_id] ?? 'Unknown' }}</td>
                                 <td class="text-center">{{ $detail->packing_type }}</td>
-                                <td class="text-right">{{ number_format($detail->soQuantity ?? 0, 2) }}</td>
-                                <td class="text-right">{{ number_format($detail->dispQuantity ?? 0, 2) }}</td>
-                                <td class="text-right">{{ number_format($detail->total_dzns ?? 0, 2) }}</td>
-                                <td class="text-right">{{ number_format($detail->rate ?? 0, 2) }}</td>
-                                <td class="text-right">{{ number_format($detail->discount ?? 0, 2) }}</td>
+                                <td class="text-center">{{ $detail->measurement_type ?? '' }}</td>
+                                <td class="text-center">{{ $detail->size ?? 'No Size' }}</td>
+                                <td class="text-center">{{ $detail->bags ?? '' }}</td>
+                                <td class="text-center">{{ $detail->measurementType ?? '' }}</td>
+                                <td class="text-right">{{ number_format($detail->quantity ?? 0, 2) }}</td>
+                                <td class="text-right">{{ number_format($detail->price ?? 0, 2) }}</td>
                                 <td class="text-right">{{ number_format($detail->amount ?? 0, 2) }}</td>
                             </tr>
                         @endforeach
@@ -331,54 +320,38 @@
                             </div>
                         </div>
                     </div>
-                    <div style="width: 20% !important">
+                    <div style="width: 15% !important">
                         <table class="w-full text-sm">
                             <thead class="bg-gray-200">
                                 <tr>
-
-                                    <th>Detail</th>
-                                    <th>Ord/QTY</th>
-                                    <th>Disp/QTY</th>
-
+                                    <th>Tot.QTY</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-
-                                    <td><b>Tot.Boray</b></td>
-                                    <td class="text-right">{{ $order->boray_so_quantity }}</td>
-                                    <td class="text-right">{{ $order->boray_disp_quantity }}</td>
-
-                                </tr>
-                                <tr>
-                                    <td><b>Tot.Carton</b></td>
-                                    <td class="text-right">{{ $order->carton_so_quantity }}</td>
-                                    <td class="text-right">{{ $order->carton_disp_quantity }}</td>
+                                    <td class="text-center">{{ $order->total_quantity }}</td>
                                 </tr>
 
                             </tbody>
                         </table>
                     </div>
-                    <div style="width: 27% !important">
+                    <div style="width: 32% !important">
                         <table class="w-full text-sm">
                             <tbody>
                                 <tr>
-                                    <td style="width: 4% !important"><b>Gross Amount</b></td>
+                                    <td style="width: 12% !important"><b>Gross Amount</b></td>
                                     <td class="text-right" style="width: 10% !important">
-                                        <b>{{ $order->gross_bill ?? '-' }}</b>
+                                        <b>{{ number_format($order->gross_bill ?? 0, 2) }}</b>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><b>Fair</b></td>
-                                    <td class="text-right"><b>{{ $order->carriage ?? '-' }}</b></td>
+                                    <td><b>Tax</b></td>
+                                    <td class="text-right"><b>{{ number_format($order->tax ?? 0, 2)  }}</b></td>
                                 </tr>
-                                <tr>
-                                    <td><b>Commission</b>-{{ $order->party->commision ?? '-' }}%</td>
-                                    <td class="text-right"><b>{{ $order->commission_amount ?? '0.00' }}</b></td>
-                                </tr>
+
                                 <tr>
                                     <td><b>Net Amount</b></td>
-                                    <td class="text-right"><b>{{ $order->net_amount ?? '-' }}</b></td>
+                                    <td class="text-right"><b>{{ number_format($order->net_amount ?? 0, 2) }}</b></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -388,28 +361,24 @@
         @endforeach
 
         {{-- Summary Table --}}
-        <table class="w-full mt-2 text-sm border">
+        <div class="summary" style="margin-top: 20px !important; margin-bottom: 20px !important;">
+            <h1 style="font-size:30px;"><b>Summary</b></h1>
+        </div>
+        {{-- Summary Table --}}
+        <table class=" mt-2 text-sm border" style="width: 40% !important;">
+
+
             <thead class="bg-gray-200">
                 <tr>
-                    <th>Packing Type</th>
-                    <th>SO Quantity</th>
-                    <th>Dispatched Quantity</th>
+                    <th>Tot.Net Amount</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td class="text-center"><b>G.Tot Boray</b></td>
-                    <td>{{ number_format($totalBoraySoQuantity, 2) }}</td>
-                    <td>{{ number_format($totalBorayDispQuantity, 2) }}</td>
-                </tr>
-                <tr>
-                    <td class="text-center"><b>G.Tot Carton</b></td>
-                    <td>{{ number_format($totalCartonSoQuantity, 2) }}</td>
-                    <td>{{ number_format($totalCartonDispQuantity, 2) }}</td>
-                </tr>
-                <tr>
-                    <td style="text-align: center; font-weight: bold;">Tot.Net Amounts:</td>
-                    <td colspan="2" style="font-weight: bold; text-align: center;">{{ number_format($totalNetAmount, 2) }}</td>
+                    {{-- <td><b>{{ number_format($totalBorayQuantity, 2) }}</b></td> --}}
+                    {{-- <td><b>{{ number_format($totalCartonQuantity, 2) }}</b></td> --}}
+                    <td style="font-weight: bold; text-align: center;">
+                        {{ number_format($totalNetAmount, 2) }}</td>
                 </tr>
             </tbody>
         </table>

@@ -44,7 +44,7 @@
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
                                 <li class="breadcrumb-item"><a href="#">Reports</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Product Order Sheet</li>
+                                <li class="breadcrumb-item active" aria-current="page">Product Sale Report</li>
                             </ol>
                         </nav>
                     </div>
@@ -59,7 +59,7 @@
             <div class="row">
                 <div class="col-lg-12" style="margin-right: 0px !important;">
                     <form action="{{ route('sales-report.productSaleReportPrint') }}" method="get" id="form-search"
-                        target="_blank">
+                        target="_blank" autocomplete="off">
                         <div class="row">
 
                             <div class="col-md-3">
@@ -68,8 +68,8 @@
                                         <label for="inputState" class="form-label">From Date</label>
                                         <div class="input-daterange input-group" id="contract-date">
 
-                                            <input name="from_date" style="color: black; "
-                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} "
+                                            <input name="from_date" style="color: black; " id="from_date"
+                                                class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} from_date"
                                                 type="text" value="{{ @$request['from_date'] }}"
                                                 placeholder="From Date..">
 
@@ -84,7 +84,8 @@
                                         <label for="inputState" class="form-label">To Date</label>
                                         <div class="input-daterange input-group" id="contract-date">
 
-                                            <input type="text" name="to_date" class="form-control form-control-sm"
+                                            <input type="text" name="to_date"
+                                                class="form-control form-control-sm to_date" id="to_date"
                                                 value="{{ @$request['to_date'] }}" placeholder="To Date" />
                                         </div>
                                     </div>
@@ -94,8 +95,8 @@
                                 <div class="form-group">
                                     <div class="input-group">
                                         <label for="inputState" class="form-label">Product</label>
-                                        <select class="select2 form-control mb-3 custom-select" name="product_id"
-                                            id="product_id" style="width: 100%; height:36px;" >
+                                        <select class="select2 form-control mb-3 custom-select" name="product_id[]"
+                                            id="product_id" style="width: 100%; height:36px;" multiple>
                                             <option value="">Select</option>
                                             @foreach ($dropDownData['products'] as $key => $value)
                                                 <option value="{{ $key }}"
@@ -110,8 +111,8 @@
                                 <div class="form-group">
                                     <div class="input-group">
                                         <label for="inputState" class="form-label">Price Tag</label>
-                                        <select class="select2 form-control mb-3 custom-select" name="price_tag"
-                                            id="price_tag" style="width: 100%; height:36px;" >
+                                        <select class="select2 form-control mb-3 custom-select" name="price_tag[]"
+                                            id="price_tag" style="width: 100%; height:36px;" multiple>
                                             <option value="">Select</option>
                                             @foreach ($dropDownData['priceTags'] as $key => $value)
                                                 <option value="{{ $key }}"
@@ -128,8 +129,8 @@
                                 <div class="form-group">
                                     <div class="input-group">
                                         <label for="inputState" class="form-label">Category</label>
-                                        <select class="select2 form-control mb-3 custom-select" name="level_4"
-                                            id="level_4" style="width: 100%; height:36px;" >
+                                        <select class="select2 form-control mb-3 custom-select" name="level_4[]"
+                                            id="level_4" style="width: 100%; height:36px;" multiple>
                                             <option value="">Select</option>
                                             @foreach ($dropDownData['fourthHeads'] as $key => $value)
                                                 <option value="{{ $key }}"
@@ -165,6 +166,48 @@
     <script>
         $(document).ready(function() {
             $('.select2').select2();
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const input = document.getElementById('from_date'); // Change to your input's actual ID
+
+            input.addEventListener('input', function() {
+                // Remove all non-digit characters
+                let raw = this.value.replace(/\D/g, '');
+
+                // Limit to 8 digits max (DDMMYYYY)
+                if (raw.length > 8) raw = raw.slice(0, 8);
+
+                // Format as DD-MM-YYYY
+                if (raw.length > 4) {
+                    this.value = raw.slice(0, 2) + '-' + raw.slice(2, 4) + '-' + raw.slice(4);
+                } else if (raw.length > 2) {
+                    this.value = raw.slice(0, 2) + '-' + raw.slice(2);
+                } else {
+                    this.value = raw;
+                }
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const input = document.getElementById('to_date'); // Change to your input's actual ID
+
+            input.addEventListener('input', function() {
+                // Remove all non-digit characters
+                let raw = this.value.replace(/\D/g, '');
+
+                // Limit to 8 digits max (DDMMYYYY)
+                if (raw.length > 8) raw = raw.slice(0, 8);
+
+                // Format as DD-MM-YYYY
+                if (raw.length > 4) {
+                    this.value = raw.slice(0, 2) + '-' + raw.slice(2, 4) + '-' + raw.slice(4);
+                } else if (raw.length > 2) {
+                    this.value = raw.slice(0, 2) + '-' + raw.slice(2);
+                } else {
+                    this.value = raw;
+                }
+            });
         });
     </script>
 

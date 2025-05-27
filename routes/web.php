@@ -458,6 +458,41 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('print', ['as' => 'sales-report.productSaleReportPrint', 'uses' => 'App\Http\Controllers\ReportController@productSaleReportPrint']);
     });
 
+    Route::group(['prefix' => 'salesReturn-report'], function () {
+        Route::get('list', ['as' => 'salesReturn-report.list', 'uses' => 'App\Http\Controllers\ReportController@salesReturnReportView']);
+        Route::get('salesReturnReport', ['as' => 'salesReturn-report.salesReturnReport', 'uses' => 'App\Http\Controllers\ReportController@salesReturnReport']);
+        Route::get('productWiseSalesReturnReport', ['as' => 'salesReturn-report.productSaleReturnlist', 'uses' => 'App\Http\Controllers\ReportController@productSaleReturnReport']);
+        Route::get('print', ['as' => 'salesReturn-report.productSaleReturnReportPrint', 'uses' => 'App\Http\Controllers\ReportController@productSaleReturnReportPrint']);
+    });
+
+    Route::group(['prefix' => 'purchase-report'], function () {
+        Route::get('list', ['as' => 'purchase-report.list', 'uses' => 'App\Http\Controllers\ReportController@purchaseReportView']);
+        Route::get('purchaseReport', ['as' => 'purchase-report.purchaseReport', 'uses' => 'App\Http\Controllers\ReportController@purchaseReport']);
+        Route::get('productWisePurchaseReport', ['as' => 'purchase-report.productPurchaselist', 'uses' => 'App\Http\Controllers\ReportController@productPurchaseReport']);
+        Route::get('print', ['as' => 'purchase-report.productPurchaseReportPrint', 'uses' => 'App\Http\Controllers\ReportController@productPurchaseReportPrint']);
+    });
+
+    Route::group(['prefix' => 'purchaseReturn-report'], function () {
+        Route::get('list', ['as' => 'purchaseReturn-report.list', 'uses' => 'App\Http\Controllers\ReportController@purchaseReturnReportView']);
+        Route::get('purchaseReturnReport', ['as' => 'purchaseReturn-report.purchaseReturnReport', 'uses' => 'App\Http\Controllers\ReportController@purchaseReturnReport']);
+        Route::get('productWisePurchaseReturnReport', ['as' => 'purchaseReturn-report.productPurchaseReturnlist', 'uses' => 'App\Http\Controllers\ReportController@productPurchaseReturnReport']);
+        Route::get('print', ['as' => 'purchaseReturn-report.productPurchaseReturnReportPrint', 'uses' => 'App\Http\Controllers\ReportController@productPurchaseReturnReportPrint']);
+    });
+
+    Route::group(['prefix' => 'purchaseOrder-report'], function () {
+        Route::get('list', ['as' => 'purchaseOrder-report.list', 'uses' => 'App\Http\Controllers\ReportController@purchaseOrderReportView']);
+        Route::get('purchaseOrderReport', ['as' => 'purchaseOrder-report.purchaseOrderReport', 'uses' => 'App\Http\Controllers\ReportController@purchaseOrderReport']);
+        Route::get('productWisePurchaseOrderReport', ['as' => 'purchaseOrder-report.productPurchaseOrderlist', 'uses' => 'App\Http\Controllers\ReportController@productPurchaseOrderReport']);
+        Route::get('print', ['as' => 'purchaseOrder-report.productPurchaseOrderReportPrint', 'uses' => 'App\Http\Controllers\ReportController@productPurchaseOrderReportPrint']);
+    });
+
+    Route::group(['prefix' => 'grn-report'], function () {
+        Route::get('list', ['as' => 'grn-report.list', 'uses' => 'App\Http\Controllers\ReportController@grnReportView']);
+        Route::get('grnReport', ['as' => 'grn-report.grnReport', 'uses' => 'App\Http\Controllers\ReportController@grnReport']);
+        Route::get('productWiseGrnReport', ['as' => 'grn-report.productGrnlist', 'uses' => 'App\Http\Controllers\ReportController@productGrnReport']);
+        Route::get('print', ['as' => 'grn-report.productGrnReportPrint', 'uses' => 'App\Http\Controllers\ReportController@productGrnReportPrint']);
+    });
+
     Route::group(['prefix' => 'grn', 'middleware' => 'auth'], function () {
         Route::get('list', ['as' => 'grn.list', 'uses' => 'App\Http\Controllers\GRNotesController@index']);
         Route::get('generate', ['as' => 'grn.generate', 'uses' => 'App\Http\Controllers\GRNotesController@generate']);

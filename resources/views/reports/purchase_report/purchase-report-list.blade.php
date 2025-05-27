@@ -44,17 +44,17 @@
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
                                 <li class="breadcrumb-item"><a href="#">Reports</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Sales Report</li>
+                                <li class="breadcrumb-item active" aria-current="page">Purchase Report</li>
                             </ol>
                         </nav>
                     </div>
                 </div>
-                <div class="col-lg-0 col-6 ">
-                    <a href="{{ route('sales-report.productSalelist') }}" class="btn btn-primary mt-2 mb-2 me-8"
+                {{-- <div class="col-lg-0 col-6 ">
+                    <a href="{{ route('purchase-report.productPurchaselist') }}" class="btn btn-primary mt-2 mb-2 me-8"
                         style="float : right; " style="">Product Wise Report
                     </a>
 
-                </div>
+                </div> --}}
             </div>
 
         </div>
@@ -64,7 +64,7 @@
         <div id="tableCustomBasic" class="col-lg-12 col-12 layout-spacing">
             <div class="row">
                 <div class="col-lg-12" style="margin-right: 0px !important;">
-                    <form action="{{ route('sales-report.salesReport') }}" method="get" id="form-search"
+                    <form action="{{ route('purchase-report.purchaseReport') }}" method="get" id="form-search"
                         target="_blank" autocomplete="off">
                         <div class="row">
 
@@ -118,6 +118,24 @@
                                 <div class="form-group">
                                     <div class="input-group">
                                         <label for="status">
+                                            Transporter</label>
+
+                                        <select class="select2 form-control mb-3 custom-select" name="transporter_id[]"
+                                            id="transporter_id" style="width: 100%; height:36px;" multiple>
+                                            <option value="">Select</option>
+                                            @foreach ($dropDownData['transporters'] as $key => $value)
+                                                <option value="{{ $key }}"
+                                                    {{ (old('transporter_id') == $key ? 'selected' : '') || (!empty($contract->transporter_id) ? collect($contract->transporter_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                    {{ $value }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <label for="status">
                                             Delivered To Parties</label>
 
                                         <select class="select2 form-control mb-3 custom-select" name="delivered_to[]"
@@ -131,13 +149,13 @@
                                         </select>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
 
                         </div>
 
                         <div class="col-md-12 mt-3">
                             <div class="row">
-                                <div class="col-md-3">
+                                {{-- <div class="col-md-3">
                                     <div class="form-group">
                                         <div class="input-group">
                                             <label for="inputState" class="form-label">Sale Man</label>
@@ -223,26 +241,8 @@
                                             </select>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <label for="status">
-                                                Transporter</label>
+                                </div> --}}
 
-                                            <select class="select2 form-control mb-3 custom-select"
-                                                name="transporter_id[]" id="transporter_id"
-                                                style="width: 100%; height:36px;" multiple>
-                                                <option value="">Select</option>
-                                                @foreach ($dropDownData['transporters'] as $key => $value)
-                                                    <option value="{{ $key }}"
-                                                        {{ (old('transporter_id') == $key ? 'selected' : '') || (!empty($contract->transporter_id) ? collect($contract->transporter_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                        {{ $value }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="inputState" class="form-label"></label>

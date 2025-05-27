@@ -22,6 +22,7 @@ use App\Models\CoaInventorySubSubHead;
 use App\Models\CoaDetailAccountSectors;
 use App\Services\ChartOfAccountService;
 use App\Models\CoaInventoryDetailAccount;
+use App\Models\GeneralJournal;
 use App\Services\CoaDetailAccountService;
 use App\Models\InventorySubSubHeadPriceTagModel;
 
@@ -172,6 +173,12 @@ class CoaDetailAccountController extends Controller
 
                 $creditAccountData = $this->coaDetailAccountService->prepareAccountCreditData($request, $detailAccountMasterInsert->id);
                 AccountLedger::insert($creditAccountData);
+
+                $generalJournalsDebitAccountData = $this->coaDetailAccountService->prepareGeneralJournalAccountDebitData($request, $detailAccountMasterInsert->id);
+                GeneralJournal::insert($generalJournalsDebitAccountData);
+
+                $generalJournalsCreditAccountData = $this->coaDetailAccountService->prepareGeneralJournalAccountCreditData($request, $detailAccountMasterInsert->id);
+                GeneralJournal::insert($generalJournalsCreditAccountData);
             } else {
 
                 $debitAccountData = $this->coaDetailAccountService->prepareDetailAccountDebitData($request, $detailAccountMasterInsert->id);
@@ -179,6 +186,12 @@ class CoaDetailAccountController extends Controller
 
                 $creditAccountData = $this->coaDetailAccountService->prepareDetailAccountCreditData($request, $detailAccountMasterInsert->id);
                 AccountLedger::insert($creditAccountData);
+
+                $generalJournalDebitAccountData = $this->coaDetailAccountService->prepareGeneralJournalDetailAccountDebitData($request, $detailAccountMasterInsert->id);
+                GeneralJournal::insert($generalJournalDebitAccountData);
+
+                $generalJournalCreditAccountData = $this->coaDetailAccountService->prepareGeneralJournalDetailAccountCreditData($request, $detailAccountMasterInsert->id);
+                GeneralJournal::insert($generalJournalCreditAccountData);
             }
 
             DB::commit();
@@ -290,6 +303,9 @@ class CoaDetailAccountController extends Controller
             CoaDetailAccountArea::where('master_account_id', $request['id'])->delete();
             CoaDetAccountDetail::where('det_account_code', $request['id'])->delete();
 
+            $docNo = 'Coa' . '-' . $request['id'];
+            GeneralJournal::where('document_number', $docNo)->where('invoice_id', $request['id'])->delete();
+
             $documentNo = 'OPENING BALANCE';
             AccountLedger::where('document_number', $documentNo)->where('invoice_id', $request['id'])->delete();
 
@@ -318,6 +334,12 @@ class CoaDetailAccountController extends Controller
 
                 $creditAccountData = $this->coaDetailAccountService->prepareAccountCreditData($request, $detailAccountMasterInsert->id);
                 AccountLedger::insert($creditAccountData);
+
+                $generalJournalsDebitAccountData = $this->coaDetailAccountService->prepareGeneralJournalAccountDebitData($request, $detailAccountMasterInsert->id);
+                GeneralJournal::insert($generalJournalsDebitAccountData);
+
+                $generalJournalsCreditAccountData = $this->coaDetailAccountService->prepareGeneralJournalAccountCreditData($request, $detailAccountMasterInsert->id);
+                GeneralJournal::insert($generalJournalsCreditAccountData);
             } else {
 
                 $debitAccountData = $this->coaDetailAccountService->prepareDetailAccountDebitData($request, $detailAccountMasterInsert->id);
@@ -325,6 +347,12 @@ class CoaDetailAccountController extends Controller
 
                 $creditAccountData = $this->coaDetailAccountService->prepareDetailAccountCreditData($request, $detailAccountMasterInsert->id);
                 AccountLedger::insert($creditAccountData);
+
+                $generalJournalDebitAccountData = $this->coaDetailAccountService->prepareGeneralJournalDetailAccountDebitData($request, $detailAccountMasterInsert->id);
+                GeneralJournal::insert($generalJournalDebitAccountData);
+
+                $generalJournalCreditAccountData = $this->coaDetailAccountService->prepareGeneralJournalDetailAccountCreditData($request, $detailAccountMasterInsert->id);
+                GeneralJournal::insert($generalJournalCreditAccountData);
             }
 
             DB::commit();

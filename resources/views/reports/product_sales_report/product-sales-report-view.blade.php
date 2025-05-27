@@ -1,12 +1,12 @@
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: Calibri, sans-serif;
             color: black;
             background-color: white;
         }
@@ -20,31 +20,38 @@
         }
 
         @media print {
+            @page {
+                size: A4 portrait;
+                margin-top: 10mm;
+                /* ✅ This sets the actual top margin on the printed page */
+                margin-left: 10mm;
+                margin-right: 10mm;
+                margin-bottom: 10mm;
+            }
+
             body {
                 margin: 0;
                 padding: 0;
+                width: 100vw;
+                height: 100vh;
                 font-size: 12px;
-                /* Set base font size for printing */
+                text-align: left !important;
+                overflow: visible !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                background-color: white;
             }
 
             .container {
-                width: 100%;
-                max-width: 210mm;
-                /* A4 width */
-                height: auto;
-                /* Allow content to flow naturally */
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
                 page-break-after: auto;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
 
-            /* Ensure portrait mode */
-            @page {
-                size: A4 portrait;
-                /* Explicitly set portrait mode */
-                margin: 10mm;
-                /* Adjust margin if needed */
-            }
-
-            /* Adjust specific font sizes for better readability */
             h1 {
                 font-size: 18px;
             }
@@ -62,7 +69,17 @@
             th {
                 font-size: 12px;
             }
+
+            .print-bg {
+                background-color: #f0f0f0 !important;
+                color: #000;
+                padding: 10px;
+            }
         }
+
+
+
+
 
         .header,
         .footer {
@@ -123,13 +140,13 @@
 
         .table-container th,
         .table-container td {
-            border: 1px solid black;
-            padding: 8px;
+            border: 1px solid lightgray !important;
+            padding: 2px;
             text-align: left;
         }
 
         .notes {
-            border: 1px solid black;
+            border: 1px solid lightgray !important;
             padding: 10px;
             margin-right: 10px;
         }
@@ -158,13 +175,13 @@
             float: left;
         }
 
-        .p-4{
+        .p-4 {
             padding: 0px !important;
         }
 
         .totals th,
         .totals td {
-            border: 1px solid black;
+            border: 1px lightgray !important;
             padding: 8px;
             text-align: left;
         }
@@ -196,11 +213,13 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header flex justify-between items-center p-4 border-b border-black">
             <div class="flex items-center">
-                <img alt="Amir Foods logo with text 'Since 1996' and 'AMIR Food' in a shield-like shape" class="h-16" height="80" src="{{ asset('images/logo.png') }}" width="80"/>
+                <img alt="Amir Foods logo with text 'Since 1996' and 'AMIR Food' in a shield-like shape" class="h-16"
+                    height="80" src="{{ asset('images/logo.png') }}" width="80" />
                 <div class="ml-4">
                     <p class="font-bold text-lg">AAMIR BROTHERS FOOD PRODUCTS MULTAN</p>
                     <p>12KM Vehari Road Multan <span class="font-bold">CELL:</span> 0309 6662476</p>
@@ -214,27 +233,27 @@
         </div>
 
         {{-- <header class="header"> --}}
-            <div class="line"></div>
+        <div class="line"></div>
         {{-- </header> --}}
 
         <div class="info" style="margin-top: 1%;">
-            <div class="row" style="margin-bottom: 3px;">
+            {{-- <div class="row" style="margin-bottom: 3px;">
                 <div style="width: 70%; text-align: left;">
                     <p><b>Product:</b>
                         <span>
-                            {{ !empty($productId) ? ($products[$productId] ?? 'Unknown Product') : 'Multiple' }}
+                            {{ !empty($productId) ? $products[$productId] ?? 'Unknown Product' : 'Multiple' }}
                         </span>
                     </p>
                 </div>
-                
-            </div>
+
+            </div> --}}
 
             <div class="row" style="margin-bottom: 3px;">
                 <div style="width: 70%; text-align: left;">
-                    <p><b>From Date:</b> <span>{{ $fromDate }}</span></p>
+                    <p><b>From Date:</b> <span>{{ \Carbon\Carbon::parse($fromDate)->format('d-F-Y') }}</span></p>
                 </div>
                 <div style="width: 30%; text-align: right;">
-                    <p><b>To Date:</b> <span>{{ $toDate }}</span></p>
+                    <p><b>To Date:</b> <span>{{ \Carbon\Carbon::parse($toDate)->format('d-F-Y') }}</span></p>
                 </div>
             </div>
 
@@ -242,7 +261,7 @@
 
         <div class="table-container">
             <table>
-                <thead>
+                <thead class="bg-gray-200">
                     <tr>
                         <th style="width: 3%;">Sr.#</th>
                         <th style="width: 30%;">Product</th>
@@ -251,7 +270,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($productTotals  as $summary)
+                    @foreach ($productTotals as $summary)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $summary['name'] }}</td>
@@ -264,10 +283,10 @@
         </div>
 
         <div class="row" style="display: flex;">
-            <div class="QWER" style="width: 65%;" >
+            <div class="QWER" style="width: 64.5%;">
 
             </div>
-            <div class="table-container" style="width: 35%;">
+            <div class="table-container" style="width: 35.5%;">
                 <table>
                     <tbody>
                         <tr>
@@ -301,4 +320,5 @@
         </div>
     </div>
 </body>
+
 </html>

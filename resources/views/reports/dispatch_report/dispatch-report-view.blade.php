@@ -91,6 +91,19 @@
 
     <div class="container w-full mx-auto">
 
+        <div class="header flex justify-between items-center p-4 border-b border-black">
+            <div class="flex items-center">
+                <img src="{{ asset('images/logo.png') }}" alt="Amir Foods Logo" class="h-16 w-16" />
+                <div class="ml-4">
+                    <p class="font-bold text-lg">AAMIR BROTHERS FOOD PRODUCTS MULTAN</p>
+                    <p>12KM Vehari Road Multan <span class="font-bold">CELL:</span> 0309 6662476</p>
+                    <p><span class="font-bold">EMAIL:</span> info.amirfoods@gmail.com</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="font-bold text-xl">{{ $title }}</p>
+            </div>
+        </div>
         @foreach ($orders as $order)
             <div class="order-block">
                 <div class="mb-1">

@@ -849,30 +849,9 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                         }
                     });
                 });
-
-
-
-
-
-
             });
         });
 
-
-    </script>
-
-
-
-
-    
-
-
-
-
-
-
-
-    <script>
         const saveRouteUrl = "{{ route('detail-account.save') }}";
         var config = {
             routes: {

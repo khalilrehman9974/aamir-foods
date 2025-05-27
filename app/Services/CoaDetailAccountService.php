@@ -51,16 +51,16 @@ class CoaDetailAccountService
 
         if (!empty($request['mainHead_id'])) {
             $q->where('main_head', $request['mainHead_id']);
-        } 
+        }
         if (!empty($request['controlHead_id'])) {
             $q->where('control_head', $request['controlHead_id']);
-        } 
+        }
         if (!empty($request['subHead_id'])) {
             $q->where('sub_head', $request['subHead_id']);
-        } 
+        }
         if (!empty($request['subSubHead_id'])) {
             $q->where('sub_sub_head', $request['subSubHead_id']);
-        } 
+        }
         if (!empty($request['account_name'])) {
             $q->where('account_name', 'like', '%' . $request['account_name'] . '%');
         }
@@ -121,7 +121,7 @@ class CoaDetailAccountService
             'parties' => CoaDetailAccount::pluck('account_name', 'id'),
             'partiesName' => CoaDetailAccount::select('account_name')->distinct()->orderBy('account_name')->get(),
 
-            
+
         ];
 
         return $result;
@@ -448,15 +448,11 @@ class CoaDetailAccountService
 
     public function prepareDetailAccountPricesData($request)
     {
-        dd($request);
-
-        // $productId = null;
 
         if ($request['product_id'] === 'select-all') {
             $inventoryAccounts = CoaInventoryDetailAccount::where('sub_sub_head', $request['master_third_level'])
                 ->where('priceTag_id', $request['master_price_tag'])
                 ->get();
-            dd($inventoryAccounts);
             $productId = null;
         } else {
             $productId = $request['product_id'];
@@ -475,24 +471,6 @@ class CoaDetailAccountService
         ];
     }
 
-
-    // public function prepareProductAssingData($request, $masterId)
-    // {
-
-    //     $productIds = CoaInventoryDetailAccount::whereNull('deleted_at')->pluck('id')->toArray();
-
-    //     return [
-    //         'detail_account_id' => $masterId,
-    //         'master_price_tag' => $request['priceTag_id'],
-    //         'master_third_level' => $request['sub_sub_head'],
-    //         'product_id' => $productIds,
-    //         'price' => $request['rate'],
-    //         'discount' => config('constants.ZERO'),
-    //         'scheme' => config('constants.ZERO'),
-    //         'created_at' => now(),
-    //         'updated_at' => now()
-    //     ];
-    // }
 
     public function prepareProductAssingData($request, $detailAccountId)
     {
@@ -536,5 +514,88 @@ class CoaDetailAccountService
                 DetailAccountProducts::create($rec);
             }
         }
+    }
+
+
+    public function prepareGeneralJournalAccountDebitData($request, $detailAccountId)
+    {
+        $partyName = CoaDetailAccount::find(107)->account_name ?? null;
+        $debitValue = abs($request['opening_balance']);
+
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $detailAccountId,
+            'document_number' => 'Coa' . '-' . $detailAccountId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $partyName,
+            'narration' => 'Debit Opening Balance of' . ' ' . $partyName,
+            'debit' =>  $debitValue,
+            'credit' => config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function prepareGeneralJournalAccountCreditData($request, $detailAccountId)
+    {
+        $creditValue = abs($request['opening_balance']);
+
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $detailAccountId,
+            'document_number' => 'Coa' . '-' . $detailAccountId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $request['account_name'],
+            'narration' => 'Credit Opening Balance of' . ' ' . $request['account_name'],
+            'debit' =>  config('constants.ZERO'),
+            'credit' => $creditValue,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function prepareGeneralJournalDetailAccountCreditData($request, $detailAccountId)
+    {
+        $partyName = CoaDetailAccount::find(107)->account_name ?? null;
+        $creditValue = abs($request['opening_balance']);
+
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $detailAccountId,
+            'document_number' => 'Coa' . '-' . $detailAccountId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $partyName,
+            'narration' => 'Credit Opening Balance of' . ' ' . $partyName,
+            'debit' =>  config('constants.ZERO'),
+            'credit' => $creditValue,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function prepareGeneralJournalDetailAccountDebitData($request, $detailAccountId)
+    {
+        $debitValue = abs($request['opening_balance']);
+
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $detailAccountId,
+            'document_number' => 'Coa' . '-' . $detailAccountId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $request['account_name'],
+            'narration' => 'Debit Opening Balance of' . ' ' . $request['account_name'],
+            'debit' =>  $debitValue,
+            'credit' => config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
     }
 }

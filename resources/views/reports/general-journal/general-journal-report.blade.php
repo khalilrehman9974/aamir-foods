@@ -3,11 +3,10 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: calibary, sans-serif;
             color: black;
             background-color: white;
         }
@@ -124,13 +123,13 @@
 
         .table-container th,
         .table-container td {
-            border: 1px solid black;
+            border: 1px solid lightgray;
             padding: 8px;
             text-align: left;
         }
 
         .notes {
-            border: 1px solid black;
+            border: 1px solid lightgray;
             padding: 10px;
             margin-right: 10px;
         }
@@ -165,7 +164,7 @@
 
         .totals th,
         .totals td {
-            border: 1px solid black;
+            border: 1px solid lightgray;
             padding: 8px;
             text-align: left;
         }
@@ -222,8 +221,8 @@
         <div class="info" style="margin-top: 1%;">
             <div class="row" style="margin-bottom: 3px;">
                 <div style="width: 70%; text-align: left;">
-                    <p><b>Run Period:</b> <span>
-                        <b>From </b>{{ $dateFrom }} <b>To</b> {{ $dateTo }}
+                    <p><b>Run Period:</b><br> <span>
+                        <b>From </b>{{ \Carbon\Carbon::parse($dateFrom?? null)->format('d-F-Y') }} <b> To </b>{{ \Carbon\Carbon::parse($dateTo?? null)->format('d-F-Y') }}
                         </span></p>
                 </div>
             </div>
@@ -251,12 +250,12 @@
                     @foreach ($generalJournals as $generalJournal)
                         <tr>
 
-                            <td>{{ \Carbon\Carbon::parse($generalJournal->date)->format('d-m-Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($generalJournal->date)->format('d-F-Y') }}</td>
                             <td>{{ $generalJournal->document_number }}</td>
                             <td>{{ $generalJournal->description }}</td>
                             <td>{{ $generalJournal->narration }}</td>
-                            <td style="text-align: end;">{{ $generalJournal->debit }}</td>
-                            <td style="text-align: end;">{{ $generalJournal->credit }}</td>
+                            <td style="text-align: end;">{{ number_format($generalJournal->debit ?? 0, 2) }}</td>
+                            <td style="text-align: end;">{{ number_format($generalJournal->credit ?? 0, 2) }}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -267,7 +266,7 @@
             <div class="line"></div>
         </header>
 
-        
+
     </div>
 </body>
 

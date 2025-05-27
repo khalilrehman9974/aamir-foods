@@ -64,10 +64,16 @@
                                         <select class="form-control-sm mb-3 select2 custom-select" name="mainHead_id"
                                             id="mainHead" style="width: 100%;">
                                             <option value="">Select</option>
-                                            @foreach ($dropDownData['mainHeads'] as $key => $value)
+                                            {{-- @foreach ($dropDownData['mainHeads'] as $key => $value)
                                                 <option value="{{ $key }}"
                                                     {{ (old('mainHead') == $key ? 'selected' : '') || (!empty($saleOrder->mainHead) ? collect($saleOrder->mainHead)->contains($key) : '') ? 'selected' : '' }}>
                                                     {{ $value }}</option>
+                                            @endforeach --}}
+                                            @foreach ($dropDownData['mainHeads'] as $key => $value)
+                                                <option value="{{ $key }}"
+                                                    {{ request('mainHead_id') == $key ? 'selected' : '' }}>
+                                                    {{ $value }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -83,7 +89,7 @@
                                             <option value="">Select</option>
                                             @foreach ($dropDownData['controlHeads'] as $key => $value)
                                                 <option value="{{ $key }}"
-                                                    {{ (old('party_id') == $key ? 'selected' : '') || (!empty($saleOrder->party_id) ? collect($saleOrder->party_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                    {{ request('controlHead_id') == $key ? 'selected' : '' }}>
                                                     {{ $value }}</option>
                                             @endforeach
                                         </select>
@@ -99,7 +105,7 @@
                                     <div class="input-group">
 
                                         <input id="account_name" type="text" name="account_name"
-                                            placeholder="Please Enter Detail Account "
+                                            placeholder="Please Enter Detail Account " value="{{ request('account_name') }}"
                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
 
                                     </div>
@@ -107,7 +113,7 @@
                             </div>
 
 
-                        {{-- </div>
+                            {{-- </div>
                         <div class="row" style="margin-bottom: 10px !important;"> --}}
                             {{-- <div class="col-lg-0 col-8 form-group mb-4">
 
@@ -127,8 +133,8 @@
                                 <label for="clear-filter" class="form-label">
                                 </label>
                                 <span class="input-group-prepend" style="margin-top: 20px ! important;">
-                                    <a href="{{ route('sub-head.list') }}" class="btn btn-primary"
-                                        value="Search" id="clear-filter" style="width: 100%; margin-left: 6px">Clear
+                                    <a href="{{ route('sub-head.list') }}" class="btn btn-primary" value="Search"
+                                        id="clear-filter" style="width: 100%; margin-left: 6px">Clear
                                         Filter</a>
 
                                 </span>

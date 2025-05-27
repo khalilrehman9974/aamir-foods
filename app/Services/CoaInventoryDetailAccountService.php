@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use Carbon\Carbon;
-use App\Models\PriceTag;
 use App\Models\CoaSubHead;
 use App\Models\CoaMainHead;
 use App\Models\PackingType;
@@ -59,8 +58,8 @@ class CoaInventoryDetailAccountService
     public function DropDownData()
     {
         $result = [
-            'MeasurementTypes' => MeasurementType::pluck('name','id'),
-            'PackingType' => PackingType::pluck('name','id'),
+            'MeasurementTypes' => MeasurementType::pluck('name', 'id'),
+            'PackingType' => PackingType::pluck('name', 'id'),
         ];
 
         return $result;
@@ -78,7 +77,7 @@ class CoaInventoryDetailAccountService
 
     public function getListOfDetailAccounts($param = null)
     {
-        $q = CoaInventoryDetailAccount::with('getMainHead','getControlHead', 'getSubHead','getSubSubHead','priceTag');
+        $q = CoaInventoryDetailAccount::with('getMainHead', 'getControlHead', 'getSubHead', 'getSubSubHead', 'priceTag');
         if (!empty($param)) {
             $q->where('name', 'LIKE', '%' . $param . '%');
         }
@@ -175,12 +174,12 @@ class CoaInventoryDetailAccountService
 
     public function getControlHeadsForMainHead($mainHead)
     {
-        return CoaControlHead::where('main_head', $mainHead)->pluck('account_name', 'id');//change here
+        return CoaControlHead::where('main_head', $mainHead)->pluck('account_name', 'id'); //change here
     }
 
     public function getSubHeadsForControlHead($controlHead)
     {
-        return CoaSubHead::where('control_head', $controlHead)->pluck('account_name', 'id');//change here
+        return CoaSubHead::where('control_head', $controlHead)->pluck('account_name', 'id'); //change here
     }
 
     public function getSubSubHeadsBySubHead($subHead)
@@ -359,6 +358,95 @@ class CoaInventoryDetailAccountService
             'updated_at' => now(),
         ];
     }
+
+    public function prepareGeneralJournalDetailAccountCreditData($request, $detailAccountId)
+    {
+        $partyName = CoaDetailAccount::find(108)->account_name ?? null;
+        $openingStock = $request['opening_stock'];
+        $stockRate = $request['stock_rate'];
+        $creditValue = ($openingStock > 0 && $stockRate > 0) ? $openingStock * $stockRate : 0;
+
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $detailAccountId,
+            'document_number' => 'Coi' . '-' . $detailAccountId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $partyName,
+            'narration' => 'Credit Opening Balance of' . ' ' . $partyName,
+            'debit' =>  config('constants.ZERO'),
+            'credit' => $creditValue,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function prepareGeneralJournalDetailAccountDebitData($request, $detailAccountId)
+    {
+        $openingStock = $request['opening_stock'];
+        $stockRate = $request['stock_rate'];
+        $debitValue = ($openingStock > 0 && $stockRate > 0) ? $openingStock * $stockRate : 0;
+
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $detailAccountId,
+            'document_number' => 'Coi' . '-' . $detailAccountId,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $request['name'],
+            'narration' => 'Debit Opening Balance of' . ' ' . $request['name'],
+            'debit' =>  $debitValue,
+            'credit' => config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+
+    public function prepareUpdateGeneralJournalDetailAccountCreditData($request)
+    {
+        $partyName = CoaDetailAccount::find(108)->account_name ?? null;
+        $openingStock = $request['opening_stock'];
+        $stockRate = $request['stock_rate'];
+        $creditValue = ($openingStock > 0 && $stockRate > 0) ? $openingStock * $stockRate : 0;
+
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $request->id,
+            'document_number' => 'Coi' . '-' . $request->id,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $partyName,
+            'narration' => 'Credit Opening Balance of' . ' ' . $partyName,
+            'debit' =>  config('constants.ZERO'),
+            'credit' => $creditValue,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+
+    public function prepareUpdateGeneralJournalDetailAccountDebitData($request)
+    {
+        $openingStock = $request['opening_stock'];
+        $stockRate = $request['stock_rate'];
+        $debitValue = ($openingStock > 0 && $stockRate > 0) ? $openingStock * $stockRate : 0;
+
+        $session = $this->commonService->getSession();
+        return [
+            'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            'invoice_id' => $request->id,
+            'document_number' => 'Coi' . '-' . $request->id,
+            'business_id' => $session->business_id,
+            'f_year_id' => $session->financial_year,
+            'description' => $request['name'],
+            'narration' => 'Debit Opening Balance of' . ' ' . $request['name'],
+            'debit' =>  $debitValue,
+            'credit' => config('constants.ZERO'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
 }
-
-

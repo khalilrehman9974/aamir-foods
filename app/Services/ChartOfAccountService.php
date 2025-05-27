@@ -104,7 +104,8 @@ class ChartOfAccountService
 
         if (!empty($request['mainHead_id'])) {
             $q->where('main_head', $request['mainHead_id']);
-        } elseif (!empty($request['account_name'])) {
+        }
+        if (!empty($request['account_name'])) {
             $q->where('account_name', $request['account_name']);
         }
 
@@ -161,9 +162,11 @@ class ChartOfAccountService
 
         if (!empty($request['mainHead_id'])) {
             $q->where('main_head', $request['mainHead_id']);
-        } elseif (!empty($request['controlHead_id'])) {
+        }
+        if (!empty($request['controlHead_id'])) {
             $q->where('control_head', $request['controlHead_id']);
-        } elseif (!empty($request['account_name'])) {
+        }
+        if (!empty($request['account_name'])) {
             $q->where('account_name', $request['account_name']);
         }
         $subHeads = $q->with('getMainHead', 'getControlHead')->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));

@@ -292,7 +292,7 @@
                     @foreach ($saleDetails as $saleDetail)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $products[$saleDetail->product_id] }}</td>
+                            <td>{{ $products[$saleDetail->product_id] ?? 'Unknown'}}</td>
                             <td>{{ $saleDetail->packing_type }}</td>
                             <td>{{ $saleDetail->measurement_type }}</td>
                             <td>{{ $saleDetail->quantity }}</td>

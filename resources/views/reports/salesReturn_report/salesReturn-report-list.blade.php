@@ -44,13 +44,13 @@
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
                                 <li class="breadcrumb-item"><a href="#">Reports</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Sales Report</li>
+                                <li class="breadcrumb-item active" aria-current="page">Sales Return Report</li>
                             </ol>
                         </nav>
                     </div>
                 </div>
                 <div class="col-lg-0 col-6 ">
-                    <a href="{{ route('sales-report.productSalelist') }}" class="btn btn-primary mt-2 mb-2 me-8"
+                    <a href="{{ route('salesReturn-report.productSaleReturnlist') }}" class="btn btn-primary mt-2 mb-2 me-8"
                         style="float : right; " style="">Product Wise Report
                     </a>
 
@@ -64,7 +64,7 @@
         <div id="tableCustomBasic" class="col-lg-12 col-12 layout-spacing">
             <div class="row">
                 <div class="col-lg-12" style="margin-right: 0px !important;">
-                    <form action="{{ route('sales-report.salesReport') }}" method="get" id="form-search"
+                    <form action="{{ route('salesReturn-report.salesReturnReport') }}" method="get" id="form-search"
                         target="_blank" autocomplete="off">
                         <div class="row">
 

@@ -65,10 +65,12 @@
                                         <select class="form-control-sm mb-3 select2 custom-select" name="mainHead_id"
                                             id="mainHead" style="width: 100%;">
                                             <option value="">Select</option>
+
                                             @foreach ($dropDownData['mainHeads'] as $key => $value)
                                                 <option value="{{ $key }}"
-                                                    {{ (old('mainHead') == $key ? 'selected' : '') || (!empty($saleOrder->mainHead) ? collect($saleOrder->mainHead)->contains($key) : '') ? 'selected' : '' }}>
-                                                    {{ $value }}</option>
+                                                    {{ request('mainHead_id') == $key ? 'selected' : '' }}>
+                                                    {{ $value }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -82,7 +84,7 @@
                                     <div class="input-group">
 
                                         <input id="account_name" type="text" name="account_name"
-                                            placeholder="Please Enter Detail Account "
+                                            placeholder="Please Enter Detail Account " value="{{ request('account_name') }}"
                                             class="form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }}">
 
                                     </div>

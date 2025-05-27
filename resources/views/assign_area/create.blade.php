@@ -11,6 +11,10 @@
         <link rel="stylesheet" href="{{ asset('plugins/flatpickr/flatpickr.css') }}">
         @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
         @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
+
+        <script src="{{ asset('plugins/select2/js/jquery.min.js') }}"></script>
+        <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
         <!--  END CUSTOM STYLE FILE  -->
     </x-slot>
     <!-- END GLOBAL MANDATORY STYLES -->
@@ -63,42 +67,46 @@
                                                         <input type="hidden" name="id" id="id"
                                                             value="{{ isset($assignArea->id) ? $assignArea->id : '' }}" />
                                                         <div class="form-group">
-                                                            <div class="col-lg-0 col-12 ">
-                                                                <label for="sale_mans_id" class="form-label">Sale
-                                                                    Man</label>
-                                                                <select id="sale_mans_id" name="sale_mans_id"
-                                                                    placeholder="Please Select Sale Man "
-                                                                    class="form-control select2 form-control mb-3 custom-select"
-                                                                    required>
-                                                                    <option value="">Select</option>
-                                                                    @foreach ($dropDownData['saleMan'] as $key => $value)
-                                                                        <option value="{{ $key }}"
-                                                                            {{ (old('sale_mans_id') == $key ? 'selected' : '') || (!empty($assignArea->sale_mans_id) ? collect($assignArea->sale_mans_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                            {{ $value }}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                                {{-- <div class="invalid-feedback">
+                                                            <div class="row">
+                                                                <div class="col-lg-0 col-6 ">
+                                                                    <label for="sale_mans_id" class="form-label">Sale
+                                                                        Man</label>
+                                                                    <select id="sale_mans_id" name="sale_mans_id"
+                                                                        placeholder="Please Select Sale Man "
+                                                                        class="form-control  form-control-sm mb-3 select2 custom-select"
+                                                                        required>
+                                                                        <option value="">Select</option>
+                                                                        @foreach ($dropDownData['saleMan'] as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                {{ (old('sale_mans_id') == $key ? 'selected' : '') || (!empty($assignArea->sale_mans_id) ? collect($assignArea->sale_mans_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                {{ $value }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                    {{-- <div class="invalid-feedback">
                                                                     Please Select the Sale Man.
                                                                 </div> --}}
-                                                            </div>
-                                                            <div class="col-lg-0 col-12 ">
-                                                                <label for="area_id" class="form-label">Area</label>
-                                                                <select id="area_id" type="text" name="area_id"
-                                                                    value="{{ old('area_id', !empty($assignArea->area_id) ? $assignArea->area_id : '') }}"
-                                                                    placeholder="Please Select Sector "
-                                                                    class="form-control select2 form-control mb-3 custom-select"
-                                                                    required>
-                                                                    <option value="">Select</option>
-                                                                    @foreach ($dropDownData['areas'] as $key => $value)
-                                                                        <option value="{{ $key }}"
-                                                                            {{ (old('area_id') == $key ? 'selected' : '') || (!empty($assignArea->area_id) ? collect($assignArea->area_id)->contains($key) : '') ? 'selected' : '' }}>
-                                                                            {{ $value }}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                                {{-- <div class="invalid-feedback">
+                                                                </div>
+                                                                <div class="col-lg-0 col-6 ">
+                                                                    <label for="area_id"
+                                                                        class="form-label">Area</label>
+                                                                    <select id="area_id" type="text" name="area_id"
+                                                                        value="{{ old('area_id', !empty($assignArea->area_id) ? $assignArea->area_id : '') }}"
+                                                                        placeholder="Please Select Sector "
+                                                                        class="form-control form-control-sm mb-3 select2 custom-select"
+                                                                        required>
+                                                                        <option value="">Select</option>
+                                                                        @foreach ($dropDownData['areas'] as $key => $value)
+                                                                            <option value="{{ $key }}"
+                                                                                {{ (old('area_id') == $key ? 'selected' : '') || (!empty($assignArea->area_id) ? collect($assignArea->area_id)->contains($key) : '') ? 'selected' : '' }}>
+                                                                                {{ $value }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                    {{-- <div class="invalid-feedback">
                                                                     Please Select the Sector.
                                                                 </div> --}}
+                                                                </div>
                                                             </div>
+
 
                                                             <a href="{{ route('assignArea.list') }}"
                                                                 style="float: right;"
@@ -129,7 +137,11 @@
             </div>
         </div>
     </div>
+
     <script>
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
         window.addEventListener('load', function() {
             // Fetch all the forms we want to apply custom Bootstrap validation styles to
             var forms = document.getElementsByClassName('needs-validation');
@@ -151,6 +163,9 @@
 
         <script type="module" src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
         <script type="module" src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
+
+        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+        <script src="{{ asset('plugins/select2/js/select2.min.js') }}"></script>
 
         <script src="{{ asset('plugins/global/vendors.min.js') }}"></script>
         @vite(['resources/assets/js/elements/custom-search.js'])

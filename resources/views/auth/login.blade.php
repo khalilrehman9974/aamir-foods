@@ -22,7 +22,8 @@
     <div class="auth-container d-flex">
 
         <div class="container mx-auto align-self-center">
-            <form method="POST" action="{{ route('login') }}" class="row g-3 needs-validation" novalidate>
+            <form method="POST" action="{{ route('login') }}" class="row g-3 needs-validation" autocomplete="off"
+                novalidate>
                 @csrf
                 <div class="row">
 
@@ -37,8 +38,8 @@
 
                                 <img src="{{ asset('images/logo.png') }}" alt="auth-img">
 
-                                {{--<h2 class="mt-5 text-white font-weight-bolder px-2">Join the community of expert developers</h2> --}}
-                                {{--<p class="text-white px-2">It is easy to setup with great customer experience. Start your 7-day free trial</p> --}}
+                                {{-- <h2 class="mt-5 text-white font-weight-bolder px-2">Join the community of expert developers</h2> --}}
+                                {{-- <p class="text-white px-2">It is easy to setup with great customer experience. Start your 7-day free trial</p> --}}
                             </div>
 
                         </div>
@@ -59,17 +60,21 @@
                                     <div class="col-md-12">
                                         <div class="mb-3">
                                             <label class="form-label">Email</label>
-                                            <input type="email" name="email" class="form-control" required>
+                                            <input type="email" name="email"
+                                                class="form-control @error('email') is-invalid @enderror"
+                                                value="{{ old('email') }}" required>
                                             @error('email')
                                                 <div class="invalid-feedback">
                                                     {{ $message }}
                                                 </div>
                                             @enderror
                                         </div>
+
                                         <div class="col-12">
                                             <div class="mb-4">
                                                 <label class="form-label">Password</label>
-                                                <input type="text" name="password" class="form-control">
+                                                <input type="password" name="password"
+                                                    class="form-control @error('password') is-invalid @enderror">
                                                 @error('password')
                                                     <span class="invalid-feedback" role="alert">
                                                         <strong>{{ $message }}</strong>
@@ -77,10 +82,11 @@
                                                 @enderror
                                             </div>
                                         </div>
+
                                         <div class="col-12">
                                             <div class="mb-4">
                                                 <label class="form-label">Business</label>
-                                                <select class="form-control" id="business_id"  name="business_id">
+                                                <select class="form-control" id="business_id" name="business_id">
                                                     @foreach (Cache::get('businesses') as $id => $business)
                                                         <option value="{{ $id }}">{{ $business }}</option>
                                                     @endforeach
@@ -95,7 +101,7 @@
                                         <div class="col-12">
                                             <div class="mb-4">
                                                 <label class="form-label">Financial Year</label>
-                                                <select class="form-control"  id="financial_year"  name="financial_year">
+                                                <select class="form-control" id="financial_year" name="financial_year">
                                                     @foreach (Cache::get('financialYears') as $id => $year)
                                                         <option value="{{ $id }}">{{ $year }}</option>
                                                     @endforeach
@@ -108,7 +114,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-12">
+                                        {{-- <div class="col-12">
                                             <div class="mb-3">
                                                 <div class="form-check form-check-primary form-check-inline">
                                                     <input class="form-check-input me-3" type="checkbox"
@@ -118,7 +124,7 @@
                                                     </label>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                         <div class="col-12">
                                             <div class="mb-4">

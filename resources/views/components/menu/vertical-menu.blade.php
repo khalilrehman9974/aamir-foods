@@ -380,10 +380,10 @@
                     <ul class="collapse submenu list-unstyled {{ Request::is('*/app/management/*') ? 'show' : '' }}"
                         id="management" data-bs-parent="#accordionExample">
                         <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
-                            <a href="{{ route('country.list') }}">Add Country</a>
+                            <a href="{{ route('country.list') }}">Location System</a>
                         </li>
 
-                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                        {{-- <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('zone.list') }}">Add Zone</a>
                         </li>
                         <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
@@ -393,15 +393,15 @@
                         <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('area.list') }}"> Area</a>
 
-                        </li>
-                        {{-- <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                        </li> --}}
+                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('assignArea.list') }}">Assign Area</a>
 
                         </li>
                         <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('assignSector.list') }}">Assign Sector</a>
 
-                        </li> --}}
+                        </li>
                         <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('saleMan.list') }}">Sale Man</a>
 
@@ -607,6 +607,22 @@
 
                         <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('sales-report.list') }}">Sales Report</a>
+                        </li>
+                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                            <a href="{{ route('salesReturn-report.list') }}">Sales Return Report</a>
+                        </li>
+                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                            <a href="{{ route('purchaseOrder-report.list') }}">Purchase Order Report</a>
+                        </li>
+                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                            <a href="{{ route('grn-report.list') }}">GRN Report</a>
+                        </li>
+                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                            <a href="{{ route('purchase-report.list') }}">Purchase Report</a>
+                        </li>
+                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                            <a href="{{ route('purchaseReturn-report.list') }}">Purchase Return Report</a>
+                        </li>
                     </ul>
                 </li>
             </ul>
