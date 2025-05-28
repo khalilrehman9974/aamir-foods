@@ -53,12 +53,14 @@
 
     <div class="row layout-top-spacing">
         <div class="row">
+            <div class="col-md-1">
 
+            </div>
             <div class="col-lg-8 col-md-8 col-sm-9 filtered-list-search mx-auto">
                 <form class="form-inline my-2 my-lg-0 justify-content-center" method="get"
-                    action="{{ route('transporter.list') }}">
+                    action="{{ route('transporter.list') }}" autocomplete="off">
                     <div class="w-100">
-                        <input type="text" value="{{ @$request['param'] }}" name="param" id="param"
+                        <input type="text" value="{{ request('param') }}" name="param" id="param"
                             class="w-100 form-control product-search br-30" id="input-search"
                             placeholder="Search Transporters...">
                         <button class="btn btn-primary _effect--ripple waves-effect waves-light" type="submit">
@@ -72,6 +74,21 @@
 
                     </div>
                 </form>
+            </div>
+            <div class="col-md-3 mt-1 " role="group">
+                <a href="{{ route('transporter.list') }}"
+                    class="btn btn-primary _effect--ripple waves-effect waves-light" id="Refresh Cw" type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="feather feather-refresh-cw">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14">
+                        </polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15">
+                        </path>
+                    </svg>
+
+                </a>
             </div>
         </div>
         <div id="tableCustomBasic" class="col-lg-12 col-12">
@@ -174,30 +191,6 @@
                                                         </svg>
                                                     </a>
                                                 @endif
-                                                {{-- @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
-                                                <a href="javascript:void(0)"
-                                                    class="action-btn btn-delete bs-tooltip delete"
-                                                    data-id="{{ $transporter->id }}" data-toggle="tooltip"
-                                                    data-placement="top" title="Delete">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                        height="24" viewBox="0 0 24 24" fill="none"
-                                                        stroke="currentColor" stroke-width="2"
-                                                        stroke-linecap="round" stroke-linejoin="round"
-                                                        class="feather feather-trash-2">
-                                                        <polyline points="3 6 5 6 21 6"></polyline>
-                                                        <path
-                                                            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                                                        </path>
-                                                        <line x1="10" y1="11" x2="10"
-                                                            y2="17">
-                                                        </line>
-                                                        <line x1="14" y1="11" x2="14"
-                                                            y2="17">
-                                                        </line>
-                                                    </svg>
-                                                </a>
-                                            @endif --}}
-
                                             </div>
                                         </td>
                                     </tr>
@@ -216,16 +209,7 @@
         </div>
     </div>
     <x-slot:footerFiles>
-        <script src="{{ asset('js/common.js') }}"></script>
-        <script src="{{ asset('plugins/sweetalerts2/sweetalerts2.min.js') }}"></script>
-        @vite(['resources/assets/js/elements/custom-search.js'])
-        <script>
-            var config = {
-                routes: {
-                    deleteMainHead: "{{ url('transporter/delete') }}",
-                },
-            }
-        </script>
+
     </x-slot>
 
 </x-base-layout>

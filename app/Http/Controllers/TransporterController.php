@@ -27,7 +27,6 @@ class TransporterController extends Controller
         $pageTitle = 'List Of Transporters';
         $request = request()->all();
         $transporters = $this->transporterService->searchTransporter($request);
-        // $saleMans = $this->transporterService->search($request);
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
         return view('transporters.index', compact('transporters', 'pageTitle', 'permission'));
     }
@@ -35,7 +34,6 @@ class TransporterController extends Controller
 
     public function create()
     {
-
         $pageTitle = 'Add Transporter';
         $permission = $this->permissionService->getUserPermission(Auth::user()->id, '13');
         return view('transporters.create', compact('permission','pageTitle'));

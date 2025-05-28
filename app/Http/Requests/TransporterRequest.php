@@ -25,9 +25,9 @@ class TransporterRequest extends FormRequest
     {
         return [
             'name' => 'required:max150',
-            'contact_number' => 'required:max150',
+            'contact_number' => 'required:max12',
+            'contact_person' => 'required:max150',
             'city' => 'required:max150',
-            'address' => 'required:max150'
         ];
     }
 
@@ -37,7 +37,7 @@ class TransporterRequest extends FormRequest
             'name.required' => 'Please enter the name!',
             'contact_number.required' => 'Please enter the Mobile Number!',
             'city.required' => 'Please enter the city name!',
-            'address.required' => 'Please enter the Address!'
+            'contact_person.required' => 'Enter Contact Person Name...!'
         ];
     }
 }
