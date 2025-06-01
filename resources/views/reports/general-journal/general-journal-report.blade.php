@@ -29,7 +29,7 @@
 
             .container {
                 width: 100%;
-                max-width: 210mm;
+                /* max-width: 210mm; */
                 /* A4 width */
                 height: auto;
                 /* Allow content to flow naturally */
@@ -40,7 +40,7 @@
             @page {
                 size: A4 portrait;
                 /* Explicitly set portrait mode */
-                margin: 10mm;
+                margin: 2mm;
                 /* Adjust margin if needed */
             }
 
@@ -217,39 +217,34 @@
 
         {{-- <header class="header"> --}}
         <div class="line"></div>
-        {{-- </header> --}}
+
         <div class="info" style="margin-top: 1%;">
             <div class="row" style="margin-bottom: 3px;">
                 <div style="width: 70%; text-align: left;">
-                    <p><b>Run Period:</b><br> <span>
-                        <b>From </b>{{ \Carbon\Carbon::parse($dateFrom?? null)->format('d-F-Y') }} <b> To </b>{{ \Carbon\Carbon::parse($dateTo?? null)->format('d-F-Y') }}
+                    <p> <span>
+                            <b> Date:</b> From <b>{{ \Carbon\Carbon::parse($dateFrom ?? null)->format('d-F-Y') }}</b> To
+                            <b>{{ \Carbon\Carbon::parse($dateTo ?? null)->format('d-F-Y') }}</b>
                         </span></p>
                 </div>
             </div>
-
 
         </div>
 
         <div class="table-container">
             <table>
                 <thead>
-
-                    <tr>
+                    <tr style="background-color: lightgray !important">
                         <th style="text-align: center; padding: 0px 0px 0px 0px !important; width: 10%;">Date</th>
                         <th style="text-align: center; padding: 0px 0px 0px 0px !important; width: 10%;">DOC#</th>
                         <th style="text-align: center; padding: 0px 0px 0px 0px !important; width: 20%;">DESCRIPTION</th>
                         <th style="text-align: center; padding: 0px 0px 0px 0px !important; width: 40%;">NARRATION</th>
                         <th style="text-align: center; padding: 0px 0px 0px 0px !important; width: 10%;">DEBIT</th>
                         <th style="text-align: center; padding: 0px 0px 0px 0px !important; width: 10%;">CREDIT</th>
-
                     </tr>
-
                 </thead>
                 <tbody>
-
                     @foreach ($generalJournals as $generalJournal)
                         <tr>
-
                             <td>{{ \Carbon\Carbon::parse($generalJournal->date)->format('d-F-Y') }}</td>
                             <td>{{ $generalJournal->document_number }}</td>
                             <td>{{ $generalJournal->description }}</td>

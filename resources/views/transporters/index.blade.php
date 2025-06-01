@@ -191,6 +191,7 @@
                                                         </svg>
                                                     </a>
                                                 @endif
+                                                
                                             </div>
                                         </td>
                                     </tr>

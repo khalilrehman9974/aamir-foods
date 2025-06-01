@@ -66,7 +66,7 @@ class ReportController extends Controller
             $toDate = date('Y-m-d', strtotime($request['to_date']));
             $stockLedgers = StockLedger::orwhereBetween('date', [$fromDate, $toDate])
                 ->orwhere('product_id', $request->product_id) // Adjust if `party_id` is a separate column
-                ->orderBy('date', 'asc')
+                ->orderBy('date', 'DESC')
                 ->get();
         } else {
 
@@ -74,7 +74,7 @@ class ReportController extends Controller
             $toDate = date('Y-m-d', strtotime($request['to_date']));
             $stockLedgers = StockLedger::orwhereBetween('date', [$fromDate, $toDate])
                 ->orwhere('product_id', $request->product_id) // Adjust if `party_id` is a separate column
-                ->orderBy('date', 'asc')
+                ->orderBy('date', 'DESC')
                 ->get();
         }
 
