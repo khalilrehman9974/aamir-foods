@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Area;
-use App\Models\SaleMan;
 use App\Models\AssignArea;
-use Illuminate\Http\Request;
 use App\Services\CommonService;
 use App\Services\AssignAreaService;
 use App\Services\PermissionService;

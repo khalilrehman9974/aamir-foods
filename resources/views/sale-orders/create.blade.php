@@ -876,6 +876,35 @@
                         }
                     })
                 });
+
+                $(".product_" + currentIndex).on('change', function() {
+                    var product = this.value;
+                    let partyId = $(".party").val();
+                    // let url = config.routes.getProductRate + '/' + product;
+                    let url = config.routes.getProductRate + '/' + product + '/' + partyId;
+                    $.ajax({
+                        url: url,
+                        type: 'GET',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+
+                        success: function(response) {
+                            $(".rate_" + currentIndex).val(response.name);
+                        },
+                        complete: function() {
+                            $('#loading').css('display', 'none');
+                        },
+                        error: function(errorThrown) {
+                            $('').val('');
+                            var errors = errorThrown.responseJSON.errors;
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Something went wrong',
+                            })
+                        }
+                    })
+                });
             });
 
             $(document).on('click', 'body *', function() {
@@ -1220,6 +1249,7 @@
                 getPartySectorDetail: "{{ url('sale-order/get-party-sale-man-sector') }}",
                 getPartyAreaDetail: "{{ url('sale-order/get-party-sale-man-area') }}",
                 getProductPackingTypeDetail: "{{ url('sale-order/get-product-packing-type') }}",
+                getProductRate: "{{ url('sale-order/get-product-rate') }}",
                 getProductMeasurementTypeDetail: "{{ url('sale-order/get-product-measurement-type') }}",
                 getDeliveredToParty: "{{ url('sale-order/get-delivered-to-party') }}",
             },

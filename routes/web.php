@@ -439,6 +439,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('print', ['as' => 'trialBalance.print', 'uses' => 'App\Http\Controllers\ReportController@trialBalancePrint']);
     });
 
+    Route::group(['prefix' => 'billAging'], function () {
+        Route::get('list', ['as' => 'billAging.list', 'uses' => 'App\Http\Controllers\BillAgingController@view']);
+        Route::get('print', ['as' => 'billAging.print', 'uses' => 'App\Http\Controllers\BillAgingController@billAgingPrint']);
+    });
+
+
     Route::group(['prefix' => 'order-sheet'], function () {
         Route::get('list', ['as' => 'order-sheet.productOrderSheetlist', 'uses' => 'App\Http\Controllers\ReportController@productOrderSheetView']);
         Route::get('orderSheetlist', ['as' => 'order-sheet.orderSheetlist', 'uses' => 'App\Http\Controllers\ReportController@orderSheetView']);
@@ -619,6 +625,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('get-delivered-to-party', ['as' => 'get-delivered-to-party', 'uses' => 'App\Http\Controllers\SaleOrderController@getDeliveredToParties']);
         Route::get('get-party-sale-man-area', ['as' => 'party-sale-man-area', 'uses' => 'App\Http\Controllers\SaleOrderController@getSaleManAreaDetail']);
         Route::get('get-product-packing-type/{name}', ['as' => 'product-packing-type', 'uses' => 'App\Http\Controllers\SaleOrderController@getProductPackingType']);
+        Route::get('get-product-rate/{product}/{partyId}', ['as' => 'product-rate', 'uses' => 'App\Http\Controllers\SaleOrderController@getProductRate']);
         Route::get('get-product-measurement-type/{name}', ['as' => 'product-measurement-type', 'uses' => 'App\Http\Controllers\SaleOrderController@getProductMeasurementType']);
         Route::get('get-products', ['as' => 'get-products', 'uses' => 'App\Http\Controllers\SaleOrderController@getProducts']);
     });

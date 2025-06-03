@@ -302,4 +302,13 @@ class SaleOrderController extends Controller
 
         return response()->json($data);
     }
+
+    public function getProductRate($product, $partyId)
+    {
+
+        $fetchProductRate = DetailAccountProducts::where('detail_account_id', $partyId)->where('product_id', $product)->value('price');
+
+        return response()->json(['status' => 'success', 'name' => $fetchProductRate]);
+    }
+
 }

@@ -1,4 +1,3 @@
-
 <x-base-layout :scrollspy="false">
     <x-slot:pageTitle>
         {{ $pageTitle }}
@@ -47,80 +46,79 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="container">
 
-                                            <div class="widget-content widget-content-area">
-                                                <form method="POST"
-                                                    action="{{ isset($user->id) ? route('user.update') : route('register') }}"
-                                                    class="row g-3 needs-validation" novalidate>
-                                                    @csrf
-                                                    <input type="hidden" name="id" id="id"
-                                                        value="{{ isset($user->id) ? $user->id : '' }}" />
-                                                    <div class="form-group">
-                                                        <div class="row">
-                                                            <div class="col-md-8">
+                                        <div class="widget-content widget-content-area">
+                                            <form method="POST"
+                                                action="{{ isset($user->id) ? route('user.update') : route('register') }}"
+                                                class="row g-3 needs-validation" novalidate autocomplete="off">
+                                                @csrf
+                                                <input type="hidden" name="id" id="id"
+                                                    value="{{ isset($user->id) ? $user->id : '' }}" />
+                                                <div class="form-group">
+                                                    <div class="row">
+                                                        <div class="col-md-8">
 
-                                                                <label for="validationCustom01"
-                                                                    class="form-label">Name</label>
-                                                                <input type="text" name="name"
-                                                                    class="form-control" id="name"
-                                                                    value="{{ old('name', !empty($user->name) ? $user->name : '') }}"
-                                                                    placeholder="Enter User Name" required>
-                                                                @error('name')
-                                                                    <span style="color:red" class="invalid-feedback">
-                                                                        <strong>{{ $message }}</strong>
-                                                                    </span>
-                                                                @enderror
-                                                            </div>
-                                                            <div class="col-md-4">
+                                                            <label for="validationCustom01"
+                                                                class="form-label">Name</label>
+                                                            <input type="text" name="name" class="form-control form-control-sm"
+                                                                id="name"
+                                                                value="{{ old('name', !empty($user->name) ? $user->name : '') }}"
+                                                                placeholder="Enter User Name" required>
+                                                            @error('name')
+                                                                <span style="color:red" class="invalid-feedback">
+                                                                    <strong>{{ $message }}</strong>
+                                                                </span>
+                                                            @enderror
+                                                        </div>
+                                                        <div class="col-md-4">
 
-                                                                <label class="form-label">Email</label>
-                                                                <input type="email" name="email"
+                                                            <label class="form-label">Email</label>
+                                                            <input type="email" name="email"
                                                                 value="{{ old('email', !empty($user->email) ? $user->email : '') }}"
-                                                                    class="form-control">
-                                                                @error('email')
-                                                                    <div class="invalid-feedback">
-                                                                        {{ $message }}
-                                                                    </div>
-                                                                @enderror
-                                                            </div>
+                                                                class="form-control form-control-sm">
+                                                            @error('email')
+                                                                <div class="invalid-feedback">
+                                                                    {{ $message }}
+                                                                </div>
+                                                            @enderror
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-8">
+
+                                                            <label>Password<span style="color: red">*</span></label>
+                                                            <input id="password" type="password"
+                                                                class="form-control form-control-sm @error('password') is-invalid @enderror"
+                                                                name="password" autocomplete="new-password">
+
+                                                            @error('password')
+                                                                <span class="invalid-feedback" role="alert">
+                                                                    <strong>{{ $message }}</strong>
+                                                                </span>
+                                                            @enderror
+
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label>Confirm Password<span
+                                                                    style="color: red">*</span></label>
+                                                            <input id="password-confirm" type="password"
+                                                                class="form-control form-control-sm @error('password') is-invalid @enderror"
+                                                                name="password_confirmation"
+                                                                autocomplete="new-password">
+                                                            @error('password')
+                                                                <span style="color:red" class="invalid-feedback">
+                                                                    <strong>{{ $message }}</strong>
+                                                                </span>
+                                                            @enderror
                                                         </div>
                                                         <div class="row">
-                                                            <div class="col-md-8">
-
-                                                                <label>Password<span
-                                                                        style="color: red">*</span></label>
-                                                                <input id="password" type="password"
-                                                                    class="form-control @error('password') is-invalid @enderror"
-                                                                    name="password" autocomplete="new-password">
-
-                                                                @error('password')
-                                                                    <span class="invalid-feedback" role="alert">
-                                                                        <strong>{{ $message }}</strong>
-                                                                    </span>
-                                                                @enderror
-
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label>Confirm Password<span
-                                                                    style="color: red">*</span></label>
-                                                                <input id="password-confirm" type="password"
-                                                                    class="form-control @error('password') is-invalid @enderror"
-                                                                    name="password_confirmation"
-                                                                    autocomplete="new-password">
-                                                                @error('password')
-                                                                    <span style="color:red" class="invalid-feedback">
-                                                                        <strong>{{ $message }}</strong>
-                                                                    </span>
-                                                                @enderror
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-2">
-                                                                    <label>User Type<span
+                                                            <div class="col-md-2">
+                                                                <label>User Type<span
                                                                         style="color: red">*</span></label>
                                                                 <div class="n-chk">
 
-                                                                    <div class="form-check form-check-primary form-check-inline me-0 mb-0">
+                                                                    <div
+                                                                        class="form-check form-check-primary form-check-inline me-0 mb-0">
 
                                                                         <input
                                                                             class="form-check-input inbox-chkbox contact-chkbox"
@@ -130,31 +128,30 @@
                                                                             @if (@$user->is_admin == 1) checked @endif>
                                                                     </div>
                                                                 </div>
-                                                                </div>
                                                             </div>
-
                                                         </div>
 
-
-                                                        <br>
-                                                        <a href="{{ route('users.list') }}" style="float: right;"
-                                                            class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
-                                                        @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
-                                                            <button type="submit" style="float: right"
-                                                                class="btn btn-success  rounded bs-popover me-1 mt-5 mb-4 "
-                                                                data-bs-container="body" data-bs-placement="right"
-                                                                data-bs-content="Tooltip on right">
-                                                                @if (!isset($user))
-                                                                    Save
-                                                                @else
-                                                                    Update
-                                                                @endif
-                                                            </button>
-                                                        @endif
                                                     </div>
 
-                                                </form>
-                                            </div>
+
+                                                    <br>
+                                                    <a href="{{ route('users.list') }}" style="float: right;"
+                                                        class="btn btn-dark rounded bs-popover ml-2 mt-5  mb-4">Cancel</a>
+                                                    @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
+                                                        <button type="submit" style="float: right"
+                                                            class="btn btn-success  rounded bs-popover me-1 mt-5 mb-4 "
+                                                            data-bs-container="body" data-bs-placement="right"
+                                                            data-bs-content="Tooltip on right">
+                                                            @if (!isset($user))
+                                                                Save
+                                                            @else
+                                                                Update
+                                                            @endif
+                                                        </button>
+                                                    @endif
+                                                </div>
+
+                                            </form>
                                         </div>
                                     </div>
                                 </div>

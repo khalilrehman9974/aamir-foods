@@ -394,14 +394,14 @@
                             <a href="{{ route('area.list') }}"> Area</a>
 
                         </li> --}}
-                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                        {{-- <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('assignArea.list') }}">Assign Area</a>
 
                         </li>
                         <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('assignSector.list') }}">Assign Sector</a>
 
-                        </li>
+                        </li> --}}
                         <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('saleMan.list') }}">Sale Man</a>
 
@@ -570,8 +570,8 @@
                             <a href="{{ route('trialBalance.list') }}">Trial
                                 Balance</a>
 
-                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
-                            <a href="{{ route('trialBalance.list') }}">Bill Aging</a>
+                        {{-- <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                            <a href="{{ route('billAging.list') }}">Bill Aging</a></li> --}}
                     </ul>
                 </li>
 

@@ -22,6 +22,8 @@ use App\Models\DetailAccountProducts;
 use App\Models\CoaDetailAccountSectors;
 use App\Models\CoaInventoryDetailAccount;
 use App\Models\CoaMainHead;
+use App\Models\Sector;
+use App\Models\Zone;
 
 class CoaDetailAccountService
 {
@@ -119,6 +121,9 @@ class CoaDetailAccountService
             'subHeads' => CoaSubHead::pluck('account_name', 'id'),
             'subSubHeads' => CoaSubSubHead::pluck('account_name', 'id'),
             'parties' => CoaDetailAccount::pluck('account_name', 'id'),
+            'zones' => Zone::pluck('name', 'id'),
+            'belts' => Sector::pluck('name', 'id'),
+            'areas' => Area::pluck('name', 'id'),
             'partiesName' => CoaDetailAccount::select('account_name')->distinct()->orderBy('account_name')->get(),
 
 

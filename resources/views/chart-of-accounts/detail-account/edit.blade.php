@@ -20,11 +20,11 @@
         {{-- @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
         @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss']) --}}
 
-            {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+        {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
                 integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
                 crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
 
-            <script src="{{ asset('plugins/select2/js/jquery.min.js') }}"></script>
+        <script src="{{ asset('plugins/select2/js/jquery.min.js') }}"></script>
 
         <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
         <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
@@ -265,7 +265,6 @@
                                                                         class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sector-dropdown"
                                                                         multiple>
                                                                     </select>
-
                                                                 @else
                                                                     <select id="sector-dropdown" name="sector_id[]"
                                                                         class="select2 custom-select form-control mb-3 {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sector-dropdown"
@@ -278,7 +277,7 @@ $isSelected = old('sector_id') == $key || $detailAccountSectors->pluck('sector_i
                                                                                 {{ $value }}
                                                                             </option>
                                                                         @endforeach
-                                                                        
+
                                                                     </select>
                                                                 @endif
                                                             </div>
@@ -603,7 +602,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                                                             </div>
                                                         </div>
 
-                                                        <br/>
+                                                        <br />
                                                         {{-- @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1) --}}
                                                         @if ((!empty($permission) && $permission->insert_access == 1) || Auth::user()->is_admin == 1)
                                                             <button type="submit" id="save"
@@ -720,7 +719,7 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
                     dataType: 'json',
                     success: function(result) {
                         $('.sector-dropdown').html(
-                            '<option value="">-- Select Belt --</option>');
+                            '<option value="select-all">-- Select All Belt --</option>');
                         $.each(result.sectors, function(key, data) {
                             $("#sector-dropdown").append('<option value="' + data.id +
                                 '">' + data.name + '</option>');
@@ -739,46 +738,109 @@ $isSelected = old('area_id') == $key || $detailAccountAreas->pluck('area_id')->c
             --------------------------------------------*/
 
 
+            // $('.sector-dropdown').on('change', function() {
+            //     // var idSaleMan = this.value;
+            //     var sectors = document.querySelectorAll('.sector-dropdown');
+
+            //     sectors.forEach(function(sector) {
+            //         // var selectedValue = sector.value; // Get the selected value of each dropdown
+            //         var selectedValues = Array.from(sector.selectedOptions).map(option => option
+            //             .value);
+
+            //         $(".area-dropdown").html('');
+            //         $.ajax({
+            //             url: "{{ url('detail-account/get-saleMan-area-detail') }}",
+            //             type: "GET",
+            //             data: {
+            //                 sector: selectedValues,
+            //                 _token: '{{ csrf_token() }}'
+            //             },
+            //             dataType: 'json',
+            //             success: function(result) {
+            //                 $('.area-dropdown').html(
+            //                     '<option value="">-- Select Area --</option>');
+            //                 $.each(result.areas, function(key, data) {
+            //                     $("#area-dropdown").append('<option value="' +
+            //                         data.id +
+            //                         '">' + data.name + '</option>');
+            //                 });
+            //             }
+            //         });
+            //     });
+
+
+
+
+
+
+            // });
+
+
             $('.sector-dropdown').on('change', function() {
-                // var idSaleMan = this.value;
-                var sectors = document.querySelectorAll('.sector-dropdown');
+                var $this = $(this);
+                var selectedValues = Array.from(this.selectedOptions).map(option => option.value);
 
-                sectors.forEach(function(sector) {
-                    // var selectedValue = sector.value; // Get the selected value of each dropdown
-                    var selectedValues = Array.from(sector.selectedOptions).map(option => option
-                        .value);
+                if (selectedValues.includes("select-all")) {
+                    $this.find('option[value="select-all"]').prop('selected', false);
 
+                    $this.find('option').each(function() {
+                        if (this.value !== "select-all") {
+                            $(this).prop('selected', true);
+                        }
+                    });
+
+                    $this.trigger('change.select2');
+                    selectedValues = Array.from($this[0].selectedOptions).map(option => option.value);
+                }
+
+                var sectorIds = selectedValues.filter(value => value !== "select-all");
+
+                if (sectorIds.length > 0) {
                     $(".area-dropdown").html('');
                     $.ajax({
                         url: "{{ url('detail-account/get-saleMan-area-detail') }}",
                         type: "GET",
                         data: {
-                            sector: selectedValues,
+                            sector: sectorIds,
                             _token: '{{ csrf_token() }}'
                         },
                         dataType: 'json',
                         success: function(result) {
                             $('.area-dropdown').html(
-                                '<option value="">-- Select Area --</option>');
+                                '<option value="select-all">-- Select All Areas --</option>'
+                            );
                             $.each(result.areas, function(key, data) {
-                                $("#area-dropdown").append('<option value="' +
-                                    data.id +
+                                $("#area-dropdown").append('<option value="' + data.id +
                                     '">' + data.name + '</option>');
                             });
+
+                            // Reinitialize Select2
+                            $('.area-dropdown').select2();
                         }
                     });
-                });
+                }
+            });
 
+            // Handle area "Select All" logic
+            $('.area-dropdown').on('change', function() {
+                var $this = $(this);
+                var selectedValues = Array.from(this.selectedOptions).map(option => option.value);
 
+                if (selectedValues.includes("select-all")) {
+                    $this.find('option[value="select-all"]').prop('selected', false);
 
+                    $this.find('option').each(function() {
+                        if (this.value !== "select-all") {
+                            $(this).prop('selected', true);
+                        }
+                    });
 
-
-
+                    $this.trigger('change.select2');
+                }
             });
         });
-
     </script>
-   
+
     <script>
         const saveRouteUrl = "{{ route('detail-account.save') }}";
         var config = {

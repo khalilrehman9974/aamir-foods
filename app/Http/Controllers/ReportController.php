@@ -3,13 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Sector;
-use App\Models\SaleMaster;
 use App\Models\StockLedger;
 use Illuminate\Http\Request;
 use App\Services\CommonService;
-use App\Models\CoaDetailAccount;
-use App\Models\DeliveredToParties;
 use Illuminate\Support\Facades\DB;
 use App\Services\PermissionService;
 use App\Models\CoaInventoryMainHead;
@@ -178,7 +174,7 @@ class ReportController extends Controller
 
     public function view()
     {
-        $pageTitle = 'Party Ledger';
+        $pageTitle = 'Trial Balance';
         $dropDownData = $this->coaDetailAccountService->DropDownData();
         $mainHeads = $this->chartOfAccountService->getMainHeads();
         $controlHeads = $this->chartOfAccountService->getControlHeads();
@@ -186,149 +182,6 @@ class ReportController extends Controller
         $subSubHeads = $this->chartOfAccountService->getSubSubHeads();
         return view('reports.trial-balance.view', compact('dropDownData', 'pageTitle', 'controlHeads', 'mainHeads', 'subHeads', 'subSubHeads'));
     }
-
-    // public function trialBalancePrint(Request $request)
-    // {
-    //     $title = 'Trial Balance';
-    //     $param = request()->param;
-    //     $dropDownData = $this->stockLedgerService->DropDownData();
-
-    //     $dateFrom = $request['from_date'];
-    //     $dateTo = $request['to_date'];
-
-    //     $fromDate = !empty($request['from_date']) ? date('Y-m-d', strtotime($request['from_date'])) : null;
-    //     $toDate = !empty($request['to_date']) ? date('Y-m-d', strtotime($request['to_date'])) : null;
-
-    //     $accountLedgers = DB::table('account_ledgers')
-    //         ->whereBetween('date', [$fromDate, $toDate])
-
-    //         ->orderBy('date', 'asc')
-    //         ->get();
-    //     $rew = $accountLedgers->pluck('party_id');
-
-    //     // $entries = DB::table('account_ledgers')
-    //     //     ->join('detail_accounts', 'account_ledgers.party_id', '=', 'detail_accounts.id')
-    //     //     ->select(
-    //     //         'detail_accounts.main_head',
-    //     //         'detail_accounts.control_head',
-    //     //         'detail_accounts.sub_head',
-    //     //         'detail_accounts.sub_sub_head',
-    //     //         'detail_accounts.account_name',
-    //     //         DB::raw("SUM(CASE WHEN date < '$fromDate' THEN debit ELSE 0 END) as opening_debit"),
-    //     //         DB::raw("SUM(CASE WHEN date < '$fromDate' THEN credit ELSE 0 END) as opening_credit"),
-    //     //         DB::raw("SUM(CASE WHEN date BETWEEN '$fromDate' AND '$toDate' THEN debit ELSE 0 END) as period_debit"),
-    //     //         DB::raw("SUM(CASE WHEN date BETWEEN '$fromDate' AND '$toDate' THEN credit ELSE 0 END) as period_credit")
-    //     //     )
-    //     //     ->groupBy(
-    //     //         'detail_accounts.main_head',
-    //     //         'detail_accounts.control_head',
-    //     //         'detail_accounts.sub_head',
-    //     //         'detail_accounts.sub_sub_head',
-    //     //         'detail_accounts.account_name'
-    //     //     )
-    //     //     ->get()
-    //     //     ->map(function ($row) {
-    //     //         $row->closing_debit = max($row->opening_debit + $row->period_debit - $row->opening_credit - $row->period_credit, 0);
-    //     //         $row->closing_credit = max($row->opening_credit + $row->period_credit - $row->opening_debit - $row->period_debit, 0);
-    //     //         return $row;
-    //     //     });
-
-    //     // // Group by hierarchy
-    //     // $grouped = $entries->groupBy('main_head')->map(function ($mainGroup) {
-    //     //     return $mainGroup->groupBy('control_head')->map(function ($controlGroup) {
-    //     //         return $controlGroup->groupBy('sub_head')->map(function ($subGroup) {
-    //     //             return $subGroup->groupBy('sub_sub_head');
-    //     //         });
-    //     //     });
-    //     // });
-
-    //     $entries = DB::table('account_ledgers')
-    //     ->join('detail_accounts', 'account_ledgers.party_id', '=', 'detail_accounts.id')
-    //     ->leftJoin('coa_det_account_details', 'coa_det_account_details.det_account_code', '=', 'detail_accounts.id')
-    //     ->select(
-    //         'detail_accounts.main_head',
-    //         'detail_accounts.control_head',
-    //         'detail_accounts.sub_head',
-    //         'detail_accounts.sub_sub_head',
-    //         'detail_accounts.account_name',
-    //         'coa_det_account_details.opening_balance',
-
-    //         DB::raw("SUM(CASE WHEN date BETWEEN '$fromDate' AND '$toDate' THEN debit ELSE 0 END) as period_debit"),
-    //         DB::raw("SUM(CASE WHEN date BETWEEN '$fromDate' AND '$toDate' THEN credit ELSE 0 END) as period_credit")
-    //     )
-    //     ->groupBy(
-    //         'detail_accounts.main_head',
-    //         'detail_accounts.control_head',
-    //         'detail_accounts.sub_head',
-    //         'detail_accounts.sub_sub_head',
-    //         'detail_accounts.account_name',
-    //         'coa_det_account_details.opening_balance'
-    //     )
-    //     ->get()
-    //     ->map(function ($row) {
-    //         $opening = floatval($row->opening_balance);
-
-    //         // ✅ Always add opening_balance to debit, subtract from credit
-    //         $debit_balance = $opening + $row->period_debit ;
-    //         $credit_balance =$opening - $row->period_credit;
-
-    //         // ✅ Closing balance = difference
-    //         $closing_balance = $debit_balance + $credit_balance;
-
-    //         $row->debit_balance = $debit_balance;
-    //         $row->credit_balance = $credit_balance;
-    //         $row->closing_debit = $closing_balance > 0 ? $closing_balance : 0;
-    //         $row->closing_credit = $closing_balance < 0 ? abs($closing_balance) : 0;
-
-    //         return $row;
-    //     });
-    //     // Now create grouped structure WITH SUMS
-    //     $grouped = [];
-
-    //     foreach ($entries as $entry) {
-    //         $main = $entry->main_head;
-    //         $control = $entry->control_head;
-    //         $sub = $entry->sub_head;
-    //         $subSub = $entry->sub_sub_head;
-
-    //         // $grouped[$main]['_totals'] = self::addSums($grouped[$main]['_totals'] ?? null, $entry);
-    //         if (!isset($grouped[$main])) {
-    //             $grouped[$main] = [];
-    //         }
-    //         $grouped[$main]['_totals'] = self::addSums($grouped[$main]['_totals'] ?? null, $entry);
-    //         $grouped[$main]['controls'][$control]['_totals'] = self::addSums($grouped[$main]['controls'][$control]['_totals'] ?? null, $entry);
-    //         $grouped[$main]['controls'][$control]['subs'][$sub]['_totals'] = self::addSums($grouped[$main]['controls'][$control]['subs'][$sub]['_totals'] ?? null, $entry);
-    //         $grouped[$main]['controls'][$control]['subs'][$sub]['subsubs'][$subSub]['_totals'] = self::addSums($grouped[$main]['controls'][$control]['subs'][$sub]['subsubs'][$subSub]['_totals'] ?? null, $entry);
-
-    //         $grouped[$main]['controls'][$control]['subs'][$sub]['subsubs'][$subSub]['accounts'][] = $entry;
-    //     }
-
-
-
-
-    //     return view('reports.trial-balance.trial_balance_view', compact('grouped', 'param', 'accountLedgers', 'dateFrom', 'dateTo', 'dropDownData', 'title'));
-    // }
-
-    // private static function addSums($current, $entry)
-    // {
-    //     $current = $current ?? (object)[
-    //         'opening_debit' => 0,
-    //         'opening_credit' =>0,
-    //         'period_debit' =>  0,
-    //         'period_credit' => 0,
-    //         'closing_debit' => 0,
-    //         'closing_credit' => 0
-    //     ];
-
-    //     $current->opening_debit += $entry->opening_debit;
-    //     $current->opening_credit += $entry->opening_credit;
-    //     $current->period_debit += $entry->period_debit;
-    //     $current->period_credit += $entry->period_credit;
-    //     $current->closing_debit += $entry->closing_debit;
-    //     $current->closing_credit += $entry->closing_credit;
-
-    //     return $current;
-    // }
 
 
     public function trialBalancePrint(Request $request)

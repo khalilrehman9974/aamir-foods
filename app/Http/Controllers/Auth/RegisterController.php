@@ -57,7 +57,7 @@ class RegisterController extends Controller
     {
         $pageTitle = 'List of Users';
 
-        $request=$request = request()->all();
+        $request = $request = request()->all();
         $users = $this->userService->getUsersList($request);
         return view('auth.index', compact('users', 'pageTitle'));
     }
@@ -86,11 +86,10 @@ class RegisterController extends Controller
     {
         $pageTitle = 'Register User';
 
-        // dd($data);
         $fileName = null;
-        if(isset($data['avatar']) && !empty($data['avatar'])){
+        if (isset($data['avatar']) && !empty($data['avatar'])) {
             $file = $data['avatar'];
-            $fileName = time().'.'.$file->getClientOriginalExtension();
+            $fileName = time() . '.' . $file->getClientOriginalExtension();
             // $file->move(User::UPLOAD_PATH, $fileName);
         }
 
@@ -103,31 +102,31 @@ class RegisterController extends Controller
             'created_by' => Auth::user()->id,
             'updated_by' => Auth::user()->id,
         ];
-        if($data['id']){
+        if ($data['id']) {
             User::where('id', $data['id'])->update(array(
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
                 'is_admin' => isset($data['is_admin']) ? $data['is_admin'] : 0,
-
                 'created_by' => Auth::user()->id,
                 'updated_by' => Auth::user()->id,
             ));
-
         }
         User::create($userData);
 
         Session::flash('message', 'User created successfully');
-        return redirect('users/list', compact('pageTitle'));
+        // return redirect('users/list', compact('pageTitle'))->with('message', config('constants.store'));
+        return redirect('users/list')->with(compact('pageTitle'));
     }
 
-    public function update(){
+    public function update()
+    {
 
         $data = request()->all();
         $fileName = null;
-        if(isset($data['avatar']) && !empty($data['avatar'])){
+        if (isset($data['avatar']) && !empty($data['avatar'])) {
             $file = $data['avatar'];
-            $fileName = time().'.'.$file->getClientOriginalExtension();
+            $fileName = time() . '.' . $file->getClientOriginalExtension();
             // $file->move(User::UPLOAD_PATH, $fileName);
         }
         User::where('id', $data['id'])->update(array(
@@ -135,7 +134,7 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'is_admin' => isset($data['is_admin']) ? $data['is_admin'] : 0,
-            ));
+        ));
 
         Session::flash('message', config('constants.update'));
         return redirect('users/list')->with('message', config('constants.store'));
@@ -159,11 +158,11 @@ class RegisterController extends Controller
         $pageTitle = 'Register User';
         $user = User::find($id);
         // dd($user);
-        if(empty($user)){
+        if (empty($user)) {
             return abort(404);
         }
 
-        return view('auth.register', compact('user','pageTitle'));
+        return view('auth.register', compact('user', 'pageTitle'));
     }
 
     /**
@@ -175,11 +174,10 @@ class RegisterController extends Controller
     public function destroy($id)
     {
         $deleted = User::destroy($id);
-        if($deleted){
-            return response()->json(['success'=>'200', 'message'=>config('constants.delete')]);
-        }else{
-            return response()->json(['error'=>'', 'message'=>config('constants.wrong')]);
+        if ($deleted) {
+            return response()->json(['success' => '200', 'message' => config('constants.delete')]);
+        } else {
+            return response()->json(['error' => '', 'message' => config('constants.wrong')]);
         }
     }
-
 }

@@ -42,7 +42,7 @@ class SaleMaster extends Model
 
     public function party()
     {
-        return $this->hasOne(CoaDetailAccount::class, 'id', 'party_id');
+        return $this->belongsTo(CoADetailAccount::class, 'party_id');
     }
 
     public function SaleMan()
@@ -53,5 +53,20 @@ class SaleMaster extends Model
     public function details()
     {
         return $this->hasMany(SaleDetail::class, 'sale_master_id');
+    }
+
+    public function Area()
+    {
+        return $this->belongsTo(Area::class, 'area');
+    }
+
+    public function transporter()
+    {
+        return $this->belongsTo(Transporter::class, 'transporter_id');
+    }
+
+    public function Belt()
+    {
+        return $this->belongsTo(Sector::class, 'sector');
     }
 }

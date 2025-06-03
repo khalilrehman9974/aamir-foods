@@ -13,6 +13,6 @@ class Sector extends Model
 
     public function zone()
     {
-        return $this->BelongsTo(Zone::class);
+        return $this->belongsTo(Zone::class, 'zone_id');
     }
 }
