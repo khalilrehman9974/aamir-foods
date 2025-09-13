@@ -141,7 +141,6 @@ class CoaSubHeadController extends Controller
 
     public function getControlAccountForMainHead($mainHead)
     {
-
         $controlAccounts = $this->chartOfAccountService->getControlHeadsForMainHead($mainHead);
         if ($controlAccounts) {
             return response()->json(['status' => 'success', 'data' => $controlAccounts]);

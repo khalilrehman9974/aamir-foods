@@ -435,7 +435,7 @@ $isSelected = old('delivered_to') == $key || $sale_Order->pluck('delivered_to')-
                                                                                                 <input id="soQuantity"
                                                                                                     type="number"
                                                                                                     name="soQuantity[]"
-                                                                                                    value="{{ old('soQuantity', !empty($saleOrderDetail->soQuantity) ? $saleOrderDetail->soQuantity : '') }}"
+                                                                                                     value="{{ $saleOrderDetail->soQuantity ?? 0}}"
                                                                                                     placeholder="SO Quantity.... "
                                                                                                     class="sOQty form-control {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} sOQty_{{ $index }}" hidden>
                                                                                             </td>
@@ -667,9 +667,7 @@ $isSelected = old('delivered_to') == $key || $sale_Order->pluck('delivered_to')-
                 '<textarea type="text" name="remarks[]" class="form-control  {{ config('constants.css-classes.ELEMENT_SIZE_CLASS') }} mt-0 remarks_' +
                 currentIndex + '" placeholder="Please Enter remarks "></textarea>' +
                 ' </td>' +
-
                 '<div class="form-check form-check-primary form-check-inline me-0 mb-0">' +
-                // '<input class="form-check-input inbox-chkbox contact-chkbox" type="checkbox">' +
                 '</div>' +
                 '</div>' +
                 '</td>' +

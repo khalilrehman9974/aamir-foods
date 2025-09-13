@@ -147,7 +147,7 @@
                                             <div class="media">
                                                 <div class="media-body align-self-center">
                                                     {{-- <h6 class="mb-0">{{ $order->date }}</h6> --}}
-                                                    <h6 class="mb-0">{{ \Carbon\Carbon::parse($order->date)->format('d-m-Y') }}</h6>
+                                                    <h6 class="mb-0">{{ \Carbon\Carbon::parse($order->date)->format('d-F-Y') }}</h6>
 
                                                 </div>
                                             </div>

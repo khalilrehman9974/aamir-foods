@@ -59,7 +59,6 @@ class PurchaseController extends Controller
      * */
     public function create(Request $request)
     {
-        // dd($request);
 
         $pageTitle = 'Create Purchase Invoice';
         $grnMaster = GoodsReceivedNote::find($request->id);
@@ -67,7 +66,6 @@ class PurchaseController extends Controller
         $transporters = Transporter::where('id', $grnMaster->transporter_id)->pluck('name', 'id');
         $grnDetails = GRNotesDetail::where('master_id', $grnMaster->id)->get();
         $maxId = PurchaseMaster::max('id') + 1;
-        // dd($grnMaster);
         $dropDownData = $this->purchaseService->DropDownData();
         $purchaseDetails = PurchaseDetail::where('purchase_master_id')->get();
 
@@ -92,6 +90,9 @@ class PurchaseController extends Controller
         // $request = $request->except('_token', 'id');
         // DB::beginTransaction();
         // // try {
+        $grn = GoodsReceivedNote::where('id', $request->grn_no)->first();
+        $updateGrnStatus = $this->purchaseService->prepareGrnMasterData($grn);
+        $this->commonService->findUpdateOrCreate(GoodsReceivedNote::class, ['id' => $grn->id], $updateGrnStatus);
 
         //Insert data into purchase tables.
         $purchaseMasterData = $this->purchaseService->preparePurchaseMasterData($request);

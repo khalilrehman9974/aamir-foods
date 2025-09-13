@@ -1,4 +1,5 @@
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -6,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: calibari, sans-serif;
             color: black;
             background-color: white;
         }
@@ -123,13 +124,13 @@
 
         .table-container th,
         .table-container td {
-            border: 1px solid black;
+            border: 1px solid gray;
             padding: 8px;
             text-align: left;
         }
 
         .notes {
-            border: 1px solid black;
+            border: 1px solid gray;
             padding: 10px;
             margin-right: 10px;
         }
@@ -158,13 +159,13 @@
             float: left;
         }
 
-        .p-4{
+        .p-4 {
             padding: 0px !important;
         }
 
         .totals th,
         .totals td {
-            border: 1px solid black;
+            border: 1px solid gray;
             padding: 8px;
             text-align: left;
         }
@@ -186,7 +187,7 @@
         }
 
         .line {
-            border-top: 2px solid black;
+            border-top: 2px solid gray;
             width: 100%;
             margin: 0 auto;
         }
@@ -196,11 +197,13 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header flex justify-between items-center p-4 border-b border-black">
             <div class="flex items-center">
-                <img alt="Amir Foods logo with text 'Since 1996' and 'AMIR Food' in a shield-like shape" class="h-16" height="80" src="{{ asset('images/logo.png') }}" width="80"/>
+                <img alt="Amir Foods logo with text 'Since 1996' and 'AMIR Food' in a shield-like shape" class="h-16"
+                    height="80" src="{{ asset('images/logo.png') }}" width="80" />
                 <div class="ml-4">
                     <p class="font-bold text-lg">AAMIR BROTHERS FOOD PRODUCTS MULTAN</p>
                     <p>12KM Vehari Road Multan <span class="font-bold">CELL:</span> 0309-6662476</p>
@@ -209,12 +212,12 @@
             </div>
             <div class="text-right">
                 <p>ABF: JV-01</p>
-                <p class="font-bold text-xl">{{$title}}</p>
+                <p class="font-bold text-xl">{{ $title }}</p>
             </div>
         </div>
 
         {{-- <header class="header"> --}}
-            <div class="line"></div>
+        <div class="line"></div>
         {{-- </header> --}}
 
         <div class="info" style="margin-top: 1%;">
@@ -230,13 +233,12 @@
         </div>
 
         <div class="table-container">
-            <table>
+            {{-- <table>
                 <thead>
                     <tr>
-                        <th style="width: 3%;">Sr.#</th>
+
                         <th style="width: 50%;">Debit Account/Credit Account</th>
-                        {{-- <th style="width: 30%;">Bank</th>--}}
-                        <th style="width: 27%;">Description</th>
+                        <th style="width: 30%;">Description</th>
                         <th style="width: 10%;">Debit</th>
                         <th style="width: 10%;">Credit</th>
                     </tr>
@@ -244,49 +246,69 @@
                 <tbody>
                     @foreach ($jvDetails as $jvDetail)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
                             <td>{{ $debitParty[$jvDetail->debit_account] }}</td>
                             <td style="border-bottom-color: white;">{{ $jvDetail->description }}</td>
                             <td >{{ $jvDetail->debit }}</td>
                             <td></td>
                             <tr>
-                                <td></td>
-                                {{-- <td></td> --}}
+
                                 <td>{{ $creditParty[$jvDetail->credit_account] }}</td>
                                 <td></td>
                                 <td style=""></td>
                                 <td>{{ $jvDetail->credit }}</td>
-                                {{-- <tr>
-                                    <td></td>
-
-                                    <td></td>
-                                    <td></td>
-                                </tr> --}}
                             </tr>
                         </tr>
 
                     @endforeach
                 </tbody>
+            </table> --}}
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 50%;">Debit Account/Credit Account</th>
+                        <th style="width: 30%;">Description</th>
+                        <th style="width: 10%;">Debit</th>
+                        <th style="width: 10%;">Credit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($jvDetails as $jvDetail)
+                        <tr>
+                            <td>{{ $debitParty[$jvDetail->debit_account] }}</td>
+                            <td rowspan="2">{{ $jvDetail->description }}</td> {{-- merged cell --}}
+                            <td>{{ $jvDetail->debit }}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>{{ $creditParty[$jvDetail->credit_account] }}</td>
+                            {{-- no <td> for description here --}}
+                            <td></td>
+                            <td>{{ $jvDetail->credit }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
+
         </div>
 
         <div class="row" style="display: flex;">
 
 
-            <div style="width: 64%;" >
+            <div style="width: 64%;">
 
             </div>
-            <div class="totals" style="width: 37%;" >
+            <div class="totals" style="width: 37%;">
                 <table style="width: 100% ! important">
                     <tbody>
 
-                        <tr >
+                        <tr>
                             <th style="width: 47%;">Tot Debit Amount</th>
-                            <td style="width: 53%;"><b>{{ $jvMaster->debit_amount.'.00' ?? '0'}}</b></td>
+                            <td style="width: 53%;"><b>{{ $jvMaster->debit_amount . '.00' ?? '0' }}</b></td>
                         </tr>
-                        <tr >
+                        <tr>
                             <th style="width: 47%;">Tot Credit Amount</th>
-                            <td style="width: 53%; text-align: end;"><b>{{ $jvMaster->credit_amount.'.00' ?? '0'}}</b></td>
+                            <td style="width: 53%; text-align: end;"><b>{{ $jvMaster->credit_amount . '.00' ?? '0' }}</b>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -314,4 +336,5 @@
         </div>
     </div>
 </body>
+
 </html>

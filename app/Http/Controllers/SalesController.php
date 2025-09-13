@@ -26,6 +26,7 @@ use App\Services\AccountLedgerService;
 use App\Http\Requests\StoreSaleRequest;
 use App\Models\CoaInventoryDetailAccount;
 use App\Models\GeneralJournal;
+use App\Models\GoodsReceivedNote;
 
 class SalesController extends Controller
 {
@@ -108,10 +109,11 @@ class SalesController extends Controller
     public function store(Request $request)
     {
 
-        $request = $request->except('_token', 'id');
-        DB::beginTransaction();
-        try {
+        // DB::beginTransaction();
+        // try {
 
+
+            $request = $request->except('_token', 'id');
             //Insert data into sale tables.
             $saleMasterData = $this->saleService->prepareSaleMasterData($request);
 
@@ -171,10 +173,10 @@ class SalesController extends Controller
             $carriageAccountDebitData = $this->saleService->prepareCarriageAccountDebitData($request, $saleMasterInsert->id);
             AccountLedger::insert($carriageAccountDebitData);
             DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('sale/create')->with('error', $e->getMessage());
-        }
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('sale/create')->with('error', $e->getMessage());
+        // }
         return redirect('sale/sales-list')->with('message', config('constants.add'));
     }
 

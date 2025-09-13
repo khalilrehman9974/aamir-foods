@@ -47,9 +47,9 @@ class GRNotesService
     public function DropDownData()
     {
         $result = [
-            'transporters' => Transporter::pluck('name','id'),
-            'products' => CoaInventoryDetailAccount::pluck('name','id'),
-            'parties' => CoaDetailAccount::pluck('account_name','id'),
+            'transporters' => Transporter::pluck('name', 'id'),
+            'products' => CoaInventoryDetailAccount::pluck('name', 'id'),
+            'parties' => CoaDetailAccount::pluck('account_name', 'id'),
 
         ];
 
@@ -70,11 +70,18 @@ class GRNotesService
         if (!empty($request['date'])) {
             $formattedDate = date('Y-m-d', strtotime($request['date']));
             $q->where('date', $formattedDate);
-        } elseif (!empty($request['party_id'])) {
+        }
+        if (!empty($request['party_id'])) {
             $q->where('party_id', $request['party_id']);
         }
+        if (!empty($request['status'])) {
+            $q->where('status', $request['status']);
+        } else {
+            // Otherwise, show only 'Pending' entries by default
+            $q->where('status', 'Pending');
+        }
 
-        $goodsReceivedNotes = $q->with('transporter','party')->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
+        $goodsReceivedNotes = $q->with('transporter', 'party')->orderBy('id', 'DESC')->paginate(config('constants.PER_PAGE'));
 
         return $goodsReceivedNotes;
     }
@@ -115,9 +122,9 @@ class GRNotesService
             'product_id' => $request['product_id'],
             'packing_type' => $request['packing_type'],
             'measurement_type' => $request['measurement_type'],
-            'size' => $request['size'] ,
-            'bags' => $request['bags'] ,
-            'measurementType' => $request['measurementType'] ,
+            'size' => $request['size'],
+            'bags' => $request['bags'],
+            'measurementType' => $request['measurementType'],
             'po_quantity' => $request['po_quantity'],
             'received_qty' => $request['received_qty'],
             'balance' => $request['balance'],
@@ -149,5 +156,4 @@ class GRNotesService
             }
         }
     }
-
 }

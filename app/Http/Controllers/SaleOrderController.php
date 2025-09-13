@@ -82,8 +82,8 @@ class SaleOrderController extends Controller
     {
 
         $request =$request->except('_token', 'id');
-        // DB::beginTransaction();
-        // try {
+        DB::beginTransaction();
+        try {
         //Insert data into sale tables.
         $saleOrderMasterData = $this->saleOrderService->prepareSaleOrderMasterData($request);
         $saleOrderMasterInsert = $this->saleOrderService->findUpdateOrCreate(SaleOrder::class, ['id' => !empty(request('id')) ? request('id') : null], $saleOrderMasterData);
@@ -93,11 +93,11 @@ class SaleOrderController extends Controller
         $saleOrderImages = $this->saleOrderService->prepareSaleOrderImagesData($request, $saleOrderMasterInsert->id);
         $this->saleOrderService->saveSaleOrderImages($saleOrderImages);
 
-        // DB::commit();
-        // } catch (\Exception $e) {
-        //     DB::rollback();
-        //     return redirect('sale-order/create')->with('error', $e->getMessage());
-        // }
+        DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect('sale-order/create')->with('error', $e->getMessage());
+        }
         // event(new AamirFoodsNotifications($saleOrderMasterData));
         $message = config(
             'constants.add'

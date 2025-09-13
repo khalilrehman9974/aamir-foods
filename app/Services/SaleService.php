@@ -654,4 +654,6 @@ class SaleService
             'updated_at' => now() ,
         ];
     }
+
+    
 }

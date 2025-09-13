@@ -57,12 +57,14 @@ class DispatchNoteController extends Controller
      */
     public function create(Request $request)
     {
+
         $pageTitle = 'Create Dispatch Note';
         $maxid = DispatchNoteMaster::count('sale_order_number', $request->id) + 1;
         $dropDownData = $this->dispatchNoteService->DropDownData();
         $sale_Order = SaleOrder::find($request->id);
+        // dd($sale_Order);
         // dd($sale_Order['status']);
-        if ($sale_Order['status'] === 'Pending') {
+        if ($sale_Order !== null && $sale_Order->status === 'Pending') {
             return back()->with('message', 'This Sale Order status is pending. Please update the status.');
         } else {
             $parties = CoaDetailAccount::where('id', $sale_Order->party_id)->pluck('account_name', 'id');
@@ -98,8 +100,8 @@ class DispatchNoteController extends Controller
     public function store(Request $request)
     {
 
-        DB::beginTransaction();
-        try {
+        // DB::beginTransaction();
+        // try {
             $saleOrder = SaleOrder::where('id', $request->sale_order_number)->first();
             $updateSaleOrderStatus = $this->dispatchNoteService->prepareSOMasterData($saleOrder);
             $dispatchMasterInsert = $this->commonService->findUpdateOrCreate(SaleOrder::class, ['id' => $saleOrder->id], $updateSaleOrderStatus);
@@ -113,11 +115,11 @@ class DispatchNoteController extends Controller
             $dispatchNoteImages = $this->dispatchNoteService->prepareDispatchNoteImagesData($request, $dispatchMasterInsert->id);
             $this->dispatchNoteService->saveDispatchNoteImages($dispatchNoteImages);
 
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('dispatch-note/create')->with('error', $e->getMessage());
-        }
+        //     DB::commit();
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     return redirect('dispatch-note/create')->with('error', $e->getMessage());
+        // }
         return redirect('dispatch-note/list')->with('message', config('constants.add'));
     }
 

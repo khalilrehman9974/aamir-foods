@@ -157,7 +157,7 @@ class DispatchNoteService
             'product_id' => $request['product_id'],
             'packing_type' => $request['packing_type'],
             'measurement_type' => $request['measurement_type'],
-            'soQuantity' => $request['soQuantity'],
+            'soQuantity' => $request['soQuantity'] ?? [0],
             'quantity' => $request['quantity'],
             'dzn' => $request['dzn'],
             'total_dzn' => $request['total_dzn'],
@@ -172,6 +172,7 @@ class DispatchNoteService
      * */
     public function saveDispatch($data)
     {
+       
         DispatchNoteDetail::where('dispatch_note_master_id', $data['dispatch_note_master_id'])->delete();
         foreach ($data['product_id'] as $key => $value) {
             if (!empty($data['product_id'][$key])) {

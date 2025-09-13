@@ -59,9 +59,9 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <div class="input-group">
-                                        <input type="text" value="{{ $param }}" name="date"
-                                            id="date" class="form-control-sm search" id="input-search"
-                                            placeholder="Date" style="width: 100%;">
+                                        <input type="text" value="{{ $param }}" name="date" id="date"
+                                            class="form-control-sm search" id="input-search" placeholder="Date"
+                                            style="width: 100%;">
                                         <span class="input-group-prepend">
                                             {{-- <button type="submit" class="btn btn-primary" disabled><i
                                                         class="fa fa-search"></i></button> --}}
@@ -72,8 +72,9 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <div class="input-group">
-                                        <select class="form-control-sm mb-3 select2 custom-select" value="{{ $param }}" name="party_id"
-                                            id="party_id" style="width: 100%;">
+                                        <select class="form-control-sm mb-3 select2 custom-select"
+                                            value="{{ $param }}" name="party_id" id="party_id"
+                                            style="width: 100%;">
                                             <option value="">Select</option>
                                             @foreach ($dropDownData['parties'] as $key => $value)
                                                 <option value="{{ $key }}"
@@ -85,22 +86,40 @@
                                 </div>
                             </div>
 
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <select class="form-control-sm mb-3 select2 custom-select"
+                                            value="{{ $param }}" name="status" id="status"
+                                            style="width: 100%;">
+                                            <option value="">Select</option>
+                                            <option value="Pending">Pending</option>
+                                            <option value="Complete">Complete</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-8">
+                            </div>
                             <div class="col-md-2">
                                 <span class="input-group-prepend" style="margin-top: 0px; ">
-                                    <button type="submit" class="btn btn-primary" value="Search"
-                                        id="search-button" style="width: 100%;"><i class="fa fa-search"></i>&nbsp;
+                                    <button type="submit" class="btn btn-primary" value="Search" id="search-button"
+                                        style="width: 100%;"><i class="fa fa-search"></i>&nbsp;
                                         Search</button>
 
                                 </span>
                             </div>
                             <div class="col-md-2 ">
                                 <span class="input-group-prepend" style="margin-top: 0px;">
-                                    <a href="{{ route('grn.list') }}" class="btn btn-primary"
-                                        value="Search" id="clear-filter" style="margin-left: 10px">Clear
+                                    <a href="{{ route('grn.list') }}" class="btn btn-primary" value="Search"
+                                        id="clear-filter" style="margin-left: 10px">Clear
                                         Filter</a>
 
                                 </span>
                             </div>
+                        </div>
                     </form>
                 </div>
 
@@ -152,7 +171,9 @@
                                             <td>
                                                 <div class="media">
                                                     <div class="media-body align-self-center">
-                                                        <h6 class="mb-0">{{ \Carbon\Carbon::parse($note->date)->format('d-m-Y') }}</h6>
+                                                        <h6 class="mb-0">
+                                                            {{ \Carbon\Carbon::parse($note->date)->format('d-m-Y') }}
+                                                        </h6>
 
                                                     </div>
                                                 </div>
@@ -186,7 +207,8 @@
                                                     @if ((!empty($permission->edit_access) && $permission->edit_access == 1) || Auth::user()->is_admin == 1)
                                                         <a href="{{ route('grn.edit', ['id' => $note->id]) }}"
                                                             class="action-btn btn-edit bs-tooltip me-2"
-                                                            data-toggle="tooltip" data-placement="top" title="Edit">
+                                                            data-toggle="tooltip" data-placement="top"
+                                                            title="Edit">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                                 height="24" viewBox="0 0 24 24" fill="none"
                                                                 stroke="currentColor" stroke-width="2"
@@ -200,12 +222,28 @@
                                                     @endif
 
                                                     <a href="{{ route('purchase.create', ['id' => $note->id]) }}"
-
                                                         class="action-btn btn-edit bs-tooltip me-2"
-                                                        data-toggle="tooltip" data-placement="top" title="Enter Purchase Invoice">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M288 256H96v64h192v-64zm89-151L279.1 7c-4.5-4.5-10.6-7-17-7H256v128h128v-6.1c0-6.3-2.5-12.4-7-16.9zm-153 31V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H248c-13.2 0-24-10.8-24-24zM64 72c0-4.4 3.6-8 8-8h80c4.4 0 8 3.6 8 8v16c0 4.4-3.6 8-8 8H72c-4.4 0-8-3.6-8-8V72zm0 64c0-4.4 3.6-8 8-8h80c4.4 0 8 3.6 8 8v16c0 4.4-3.6 8-8 8H72c-4.4 0-8-3.6-8-8v-16zm256 304c0 4.4-3.6 8-8 8h-80c-4.4 0-8-3.6-8-8v-16c0-4.4 3.6-8 8-8h80c4.4 0 8 3.6 8 8v16zm0-200v96c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16v-96c0-8.8 7.2-16 16-16h224c8.8 0 16 7.2 16 16z"/></svg>
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Enter Purchase Invoice">
+                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                            viewBox="0 0 384 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                                                            <path
+                                                                d="M288 256H96v64h192v-64zm89-151L279.1 7c-4.5-4.5-10.6-7-17-7H256v128h128v-6.1c0-6.3-2.5-12.4-7-16.9zm-153 31V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H248c-13.2 0-24-10.8-24-24zM64 72c0-4.4 3.6-8 8-8h80c4.4 0 8 3.6 8 8v16c0 4.4-3.6 8-8 8H72c-4.4 0-8-3.6-8-8V72zm0 64c0-4.4 3.6-8 8-8h80c4.4 0 8 3.6 8 8v16c0 4.4-3.6 8-8 8H72c-4.4 0-8-3.6-8-8v-16zm256 304c0 4.4-3.6 8-8 8h-80c-4.4 0-8-3.6-8-8v-16c0-4.4 3.6-8 8-8h80c4.4 0 8 3.6 8 8v16zm0-200v96c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16v-96c0-8.8 7.2-16 16-16h224c8.8 0 16 7.2 16 16z" />
+                                                        </svg>
                                                     </a>
-                                                    <a href="{{ route('grn.print', ['id' => $note->id]) }}" target="_blank" title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></a>
+                                                    <a href="{{ route('grn.print', ['id' => $note->id]) }}"
+                                                        target="_blank" title="Print"><svg
+                                                            xmlns="http://www.w3.org/2000/svg" width="24"
+                                                            height="24" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2"
+                                                            stroke-linecap="round" stroke-linejoin="round"
+                                                            class="feather feather-printer">
+                                                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                                            <path
+                                                                d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2">
+                                                            </path>
+                                                            <rect x="6" y="14" width="12" height="8"></rect>
+                                                        </svg></a>
                                                     {{-- @if ((!empty($permission->delete_access) && $permission->delete_access == 1) || Auth::user()->is_admin == 1)
 
                                                 @endif --}}

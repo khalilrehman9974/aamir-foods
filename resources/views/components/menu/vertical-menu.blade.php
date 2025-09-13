@@ -566,12 +566,15 @@
                         </li>
                         <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('generalJournals.list') }}">General Journal</a>
+                        </li>
                         <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
                             <a href="{{ route('trialBalance.list') }}">Trial
                                 Balance</a>
+                        </li>
 
-                        {{-- <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
-                            <a href="{{ route('billAging.list') }}">Bill Aging</a></li> --}}
+                        <li class="{{ Request::routeIs('management-preview') ? 'active' : '' }}">
+                            <a href="{{ route('billAging.list') }}">Bill Aging</a>
+                        </li>
                     </ul>
                 </li>
 

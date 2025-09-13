@@ -56,7 +56,7 @@
                 <div class="col-md-12 mb-4">
                     <div class="widget-content widget-content-area">
                         <form method="POST" action="{{ !empty($note) ? route('grn.update') : route('grn.save') }}"
-                            class="row g-3 needs-validation" novalidate>
+                            class="row g-3 needs-validation" novalidate autocomplete="off">
                             @csrf
                             <input type="hidden" name="id" id="id"
                                 value="{{ isset($note->id) ? $note->id : '' }}" />

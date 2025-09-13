@@ -27,7 +27,6 @@ class GRNotesController extends Controller
     {
         $this->commonService = $commonService;
         $this->grNotesService = $grNotesService;
-
     }
 
     public function generate()
@@ -46,7 +45,7 @@ class GRNotesController extends Controller
         $param = request()->param;
         $dropDownData = $this->grNotesService->DropDownData();
 
-        return view('goods-received-notes.index', compact('notes','param', 'dropDownData','request','pageTitle'));
+        return view('goods-received-notes.index', compact('notes', 'param', 'dropDownData', 'request', 'pageTitle'));
     }
 
     /*
@@ -57,12 +56,10 @@ class GRNotesController extends Controller
         $pageTitle = 'Create GRN';
         $maxid = GoodsReceivedNote::max('id') + 1;
         $purchaseOrder = PurchaseOrderMaster::find($request->id);
-        $purchaseOrderDetails = PurchaseOrderDetail::where('purchase_order_master_id',$purchaseOrder->id)->get();
+        $purchaseOrderDetails = PurchaseOrderDetail::where('purchase_order_master_id', $purchaseOrder->id)->get();
         $parties = CoaDetailAccount::where('id', $purchaseOrder->party_id)->pluck('account_name', 'id');
-        // dd($purchaseOrderDetails);
         $dropDownData = $this->grNotesService->DropDownData();
-        // $note_details = GRNotesDetail::where('goods_received_note_master_id')->get();
-        return view('goods-received-notes.create', compact('pageTitle','purchaseOrderDetails','parties','dropDownData','maxid','purchaseOrder'));
+        return view('goods-received-notes.create', compact('pageTitle', 'purchaseOrderDetails', 'parties', 'dropDownData', 'maxid', 'purchaseOrder'));
     }
 
     /*
@@ -73,16 +70,81 @@ class GRNotesController extends Controller
     {
         // dd($request);
 
-        $request = $request->except('_token', 'id');
         // DB::beginTransaction();
         // try {
-            //Insert data into GRN tables.
-            $grnMasterData = $this->grNotesService->prepareGRNMasterData($request);
-            $grnMasterInsert = $this->commonService->findUpdateOrCreate(GoodsReceivedNote::class, ['id' => ''], $grnMasterData);
-            $grnDetailData = $this->grNotesService->prepareGRNDetailData($request, $grnMasterInsert->id);
-            $this->grNotesService->saveGRN($grnDetailData);
+        // $purchaseOrderDetail = PurchaseOrderDetail::where('purchase_order_master_id', $request->purchase_order_no)->get();
+        // $grnMaster = GoodsReceivedNote::where('purchase_order_no' ,$request->purchase_order_no)->where('party_id', '4')->pluck('id');
+        // $grnDetail = GRNotesDetail::whereIn('master_id', $grnMaster)->get();
+        // dd($grnDetail);
+        // $poQuantities = $request->po_quantity;     // e.g., [10, 5, 8]
+        // $receivedQtys = $request->received_qty;    // e.g., [10, 5, 8]
 
-            // DB::commit();
+        // $allMatch = $request->po_quantity === $request->received_qty;
+
+        // foreach ($poQuantities as $index => $poQty) {
+        //     if (!isset($receivedQtys[$index]) || $poQty != $receivedQtys[$index]) {
+        //         $allMatch = false;
+        //         break;
+        //     }
+        // }
+
+        // if ($allMatch) {
+        //     // ✅ All quantities match — do this
+        //     // Example:
+        //     // $this->markAsComplete($purchaseOrderId);
+        // } else {
+        //     // ❌ One or more values don’t match — handle it
+        // }
+
+
+
+        $purchaseOrderDetail = PurchaseOrderDetail::where('purchase_order_master_id', $request->purchase_order_no)->get();
+
+        $grnMasterIds = GoodsReceivedNote::where('purchase_order_no', $request->purchase_order_no)
+            ->where('party_id', 4)
+            ->pluck('id');
+
+        $grnDetail = GRNotesDetail::whereIn('master_id', $grnMasterIds)->get();
+
+        // ✅ Step 1: Group purchase order quantities by product_id
+        $poQuantities = $purchaseOrderDetail->groupBy('product_id')->map(function ($items) {
+            return $items->sum('quantity');
+        });
+
+
+        // ✅ Step 2: Group GRN received_qty by product_id
+        $grnQuantities = $grnDetail->groupBy('product_id')->map(function ($items) {
+            return $items->sum('received_qty');
+        });
+        // ✅ Step 3: Check if each product in PO has matching received_qty
+        $allMatched = true;
+
+        foreach ($poQuantities as $productId => $poQty) {
+            $receivedQty = $grnQuantities[$productId] ?? 0;
+
+            if ($poQty != $receivedQty) {
+                $allMatched = false;
+                break;
+            }
+        }
+
+        // ✅ Step 4: Take action if all matched
+        if ($allMatched) {
+
+        } else {
+           
+        }
+
+
+        dd("stop here");
+        //Insert data into GRN tables.
+        $request = $request->except('_token', 'id');
+        $grnMasterData = $this->grNotesService->prepareGRNMasterData($request);
+        $grnMasterInsert = $this->commonService->findUpdateOrCreate(GoodsReceivedNote::class, ['id' => ''], $grnMasterData);
+        $grnDetailData = $this->grNotesService->prepareGRNDetailData($request, $grnMasterInsert->id);
+        $this->grNotesService->saveGRN($grnDetailData);
+
+        // DB::commit();
         // } catch (\Exception $e) {
         //     DB::rollback();
         //     return redirect('grn/create')->with('error', $e->getMessage());
@@ -95,13 +157,13 @@ class GRNotesController extends Controller
         // dd($request);
         // DB::beginTransaction();
         // try {
-            $request = request()->all();
-            GRNotesDetail::where('master_id', $request['id'])->delete();
+        $request = request()->all();
+        GRNotesDetail::where('master_id', $request['id'])->delete();
 
-            $grnMasterData = $this->grNotesService->prepareGRNMasterData($request);
-            $grnMasterInsert = $this->commonService->findUpdateOrCreate(GoodsReceivedNote::class, ['id' => request('id')], $grnMasterData);
-            $grnDetailData = $this->grNotesService->prepareGRNDetailData($request, $grnMasterInsert->id);
-            $this->grNotesService->saveGRN($grnDetailData);
+        $grnMasterData = $this->grNotesService->prepareGRNMasterData($request);
+        $grnMasterInsert = $this->commonService->findUpdateOrCreate(GoodsReceivedNote::class, ['id' => request('id')], $grnMasterData);
+        $grnDetailData = $this->grNotesService->prepareGRNDetailData($request, $grnMasterInsert->id);
+        $this->grNotesService->saveGRN($grnDetailData);
 
 
 
@@ -131,7 +193,7 @@ class GRNotesController extends Controller
             $message = config('constants.wrong');
         }
 
-        return view('goods-received-notes.edit', compact('pageTitle' ,'date','maxid','note','parties', 'note_details','dropDownData'));
+        return view('goods-received-notes.edit', compact('pageTitle', 'date', 'maxid', 'note', 'parties', 'note_details', 'dropDownData'));
     }
 
     public function print($id)
@@ -143,11 +205,11 @@ class GRNotesController extends Controller
         $grnDetails = GRNotesDetail::where('master_id', $grnMaster->id)->get();
         // dd($grnDetails);
         $productsArray = $grnDetails->pluck('product_id')->toArray();
-        $products = CoaInventoryDetailAccount::whereIn('id',$productsArray)->pluck('name','id');
-        $user = User::where('id',$grnMaster->created_by)->value('name');
-        $transporters = Transporter::where('id',$grnMaster->transporter_id)->value('name');
+        $products = CoaInventoryDetailAccount::whereIn('id', $productsArray)->pluck('name', 'id');
+        $user = User::where('id', $grnMaster->created_by)->value('name');
+        $transporters = Transporter::where('id', $grnMaster->transporter_id)->value('name');
 
-        return view('goods-received-notes.print', compact('title','transporters','products','user','grnMaster','date','grnDetails','party'));
+        return view('goods-received-notes.print', compact('title', 'transporters', 'products', 'user', 'grnMaster', 'date', 'grnDetails', 'party'));
     }
 
 
@@ -162,14 +224,12 @@ class GRNotesController extends Controller
             $deleteMaster = GoodsReceivedNote::where('id', request()->id)->delete();
             $deleteDetail = GRNotesDetail::where('goods_received_note_master_id', request()->id)->delete();
             DB::commit();
-            if ($deleteMaster && $deleteDetail ) {
+            if ($deleteMaster && $deleteDetail) {
                 return $this->commonService->deleteResource(GoodsReceivedNote::class, GRNotesDetail::class);
             }
-
         } catch (\Exception $e) {
             DB::rollback();
             return redirect('grn/list')->with('error', $e->getMessage());
         }
     }
-
 }

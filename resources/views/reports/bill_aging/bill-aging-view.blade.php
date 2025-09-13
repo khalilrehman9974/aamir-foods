@@ -387,10 +387,10 @@
             </div>
         @endforeach --}}
 
-        {{-- @foreach ($finalData as $partyRows)
+        @foreach ($finalData as $partyRows)
             <div class="order-block">
 
-                {{-- Wrap all header info blocks in this container
+                {{-- Wrap all header info blocks in this container --}}
                 <div class="header-info-container">
                     <div class="mb-1">
                         <div class="label-value-pair">
@@ -439,9 +439,9 @@
                     </div>
                 </div>
 
-                {{-- <h4>Party: {{ $partyRows[0]['party_name'] }}</h4>
+                {{-- <h4>Party: {{ $partyRows[0]['party_name'] }}</h4> --}}
 
-                {{-- <h4>Sale Man: {{ $partyRows[0]['salesman'] }}</h4>
+                {{-- <h4>Sale Man: {{ $partyRows[0]['salesman'] }}</h4> --}}
                 <table class="w-full mb-4 text-sm table-fixed">
                     <thead class="bg-gray-200">
                         <tr>
@@ -469,7 +469,7 @@
                     </tbody>
                 </table>
             </div>
-        @endforeach --}}
+        @endforeach
 
 
         {{-- @foreach ($groupedInvoices as $group)
@@ -542,7 +542,7 @@
             @endforeach
         @endforeach --}}
 
-        @foreach ($groupedInvoices as $group)
+        {{-- @foreach ($groupedInvoices as $group)
 
             <div class="card my-4">
                 <div class="card-header bg-light">
@@ -596,7 +596,7 @@
             <div class="alert alert-info text-center">
                 No records found for the selected filters.
             </div>
-        @endif
+        @endif --}}
 
 
         {{-- Summary Table --}}

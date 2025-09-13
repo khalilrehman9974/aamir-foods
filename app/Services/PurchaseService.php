@@ -236,11 +236,11 @@ class PurchaseService
             'total_quantity' => config('constants.ZERO'),
             'measurementType' => config('constants.ZERO'),
             'bags' => config('constants.ZERO'),
-            'description' => 'Purchase From'. ' ' . $party . '<br>' .  $request['remarks'],
+            'description' => 'Purchase From' . ' ' . $party . '<br>' .  $request['remarks'],
             'debit' => config('constants.ZERO'),
             'credit' =>  $request['gross_bill'],
             'created_at' => now(),
-            'updated_at' => now() ,
+            'updated_at' => now(),
         ];
     }
 
@@ -257,13 +257,13 @@ class PurchaseService
             'invoice_id' => $purchaseParentId,
             'party_id' =>  $partyId,
             'document_number' => 'P/I' . '-' . $purchaseParentId,
-            'rate' =>$request['price'],
+            'rate' => $request['price'],
             'bilty_no' => $request['supplier_bill_no'],
             'transporter_id' => $request['transporter_id'],
             'total_quantity' => $request['quantity'],
             'measurementType' => $request['measurementType'],
             'bags' => $request['bags'],
-            'description' => $description . '<br>' .$remarks ,
+            'description' => $description . '<br>' . $remarks,
             'debit' => $request['amount'],
             'credit' => config('constants.ZERO'),
             'created_at' => now(),
@@ -313,7 +313,7 @@ class PurchaseService
             'total_quantity' => config('constants.ZERO'),
             'measurementType' => config('constants.ZERO'),
             'bags' => config('constants.ZERO'),
-            'description' => 'Carriage Of'. ' ' . $party . '<br>' .  $request['remarks'],
+            'description' => 'Carriage Of' . ' ' . $party . '<br>' .  $request['remarks'],
             'debit' => $request['carriage'],
             'credit' => config('constants.ZERO'),
             'created_at' => now(),
@@ -340,11 +340,11 @@ class PurchaseService
             'total_quantity' => config('constants.ZERO'),
             'measurementType' => config('constants.ZERO'),
             'bags' => config('constants.ZERO'),
-            'description' => 'Carriage Of'. ' ' . $mainPartyName . '<br>' .  $request['remarks'],
+            'description' => 'Carriage Of' . ' ' . $mainPartyName . '<br>' .  $request['remarks'],
             'debit' => config('constants.ZERO'),
             'credit' => $request['carriage'],
             'created_at' => now(),
-            'updated_at' => now() ,
+            'updated_at' => now(),
         ];
     }
 
@@ -363,11 +363,11 @@ class PurchaseService
             'total_quantity' => config('constants.ZERO'),
             'measurementType' => config('constants.ZERO'),
             'bags' => config('constants.ZERO'),
-            'description' => 'Tax '. ' ' . $party . '<br>' .  $request['remarks'],
+            'description' => 'Tax ' . ' ' . $party . '<br>' .  $request['remarks'],
             'debit' => $request['tax'],
             'credit' => config('constants.ZERO'),
             'created_at' => now(),
-            'updated_at' => now() ,
+            'updated_at' => now(),
         ];
     }
 
@@ -389,12 +389,12 @@ class PurchaseService
             'total_quantity' => config('constants.ZERO'),
             'measurementType' => config('constants.ZERO'),
             'bags' => config('constants.ZERO'),
-            'description' => 'Tax of'. ' ' . $mainPartyName . '<br>' .  $request['remarks'],
+            'description' => 'Tax of' . ' ' . $mainPartyName . '<br>' .  $request['remarks'],
 
             'debit' => config('constants.ZERO'),
             'credit' => $request['tax'],
             'created_at' => now(),
-            'updated_at' => now() ,
+            'updated_at' => now(),
         ];
     }
 
@@ -408,12 +408,12 @@ class PurchaseService
             'document_number' => 'P/I' . '-' . $saleParentId,
             'business_id' => $session->business_id,
             'f_year_id' => $session->financial_year,
-            'description' => $party ,
-            'narration' => 'Credit Sale Of'. ' ' . $party ,
+            'description' => $party,
+            'narration' => 'Credit Sale Of' . ' ' . $party,
             'debit' => config('constants.ZERO'),
             'credit' => $request['gross_bill'],
             'created_at' => now(),
-            'updated_at' => now() ,
+            'updated_at' => now(),
         ];
     }
 
@@ -431,12 +431,12 @@ class PurchaseService
             'document_number' => 'P/I' . '-' . $saleParentId,
             'business_id' => $session->business_id,
             'f_year_id' => $session->financial_year,
-            'description' => $product ,
-            'narration' => 'Debit Sale of:'. ' ' . $party ,
+            'description' => $product,
+            'narration' => 'Debit Sale of:' . ' ' . $party,
             'debit' => $request['amount'],
             'credit' => config('constants.ZERO'),
             'created_at' => now(),
-            'updated_at' => now() ,
+            'updated_at' => now(),
         ];
     }
 
@@ -472,12 +472,12 @@ class PurchaseService
             'document_number' => 'P/I' . '-' . $saleParentId,
             'business_id' => $session->business_id,
             'f_year_id' => $session->financial_year,
-            'description' => $partyName ,
-            'narration' => 'Credit'. ' ' . $partyName ,
+            'description' => $partyName,
+            'narration' => 'Credit' . ' ' . $partyName,
             'debit' => config('constants.ZERO'),
             'credit' => $request['tax'],
             'created_at' => now(),
-            'updated_at' => now() ,
+            'updated_at' => now(),
         ];
     }
 
@@ -492,12 +492,12 @@ class PurchaseService
             'document_number' => 'P/I' . '-' . $saleParentId,
             'business_id' => $session->business_id,
             'f_year_id' => $session->financial_year,
-            'description' => $party ,
-            'narration' => 'Tax Of'. ' ' . $party ,
+            'description' => $party,
+            'narration' => 'Tax Of' . ' ' . $party,
             'debit' => $request['tax'],
             'credit' => config('constants.ZERO'),
             'created_at' => now(),
-            'updated_at' => now() ,
+            'updated_at' => now(),
         ];
     }
 
@@ -512,12 +512,12 @@ class PurchaseService
             'document_number' => 'P/I' . '-' . $saleParentId,
             'business_id' => $session->business_id,
             'f_year_id' => $session->financial_year,
-            'description' => $partyName ,
-            'narration' => 'Credit'. ' ' . $partyName ,
+            'description' => $partyName,
+            'narration' => 'Credit' . ' ' . $partyName,
             'debit' => config('constants.ZERO'),
             'credit' => $request['carriage'],
             'created_at' => now(),
-            'updated_at' => now() ,
+            'updated_at' => now(),
         ];
     }
 
@@ -532,13 +532,35 @@ class PurchaseService
             'document_number' => 'P/I' . '-' . $saleParentId,
             'business_id' => $session->business_id,
             'f_year_id' => $session->financial_year,
-            'description' => $party ,
-            'narration' => 'Carriage Of'. ' ' . $party ,
+            'description' => $party,
+            'narration' => 'Carriage Of' . ' ' . $party,
             'debit' => $request['carriage'],
             'credit' => config('constants.ZERO'),
             'created_at' => now(),
-            'updated_at' => now() ,
+            'updated_at' => now(),
         ];
     }
+    public function prepareGrnMasterData($grn)
+    {
+        $status = 'Complete';
 
+        return [
+            'date' => Carbon::parse($grn['date'])->format('Y-m-d'),
+            'party_id' => $grn['party_id'],
+            'business_id' => $grn['business_id'],
+            'f_year_id' => $grn['f_year_id'],
+            'purchase_order_no' => $grn['purchase_order_no'],
+            'fare' => $grn['fare'],
+            'supplier_bill_no' => $grn['supplier_bill_no'],
+            'transporter_id' => $grn['transporter_id'],
+            'status' => $status,
+            'unloaded_by' => $grn['unloaded_by'],
+            'total_quantity' => $grn['total_quantity'],
+            'remarks' => $grn['remarks'],
+            'created_at' => $grn['created_at'],
+            'updated_at' => $grn['updated_at'],
+            'created_by' => $grn['created_by'],
+            'updated_by' => $grn['updated_by']
+        ];
+    }
 }
